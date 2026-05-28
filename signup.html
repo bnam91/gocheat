@@ -27,8 +27,8 @@
       <p class="section-label">비밀기술 커뮤니티에 등록</p>
       <h1 class="signup-title">도구 출시·강의 오픈·실전 노하우. 가장 먼저 받으실 수 있게.</h1>
       <p class="signup-sub">
-        도구·콘텐츠 소식만 가끔 보내드려요. 광고 아닙니다.
-        가입은 1초, 탈퇴는 메일 하단 한 번 클릭이면 끝.
+        가입하면 라이센스 키를 메일로 받을 수 있어요.
+        도구·콘텐츠 소식만 가끔 보내드리고, 광고는 보내지 않아요.
       </p>
 
       <form id="signup-form" class="signup-form" novalidate>
@@ -42,12 +42,23 @@
           autocomplete="email"
           required
         />
-        <button type="submit" class="signup-submit">가입하기 →</button>
+        <label class="signup-label" for="password">비밀번호 <span style="opacity:.5;font-weight:400;">(8자 이상)</span></label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          class="signup-input"
+          placeholder="••••••••"
+          autocomplete="new-password"
+          minlength="8"
+          required
+        />
+        <button type="submit" class="signup-submit" id="signup-submit">가입하기 →</button>
         <p class="signup-msg" id="signup-msg" role="status" aria-live="polite"></p>
       </form>
 
       <p class="signup-fineprint">
-        ※ 지금은 출시 알림 폼이고, 출시 후엔 라이센스가 자동으로 메일로 갑니다.
+        ※ 가입 후 인증 메일이 발송돼요. 인증 메일은 큐를 거쳐 발송되므로 도착까지 몇 분 걸릴 수 있어요.
       </p>
     </div>
   </section>
@@ -65,28 +76,55 @@
   <script>
     (function () {
       const form = document.getElementById('signup-form');
-      const input = document.getElementById('email');
+      const emailInput = document.getElementById('email');
+      const passwordInput = document.getElementById('password');
+      const submit = document.getElementById('signup-submit');
       const msg = document.getElementById('signup-msg');
       const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      form.addEventListener('submit', function (e) {
+      function show(text, ok) {
+        msg.textContent = text;
+        msg.className = 'signup-msg ' + (ok ? 'signup-msg-ok' : 'signup-msg-error');
+      }
+
+      form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const value = (input.value || '').trim();
-        if (!value) {
-          msg.textContent = '이메일을 입력해주세요.';
-          msg.className = 'signup-msg signup-msg-error';
-          input.focus();
-          return;
+        const email = (emailInput.value || '').trim();
+        const password = passwordInput.value || '';
+        if (!email || !emailRe.test(email)) {
+          show('이메일 형식이 올바르지 않아요.', false); emailInput.focus(); return;
         }
-        if (!emailRe.test(value)) {
-          msg.textContent = '이메일 형식이 올바르지 않아요.';
-          msg.className = 'signup-msg signup-msg-error';
-          input.focus();
-          return;
+        if (password.length < 8) {
+          show('비밀번호는 8자 이상이어야 해요.', false); passwordInput.focus(); return;
         }
-        msg.textContent = '신청 완료! 출시 소식이 준비되면 메일로 알려드릴게요.';
-        msg.className = 'signup-msg signup-msg-ok';
-        form.reset();
+
+        submit.disabled = true;
+        const original = submit.textContent;
+        submit.textContent = '가입 중…';
+        try {
+          const r = await fetch('/api/license/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await r.json().catch(() => ({}));
+          if (!r.ok || !data.ok) {
+            const reason = data.error || ('HTTP ' + r.status);
+            show('가입에 실패했어요: ' + reason, false);
+            return;
+          }
+          if (data.alreadyVerified) {
+            show('이미 인증된 계정이에요. 다운로드 페이지에서 라이센스를 발급받으세요.', true);
+          } else {
+            show('가입 완료! 인증 메일을 확인해주세요. (몇 분 걸릴 수 있어요)', true);
+          }
+          form.reset();
+        } catch (err) {
+          show('네트워크 오류로 가입에 실패했어요. 잠시 후 다시 시도해주세요.', false);
+        } finally {
+          submit.disabled = false;
+          submit.textContent = original;
+        }
       });
     })();
   </script>
