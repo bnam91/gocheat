@@ -27,7 +27,7 @@ async function loadApps() {
   // 진입 완료 후 floatBob 시작 (마지막 pill: 0.78+0.40+0.45 ≈ 1.63s + 여유 200ms)
   setTimeout(() => {
     document.querySelectorAll('.hero-app-pill').forEach((pill, i) => {
-      pill.style.animationDuration = bobDurations[i] + 's';
+      pill.style.animationDuration = bobDurations[i % bobDurations.length] + 's';
       pill.style.animationDelay = (i * 0.2).toFixed(1) + 's';
       pill.classList.add('bob-ready');
     });
