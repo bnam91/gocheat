@@ -1,7 +1,2 @@
 .preview/
 .DS_Store
-node_modules/
-.vercel
-.env
-.env.local
-.env.*.local
