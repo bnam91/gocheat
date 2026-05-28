@@ -240,6 +240,65 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 }
 .cta-primary:hover { background: var(--text); color: #fff; transform: translateY(-2px); }
 
+/* ===== APP DETAIL (goditor.html) ===== */
+.detail { max-width: var(--width); margin: 0 auto; padding: 64px 24px 80px; }
+.detail-inner { display: flex; flex-direction: column; gap: 28px; }
+.detail-back { font-family: var(--mono); font-size: 11px; color: var(--subtle); letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.15s; align-self: flex-start; }
+.detail-back:hover { color: var(--text); }
+.detail-header { display: flex; align-items: center; gap: 20px; }
+.detail-icon { width: 72px; height: 72px; border-radius: 16px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 34px; flex-shrink: 0; }
+.detail-meta { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.detail-badge { font-family: var(--mono); font-size: 11px; color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; }
+.detail-title { font-size: clamp(40px, 7vw, 56px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+.detail-tagline { font-size: 15px; color: var(--muted); }
+.detail-desc { font-size: 15px; color: var(--text); line-height: 1.7; }
+.detail-cta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.detail-note { font-size: 12px; color: var(--subtle); margin-top: -8px; }
+.feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.feature-list li { font-size: 14px; color: var(--text); display: flex; gap: 8px; align-items: baseline; }
+.feature-dot { color: var(--subtle); font-family: var(--mono); }
+
+/* ===== SIGNUP (signup.html) ===== */
+.signup { max-width: var(--width); margin: 0 auto; padding: 80px 24px 100px; }
+.signup-inner { display: flex; flex-direction: column; gap: 16px; }
+.signup-title { font-size: clamp(36px, 6vw, 48px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-top: 4px; }
+.signup-sub { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+.signup-form { display: flex; flex-direction: column; gap: 10px; }
+.signup-label { font-family: var(--mono); font-size: 11px; color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; }
+.signup-input {
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.signup-input::placeholder { color: var(--subtle); }
+.signup-input:focus { border-color: rgba(0,0,0,0.3); background: #fff; }
+.signup-submit {
+  align-self: flex-start;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  background: transparent;
+  border: 1.5px solid #1d1d1f;
+  padding: 9px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  margin-top: 6px;
+  transition: background 0.18s, color 0.18s, transform 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.signup-submit:hover { background: var(--text); color: #fff; transform: translateY(-2px); }
+.signup-msg { font-size: 13px; min-height: 18px; margin-top: 4px; }
+.signup-msg-error { color: #b00020; }
+.signup-msg-ok { color: #1a7f37; }
+.signup-fineprint { font-size: 12px; color: var(--subtle); margin-top: 16px; }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
   .hero-title { font-size: clamp(44px, 11vw, 72px); }

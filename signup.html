@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 · 소문의섬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">소문의섬</a>
+      <div class="nav-links">
+        <a href="/#apps">앱</a>
+        <a href="https://youtube.com" target="_blank">YouTube</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="signup">
+    <div class="signup-inner">
+      <p class="section-label">회원가입</p>
+      <h1 class="signup-title">먼저 이메일만 남겨주세요.</h1>
+      <p class="signup-sub">
+        앱 출시·업데이트·할인 소식만 가끔 보내드려요. 광고 메일 아닙니다.
+        가입은 1초, 탈퇴는 메일 하단 한 번 클릭이면 끝.
+      </p>
+
+      <form id="signup-form" class="signup-form" novalidate>
+        <label class="signup-label" for="email">이메일</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          class="signup-input"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        />
+        <button type="submit" class="signup-submit">가입하기 →</button>
+        <p class="signup-msg" id="signup-msg" role="status" aria-live="polite"></p>
+      </form>
+
+      <p class="signup-fineprint">
+        ※ 현재는 베타 안내용 폼입니다. 가입 정보는 출시 알림 용도로만 사용해요.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>소문의섬 · hello@example.com</span>
+      <div class="footer-links">
+        <a href="https://youtube.com" target="_blank">YouTube</a>
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <a href="https://twitter.com" target="_blank">Twitter</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const form = document.getElementById('signup-form');
+      const input = document.getElementById('email');
+      const msg = document.getElementById('signup-msg');
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const value = (input.value || '').trim();
+        if (!value) {
+          msg.textContent = '이메일을 입력해주세요.';
+          msg.className = 'signup-msg signup-msg-error';
+          input.focus();
+          return;
+        }
+        if (!emailRe.test(value)) {
+          msg.textContent = '이메일 형식이 올바르지 않아요.';
+          msg.className = 'signup-msg signup-msg-error';
+          input.focus();
+          return;
+        }
+        msg.textContent = '신청 완료! 출시 소식이 준비되면 메일로 알려드릴게요.';
+        msg.className = 'signup-msg signup-msg-ok';
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>

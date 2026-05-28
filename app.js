@@ -12,7 +12,7 @@ async function loadApps() {
   // Hero pills — 개별 stagger: 0.78s 기준, 0.08s 간격
   const bobDurations = [3.5, 4.0, 3.7, 4.1, 3.6, 3.9];
   document.getElementById('hero-apps').innerHTML = apps.map((app, i) => {
-    const href = app.buyUrl || app.downloadUrl || '#apps';
+    const href = app.detailUrl || app.buyUrl || app.downloadUrl || '#apps';
     const delay = (0.78 + i * 0.08).toFixed(2);
     return `
     <a class="hero-app-pill" href="${href}" style="animation-delay:${delay}s;">
@@ -34,7 +34,7 @@ async function loadApps() {
   }, 1850);
 
   document.getElementById('app-grid').innerHTML = apps.map(app=>`
-    <a class="app-card card-hidden" href="${app.buyUrl||app.downloadUrl||'#'}">
+    <a class="app-card card-hidden" href="${app.detailUrl||app.buyUrl||app.downloadUrl||'#'}">
       <div class="app-icon"><img src="${app.icon}" alt="${app.name}" onerror="this.parentElement.textContent='${EMOJI_FALLBACK[app.id]||'📦'}'" /></div>
       <div class="app-info">
         <div class="app-name">${app.name}</div>
