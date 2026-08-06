@@ -33,6 +33,7 @@
 
   /* 읽는 축(폭). 섹션마다 다르면 스크롤할 때 좌우로 흔들린다 */
   --read:    720px;
+  --sp-section: 84px;   /* 구간 사이 여백 — 리듬을 여기 하나로 모은다 */
 }
 
 html { scroll-behavior: smooth; background: var(--bg); font-size: 80%; }
@@ -707,3 +708,45 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .find-result-note a { color: var(--accent); }
 .find-manual { font-size: var(--fs-body); color: var(--muted); line-height: 1.85; margin-bottom: 18px; }
 .find-manual b { color: var(--fg); }
+
+/* ── 구간 재설계 (5구간, 각 구간이 «한 가지»만 말한다) ──────────
+   전에는 .detail 한 섹션에 뒤로가기·정체·CTA·영상·기능이 다 섞여 있었다.
+   여백은 --sp-section 하나로 모아 리듬을 한 곳에서 조절한다. */
+.detail { padding: 40px 24px var(--sp-section); }
+.showcase, .features { max-width: var(--read); margin: 0 auto; padding: 0 24px var(--sp-section); }
+/* ★리드 문단과 기능 격자의 «왼쪽 축»을 맞춘다.
+   align-items:center 면 둘의 폭이 달라 시작점이 어긋난다. */
+.features-inner { display: flex; flex-direction: column; align-items: stretch; gap: 20px; }
+.features-inner > .section-h { text-align: center; }
+.features-inner > .features-req { text-align: center; }
+.pricing { padding-top: 0; }
+
+/* ★뒤로가기 — 좌상단. 페이지 전체 가운데 정렬에 끌려가 있었다 */
+.detail-back { align-self: flex-start; font-size: var(--fs-xs); }
+
+/* 히어로 — 아이콘 · 제목 · 한 줄 · 버튼 하나 */
+.detail-lead { font-size: var(--fs-lead); color: var(--muted); line-height: 1.6; max-width: 40ch; }
+.detail-alt { font-size: var(--fs-sm); color: var(--subtle); margin-top: -8px; }
+.detail-alt a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.detail-alt a:hover { color: var(--accent); }
+.cta-download { min-width: 220px; padding: 12px 26px; font-size: var(--fs-body); font-weight: 700; }
+
+/* ② 이벤트 띠 — 요금제 절에 있던 배너를 여기로 옮겼다(첫 화면 근처) */
+.event-strip {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 13px 24px; margin-bottom: var(--sp-section);
+  background: rgba(201,242,58,.06); border-top: 1px solid rgba(201,242,58,.22);
+  border-bottom: 1px solid rgba(201,242,58,.22);
+}
+.event-strip .event-banner-text { font-size: var(--fs-sm); font-weight: 600; color: var(--fg); }
+
+/* ④ 기능 2×2 — 기능별 이미지가 없어 좌우 교차는 의미가 없다.
+   가로를 채워 세로를 줄인다. */
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; max-width: 100%; }
+.features-lead { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; }
+.features-req { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); margin-top: 6px; }
+
+@media (max-width: 700px) {
+  :root { --sp-section: 56px; }
+  .feature-grid { grid-template-columns: 1fr; }
+}

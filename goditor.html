@@ -25,6 +25,7 @@
     </nav>
   </header>
 
+  <!-- ① 히어로 — 말하는 한 가지: «이게 뭔지 · 받아라» -->
   <section class="detail">
     <div class="detail-inner">
       <a href="/#apps" class="detail-back">← 앱 목록</a>
@@ -34,24 +35,32 @@
           <img src="/public/icons/goditor.png" alt="GODITOR 앱 아이콘" width="72" height="72" />
         </div>
         <div class="detail-meta">
-          <p class="detail-badge">Design · macOS 13+</p>
           <h1 class="detail-title">GODITOR</h1>
-          <p class="detail-tagline">상세페이지 전용 디자인 에디터. 블록을 쌓고 바로 미리봅니다.</p>
+          <!-- 배지·태그라인 제거(현빈). 이 한 줄이 «유일한 제품 설명»이라
+               지어내지 않고 기존 .detail-desc 에서 뽑아 압축했다. -->
+          <p class="detail-lead">상세페이지를 블록으로 쌓고, 바로 미리봅니다.</p>
         </div>
       </div>
 
-      <p class="detail-desc">
-        못으로 칼국수를 자를 순 없죠. 피그마는 와이어프레임 도구지, 상세페이지 도구가 아닙니다. 매번 어색했죠.
-        그래서 상세페이지 전용으로 다시 만들었습니다.
-        블록 쌓고, 텍스트 넣고, 미리보기. 그게 전부입니다.
-      </p>
-
       <div class="detail-cta">
-        <button type="button" id="download-btn" class="cta-primary cta-download">DOWNLOAD</button>
+        <button type="button" id="download-btn" class="cta-primary cta-download">다운로드</button>
       </div>
+      <!-- 맥은 ARM64/Intel 로 갈린다. 칩을 «단정»하지 않고 기본을 제시하되
+           반대 경로를 항상 나란히 둔다 — 틀려도 한 번에 고칠 수 있게. -->
+      <p class="detail-alt" id="dl-alt" hidden></p>
       <p class="detail-note dl-msg" id="dl-msg" role="status" aria-live="polite" hidden></p>
-      <p class="detail-note">다운로드에는 계정이 필요해요 — 없으시면 받으실 때 안내해 드립니다.</p>
+    </div>
+  </section>
 
+  <!-- ② 이벤트 띠 — 말하는 한 가지: «지금 전부 무료».
+       요금제 절에 있던 배너를 여기로 «옮겼다»(첫 화면 근처에서 보여야 한다). -->
+  <div class="event-strip">
+    <span class="event-banner-tag">Event</span>
+    <span class="event-banner-text">지금은 전 등급을 무료로 드립니다</span>
+  </div>
+
+  <!-- ③ 영상 — 말하는 한 가지: «어떻게 쓰는지» -->
+  <section class="showcase">
       <figure class="video-embed">
         <div class="video-frame">
           <iframe
@@ -65,16 +74,24 @@
         </div>
         <figcaption class="video-caption">데뷔 영상 · [최초공개] 더이상 피그마로 상세페이지 만들지마세요.</figcaption>
       </figure>
+  </section>
 
-      <hr />
-
+  <!-- ④ 기능 — 말하는 한 가지: «뭘 할 수 있는지». 2×2 (기능별 이미지가 없어
+       좌우 교차는 의미가 없다 — 가로를 채워 세로를 줄인다) -->
+  <section class="features">
+    <div class="features-inner">
       <h2 class="section-h">주요 기능</h2>
-      <ul class="feature-list">
+      <p class="features-lead">
+        못으로 칼국수를 자를 순 없죠. 피그마는 와이어프레임 도구지 상세페이지 도구가 아닙니다.
+        그래서 상세페이지 전용으로 다시 만들었습니다.
+      </p>
+      <ul class="feature-list feature-grid">
         <li><span class="feature-dot">·</span> 블록 단위로 섹션을 쌓아 올리는, 머리 안 굴려도 되는 에디터</li>
         <li><span class="feature-dot">·</span> 이미지·텍스트·CTA 블록 드래그 앤 드롭</li>
         <li><span class="feature-dot">·</span> 작업한 그대로 실시간 미리보기</li>
         <li><span class="feature-dot">·</span> 한 번 만들고 다시 안 만들기</li>
       </ul>
+      <p class="features-req">macOS 13 이상</p>
     </div>
   </section>
 
@@ -83,11 +100,6 @@
          그래서 플랫폼 레벨 pricing.html 이 아니라 이 앱 페이지 안에 둔다. -->
     <div class="pricing-inner" id="pricing">
       <p class="section-label">GODITOR 요금제</p>
-
-      <div class="event-banner">
-        <span class="event-banner-tag">Event</span>
-        <span class="event-banner-text">지금은 전 등급을 무료로 드립니다</span>
-      </div>
 
       <h2 class="pricing-title">네 가지 등급의 구독제입니다.</h2>
       <p class="pricing-sub">
@@ -258,7 +270,9 @@
     })();
   </script>
 
-  <!-- 다운로드 로그인 안내 모달.
+  <!-- ⚠️ 2026-08-07: 다운로드가 비회원도 되게 바뀌어 «이 모달은 다운로드 경로에서 뗐다».
+       지우지 않고 남겨둔다 — 이벤트 종료 후 DOWNLOAD_REQUIRE_LOGIN=on 으로 켜면 다시 쓴다.
+  (구) 다운로드 로그인 안내 모달.
        ★보안 게이트가 아니다 — 드라이브 링크를 아는 사람은 그대로 받을 수 있다.
          실제 차단은 앱의 로그인이 한다. 여기서는 «계정을 먼저 만들게 유도»만 한다.
          그래서 문구도 "차단됐다"가 아니라 "로그인하면 이어서 받는다"로 쓴다. -->
@@ -279,71 +293,65 @@
   </div>
 
   <script>
-    // 다운로드 = 로그인 유도 지점 + «받아간 기록» 지점.
+    // 다운로드 — 누르면 «바로» 받는다. 로그인은 필요 없다(2026-08-07 방향 전환).
+    // 로그인 상태면 서버가 기록만 남긴다. 게이트가 아니라 «선택적 기록»이다.
     //
-    // ★차단이 아니다. 드라이브 폴더는 링크 공개라 링크를 아는 사람은 그대로 받는다.
-    //   실제 차단은 앱 로그인이 한다. 여기서 얻는 건 «회원 중 누가 받았나» 뿐이고,
-    //   그래서 문구도 "권한"이 아니라 "로그인이 필요해요"로 쓴다.
-    // ★다운로드 주소를 이 파일에 두지 않는다. 서버가 내려준다 —
-    //   나중에 드라이브 → S3 로 바꿔도 이 페이지는 손댈 필요가 없다.
+    // ★플랫폼을 감지하되 «칩은 단정하지 않는다».
+    //   맥은 ARM64/Intel 로 갈리는데 브라우저로 구분할 방법이 없다.
+    //   그래서 ARM64 를 기본으로 «제시»하고 Intel 경로를 항상 나란히 둔다 —
+    //   틀려도 사용자가 한 번에 고칠 수 있다. 추측으로 단정하면
+    //   안 돌아가는 파일을 받게 된다.
     (function () {
-      var btn   = document.getElementById('download-btn');
-      var modal = document.getElementById('dl-modal');
-      var note  = document.getElementById('dl-msg');
-      if (!btn || !modal) return;
+      var btn = document.getElementById('download-btn');
+      var alt = document.getElementById('dl-alt');
+      var note = document.getElementById('dl-msg');
+      if (!btn) return;
+
+      var ua = navigator.userAgent || '';
+      var isWin = /Windows/i.test(ua);
+      var isMac = /Mac OS X|Macintosh/i.test(ua) && !/iPhone|iPad/i.test(ua);
+
+      var LABEL = { 'mac-arm64': 'macOS 버전 다운로드', 'win': 'Windows 버전 다운로드', '': '다운로드' };
+      var platform = isMac ? 'mac-arm64' : (isWin ? 'win' : '');
+      btn.textContent = LABEL[platform];
+
+      if (isMac && alt) {
+        alt.innerHTML = 'Apple Silicon 용입니다. '
+          + '<a href="#" id="dl-intel">Intel 맥을 쓰시나요?</a>';
+        alt.hidden = false;
+      }
+
+      function say(t, kind) {
+        if (!note) return;
+        note.textContent = t || '';
+        note.className = 'detail-note dl-msg' + (kind ? ' dl-msg-' + kind : '');
+        note.hidden = !t;
+      }
 
       function auth() {
         try {
-          return { email: sessionStorage.getItem('sms_email'),
-                   token: sessionStorage.getItem('sms_token') };
-        } catch (e) { return { email: null, token: null }; }
+          return { email: sessionStorage.getItem('sms_email'), token: sessionStorage.getItem('sms_token') };
+        } catch (e) { return {}; }
       }
-      function say(text, kind) {
-        if (!note) return;
-        note.textContent = text;
-        note.className = 'detail-note dl-msg' + (kind ? ' dl-msg-' + kind : '');
-        note.hidden = !text;
-      }
-      function openModal() {
-        modal.hidden = false; document.body.style.overflow = 'hidden';
-        var f = document.getElementById('dl-login'); if (f) f.focus();
-      }
-      function closeModal() {
-        modal.hidden = true; document.body.style.overflow = ''; btn.focus();
-      }
-      modal.addEventListener('click', function (e) {
-        if (e.target.hasAttribute('data-close')) closeModal();
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !modal.hidden) closeModal();
-      });
 
-      function request() {
+      function get(pf) {
         var a = auth();
-        say('확인 중…');
+        say('준비 중…');
         btn.disabled = true;
         return fetch('/api/license/download', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: a.email, sessionToken: a.token, app: 'goditor' }),
+          body: JSON.stringify({ email: a.email, sessionToken: a.token, app: 'goditor', platform: pf }),
         })
-        .then(function (r) { return r.json().catch(function () { return {}; })
-                              .then(function (j) { return { status: r.status, json: j }; }); })
-        .then(function (r) {
-          var j = r.json || {};
-          if (r.status === 200 && j.ok && j.url) {
+        .then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (j) {
+          if (j && j.ok && j.url) {
             say('다운로드 페이지를 열었어요. 안 열렸다면 팝업 차단을 확인해 주세요.', 'ok');
             window.open(j.url, '_blank', 'noopener');
             return;
           }
-          if (r.status === 200 && j.ok === false && j.reason === 'expired') {
+          if (j && j.reason === 'expired') {
             say('이용 기간이 끝났어요. 요금제를 확인해 주세요.', 'warn');
             location.hash = '#pricing';
-            return;
-          }
-          if (r.status === 200 && j.ok === false) {
-            // 세션이 만료됐거나 다른 기기에서 로그인해 토큰이 회전한 경우
-            try { sessionStorage.removeItem('sms_token'); } catch (e) {}
-            say('', null); openModal();
             return;
           }
           say('지금은 연결이 어려워요. 잠시 후 다시 눌러주세요.', 'warn');
@@ -352,26 +360,10 @@
         .finally(function () { btn.disabled = false; });
       }
 
-      btn.addEventListener('click', function () {
-        var a = auth();
-        if (!a.email || !a.token) {
-          // 로그인하고 돌아오면 «하려던 일»을 이어준다
-          try { sessionStorage.setItem('sms_after_login', 'download'); } catch (e) {}
-          openModal();
-          return;
-        }
-        request();
+      btn.addEventListener('click', function () { get(platform); });
+      document.addEventListener('click', function (e) {
+        if (e.target && e.target.id === 'dl-intel') { e.preventDefault(); get('mac-intel'); }
       });
-
-      // 로그인하고 돌아왔다면 바로 이어서 받게 한다
-      try {
-        var a0 = auth();
-        if (a0.email && a0.token && sessionStorage.getItem('sms_after_login') === 'download') {
-          sessionStorage.removeItem('sms_after_login');
-          say('로그인되었습니다. 이어서 받는 중…', 'ok');
-          request();
-        }
-      } catch (e) {}
     })();
   </script>
 
