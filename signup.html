@@ -28,7 +28,12 @@
   <section class="auth">
     <div class="auth-inner">
       <img src="/public/icons/goditor.png" alt="" class="auth-mark" id="su-mark" width="52" height="52" hidden />
-      <p class="section-label" id="su-label">소문의섬 계정 만들기</p>
+      <!-- ★눈꺼풀은 «비어 있는 채로» 시작한다. 전에는 아래 H1 과 «같은 문장»이라
+           같은 말을 두 줄로 두 번 했다 — 제목이 이미 그 말을 한다.
+           ★다만 지우지는 않았다. 앱에서 넘어오면(?app=goditor) 이 자리가
+             「GODITOR 시작하기」로 바뀌어 «어디서 왔는지»를 말한다 — 그때는 중복이 아니다.
+             그래서 «채울 말이 있을 때만» 나타나게 한다(아래 스크립트가 hidden 을 푼다). -->
+      <p class="section-label" id="su-label" hidden></p>
       <h1 class="auth-title">소문의섬 계정 만들기</h1>
       <p class="auth-sub">
         <span id="su-lead">이벤트 기간에는 가입 즉시 소문의섬 앱을 전부 쓰실 수 있어요.</span>
@@ -270,7 +275,8 @@
           window.__srcApp = a;
           var label = document.getElementById('su-label');
           var mark  = document.getElementById('su-mark');
-          if (label) label.textContent = a.name + ' 시작하기';
+          // 채울 말이 생겼을 때만 눈꺼풀을 꺼낸다(기본은 비어 있고 숨어 있다)
+          if (label) { label.textContent = a.name + ' 시작하기'; label.hidden = false; }
           if (mark && a.icon) { mark.src = a.icon; mark.alt = a.name; mark.hidden = false; }
           var lead = document.getElementById('su-lead');
           if (lead) lead.textContent = '이벤트 기간에는 가입 즉시 ' + a.name + ' 전체 기능을 쓰실 수 있어요.';

@@ -699,6 +699,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    (다른 곳의 입력창은 그대로 — 룩어라이크 클래스를 새로 만들지 않는다). */
 .auth { max-width: 400px; margin: 0 auto; padding: 64px 24px 72px; }
 .auth-mark { width: 52px; height: 52px; display: block; margin: 0 auto 14px; }
+/* ★display:block 이 UA 의 [hidden]{display:none} 을 이긴다(작성자 스타일이 세다).
+   그래서 hidden 을 걸어놔도 «앱에서 안 왔는데» GODITOR 아이콘이 떠 있었다.
+   .ext-block 에서 만난 것과 같은 함정 — display 를 주면 [hidden] 을 같이 적어야 한다. */
+.auth-mark[hidden] { display: none; }
 .auth-title { font-size: var(--fs-h2); font-weight: 800; letter-spacing: -.03em; text-align: center; color: var(--fg); }
 .auth-sub { font-size: var(--fs-sm); color: var(--muted); text-align: center; line-height: 1.7; margin-top: 8px; }
 
