@@ -129,11 +129,20 @@
         if (el) el.focus();
       }
 
+      // ★한국 시간 고정. new Date().getFullYear() 계열을 쓰면 보는 사람의 시간대에 따라
+      //   같은 계정이 다른 날짜로 보인다(해외에서 보면 하루 어긋남).
       function fmtDate(v) {
         if (!v) return '제한 없음';
         const d = new Date(v);
         if (isNaN(d.getTime())) return String(v);
-        return d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일까지';
+        try {
+          const s = new Intl.DateTimeFormat('ko-KR', {
+            timeZone: 'Asia/Seoul', year: 'numeric', month: 'long', day: 'numeric',
+          }).format(d);
+          return s + '까지 (KST)';
+        } catch (e) {
+          return d.toISOString().slice(0, 10) + '까지';
+        }
       }
 
       // 가입 직후 넘어온 이메일이 있으면 채워준다
