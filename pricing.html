@@ -46,7 +46,7 @@
         요금제는 앱마다 따로 있어요. 앱을 고르면 그 앱의 등급 안내로 이동합니다.
       </p>
       <div id="app-list" class="pricing-apps">
-        <p class="dim" style="font-size:12px">불러오는 중…</p>
+        <p class="dim">불러오는 중…</p>
       </div>
       <p class="signup-fineprint">
         지금은 <b>이벤트 기간</b>이라 가입만 하면 전 기능을 무료로 쓰실 수 있어요.
@@ -80,7 +80,7 @@
           var withPlans = apps.filter(function (a) { return a.plans && a.plans.length && a.detailUrl; });
 
           if (!withPlans.length) {
-            box.innerHTML = '<p class="dim" style="font-size:12px">아직 요금제가 공개된 앱이 없어요.</p>';
+            box.innerHTML = '<p class="dim">아직 요금제가 공개된 앱이 없어요.</p>';
             return;
           }
           // 하나뿐이면 고르게 할 이유가 없다 — 바로 넘긴다
@@ -98,7 +98,7 @@
           }).join('');
         })
         .catch(function () {
-          box.innerHTML = '<p class="dim" style="font-size:12px">'
+          box.innerHTML = '<p class="dim">'
             + '요금제 목록을 불러오지 못했어요. '
             + '<a href="/goditor.html#pricing" style="color:var(--accent)">GODITOR 요금제 보기 →</a></p>';
         });
