@@ -39,7 +39,7 @@ async function loadApps() {
       <div class="app-info">
         <div class="app-name">${app.name}</div>
         <div class="app-tagline">${app.tagline}</div>
-        <div class="app-footer"><span class="app-badge">${app.price==='free'?'free':'paid'}</span><span class="app-arrow">→</span></div>
+        <div class="app-footer"><span class="app-badge">${app.badge||(app.price==='free'?'free':'paid')}</span><span class="app-arrow">→</span></div>
       </div>
     </a>`).join('');
   initEntrance('.card-hidden', 'card-visible', 0.1, 70);

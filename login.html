@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>로그인 · 소문의섬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">소문의섬</a>
+      <div class="nav-links">
+        <a href="/#apps">앱</a>
+        <a href="pricing.html">요금제</a>
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="signup">
+    <div class="signup-inner">
+      <p class="section-label">Goditor 로그인</p>
+      <h1 class="signup-title" id="login-title">로그인하고 고디터를 받으세요.</h1>
+      <p class="signup-sub" id="login-sub">가입할 때 쓴 이메일과 비밀번호를 입력하세요.</p>
+
+      <form id="login-form" class="signup-form" novalidate>
+        <label class="signup-label" for="email">이메일</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          class="signup-input"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        />
+
+        <label class="signup-label" for="password">비밀번호</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          class="signup-input"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          required
+        />
+
+        <button type="submit" class="signup-submit" id="login-submit">로그인 →</button>
+        <p class="signup-msg" id="login-msg" role="status" aria-live="polite"></p>
+      </form>
+
+      <!-- 로그인 성공 후 상태 패널 -->
+      <div class="account-panel" id="account-panel">
+        <div class="account-rows">
+          <div class="account-row">
+            <span class="account-key">계정</span>
+            <span class="account-val" id="acc-email">—</span>
+          </div>
+          <div class="account-row">
+            <span class="account-key">이용 등급</span>
+            <span class="account-val account-val-accent" id="acc-plan">—</span>
+          </div>
+          <div class="account-row">
+            <span class="account-key">이용 기한</span>
+            <span class="account-val" id="acc-until">—</span>
+          </div>
+        </div>
+        <a
+          id="download-link"
+          class="plan-cta"
+          style="display:block;text-decoration:none;max-width:260px;"
+          href="https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
+          target="_blank"
+          rel="noopener"
+        >고디터 다운로드 →</a>
+        <p class="order-warn" id="acc-note">
+          macOS 13 이상에서 쓸 수 있어요. 앱에서도 같은 이메일·비밀번호로 로그인하세요.
+        </p>
+        <button type="button" class="plan-cta plan-cta-quiet" id="logout-btn" style="max-width:200px;">다른 계정으로 로그인</button>
+      </div>
+
+      <p class="login-alt" id="login-alt">아직 계정이 없으신가요? <a href="signup.html">회원가입하기 →</a></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>비밀이라 부르기엔 아까운 기술들 © 소문의섬<br />hello@example.com</span>
+      <div class="footer-links">
+        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://github.com/bnam91" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const form    = document.getElementById('login-form');
+      const email   = document.getElementById('email');
+      const pw      = document.getElementById('password');
+      const submit  = document.getElementById('login-submit');
+      const msg     = document.getElementById('login-msg');
+      const panel   = document.getElementById('account-panel');
+      const title   = document.getElementById('login-title');
+      const sub     = document.getElementById('login-sub');
+      const alt     = document.getElementById('login-alt');
+      const dlLink  = document.getElementById('download-link');
+      const accNote = document.getElementById('acc-note');
+      const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      const PLAN_LABEL = {
+        event_free: '이벤트 무료',
+        basic: '베이직',
+        pro: '프로',
+        promax: '프로맥스',
+      };
+
+      function fail(text, el) {
+        msg.textContent = text;
+        msg.className = 'signup-msg signup-msg-error';
+        if (el) el.focus();
+      }
+
+      function fmtDate(v) {
+        if (!v) return '제한 없음';
+        const d = new Date(v);
+        if (isNaN(d.getTime())) return String(v);
+        return d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일까지';
+      }
+
+      // 가입 직후 넘어온 이메일이 있으면 채워준다
+      try {
+        const saved = sessionStorage.getItem('goditor_email');
+        if (saved) email.value = saved;
+      } catch (e) { /* 스토리지 차단 환경 무시 */ }
+
+      function showAccount(data) {
+        document.getElementById('acc-email').textContent = data.email || email.value.trim();
+        document.getElementById('acc-plan').textContent  = PLAN_LABEL[data.plan] || data.plan || '—';
+        document.getElementById('acc-until').textContent = fmtDate(data.accessUntil);
+        form.style.display = 'none';
+        alt.style.display = 'none';
+        title.textContent = '로그인되었습니다.';
+        sub.textContent = '아래에서 고디터를 내려받으세요.';
+        panel.classList.add('is-open');
+        // ★비밀번호·세션토큰은 저장하지 않는다. 표시 연속성에 필요한 이메일만.
+        try { sessionStorage.setItem('goditor_email', data.email || email.value.trim()); } catch (e) {}
+      }
+
+      function showExpired(data) {
+        document.getElementById('acc-email').textContent = data.email || email.value.trim();
+        document.getElementById('acc-plan').textContent  = '기간 만료';
+        document.getElementById('acc-until').textContent = fmtDate(data.accessUntil);
+        dlLink.textContent = '요금제 보고 연장하기 →';
+        dlLink.href = data.purchaseUrl || 'pricing.html';
+        dlLink.removeAttribute('target');
+        accNote.textContent = '이용 기간이 끝났어요. 요금제를 선택하면 계속 사용할 수 있습니다.';
+        form.style.display = 'none';
+        alt.style.display = 'none';
+        title.textContent = '이용 기간이 끝났어요.';
+        sub.textContent = '아래에서 요금제를 확인해 주세요.';
+        panel.classList.add('is-open');
+      }
+
+      document.getElementById('logout-btn').addEventListener('click', function () {
+        try { sessionStorage.removeItem('goditor_email'); } catch (e) {}
+        window.location.reload();
+      });
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const emailVal = (email.value || '').trim();
+        if (!emailVal)                return fail('이메일을 입력해주세요.', email);
+        if (!emailRe.test(emailVal))  return fail('이메일 형식이 올바르지 않아요.', email);
+        if (!pw.value)                return fail('비밀번호를 입력해주세요.', pw);
+
+        submit.disabled = true;
+        const original = submit.textContent;
+        submit.textContent = '로그인 중…';
+        msg.textContent = '';
+        msg.className = 'signup-msg';
+
+        try {
+          const res = await fetch('/api/license/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailVal, password: pw.value }),
+          });
+          const data = await res.json().catch(function () { return {}; });
+
+          // 만료는 HTTP 200 + ok:false 로 온다 — 에러가 아니라 별도 화면으로 안내한다
+          if (res.status === 200 && data.ok === false && data.reason === 'expired') {
+            pw.value = '';
+            showExpired(data);
+            return;
+          }
+          if (res.status === 401) return fail('이메일 또는 비밀번호가 올바르지 않아요.');
+          if (res.status === 403) return fail('이메일 인증이 완료되지 않은 계정이에요.');
+          if (!res.ok || !data.ok) {
+            return fail('로그인에 실패했어요: ' + (data.reason || 'HTTP ' + res.status));
+          }
+
+          pw.value = '';
+          showAccount(data);
+        } catch (err) {
+          fail('로그인 서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.');
+        } finally {
+          submit.disabled = false;
+          submit.textContent = original;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

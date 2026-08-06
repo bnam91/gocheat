@@ -380,3 +380,74 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   .yt-hidden { opacity: 1; transform: none; }
   * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+/* ===== PRICING (pricing.html) ===== */
+/* 4단 카드는 680px 안에 안 들어간다 → 이 페이지만 넓은 컨테이너를 쓴다. 토큰·컴포넌트는 그대로 재사용. */
+.pricing { max-width: 1040px; margin: 0 auto; padding: 64px 24px 80px; text-align: center; }
+.pricing-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.pricing-title { font-size: clamp(29px, 4.8vw, 38px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--fg); }
+.pricing-sub { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+.event-banner {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,242,58,0.08);
+  border: 1px solid rgba(201,242,58,0.32);
+  border-radius: 20px; padding: 8px 16px; margin-bottom: 4px;
+}
+.event-banner-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.event-banner-text { font-size: 11px; font-weight: 600; color: var(--fg); }
+
+.plan-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; margin-top: 24px; align-items: stretch; }
+.plan-card {
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 22px 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  transition: border-color 0.2s, background 0.2s, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.plan-card:hover { border-color: var(--border-strong); background: var(--bg-elev-hi); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.40); }
+.plan-card-featured { border-color: rgba(201,242,58,0.42); }
+.plan-ribbon { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); min-height: 12px; }
+.plan-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+.plan-price { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; color: var(--fg); }
+.plan-price-note { font-size: 10px; color: var(--subtle); min-height: 14px; }
+.plan-divider { width: 100%; border-top: 1px solid var(--border); margin: 4px 0; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 7px; width: 100%; flex: 1; }
+.plan-features li { font-size: 10px; color: var(--muted); line-height: 1.5; display: flex; gap: 6px; align-items: baseline; justify-content: center; }
+.plan-features .feature-dot { color: var(--accent); font-family: var(--mono); flex-shrink: 0; }
+.plan-features .plan-feature-tbd { color: var(--subtle); font-style: normal; opacity: 0.75; }
+.plan-cta {
+  font-family: var(--font); font-size: 11px; font-weight: 600; color: var(--accent);
+  background: transparent; border: 1.5px solid var(--accent); padding: 9px 18px; border-radius: 20px;
+  cursor: pointer; letter-spacing: -0.01em; width: 100%; margin-top: 6px;
+  transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+.plan-cta:hover { background: var(--accent); color: var(--accent-fg); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(201,242,58,0.22); }
+.plan-cta:active { background: var(--accent-hover); border-color: var(--accent-hover); transform: translateY(0); }
+.plan-cta:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); }
+.plan-cta-quiet { color: var(--muted); border-color: var(--border-strong); }
+.plan-cta-quiet:hover { background: var(--bg-elev-hi); color: var(--fg); border-color: var(--border-strong); box-shadow: none; }
+
+/* 구매 신청 폼 — 카드 아래 인라인으로 펼쳐진다 */
+.order-panel { width: 100%; max-width: 380px; margin-top: 28px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; display: none; flex-direction: column; align-items: center; gap: 10px; }
+.order-panel.is-open { display: flex; animation: fadeUp 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+.order-panel-title { font-size: 12px; font-weight: 700; color: var(--fg); }
+.order-panel-plan { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.order-result { width: 100%; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.order-result-row { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.order-result-key { color: var(--subtle); flex-shrink: 0; }
+.order-result-val { color: var(--fg); font-weight: 600; text-align: right; word-break: break-all; }
+.order-warn { font-size: 10px; color: var(--muted); line-height: 1.6; text-align: center; margin-top: 4px; }
+
+@media (max-width: 900px) { .plan-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .plan-grid { grid-template-columns: 1fr; } .pricing { padding-left: 20px; padding-right: 20px; } }
+
+/* ===== ACCOUNT STATUS (login.html 로그인 후) ===== */
+.account-panel { width: 100%; max-width: 380px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; display: none; flex-direction: column; align-items: center; gap: 12px; }
+.account-panel.is-open { display: flex; animation: fadeUp 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+.account-rows { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.account-row { display: flex; justify-content: space-between; gap: 12px; font-size: 11px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+.account-key { color: var(--subtle); }
+.account-val { color: var(--fg); font-weight: 600; text-align: right; word-break: break-all; }
+.account-val-accent { color: var(--accent); }
+.login-alt { font-size: 11px; color: var(--subtle); margin-top: 14px; }
+.login-alt a { color: var(--accent); font-weight: 600; }
+.login-alt a:hover { text-decoration: underline; }
