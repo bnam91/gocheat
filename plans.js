@@ -36,25 +36,24 @@
             : '<li class="plan-feat-off"><span class="feature-dot">×</span> ' + esc(f.t) + '</li>';
         }).join('');
 
-        // ★전에는 한 카드에서 네 번 말했다 —
-        //   취소선 정가 + "이벤트 무료" + «예시» 배지 + "금액·주기는 확정 전".
-        //   전할 건 «지금 공짜 / 나중에 유료 / 금액은 예시» 셋뿐이라 두 줄로 줄인다.
-        //     1행: 지금 얼마인가        → "무료"
-        //     2행: 나중엔 얼마인가(예시) → "이벤트 후 ₩9,900/월 · 예시"
-        //   ★카드는 «금액» 하나만 말한다. "이벤트라 무료"는 절 상단 배너가,
-        //     "금액은 예시"는 절 상단 고지가 이미 말했다 — 카드마다 되풀이하지 않는다.
-        var priceHtml = (p.id === 'free')
-          ? '<span class="plan-amount">' + esc(p.price) + '</span>'
-              + '<span class="plan-per"> / ' + esc(p.per) + '</span>'
-          : '<span class="plan-amount">무료</span>';
+        // ★카드에서 «제일 큰 글자»는 등급 이름이다. 금액은 그 아래다.
+        //   전에는 네 장 모두 「무료」가 제일 컸다. 이벤트로 전부 무료인 건 맞지만,
+        //   그러면 네 카드가 똑같아 보여서 «비교표가 비교를 못 한다».
+        //   비교해야 할 건 등급 차이지 이벤트가 아니다.
+        //
+        //   그래서 카드는 «자기 예시 금액»을 그대로 보여준다 — 이게 등급을 가르는 값이다.
+        //   「지금 전부 무료」는 상단 이벤트 띠와 요금제 절 머리글이 이미 말했으니
+        //   카드마다 되풀이하지 않는다.
+        var priceHtml = '<span class="plan-amount">' + esc(p.price) + '</span>'
+              + '<span class="plan-per"> / ' + esc(p.per) + '</span>';
 
         return '<div class="plan-card' + (p.now ? ' plan-card-now' : '') + '">'
           + (p.ribbon ? '<p class="plan-ribbon">' + esc(p.ribbon) + '</p>' : '')
           + '<h3 class="plan-name">' + esc(p.name) + '</h3>'
           + '<p class="plan-price">' + priceHtml + '</p>'
-          + '<p class="plan-price-note">' + (p.id === 'free'
-              ? '언제나 무료'
-              : '이후 ' + esc(p.price) + ' / ' + esc(p.per)) + '</p>'
+          // 무료 등급만 «항상» 이라는 정보가 따로 있다. 유료 등급은 위에서 이미 말했으니 비운다
+          // (빈 줄을 남겨 카드 넷의 세로 축은 맞춘다).
+          + '<p class="plan-price-note">' + (p.id === 'free' ? '언제나 무료' : '') + '</p>'
           + '<div class="plan-divider"></div>'
           + '<ul class="plan-features">' + feats + '</ul>'
           + '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
