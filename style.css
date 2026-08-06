@@ -19,6 +19,20 @@
   --mono:    'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
   --width:   680px;
   --radius:  10px;
+
+  /* ── 타이포 스케일 ──────────────────────────────────────────
+     기존엔 45px(제목) 다음이 바로 12px(본문)이라 «사이가 비어» 위계가 없었다.
+     읽는 글은 15px 를 바닥으로 두고, 그 사이 단계를 채운다.
+     px 를 흩뿌리지 않고 여기서만 정의해 다른 페이지도 같은 축을 쓰게 한다. */
+  --fs-hero: clamp(32px, 5.2vw, 44px);   /* 페이지 제목 */
+  --fs-h2:   clamp(20px, 2.6vw, 26px);   /* 섹션 제목 */
+  --fs-lead: 15px;                        /* 태그라인·리드 */
+  --fs-body: 15px;                        /* 본문 — 읽는 글의 바닥 */
+  --fs-sm:   13px;                        /* 보조 설명 */
+  --fs-xs:   11px;                        /* 캡션·눈꺼풀 라벨 */
+
+  /* 읽는 축(폭). 섹션마다 다르면 스크롤할 때 좌우로 흔들린다 */
+  --read:    720px;
 }
 
 html { scroll-behavior: smooth; background: var(--bg); font-size: 80%; }
@@ -282,8 +296,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .cta-primary:active { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-fg); transform: translateY(0); }
 
 /* ===== APP DETAIL (goditor.html) ===== */
-.detail { max-width: var(--width); margin: 0 auto; padding: 64px 24px 80px; text-align: center; }
-.detail-inner { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+.detail { max-width: var(--read); margin: 0 auto; padding: 56px 24px 40px; text-align: center; }
+.detail-inner { display: flex; flex-direction: column; align-items: center; gap: 22px; }
 .detail-back { font-family: var(--mono); font-size: 9px; color: var(--subtle); letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.15s; align-self: center; }
 .detail-back:hover { color: var(--fg); }
 .detail-back:focus-visible { outline: none; color: var(--accent); }
@@ -291,18 +305,18 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .detail-icon { width: 72px; height: 72px; border-radius: 16px; background: var(--bg-elev); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 27px; flex-shrink: 0; }
 .detail-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; display: block; }
 .detail-meta { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; min-width: 0; }
-.detail-badge { font-family: var(--mono); font-size: 9px; color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; }
-.detail-title { font-size: clamp(32px, 5.6vw, 45px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; color: var(--fg); }
-.detail-tagline { font-size: 12px; color: var(--muted); }
-.detail-desc { font-size: 12px; color: var(--fg); line-height: 1.7; text-align: center; }
+.detail-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; }
+.detail-title { font-size: var(--fs-hero); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; color: var(--fg); }
+.detail-tagline { font-size: var(--fs-lead); color: var(--muted); line-height: 1.55; max-width: 48ch; }
+.detail-desc { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; max-width: 62ch; }
 .detail-cta { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
-.detail-note { font-size: 10px; color: var(--subtle); margin-top: -8px; }
+.detail-note { font-size: var(--fs-sm); color: var(--subtle); margin-top: -2px; line-height: 1.75; max-width: 62ch; text-align: left; }
 .video-embed { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 8px 0; width: 100%; }
 .video-frame { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); }
 .video-frame iframe { width: 100%; height: 100%; display: block; border: 0; }
-.video-caption { font-family: var(--mono); font-size: 9px; color: var(--subtle); letter-spacing: 0.02em; text-align: center; }
-.feature-list { list-style: none; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.feature-list li { font-size: 11px; color: var(--fg); display: flex; gap: 8px; align-items: baseline; justify-content: center; }
+.video-caption { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.02em; text-align: center; }
+.feature-list { list-style: none; display: flex; flex-direction: column; align-items: stretch; gap: 11px; width: 100%; max-width: 62ch; margin: 0 auto; }
+.feature-list li { font-size: var(--fs-body); color: var(--muted); display: flex; gap: 10px; align-items: baseline; justify-content: flex-start; text-align: left; line-height: 1.65; }
 .feature-dot { color: var(--accent); font-family: var(--mono); }
 
 /* ===== SIGNUP (signup.html) ===== */
@@ -384,10 +398,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 /* ===== PRICING (pricing.html) ===== */
 /* 4단 카드는 680px 안에 안 들어간다 → 이 페이지만 넓은 컨테이너를 쓴다. 토큰·컴포넌트는 그대로 재사용. */
-.pricing { max-width: 1040px; margin: 0 auto; padding: 64px 24px 80px; text-align: center; }
-.pricing-inner { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.pricing-title { font-size: clamp(29px, 4.8vw, 38px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--fg); }
-.pricing-sub { font-size: 12px; color: var(--muted); line-height: 1.7; }
+.pricing { max-width: 1040px; margin: 0 auto; padding: 8px 24px 64px; text-align: center; }
+.pricing-inner { display: flex; flex-direction: column; align-items: center; gap: 13px; }
+.pricing-title { font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--fg); }
+.pricing-sub { font-size: var(--fs-sm); color: var(--muted); line-height: 1.75; max-width: 62ch; }
 
 .event-banner {
   display: inline-flex; align-items: center; gap: 8px;
@@ -407,12 +421,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-card:hover { border-color: var(--border-strong); background: var(--bg-elev-hi); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.40); }
 .plan-card-featured { border-color: rgba(201,242,58,0.42); }
 .plan-ribbon { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); min-height: 12px; }
-.plan-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+.plan-name { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .plan-price { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; color: var(--fg); }
-.plan-price-note { font-size: 10px; color: var(--subtle); min-height: 14px; }
+.plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 14px; }
 .plan-divider { width: 100%; border-top: 1px solid var(--border); margin: 4px 0; }
-.plan-features { list-style: none; display: flex; flex-direction: column; gap: 7px; width: 100%; flex: 1; }
-.plan-features li { font-size: 10px; color: var(--muted); line-height: 1.5; display: flex; gap: 6px; align-items: baseline; justify-content: center; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; width: 100%; flex: 1; }
+.plan-features li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; display: flex; gap: 7px; align-items: baseline; justify-content: flex-start; text-align: left; }
 .plan-features .feature-dot { color: var(--accent); font-family: var(--mono); flex-shrink: 0; }
 .plan-features .plan-feature-tbd { color: var(--subtle); font-style: normal; opacity: 0.75; }
 .plan-cta {
@@ -476,7 +490,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 /* 더미(예시) 표식 — 자리표시자가 «진짜»로 읽히면 사고다. 눈에 띄게 둔다 */
 .dummy-notice{
-  font-size:11px; color:var(--muted); line-height:1.7;
+  font-size:var(--fs-sm); color:var(--muted); line-height:1.7;
   background:rgba(255,209,102,.07); border:1px solid rgba(255,209,102,.35);
   border-radius:var(--radius); padding:10px 16px; max-width:560px; margin:6px auto 0;
 }
@@ -531,9 +545,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .cta-pulse{ box-shadow:0 0 0 3px rgba(201,242,58,.28) }
 
 /* 가격 표기 — 예시 정가와 «지금 무료»를 함께 보여준다 */
-.plan-amount{ font-size:20px; font-weight:800 }
-.plan-amount-was{ font-size:17px; font-weight:700; color:var(--subtle); text-decoration-thickness:1.5px }
-.plan-now{ display:block; font-size:12px; font-weight:700; color:var(--accent); margin-top:2px; letter-spacing:-.01em }
+.plan-amount{ font-size:22px; font-weight:800; letter-spacing:-.02em }
+.plan-now{ display:block; font-size:var(--fs-xs); font-weight:600; color:var(--accent); margin-top:1px; letter-spacing:.02em }
+.plan-price-note{ line-height:1.5 }
 .plan-empty{ grid-column:1/-1; font-size:12px; color:var(--subtle); padding:20px 0 }
 .pricing-apps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; width:100%; max-width:520px; margin-top:8px }
 .dl-msg{ min-height:18px }
@@ -604,4 +618,35 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .hero-app-pill-icon img,
 .brand-mark {
   border-radius: 0;
+}
+
+/* ── 읽는 축 통일 ──────────────────────────────────────────────
+   요금제 절이 1040px, 상세가 720px 이라 스크롤할 때 좌우로 흔들렸다.
+   ★넓어야 하는 건 «카드 격자»뿐이다. 글은 상세와 같은 축에 둔다. */
+.pricing-inner > .section-h,
+.pricing-inner > .pricing-title,
+.pricing-inner > .pricing-sub,
+.pricing-inner > .dummy-notice,
+.pricing-inner > .event-banner { max-width: var(--read); }
+.pricing-inner > .future-pay { max-width: var(--read); width: 100%; }
+
+/* ── 섹션 제목 ────────────────────────────────────────────────
+   "주요 기능"이 눈꺼풀 라벨(10px)이라 본문보다 작았다 — 제목인데 제목으로 안 보인다.
+   눈꺼풀(.section-label)은 그대로 두고, «진짜 제목» 한 단계를 만든다. */
+.section-h {
+  font-size: var(--fs-h2);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--fg);
+}
+.detail-inner > .section-h { align-self: center; }
+
+/* 구획 사이 여백 — 화면 한 개씩 비어 연결이 끊기던 것을 좁힌다 */
+.detail hr { margin: 28px 0 20px; }
+.detail-inner > .feature-list { margin-bottom: 4px; }
+.video-embed { margin: 4px 0 0; }
+
+@media (max-width: 700px) {
+  .detail-desc, .detail-note, .detail-tagline, .feature-list { max-width: 100%; }
 }

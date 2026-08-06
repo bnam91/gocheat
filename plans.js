@@ -36,20 +36,27 @@
             : '<li class="plan-feat-off"><span class="feature-dot">×</span> ' + esc(f.t) + '</li>';
         }).join('');
 
-        // ★가격은 «예시»다. 그런데 지금은 이벤트로 전부 무료다 —
-        //   둘 다 보여야 한다. 정가를 죽여서 표기하고 현재 상태를 아래 줄에 쓴다.
+        // ★전에는 한 카드에서 네 번 말했다 —
+        //   취소선 정가 + "이벤트 무료" + «예시» 배지 + "금액·주기는 확정 전".
+        //   전할 건 «지금 공짜 / 나중에 유료 / 금액은 예시» 셋뿐이라 두 줄로 줄인다.
+        //     1행: 지금 얼마인가        → "무료"
+        //     2행: 나중엔 얼마인가(예시) → "이벤트 후 ₩9,900/월 · 예시"
+        //   무료 등급은 «언제나» ₩0 이고, 유료 등급이 «지금만» 무료다. 둘을 구분해 쓴다
+        //   (둘 다 "무료"로 쓰면 무료 카드에 '무료'가 등급명·가격으로 두 번 나온다)
         var priceHtml = (p.id === 'free')
           ? '<span class="plan-amount">' + esc(p.price) + '</span>'
               + '<span class="plan-per"> / ' + esc(p.per) + '</span>'
-          : '<s class="plan-amount-was">' + esc(p.price) + '</s>'
-              + '<span class="plan-per"> / ' + esc(p.per) + '</span>'
-              + '<span class="plan-now">이벤트 무료</span>';
+          : '<span class="plan-amount">무료</span>'
+              + '<span class="plan-now">이벤트 기간</span>';
 
         return '<div class="plan-card' + (p.now ? ' plan-card-now' : '') + '">'
           + '<p class="plan-ribbon">' + esc(p.ribbon || '') + '</p>'
           + '<h3 class="plan-name">' + esc(p.name) + '</h3>'
           + '<p class="plan-price">' + priceHtml + '</p>'
-          + '<p class="plan-price-note"><span class="dummy-tag dummy-tag-sm">예시</span> 금액·주기는 확정 전</p>'
+          + '<p class="plan-price-note">' + (p.id === 'free'
+              ? '언제나 무료'
+              : '이벤트 후 ' + esc(p.price) + ' / ' + esc(p.per)
+                + ' <span class="dummy-tag dummy-tag-sm">예시</span>') + '</p>'
           + '<div class="plan-divider"></div>'
           + '<ul class="plan-features">' + feats + '</ul>'
           + '<a href="signup.html" class="plan-cta">무료로 사용하기 →</a>'
