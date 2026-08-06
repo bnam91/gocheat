@@ -555,14 +555,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .field-note{ font-size:10px; color:var(--subtle); line-height:1.6; text-align:center; margin-top:-4px; }
 .field-note b{ color:var(--muted); }
 
-.seg{ justify-content:center; gap:10px; }
-.seg-item{
-  flex:1; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;
-  background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
-  padding:11px 0; font-size:12px; color:var(--muted); transition:border-color .15s,color .15s;
-}
-.seg-item:has(input:checked){ border-color:var(--accent); color:var(--fg); }
-.seg-item input{ accent-color:var(--accent); }
 
 .agree-box{
   width:100%; background:var(--bg-elev); border:1px solid var(--border);
@@ -586,3 +578,30 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .legal-empty-title{ font-size:13px; font-weight:700; color:var(--warn); margin-bottom:8px; }
 .legal-empty-sub{ font-size:11.5px; color:var(--muted); line-height:1.8; }
 .legal-empty-sub a{ color:var(--accent); }
+
+/* ── 아이콘 이중 라운딩 해소 ──────────────────────────────────
+   goditor.png 은 «이미» 둥근 모서리가 구워져 있다(반경 = 변의 25%).
+   그런데 컨테이너도 border-radius 로 또 깎고 있었다:
+     .detail-icon 72px → PNG 18px vs CSS 16px  (+ border 1px 로 안쪽이 70px)
+     .app-icon    48px → PNG 12px vs CSS 10px
+   두 곡선이 어긋난 틈으로 컨테이너 배경·테두리가 초승달처럼 비쳤다.
+
+   ★아이콘이 이미 «완성된 모양»이므로 컨테이너는 아무것도 하지 않는다.
+     단 이모지 폴백(onerror 로 img 가 사라지는 경우)에는 배경이 필요하므로
+     :has(img) 로 «이미지가 있을 때만» 물러나게 한다.
+     onerror 가 img 를 지우면 :has 가 풀려 배경이 저절로 돌아온다. */
+.detail-icon:has(img),
+.app-icon:has(img),
+.hero-app-pill-icon:has(img) {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+/* PNG 가 이미 둥글다 — 여기서 또 깎으면 어긋난다 */
+.detail-icon img,
+.app-icon img,
+.hero-app-pill-icon img,
+.brand-mark {
+  border-radius: 0;
+}

@@ -66,11 +66,6 @@
         </div>
         <p class="field-note">문자 인증은 준비 중이에요. 지금은 번호만 입력받고 <b>인증 절차는 진행하지 않습니다.</b></p>
 
-        <label class="signup-label">성별</label>
-        <div class="field-row seg">
-          <label class="seg-item"><input type="radio" name="gender" value="male" /> <span>남</span></label>
-          <label class="seg-item"><input type="radio" name="gender" value="female" /> <span>여</span></label>
-        </div>
 
         <div class="agree-box">
           <label class="agree-item agree-all">
@@ -151,7 +146,6 @@
         var name     = (document.getElementById('name').value || '').trim();
         var birth    = document.getElementById('birth').value || '';
         var phone    = (document.getElementById('phone').value || '').trim();
-        var genderEl = document.querySelector('input[name="gender"]:checked');
         var terms    = document.getElementById('agree-terms').checked;
         var marketing= document.getElementById('agree-marketing').checked;
 
@@ -163,7 +157,6 @@
         if (!name)                           return bad('이름을 입력해 주세요.', document.getElementById('name'));
         if (!birth)                          return bad('생년월일을 선택해 주세요.', document.getElementById('birth'));
         if (phone.length < 10)               return bad('휴대전화 번호를 정확히 입력해 주세요.', phoneEl);
-        if (!genderEl)                       return bad('성별을 선택해 주세요.');
         if (!terms)                          return bad('이용약관과 개인정보 처리방침에 동의해 주세요.', document.getElementById('agree-terms'));
 
         submit.disabled = true;
@@ -176,7 +169,7 @@
             body: JSON.stringify({
               email: email, password: password,
               // ★개인정보는 profile 하나로 묶어 보낸다 — 나중에 지울 때 한 덩어리로 지운다
-              profile: { name: name, birth: birth, phone: phone, gender: genderEl.value },
+              profile: { name: name, birth: birth, phone: phone },
               consents: { terms: true, marketing: marketing },
             }),
           });

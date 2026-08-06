@@ -17,11 +17,10 @@ function buildProfile(raw) {
   const s = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
   const phone = s(raw.phone, 20).replace(/[^0-9]/g, '');
   const birth = s(raw.birth, 10);
-  const gender = ['male', 'female'].includes(raw.gender) ? raw.gender : '';
   const name = s(raw.name, 40);
-  if (!name && !phone && !birth && !gender) return null;
+  if (!name && !phone && !birth) return null;
   return {
-    name, phone, gender,
+    name, phone,
     birth: /^\d{4}-\d{2}-\d{2}$/.test(birth) ? birth : '',
     // 휴대전화는 아직 «인증되지 않은» 값이다. 나중에 인증이 붙어도
     // 이 플래그만 보면 어느 번호가 검증된 것인지 구분된다.
