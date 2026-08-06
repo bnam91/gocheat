@@ -106,7 +106,7 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 5
 /* ===== MAIN SECTIONS ===== */
 main, .yt-section, footer { max-width: var(--width); margin: 0 auto; padding-left: 24px; padding-right: 24px; text-align: center; }
 main { padding-bottom: 0; margin-top: 0; }
-.section-label { font-family: var(--mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--subtle); margin-bottom: 16px; }
+.section-label { font-size: var(--fs-xs); color: var(--subtle); margin-bottom: 16px; }
 
 /* ===== APP GRID ===== */
 .app-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; justify-items: center; }
@@ -329,7 +329,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .detail-icon { width: 72px; height: 72px; border-radius: 16px; background: var(--bg-elev); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 27px; flex-shrink: 0; }
 .detail-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; display: block; }
 .detail-meta { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; min-width: 0; }
-.detail-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; }
+.detail-badge { font-size: var(--fs-xs); color: var(--subtle); }
 .detail-title { font-size: var(--fs-hero); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; color: var(--fg); }
 .detail-tagline { font-size: var(--fs-lead); color: var(--muted); line-height: 1.55; max-width: 48ch; }
 .detail-desc { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; max-width: 62ch; }
@@ -338,7 +338,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .video-embed { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 8px 0; width: 100%; }
 .video-frame { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); }
 .video-frame iframe { width: 100%; height: 100%; display: block; border: 0; }
-.video-caption { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.02em; text-align: center; }
+.video-caption { font-size: var(--fs-xs); color: var(--subtle); text-align: center; }
 .feature-list { list-style: none; display: flex; flex-direction: column; align-items: stretch; gap: 11px; width: 100%; max-width: 62ch; margin: 0 auto; }
 .feature-list li { font-size: var(--fs-body); color: var(--muted); display: flex; gap: 10px; align-items: baseline; justify-content: flex-start; text-align: left; line-height: 1.65; }
 .feature-dot { color: var(--accent); font-family: var(--mono); }
@@ -349,7 +349,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .signup-title { font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-top: 4px; color: var(--fg); text-align: center; }
 .signup-sub { font-size: var(--fs-sm); color: var(--muted); line-height: 1.7; margin-bottom: 16px; text-align: center; }
 .signup-form { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 360px; }
-.signup-label { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; align-self: center; }
+.signup-label { font-size: var(--fs-xs); color: var(--subtle); align-self: center; }
 .signup-input {
   font-family: var(--font);
   font-size: var(--fs-body);
@@ -445,7 +445,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 }
 .plan-card:hover { border-color: var(--border-strong); background: var(--bg-elev-hi); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.40); }
 .plan-card-featured { border-color: rgba(201,242,58,0.42); }
-.plan-ribbon { font-family: var(--mono); font-size: var(--fs-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.plan-ribbon { font-size: var(--fs-xs); color: var(--accent); }
 /* ★리본이 한 카드에만 있으면 그 카드만 아래로 밀려 이름줄이 어긋난다.
    자리를 «항상» 비워둬서 네 장의 기준선을 맞춘다. */
 /* 리본 없는 카드의 자리맞춤. ★고정 14px 이 아니라 «리본 한 줄의 실제 높이»여야
@@ -476,7 +476,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .order-panel { width: 100%; max-width: 380px; margin-top: 28px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; display: none; flex-direction: column; align-items: center; gap: 10px; }
 .order-panel.is-open { display: flex; animation: fadeUp 0.35s cubic-bezier(0.22,1,0.36,1) both; }
 .order-panel-title { font-size: var(--fs-body); font-weight: 700; color: var(--fg); }
-.order-panel-plan { font-family: var(--mono); font-size: var(--fs-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.order-panel-plan { font-size: var(--fs-xs); color: var(--accent); }
 .order-result { width: 100%; display: flex; flex-direction: column; gap: 8px; text-align: left; }
 .order-result-row { display: flex; justify-content: space-between; gap: 12px; font-size: var(--fs-sm); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
 .order-result-key { color: var(--subtle); flex-shrink: 0; }
@@ -591,6 +591,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .dl-msg-ok{ color:var(--success) }
 .dl-msg-warn{ color:var(--warn) }
 
+/* ★확장 수집 구간 감싸개 — .signup-form 의 세로 flex 를 «그대로 통과»시켜야
+   라벨·입력이 다른 필드와 같은 간격으로 선다. display:contents 가 그 일을 한다.
+   단 [hidden] 을 이겨버리면 안 되므로 :not([hidden]) 으로 범위를 좁힌다. */
+.ext-block:not([hidden]) { display: contents; }
+
 /* ── 확장 가입 폼 (ttj 기준, 뉴스레터 제외) ── */
 .signup-form-wide{ max-width:400px; }
 .lbl-hint{ opacity:.5; font-weight:400; }
@@ -621,7 +626,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .legal{ max-width:var(--width); margin:0 auto; padding:56px 24px 72px; text-align:left; }
 .legal-inner{ display:flex; flex-direction:column; gap:14px; }
 .legal-title{ font-size:var(--fs-h2); font-weight:800; letter-spacing:-.03em; color:var(--fg); }
-.legal-meta{ font-family:var(--mono); font-size:var(--fs-xs); color:var(--subtle); }
+.legal-meta{ font-size:var(--fs-xs); color:var(--subtle); }
 .legal-sec{ margin-top:14px; }
 .legal-h{ font-size:var(--fs-lead); font-weight:700; color:var(--fg); margin-bottom:6px; }
 .legal-p{ font-size:var(--fs-body); color:var(--muted); line-height:1.85; margin-bottom:6px; }
@@ -866,7 +871,7 @@ a.appnav-link:focus-visible { outline: none; color: var(--accent); }
 /* 리드는 가운데 정렬 — 왼쪽 축을 맞출 상대(2×2 격자)가 사라졌다 */
 /* text-wrap:balance — 마지막 줄에 «다.» 한 글자만 남는 고아 줄을 막는다 */
 .features-lead { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; text-align: center; text-wrap: balance; }
-.features-req { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); margin-top: var(--sp-section); text-align: center; }
+.features-req { font-size: var(--fs-xs); color: var(--subtle); margin-top: var(--sp-section); text-align: center; }
 
 /* 좌우 교차는 «나란히 놓을 폭»이 있을 때만 성립한다. 좁아지면 세로로 쌓고
    순서 뒤바꿈도 푼다(안 풀면 짝수 구간만 그림이 글 위로 올라간다). */
