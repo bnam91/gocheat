@@ -289,6 +289,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .detail-back:focus-visible { outline: none; color: var(--accent); }
 .detail-header { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
 .detail-icon { width: 72px; height: 72px; border-radius: 16px; background: var(--bg-elev); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 27px; flex-shrink: 0; }
+.detail-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; display: block; }
 .detail-meta { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; min-width: 0; }
 .detail-badge { font-family: var(--mono); font-size: 9px; color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; }
 .detail-title { font-size: clamp(32px, 5.6vw, 45px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; color: var(--fg); }
@@ -451,3 +452,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .login-alt { font-size: 11px; color: var(--subtle); margin-top: 14px; }
 .login-alt a { color: var(--accent); font-weight: 600; }
 .login-alt a:hover { text-decoration: underline; }
+
+/* 브랜드 마크 — 앱에서 넘어온 사용자가 같은 제품임을 알아보게 */
+.brand-mark { width: 48px; height: 48px; border-radius: 11px; display: block; margin: 0 auto 2px; }
