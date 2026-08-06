@@ -49,39 +49,49 @@
         <input id="password2" name="password2" type="password" class="signup-input" placeholder="••••••••"
                autocomplete="new-password" minlength="8" required />
 
-        <label class="signup-label" for="name">이름</label>
-        <input id="name" name="name" type="text" class="signup-input" placeholder="홍길동"
-               autocomplete="name" maxlength="40" required />
+        <!-- ★★확장 수집 구간 — data/flags.json 의 extendedSignup 이 true 일 때만 «존재»한다.
+             기본은 hidden 이고, 아래 스크립트가 잠겨 있으면 DOM 에서 «지운다».
+             숨기기만 하면 안 된다 — 숨은 입력도 값이 실려 나가고, 사용자가 볼 수도 있다.
 
-        <label class="signup-label" for="birth">생년월일</label>
-        <input id="birth" name="birth" type="date" class="signup-input" required />
+             ★왜 잠갔나: 개인정보 수집·이용 동의는 «고지사항»이 있어야 성립하는데
+               data/legal.json 의 약관 본문이 아직 비어 있다(사업자정보 대기).
+               빈 고지로 성함·전화번호·생년월일을 받으면 안 된다.
+             ★기본값이 «안전한 쪽»이다 — flags 를 못 읽어도(fetch 실패·구버전 캐시)
+               구간은 지워진 채로 남는다. 열려면 명시적으로 true 여야 한다. -->
+        <div id="ext-block" class="ext-block" hidden>
+          <label class="signup-label" for="name">이름</label>
+          <input id="name" name="name" type="text" class="signup-input" placeholder="홍길동"
+                 autocomplete="name" maxlength="40" required />
 
-        <label class="signup-label" for="phone">휴대전화</label>
-        <div class="field-row">
-          <input id="phone" name="phone" type="tel" class="signup-input" placeholder="01012345678"
-                 autocomplete="tel" inputmode="numeric" maxlength="13" required />
-          <!-- ★문자 발송이 아직 없다. 버튼만 두고 아무 일도 안 일어나면 사용자가 거기서 멈춘다.
-               그래서 «비활성 + 준비 중»으로 명시한다. 인증을 한 척하지 않는다. -->
-          <button type="button" class="field-btn" id="phone-send" disabled
-                  title="문자 인증은 준비 중입니다">받기</button>
-        </div>
-        <p class="field-note">문자 인증은 준비 중이에요. 지금은 번호만 입력받고 <b>인증 절차는 진행하지 않습니다.</b></p>
+          <label class="signup-label" for="birth">생년월일</label>
+          <input id="birth" name="birth" type="date" class="signup-input" required />
 
+          <label class="signup-label" for="phone">휴대전화</label>
+          <div class="field-row">
+            <input id="phone" name="phone" type="tel" class="signup-input" placeholder="01012345678"
+                   autocomplete="tel" inputmode="numeric" maxlength="13" required />
+            <!-- ★문자 발송이 아직 없다. 버튼만 두고 아무 일도 안 일어나면 사용자가 거기서 멈춘다.
+                 그래서 «비활성 + 준비 중»으로 명시한다. 인증을 한 척하지 않는다. -->
+            <button type="button" class="field-btn" id="phone-send" disabled
+                    title="문자 인증은 준비 중입니다">받기</button>
+          </div>
+          <p class="field-note">문자 인증은 준비 중이에요. 지금은 번호만 입력받고 <b>인증 절차는 진행하지 않습니다.</b></p>
 
-        <div class="agree-box">
-          <label class="agree-item agree-all">
-            <input type="checkbox" id="agree-all" /> <span><b>전체 동의</b></span>
-          </label>
-          <div class="agree-divider"></div>
-          <label class="agree-item">
-            <input type="checkbox" id="agree-terms" class="agree-child" />
-            <span>[필수] <a href="terms.html" target="_blank" rel="noopener">이용약관</a> 및
-              <a href="privacy.html" target="_blank" rel="noopener">개인정보 처리방침</a> 동의</span>
-          </label>
-          <label class="agree-item">
-            <input type="checkbox" id="agree-marketing" class="agree-child" />
-            <span>[선택] 마케팅 수신 동의</span>
-          </label>
+          <div class="agree-box">
+            <label class="agree-item agree-all">
+              <input type="checkbox" id="agree-all" /> <span><b>전체 동의</b></span>
+            </label>
+            <div class="agree-divider"></div>
+            <label class="agree-item">
+              <input type="checkbox" id="agree-terms" class="agree-child" />
+              <span>[필수] <a href="terms.html" target="_blank" rel="noopener">이용약관</a> 및
+                <a href="privacy.html" target="_blank" rel="noopener">개인정보 처리방침</a> 동의</span>
+            </label>
+            <label class="agree-item">
+              <input type="checkbox" id="agree-marketing" class="agree-child" />
+              <span>[선택] 마케팅 수신 동의</span>
+            </label>
+          </div>
         </div>
 
         <button type="submit" class="signup-submit" id="signup-submit">가입하기 →</button>
@@ -127,43 +137,68 @@
         msg.className = 'signup-msg ' + (ok ? 'signup-msg-ok' : 'signup-msg-error');
       }
 
-      // 전체동의 ↔ 개별항목 동기화
-      var all = document.getElementById('agree-all');
-      var kids = Array.prototype.slice.call(document.querySelectorAll('.agree-child'));
-      all.addEventListener('change', function () {
-        kids.forEach(function (k) { k.checked = all.checked; });
-      });
-      kids.forEach(function (k) {
-        k.addEventListener('change', function () {
-          all.checked = kids.every(function (x) { return x.checked; });
-        });
-      });
+      // ── 확장 수집 구간 열고 닫기 ────────────────────────────────
+      // flags 를 읽기 전까지는 «잠긴 것으로» 취급한다. 못 읽으면 잠긴 채로 남는다.
+      // 제출 버튼은 판정이 끝날 때까지 눌리지 않게 막는다 —
+      // 그 틈에 제출되면 «열려 있는데 필드가 없는» 상태로 실패한다.
+      var ext = document.getElementById('ext-block');
+      var extOpen = false;
+      submit.disabled = true;
 
-      var phoneEl = document.getElementById('phone');
-      phoneEl.addEventListener('input', function () {
-        phoneEl.value = phoneEl.value.replace(/[^0-9]/g, '').slice(0, 11);
-      });
+      function lockExtended() { if (ext) { ext.remove(); ext = null; } extOpen = false; }
+      function openExtended() {
+        if (!ext) return;
+        ext.hidden = false;
+        extOpen = true;
+
+        // 전체동의 ↔ 개별항목 동기화 (구간이 있을 때만 의미가 있다)
+        var all = document.getElementById('agree-all');
+        var kids = Array.prototype.slice.call(document.querySelectorAll('.agree-child'));
+        all.addEventListener('change', function () {
+          kids.forEach(function (k) { k.checked = all.checked; });
+        });
+        kids.forEach(function (k) {
+          k.addEventListener('change', function () {
+            all.checked = kids.every(function (x) { return x.checked; });
+          });
+        });
+
+        var phoneEl = document.getElementById('phone');
+        phoneEl.addEventListener('input', function () {
+          phoneEl.value = phoneEl.value.replace(/[^0-9]/g, '').slice(0, 11);
+        });
+      }
+
+      fetch('data/flags.json')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (f) { (f && f.extendedSignup === true) ? openExtended() : lockExtended(); })
+        .catch(lockExtended)
+        .then(function () { submit.disabled = false; });
 
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
         var email    = (emailInput.value || '').trim();
         var password = passwordInput.value || '';
         var pw2      = document.getElementById('password2').value || '';
-        var name     = (document.getElementById('name').value || '').trim();
-        var birth    = document.getElementById('birth').value || '';
-        var phone    = (document.getElementById('phone').value || '').trim();
-        var terms    = document.getElementById('agree-terms').checked;
-        var marketing= document.getElementById('agree-marketing').checked;
+        // ★확장 구간이 잠겨 있으면 이 요소들은 «존재하지 않는다». 읽지도 보내지도 않는다.
+        var v = function (id) { var el = document.getElementById(id); return el ? el.value : ''; };
+        var c = function (id) { var el = document.getElementById(id); return !!(el && el.checked); };
+        var name     = (v('name') || '').trim();
+        var birth    = v('birth') || '';
+        var phone    = (v('phone') || '').trim();
+        var marketing= c('agree-marketing');
 
         function bad(msg, el) { show(msg, false); if (el) el.focus(); }
 
         if (!email || !emailRe.test(email))  return bad('이메일 형식이 올바르지 않아요.', emailInput);
         if (password.length < 8)             return bad('비밀번호는 8자 이상이어야 해요.', passwordInput);
         if (password !== pw2)                return bad('비밀번호가 서로 달라요.', document.getElementById('password2'));
-        if (!name)                           return bad('이름을 입력해 주세요.', document.getElementById('name'));
-        if (!birth)                          return bad('생년월일을 선택해 주세요.', document.getElementById('birth'));
-        if (phone.length < 10)               return bad('휴대전화 번호를 정확히 입력해 주세요.', phoneEl);
-        if (!terms)                          return bad('이용약관과 개인정보 처리방침에 동의해 주세요.', document.getElementById('agree-terms'));
+        if (extOpen) {
+          if (!name)                         return bad('이름을 입력해 주세요.', document.getElementById('name'));
+          if (!birth)                        return bad('생년월일을 선택해 주세요.', document.getElementById('birth'));
+          if (phone.length < 10)             return bad('휴대전화 번호를 정확히 입력해 주세요.', document.getElementById('phone'));
+          if (!c('agree-terms'))             return bad('이용약관과 개인정보 처리방침에 동의해 주세요.', document.getElementById('agree-terms'));
+        }
 
         submit.disabled = true;
         var original = submit.textContent;
@@ -172,12 +207,17 @@
           const r = await fetch('/api/license/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              email: email, password: password,
-              // ★개인정보는 profile 하나로 묶어 보낸다 — 나중에 지울 때 한 덩어리로 지운다
-              profile: { name: name, birth: birth, phone: phone },
-              consents: { terms: true, marketing: marketing },
-            }),
+            // ★확장이 잠겨 있으면 profile·consents 자체를 «보내지 않는다».
+            //   빈 객체라도 보내면 «받긴 받는데 비어 있다»가 되어 나중에 구분이 안 된다.
+            //   (서버도 flags 를 보고 한 번 더 버린다 — 여기만 믿지 않는다)
+            body: JSON.stringify(Object.assign(
+              { email: email, password: password },
+              extOpen ? {
+                // ★개인정보는 profile 하나로 묶어 보낸다 — 나중에 지울 때 한 덩어리로 지운다
+                profile: { name: name, birth: birth, phone: phone },
+                consents: { terms: true, marketing: marketing },
+              } : {}
+            )),
           });
           const data = await r.json().catch(() => ({}));
           if (!r.ok || !data.ok) {
@@ -192,7 +232,9 @@
           } else {
             show('가입 완료! 인증 메일을 확인해주세요.', true);
           }
-          form.reset(); all.checked = false;
+          // ★`all` 은 확장 구간 안에 있다 — 잠겨 있으면 없다. form.reset() 이
+          //   체크박스도 되돌리므로 별도 처리는 없어도 된다.
+          form.reset();
           if (data.alreadyVerified || data.ready) {
             var nx = new URLSearchParams(location.search).get('next');
             var ap = new URLSearchParams(location.search).get('app');

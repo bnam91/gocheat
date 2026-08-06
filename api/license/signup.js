@@ -35,6 +35,12 @@ function buildConsents(raw, now) {
   return out;
 }
 
+// ★배포 분리 스위치. 클라이언트(signup.html)와 «같은 파일»을 본다.
+//   env 로 갈라 두면 둘이 어긋나 «폼은 안 물어보는데 서버는 받는» 상태가 생긴다.
+//   레포 파일이라 정적 require 로 번들에 실린다 — 켜고 끄는 건 커밋 한 줄이다.
+const FLAGS = require('../../data/flags.json');
+const EXTENDED_SIGNUP = FLAGS.extendedSignup === true;
+
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const EVENT_MODE = process.env.EVENT_MODE !== 'off';           // 이벤트 기간엔 이메일 인증 생략
 const EVENT_UNTIL = new Date(process.env.EVENT_UNTIL || '2026-12-31T23:59:59Z');
@@ -53,10 +59,21 @@ module.exports = async (req, res) => {
   if (!isValidEmail(email)) return json(res, 400, { error: 'invalid_email' });
   if (!isStrongEnough(password)) return json(res, 400, { error: 'weak_password', detail: 'min 8 chars' });
 
-  // ★필수 동의가 없으면 개인정보를 «받지 않는다». 폼에서 막더라도 서버가 다시 막아야 한다.
-  //   (구버전 폼·직접 호출로도 들어올 수 있다)
-  const profile = buildProfile(body.profile);
-  if (profile && body.consents && body.consents.terms !== true) {
+  // ★★확장 가입이 잠겨 있으면 개인정보를 «아예 받지 않는다».
+  //   폼을 지우는 것만으로는 못 막는다 — 구버전 폼·캐시된 페이지·직접 호출이
+  //   여전히 profile 을 보낸다. 막는 자리는 «저장 직전»인 여기다.
+  //   잠겨 있는 이유: 개인정보 수집·이용 동의는 고지사항이 있어야 성립하는데
+  //   data/legal.json 의 약관 본문이 아직 비어 있다(사업자정보 대기).
+  const profile = EXTENDED_SIGNUP ? buildProfile(body.profile) : null;
+  const consents = EXTENDED_SIGNUP ? body.consents : null;
+
+  if (!EXTENDED_SIGNUP && body.profile) {
+    // 조용히 버리지 않고 «버렸다»고 로그를 남긴다 — 나중에 «왜 안 저장됐지»로 헤매지 않게.
+    console.warn('[signup] extendedSignup=false — 전달된 profile 을 저장하지 않고 버림');
+  }
+
+  // 필수 동의가 없으면 개인정보를 받지 않는다(확장이 열린 뒤에도 유효한 규칙).
+  if (profile && consents && consents.terms !== true) {
     return json(res, 400, { error: 'terms_required', detail: '이용약관·개인정보 처리방침 동의가 필요합니다' });
   }
 
@@ -88,7 +105,7 @@ module.exports = async (req, res) => {
           verificationTokenExpiresAt,
           updatedAt: now,
           ...(profile ? { profile } : {}),
-          ...(body.consents ? { consents: buildConsents(body.consents, now) } : {}),
+          ...(consents ? { consents: buildConsents(consents, now) } : {}),
         },
         $setOnInsert: { createdAt: now },
       },
