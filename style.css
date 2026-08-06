@@ -455,3 +455,21 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 /* 브랜드 마크 — 앱에서 넘어온 사용자가 같은 제품임을 알아보게 */
 .brand-mark { width: 48px; height: 48px; border-radius: 11px; display: block; margin: 0 auto 2px; }
+
+/* 결제수단 안내 — 버튼 누르기 전에 보이는 자리 */
+.pay-notice {
+  font-size: 11px; color: var(--muted); line-height: 1.7;
+  background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px 16px; max-width: 520px; margin: 4px auto 0;
+}
+.pay-notice strong { color: var(--fg); font-weight: 600; }
+.pay-notice-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--accent); margin-right: 8px;
+}
+.pay-notice-inline { max-width: 100%; font-size: 10px; padding: 9px 12px; margin-bottom: 4px; }
+
+/* 푸터 사업자정보 — data/business.json 값이 있을 때만 렌더된다 */
+.footer-biz { font-size: 10px; color: var(--subtle); line-height: 1.8; margin-top: 4px; max-width: 560px; }
+.footer-biz-sep { margin: 0 8px; opacity: 0.4; }
+.footer-biz-item { display: inline-block; white-space: nowrap; }

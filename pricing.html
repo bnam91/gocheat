@@ -41,6 +41,12 @@
         아래 유료 등급은 이벤트 종료 이후를 위한 준비 중인 안내입니다.
       </p>
 
+      <!-- ★결제수단은 «버튼을 누르기 전에» 알려야 한다. 카드 결제를 기대하고 눌렀다가 어긋나지 않게. -->
+      <p class="pay-notice">
+        <span class="pay-notice-tag">결제 수단</span>
+        아직 정식 서비스 전이라 <strong>계좌이체(무통장입금)만</strong> 가능해요. 카드·간편결제는 준비 중입니다.
+      </p>
+
       <div class="plan-grid">
         <!-- 무료 -->
         <div class="plan-card plan-card-featured">
@@ -101,6 +107,10 @@
       <div class="order-panel" id="order-panel">
         <p class="order-panel-plan" id="order-plan-label">—</p>
         <p class="order-panel-title">무통장입금 구매 신청</p>
+        <p class="pay-notice pay-notice-inline">
+          현재 가능한 결제 수단은 <strong>계좌이체(무통장입금)</strong> 하나예요.<br />
+          신청하면 입금 안내를 받으실 수 있고, <strong>이 단계에서 결제되지는 않습니다.</strong>
+        </p>
         <form id="order-form" class="signup-form" novalidate>
           <label class="signup-label" for="order-email">가입한 이메일</label>
           <input id="order-email" type="email" class="signup-input" placeholder="you@example.com" autocomplete="email" required />
@@ -118,10 +128,10 @@
       <!-- 신청 완료 결과 -->
       <div class="order-panel" id="result-panel">
         <p class="order-panel-plan">신청 접수 완료</p>
-        <p class="order-panel-title">아래 계좌로 입금해 주세요</p>
+        <p class="order-panel-title">계좌이체(무통장입금) 안내</p>
         <div class="order-result" id="result-rows"></div>
         <p class="order-warn">
-          ⚠️ <strong>이 화면을 캡처해 두세요.</strong> 주문번호와 계좌는 이 화면에서만 확인할 수 있어요.<br />
+          ⚠️ <strong>이 화면을 캡처해 두세요.</strong> 주문번호는 이 화면에서만 확인할 수 있어요.<br />
           입금이 확인되면 계정에 반영됩니다. (보통 1영업일 이내)
         </p>
         <button type="button" class="plan-cta plan-cta-quiet" id="result-close" style="max-width:200px;">닫기</button>
@@ -136,6 +146,7 @@
         <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
         <a href="https://github.com/bnam91" target="_blank" rel="noopener">GitHub</a>
       </div>
+    <div id="biz-info"></div>
     </div>
   </footer>
 
@@ -228,7 +239,8 @@
           resultRows.appendChild(row('주문번호', data.orderNo));
           resultRows.appendChild(row('요금제', data.plan));
           resultRows.appendChild(row('입금자명', data.depositor));
-          resultRows.appendChild(row('입금 계좌', data.bank));
+          // 라벨을 '입금 안내'로 둔다 — 실제 계좌가 들어와도, 준비 중 안내문이 와도 문장이 자연스럽다
+          resultRows.appendChild(row('입금 안내', data.bank));
           panel.classList.remove('is-open');
           resultPnl.classList.add('is-open');
           resultPnl.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -243,5 +255,6 @@
       });
     })();
   </script>
+  <script src="footer.js"></script>
 </body>
 </html>
