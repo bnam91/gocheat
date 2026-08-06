@@ -91,7 +91,13 @@
         <li><span class="feature-dot">·</span> 작업한 그대로 실시간 미리보기</li>
         <li><span class="feature-dot">·</span> 한 번 만들고 다시 안 만들기</li>
       </ul>
-      <p class="features-req">macOS 13 이상</p>
+      <!-- 동작 요구사항.
+           ⚠️ macOS 13 : 빌드 설정(package.json build.mac.minimumSystemVersion)에 «없는» 값이다.
+              근거가 확인되지 않았으나 지금 화면에 있던 값이라 그대로 둔다 — 태양 확인 후 확정.
+           ⚠️ Windows  : 빌드가 nsis·x64 하나뿐이라 «64비트»는 확실하다.
+              "Windows 10 이상"은 Electron 41 요구사항에서 온 «추론»이라 적지 않는다.
+              모르는 걸 적는 것보다 비우는 게 낫다. -->
+      <p class="features-req">macOS 13 이상 · Windows 64비트</p>
     </div>
   </section>
 
