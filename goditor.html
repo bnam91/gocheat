@@ -76,8 +76,15 @@
       </figure>
   </section>
 
-  <!-- ④ 기능 — 말하는 한 가지: «뭘 할 수 있는지». 2×2 (기능별 이미지가 없어
-       좌우 교차는 의미가 없다 — 가로를 채워 세로를 줄인다) -->
+  <!-- ④ 기능 — 구간 하나가 «기능 하나»를 말한다.
+       전에는 넷을 2×2 목록으로 접어 놨다. 접으면 한 줄짜리 문구 넷이 되고,
+       그러면 카피를 아무리 다듬어도 «기능이 보이지 않는다».
+       그래서 펼치고 좌우로 교차시킨다.
+
+       ★문구는 지어내지 않았다 — 접혀 있던 목록 네 줄을 그대로 풀어 쓴 것이다.
+         ④의 «내보내기»만 data/apps.json 의 등급별 기능 목록에서 왔다.
+       ★이미지는 아직 없다. 파일이 없으면 깨진 아이콘 대신 «준비 중» 판이 뜬다
+         (onerror). 태양이 assets/shots/ 에 넣으면 손 안 대고 살아난다. -->
   <section class="features">
     <div class="features-inner">
       <h2 class="section-h">주요 기능</h2>
@@ -85,20 +92,67 @@
         못으로 칼국수를 자를 순 없죠. 피그마는 와이어프레임 도구지 상세페이지 도구가 아닙니다.
         그래서 상세페이지 전용으로 다시 만들었습니다.
       </p>
-      <ul class="feature-list feature-grid">
-        <li><span class="feature-dot">·</span> 블록 단위로 섹션을 쌓아 올리는, 머리 안 굴려도 되는 에디터</li>
-        <li><span class="feature-dot">·</span> 이미지·텍스트·CTA 블록 드래그 앤 드롭</li>
-        <li><span class="feature-dot">·</span> 작업한 그대로 실시간 미리보기</li>
-        <li><span class="feature-dot">·</span> 한 번 만들고 다시 안 만들기</li>
-      </ul>
-      <!-- 동작 요구사항.
-           ⚠️ macOS 13 : 빌드 설정(package.json build.mac.minimumSystemVersion)에 «없는» 값이다.
-              근거가 확인되지 않았으나 지금 화면에 있던 값이라 그대로 둔다 — 태양 확인 후 확정.
-           ⚠️ Windows  : 빌드가 nsis·x64 하나뿐이라 «64비트»는 확실하다.
-              "Windows 10 이상"은 Electron 41 요구사항에서 온 «추론»이라 적지 않는다.
-              모르는 걸 적는 것보다 비우는 게 낫다. -->
-      <p class="features-req">macOS 13 이상 · Windows 64비트</p>
     </div>
+
+    <div class="feature-row">
+      <div class="feature-copy">
+        <h3 class="feature-h">블록으로 쌓습니다</h3>
+        <p class="feature-body">
+          블록 단위로 섹션을 쌓아 올립니다. 머리 안 굴려도 되는 에디터입니다.
+        </p>
+      </div>
+      <figure class="feature-shot" data-pending="앱 화면 준비 중 — 편집기 캔버스">
+        <img src="assets/shots/editor-canvas.png" alt="GODITOR 편집기 캔버스 화면" loading="lazy"
+             onerror="this.parentElement.classList.add('shot-pending'); this.remove();" />
+      </figure>
+    </div>
+
+    <div class="feature-row feature-row--rev">
+      <div class="feature-copy">
+        <h3 class="feature-h">끌어다 놓습니다</h3>
+        <p class="feature-body">
+          이미지·텍스트·CTA 블록을 드래그 앤 드롭으로 배치합니다.
+        </p>
+      </div>
+      <figure class="feature-shot" data-pending="앱 화면 준비 중 — 블록 쌓기">
+        <img src="assets/shots/blocks.png" alt="GODITOR 블록(섹션) 목록과 좌측 패널" loading="lazy"
+             onerror="this.parentElement.classList.add('shot-pending'); this.remove();" />
+      </figure>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-copy">
+        <h3 class="feature-h">바로 미리봅니다</h3>
+        <p class="feature-body">
+          작업한 그대로 실시간으로 미리봅니다.
+        </p>
+      </div>
+      <figure class="feature-shot" data-pending="앱 화면 준비 중 — 실시간 미리보기">
+        <img src="assets/shots/preview.png" alt="GODITOR 실시간 미리보기(모바일 폭)" loading="lazy"
+             onerror="this.parentElement.classList.add('shot-pending'); this.remove();" />
+      </figure>
+    </div>
+
+    <div class="feature-row feature-row--rev">
+      <div class="feature-copy">
+        <h3 class="feature-h">만든 걸 내보냅니다</h3>
+        <p class="feature-body">
+          한 번 만들고, 다시 안 만듭니다.
+        </p>
+      </div>
+      <figure class="feature-shot" data-pending="앱 화면 준비 중 — 내보내기 결과">
+        <img src="assets/shots/export.png" alt="GODITOR 내보내기 결과" loading="lazy"
+             onerror="this.parentElement.classList.add('shot-pending'); this.remove();" />
+      </figure>
+    </div>
+
+    <!-- 동작 요구사항.
+         ⚠️ macOS 13 : 빌드 설정(package.json build.mac.minimumSystemVersion)에 «없는» 값이다.
+            근거가 확인되지 않았으나 지금 화면에 있던 값이라 그대로 둔다 — 태양 확인 후 확정.
+         ⚠️ Windows  : 빌드가 nsis·x64 하나뿐이라 «64비트»는 확실하다.
+            "Windows 10 이상"은 Electron 41 요구사항에서 온 «추론»이라 적지 않는다.
+            모르는 걸 적는 것보다 비우는 게 낫다. -->
+    <p class="features-req">macOS 13 이상 · Windows 64비트</p>
   </section>
 
   <section class="pricing">

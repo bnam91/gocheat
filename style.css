@@ -730,13 +730,19 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    전에는 .detail 한 섹션에 뒤로가기·정체·CTA·영상·기능이 다 섞여 있었다.
    여백은 --sp-section 하나로 모아 리듬을 한 곳에서 조절한다. */
 .detail { padding: 40px 24px var(--sp-section); }
-.showcase, .features { max-width: var(--read); margin: 0 auto; padding: 0 24px var(--sp-section); }
-/* ★리드 문단과 기능 격자의 «왼쪽 축»을 맞춘다.
-   align-items:center 면 둘의 폭이 달라 시작점이 어긋난다. */
-.features-inner { display: flex; flex-direction: column; align-items: stretch; gap: 20px; }
+/* ★영상과 기능은 «넓은 축»을 쓴다.
+   영상은 코덱스의 큰 제품 스크린샷 자리다 — 본문 폭에 갇혀 있으면
+   «큰 시각물»이 아니라 그냥 삽화가 된다. 읽는 글만 --read 로 잡아 준다. */
+.showcase, .features { max-width: var(--wide); margin: 0 auto; padding: 0 24px var(--sp-section); }
+/* 제목·리드는 읽는 글이므로 넓은 축을 따라가지 않는다 */
+.features-inner { display: flex; flex-direction: column; align-items: stretch; gap: 14px; max-width: var(--read); margin: 0 auto; }
 .features-inner > .section-h { text-align: center; }
-.features-inner > .features-req { text-align: center; }
 .pricing { padding-top: 0; }
+
+/* ★틀(머리·바닥)은 «가장 넓은 내용»만큼 넓어야 한다.
+   내용이 1040px 인데 머리띠가 680px 이면 영상이 헤더 밖으로 삐져나온 것처럼 보인다.
+   넓히는 건 «틀»뿐이고 읽는 글은 그대로 --read 축에 있다. */
+nav, footer { max-width: var(--wide); }
 
 /* ★뒤로가기 — 좌상단. 페이지 전체 가운데 정렬에 끌려가 있었다 */
 .detail-back { align-self: flex-start; font-size: var(--fs-xs); }
@@ -757,13 +763,54 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 }
 .event-strip .event-banner-text { font-size: var(--fs-sm); font-weight: 600; color: var(--fg); }
 
-/* ④ 기능 2×2 — 기능별 이미지가 없어 좌우 교차는 의미가 없다.
-   가로를 채워 세로를 줄인다. */
-.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; max-width: 100%; }
-.features-lead { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; }
-.features-req { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); margin-top: 6px; }
+/* ④ 기능 — «펼친» 구간 ────────────────────────────────────────
+   2×2 격자(.feature-grid)를 걷어냈다. 기능을 접어 넣으면 한 줄짜리 문구
+   넷이 되고, 그러면 기능이 아니라 «목록»으로 읽힌다.
+   기능 하나가 화면 한 폭을 쓰게 펼치고, 글과 그림의 자리를 좌우로 교차시킨다. */
+.feature-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 48px; align-items: center;
+  margin-top: var(--sp-section);
+}
+/* 짝수 구간은 글과 그림의 자리를 맞바꾼다.
+   ★:nth-child 는 제목 블록(.features-inner)까지 세어 어긋난다 — 클래스로 «명시»한다. */
+.feature-row--rev .feature-copy { order: 2; }
+
+.feature-copy { text-align: left; display: flex; flex-direction: column; gap: 12px; }
+.feature-h { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; color: var(--fg); }
+/* 44ch ≈ 460px — 코덱스 본문 폭(437px 안팎)에 맞춘다. 더 길면 눈이 되돌아올 때 줄을 놓친다 */
+.feature-body { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; max-width: 44ch; }
+
+.feature-shot {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; background: var(--bg-elev);
+}
+.feature-shot img { width: 100%; height: auto; display: block; }
+/* ★파일이 아직 없을 때 — 깨진 이미지 아이콘 대신 «준비 중» 판을 보여준다.
+   img 의 onerror 가 이 클래스를 붙이고 자기를 지운다. 파일이 들어오면
+   onerror 가 안 돌아 이 규칙도 안 걸린다 — CSS 를 되돌릴 필요가 없다. */
+.feature-shot.shot-pending {
+  aspect-ratio: 16 / 10;
+  display: flex; align-items: center; justify-content: center;
+  border-style: dashed;
+}
+.feature-shot.shot-pending::after {
+  content: attr(data-pending);
+  font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle);
+}
+
+/* 리드는 가운데 정렬 — 왼쪽 축을 맞출 상대(2×2 격자)가 사라졌다 */
+.features-lead { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; text-align: center; }
+.features-req { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); margin-top: var(--sp-section); text-align: center; }
+
+/* 좌우 교차는 «나란히 놓을 폭»이 있을 때만 성립한다. 좁아지면 세로로 쌓고
+   순서 뒤바꿈도 푼다(안 풀면 짝수 구간만 그림이 글 위로 올라간다). */
+@media (max-width: 860px) {
+  .feature-row { grid-template-columns: 1fr; gap: 22px; }
+  .feature-row--rev .feature-copy { order: 0; }
+  .feature-body { max-width: 100%; }
+}
 
 @media (max-width: 700px) {
   :root { --sp-section: 56px; }
-  .feature-grid { grid-template-columns: 1fr; }
 }
