@@ -539,3 +539,50 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .dl-msg{ min-height:18px }
 .dl-msg-ok{ color:var(--success) }
 .dl-msg-warn{ color:var(--warn) }
+
+/* ── 확장 가입 폼 (ttj 기준, 뉴스레터 제외) ── */
+.signup-form-wide{ max-width:400px; }
+.lbl-hint{ opacity:.5; font-weight:400; }
+.field-row{ display:flex; gap:8px; width:100%; align-items:stretch; }
+.field-row .signup-input{ flex:1; }
+.field-btn{
+  font-family:var(--font); font-size:11px; font-weight:600; white-space:nowrap;
+  color:var(--muted); background:var(--bg-elev); border:1px solid var(--border-strong);
+  border-radius:var(--radius); padding:0 14px; cursor:pointer;
+}
+.field-btn:hover:not(:disabled){ color:var(--fg); border-color:var(--accent); }
+.field-btn:disabled{ opacity:.42; cursor:not-allowed; }
+.field-note{ font-size:10px; color:var(--subtle); line-height:1.6; text-align:center; margin-top:-4px; }
+.field-note b{ color:var(--muted); }
+
+.seg{ justify-content:center; gap:10px; }
+.seg-item{
+  flex:1; display:flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;
+  background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
+  padding:11px 0; font-size:12px; color:var(--muted); transition:border-color .15s,color .15s;
+}
+.seg-item:has(input:checked){ border-color:var(--accent); color:var(--fg); }
+.seg-item input{ accent-color:var(--accent); }
+
+.agree-box{
+  width:100%; background:var(--bg-elev); border:1px solid var(--border);
+  border-radius:var(--radius); padding:12px 14px; display:flex; flex-direction:column; gap:9px; margin-top:6px;
+}
+.agree-item{ display:flex; align-items:flex-start; gap:9px; font-size:11.5px; color:var(--muted); cursor:pointer; text-align:left; line-height:1.6; }
+.agree-item input{ margin-top:2px; accent-color:var(--accent); flex-shrink:0; }
+.agree-item a{ color:var(--accent); text-decoration:underline; text-underline-offset:2px; }
+.agree-all span b{ color:var(--fg); font-size:12px; }
+.agree-divider{ border-top:1px solid var(--border); }
+
+/* ── 약관·개인정보 문서 ── */
+.legal{ max-width:var(--width); margin:0 auto; padding:56px 24px 72px; text-align:left; }
+.legal-inner{ display:flex; flex-direction:column; gap:14px; }
+.legal-title{ font-size:clamp(24px,4vw,32px); font-weight:800; letter-spacing:-.03em; color:var(--fg); }
+.legal-meta{ font-family:var(--mono); font-size:10px; color:var(--subtle); }
+.legal-sec{ margin-top:14px; }
+.legal-h{ font-size:13px; font-weight:700; color:var(--fg); margin-bottom:6px; }
+.legal-p{ font-size:12px; color:var(--muted); line-height:1.85; margin-bottom:6px; }
+.legal-empty{ background:var(--bg-elev); border:1px solid rgba(255,209,102,.35); border-radius:var(--radius); padding:22px 20px; text-align:center; }
+.legal-empty-title{ font-size:13px; font-weight:700; color:var(--warn); margin-bottom:8px; }
+.legal-empty-sub{ font-size:11.5px; color:var(--muted); line-height:1.8; }
+.legal-empty-sub a{ color:var(--accent); }

@@ -29,34 +29,65 @@
     <div class="signup-inner">
       <img src="/public/icons/goditor.png" alt="" class="brand-mark" id="su-mark" width="48" height="48" hidden />
       <p class="section-label" id="su-label">소문의섬 계정 만들기</p>
-      <h1 class="signup-title">도구 출시·강의 오픈·실전 노하우. 가장 먼저 받으실 수 있게.</h1>
+      <h1 class="signup-title">계정 하나로 소문의섬 앱을 씁니다.</h1>
       <p class="signup-sub">
         <span id="su-lead">이벤트 기간에는 가입 즉시 소문의섬 앱을 전부 쓰실 수 있어요.</span>
-        도구·콘텐츠 소식만 가끔 보내드리고, 광고는 보내지 않아요.
+        가입 정보는 계정 관리와 고객 지원에만 씁니다.
       </p>
 
-      <form id="signup-form" class="signup-form" novalidate>
+      <form id="signup-form" class="signup-form signup-form-wide" novalidate>
         <label class="signup-label" for="email">이메일</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          class="signup-input"
-          placeholder="you@example.com"
-          autocomplete="email"
-          required
-        />
-        <label class="signup-label" for="password">비밀번호 <span style="opacity:.5;font-weight:400;">(8자 이상)</span></label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          class="signup-input"
-          placeholder="••••••••"
-          autocomplete="new-password"
-          minlength="8"
-          required
-        />
+        <input id="email" name="email" type="email" class="signup-input" placeholder="you@example.com"
+               autocomplete="email" required />
+
+        <label class="signup-label" for="password">비밀번호 <span class="lbl-hint">(8자 이상)</span></label>
+        <input id="password" name="password" type="password" class="signup-input" placeholder="••••••••"
+               autocomplete="new-password" minlength="8" required />
+
+        <label class="signup-label" for="password2">비밀번호 확인</label>
+        <input id="password2" name="password2" type="password" class="signup-input" placeholder="••••••••"
+               autocomplete="new-password" minlength="8" required />
+
+        <label class="signup-label" for="name">이름</label>
+        <input id="name" name="name" type="text" class="signup-input" placeholder="홍길동"
+               autocomplete="name" maxlength="40" required />
+
+        <label class="signup-label" for="birth">생년월일</label>
+        <input id="birth" name="birth" type="date" class="signup-input" required />
+
+        <label class="signup-label" for="phone">휴대전화</label>
+        <div class="field-row">
+          <input id="phone" name="phone" type="tel" class="signup-input" placeholder="01012345678"
+                 autocomplete="tel" inputmode="numeric" maxlength="13" required />
+          <!-- ★문자 발송이 아직 없다. 버튼만 두고 아무 일도 안 일어나면 사용자가 거기서 멈춘다.
+               그래서 «비활성 + 준비 중»으로 명시한다. 인증을 한 척하지 않는다. -->
+          <button type="button" class="field-btn" id="phone-send" disabled
+                  title="문자 인증은 준비 중입니다">받기</button>
+        </div>
+        <p class="field-note">문자 인증은 준비 중이에요. 지금은 번호만 입력받고 <b>인증 절차는 진행하지 않습니다.</b></p>
+
+        <label class="signup-label">성별</label>
+        <div class="field-row seg">
+          <label class="seg-item"><input type="radio" name="gender" value="male" /> <span>남</span></label>
+          <label class="seg-item"><input type="radio" name="gender" value="female" /> <span>여</span></label>
+        </div>
+
+        <div class="agree-box">
+          <label class="agree-item agree-all">
+            <input type="checkbox" id="agree-all" /> <span><b>전체 동의</b></span>
+          </label>
+          <div class="agree-divider"></div>
+          <label class="agree-item">
+            <input type="checkbox" id="agree-terms" class="agree-child" />
+            <span>[필수] <a href="terms.html" target="_blank" rel="noopener">이용약관</a> 및
+              <a href="privacy.html" target="_blank" rel="noopener">개인정보 처리방침</a> 동의</span>
+          </label>
+          <label class="agree-item">
+            <input type="checkbox" id="agree-marketing" class="agree-child" />
+            <span>[선택] 마케팅 수신 동의</span>
+          </label>
+        </div>
+
         <button type="submit" class="signup-submit" id="signup-submit">가입하기 →</button>
         <p class="signup-msg" id="signup-msg" role="status" aria-live="polite"></p>
       </form>
@@ -72,6 +103,8 @@
     <div class="footer-inner">
       <span>비밀이라 부르기엔 아까운 기술들 © 소문의섬<br />coq3820@gmail.com</span>
       <div class="footer-links">
+        <a href="terms.html">이용약관</a>
+        <a href="privacy.html">개인정보 처리방침</a>
         <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
         <a href="https://github.com/bnam91" target="_blank" rel="noopener">GitHub</a>
       </div>
@@ -93,35 +126,66 @@
         msg.className = 'signup-msg ' + (ok ? 'signup-msg-ok' : 'signup-msg-error');
       }
 
+      // 전체동의 ↔ 개별항목 동기화
+      var all = document.getElementById('agree-all');
+      var kids = Array.prototype.slice.call(document.querySelectorAll('.agree-child'));
+      all.addEventListener('change', function () {
+        kids.forEach(function (k) { k.checked = all.checked; });
+      });
+      kids.forEach(function (k) {
+        k.addEventListener('change', function () {
+          all.checked = kids.every(function (x) { return x.checked; });
+        });
+      });
+
+      var phoneEl = document.getElementById('phone');
+      phoneEl.addEventListener('input', function () {
+        phoneEl.value = phoneEl.value.replace(/[^0-9]/g, '').slice(0, 11);
+      });
+
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        const email = (emailInput.value || '').trim();
-        const password = passwordInput.value || '';
-        if (!email || !emailRe.test(email)) {
-          show('이메일 형식이 올바르지 않아요.', false); emailInput.focus(); return;
-        }
-        if (password.length < 8) {
-          show('비밀번호는 8자 이상이어야 해요.', false); passwordInput.focus(); return;
-        }
+        var email    = (emailInput.value || '').trim();
+        var password = passwordInput.value || '';
+        var pw2      = document.getElementById('password2').value || '';
+        var name     = (document.getElementById('name').value || '').trim();
+        var birth    = document.getElementById('birth').value || '';
+        var phone    = (document.getElementById('phone').value || '').trim();
+        var genderEl = document.querySelector('input[name="gender"]:checked');
+        var terms    = document.getElementById('agree-terms').checked;
+        var marketing= document.getElementById('agree-marketing').checked;
+
+        function bad(msg, el) { show(msg, false); if (el) el.focus(); }
+
+        if (!email || !emailRe.test(email))  return bad('이메일 형식이 올바르지 않아요.', emailInput);
+        if (password.length < 8)             return bad('비밀번호는 8자 이상이어야 해요.', passwordInput);
+        if (password !== pw2)                return bad('비밀번호가 서로 달라요.', document.getElementById('password2'));
+        if (!name)                           return bad('이름을 입력해 주세요.', document.getElementById('name'));
+        if (!birth)                          return bad('생년월일을 선택해 주세요.', document.getElementById('birth'));
+        if (phone.length < 10)               return bad('휴대전화 번호를 정확히 입력해 주세요.', phoneEl);
+        if (!genderEl)                       return bad('성별을 선택해 주세요.');
+        if (!terms)                          return bad('이용약관과 개인정보 처리방침에 동의해 주세요.', document.getElementById('agree-terms'));
 
         submit.disabled = true;
-        const original = submit.textContent;
+        var original = submit.textContent;
         submit.textContent = '가입 중…';
         try {
           const r = await fetch('/api/license/signup', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({
+              email: email, password: password,
+              // ★개인정보는 profile 하나로 묶어 보낸다 — 나중에 지울 때 한 덩어리로 지운다
+              profile: { name: name, birth: birth, phone: phone, gender: genderEl.value },
+              consents: { terms: true, marketing: marketing },
+            }),
           });
           const data = await r.json().catch(() => ({}));
           if (!r.ok || !data.ok) {
-            const reason = data.error || ('HTTP ' + r.status);
-            show('가입에 실패했어요: ' + reason, false);
+            show('가입에 실패했어요: ' + (data.error || ('HTTP ' + r.status)), false);
             return;
           }
-          // 가입한 이메일은 로그인 화면에서 채워 쓴다 (비밀번호는 저장하지 않는다)
           try { sessionStorage.setItem('sms_email', email); } catch (e2) {}
-
           if (data.alreadyVerified) {
             show('이미 가입된 계정이에요. 로그인 화면으로 이동할게요…', true);
           } else if (data.ready) {
@@ -129,10 +193,14 @@
           } else {
             show('가입 완료! 인증 메일을 확인해주세요.', true);
           }
-          form.reset();
+          form.reset(); all.checked = false;
           if (data.alreadyVerified || data.ready) {
             var nx = new URLSearchParams(location.search).get('next');
-            var dest = 'login.html' + (nx ? '?next=' + encodeURIComponent(nx) : '');
+            var ap = new URLSearchParams(location.search).get('app');
+            var q  = [];
+            if (nx) q.push('next=' + encodeURIComponent(nx));
+            if (ap) q.push('app=' + encodeURIComponent(ap));
+            var dest = 'login.html' + (q.length ? '?' + q.join('&') : '');
             setTimeout(function () { window.location.href = dest; }, 1400);
           }
         } catch (err) {
