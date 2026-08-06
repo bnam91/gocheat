@@ -41,25 +41,23 @@
         //   전할 건 «지금 공짜 / 나중에 유료 / 금액은 예시» 셋뿐이라 두 줄로 줄인다.
         //     1행: 지금 얼마인가        → "무료"
         //     2행: 나중엔 얼마인가(예시) → "이벤트 후 ₩9,900/월 · 예시"
-        //   무료 등급은 «언제나» ₩0 이고, 유료 등급이 «지금만» 무료다. 둘을 구분해 쓴다
-        //   (둘 다 "무료"로 쓰면 무료 카드에 '무료'가 등급명·가격으로 두 번 나온다)
+        //   ★카드는 «금액» 하나만 말한다. "이벤트라 무료"는 절 상단 배너가,
+        //     "금액은 예시"는 절 상단 고지가 이미 말했다 — 카드마다 되풀이하지 않는다.
         var priceHtml = (p.id === 'free')
           ? '<span class="plan-amount">' + esc(p.price) + '</span>'
               + '<span class="plan-per"> / ' + esc(p.per) + '</span>'
-          : '<span class="plan-amount">무료</span>'
-              + '<span class="plan-now">이벤트 기간</span>';
+          : '<span class="plan-amount">무료</span>';
 
         return '<div class="plan-card' + (p.now ? ' plan-card-now' : '') + '">'
-          + '<p class="plan-ribbon">' + esc(p.ribbon || '') + '</p>'
+          + (p.ribbon ? '<p class="plan-ribbon">' + esc(p.ribbon) + '</p>' : '')
           + '<h3 class="plan-name">' + esc(p.name) + '</h3>'
           + '<p class="plan-price">' + priceHtml + '</p>'
           + '<p class="plan-price-note">' + (p.id === 'free'
               ? '언제나 무료'
-              : '이벤트 후 ' + esc(p.price) + ' / ' + esc(p.per)
-                + ' <span class="dummy-tag dummy-tag-sm">예시</span>') + '</p>'
+              : '이후 ' + esc(p.price) + ' / ' + esc(p.per)) + '</p>'
           + '<div class="plan-divider"></div>'
           + '<ul class="plan-features">' + feats + '</ul>'
-          + '<a href="signup.html" class="plan-cta">무료로 사용하기 →</a>'
+          + '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
           + '</div>';
       }).join('');
 

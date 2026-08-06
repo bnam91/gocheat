@@ -297,7 +297,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 /* ===== APP DETAIL (goditor.html) ===== */
 .detail { max-width: var(--read); margin: 0 auto; padding: 56px 24px 40px; text-align: center; }
-.detail-inner { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.detail-inner { display: flex; flex-direction: column; align-items: center; gap: 26px; }
 .detail-back { font-family: var(--mono); font-size: 9px; color: var(--subtle); letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.15s; align-self: center; }
 .detail-back:hover { color: var(--fg); }
 .detail-back:focus-visible { outline: none; color: var(--accent); }
@@ -399,7 +399,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 /* ===== PRICING (pricing.html) ===== */
 /* 4단 카드는 680px 안에 안 들어간다 → 이 페이지만 넓은 컨테이너를 쓴다. 토큰·컴포넌트는 그대로 재사용. */
 .pricing { max-width: 1040px; margin: 0 auto; padding: 8px 24px 64px; text-align: center; }
-.pricing-inner { display: flex; flex-direction: column; align-items: center; gap: 13px; }
+.pricing-inner { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .pricing-title { font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--fg); }
 .pricing-sub { font-size: var(--fs-sm); color: var(--muted); line-height: 1.75; max-width: 62ch; }
 
@@ -412,19 +412,23 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .event-banner-tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
 .event-banner-text { font-size: 11px; font-weight: 600; color: var(--fg); }
 
-.plan-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; margin-top: 24px; align-items: stretch; }
+.plan-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; margin-top: 30px; align-items: stretch; }
 .plan-card {
   background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 22px 18px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
   transition: border-color 0.2s, background 0.2s, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
 }
 .plan-card:hover { border-color: var(--border-strong); background: var(--bg-elev-hi); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.40); }
 .plan-card-featured { border-color: rgba(201,242,58,0.42); }
-.plan-ribbon { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); min-height: 12px; }
+.plan-ribbon { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+/* ★리본이 한 카드에만 있으면 그 카드만 아래로 밀려 이름줄이 어긋난다.
+   자리를 «항상» 비워둬서 네 장의 기준선을 맞춘다. */
+.plan-card::before { content: ''; display: block; height: 14px; }
+.plan-card:has(.plan-ribbon)::before { display: none; }
 .plan-name { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .plan-price { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; color: var(--fg); }
 .plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 14px; }
-.plan-divider { width: 100%; border-top: 1px solid var(--border); margin: 4px 0; }
+.plan-divider { width: 100%; border-top: 1px solid var(--border); margin: 6px 0; }
 .plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; width: 100%; flex: 1; }
 .plan-features li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; display: flex; gap: 7px; align-items: baseline; justify-content: flex-start; text-align: left; }
 .plan-features .feature-dot { color: var(--accent); font-family: var(--mono); flex-shrink: 0; }
