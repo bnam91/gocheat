@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>이메일 찾기 · 소문의섬</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">소문의섬</a>
+      <div class="nav-links">
+        <a href="/#apps">앱</a>
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
+      </div>
+    </nav>
+  </header>
+  <section class="auth">
+    <p class="section-label">이메일 찾기</p>
+    <h1 class="auth-title">가입한 이메일을 찾아드려요</h1>
+    <p class="auth-sub">가입할 때 입력한 이름과 휴대전화를 넣어주세요.</p>
+    <div class="auth-card">
+      <form id="find-form" class="signup-form" novalidate>
+        <label class="signup-label" for="name">이름</label>
+        <input id="name" type="text" class="signup-input" placeholder="가입할 때 입력한 이름" autocomplete="name" maxlength="40" required />
+        <label class="signup-label" for="phone">휴대전화</label>
+        <input id="phone" type="tel" class="signup-input" placeholder="01012345678" autocomplete="tel" inputmode="numeric" maxlength="11" required />
+        <button type="submit" class="signup-submit" id="find-submit">이메일 찾기</button>
+        <p class="signup-msg" id="find-msg" role="status" aria-live="polite"></p>
+      </form>
+      <div class="find-result" id="find-result" hidden>
+        <p class="find-result-label">가입된 이메일</p>
+        <p class="find-result-value" id="find-email-value">—</p>
+        <p class="find-result-note">보안을 위해 일부만 보여드려요. 전체 주소가 기억나지 않으면 <a href="mailto:coq3820@gmail.com">문의</a>해 주세요.</p>
+        <a href="login.html" class="plan-cta" style="display:block;text-decoration:none;margin-top:14px">로그인하러 가기 →</a>
+      </div>
+    </div>
+    <p class="auth-links">
+      <a href="login.html">로그인</a>
+      <span class="sep">|</span>
+      <a href="find-password.html">비밀번호 찾기</a>
+      <span class="sep">|</span>
+      <a href="signup.html">회원가입</a>
+    </p>
+  </section>
+  <footer>
+    <div class="footer-inner">
+      <span>비밀이라 부르기엔 아까운 기술들 © 소문의섬<br />coq3820@gmail.com</span>
+      <div class="footer-links">
+        <a href="terms.html">이용약관</a>
+        <a href="privacy.html">개인정보 처리방침</a>
+      </div>
+      <div id="biz-info"></div>
+    </div>
+  </footer>
+  <script>
+    (function () {
+      var form = document.getElementById("find-form");
+      var msg = document.getElementById("find-msg");
+      var box = document.getElementById("find-result");
+      var val = document.getElementById("find-email-value");
+      var btn = document.getElementById("find-submit");
+      var phone = document.getElementById("phone");
+      phone.addEventListener("input", function () {
+        phone.value = phone.value.replace(/[^0-9]/g, "").slice(0, 11);
+      });
+      function say(t, ok) { msg.textContent = t; msg.className = "signup-msg " + (ok ? "signup-msg-ok" : "signup-msg-error"); }
+      var REASON = {
+        invalid_input: "이름과 휴대전화를 정확히 입력해 주세요.",
+        not_found: "입력하신 정보와 일치하는 계정을 찾지 못했어요.",
+        too_many_attempts: "시도가 너무 많아요. 잠시 후 다시 시도해 주세요.",
+        internal_error: "서버 오류예요. 잠시 후 다시 시도해 주세요."
+      };
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        var name = (document.getElementById("name").value || "").trim();
+        var ph = (phone.value || "").trim();
+        if (!name) return say("이름을 입력해 주세요.", false);
+        if (ph.length < 10) return say("휴대전화 번호를 정확히 입력해 주세요.", false);
+        btn.disabled = true; var o = btn.textContent; btn.textContent = "찾는 중…"; say("", true);
+        try {
+          var r = await fetch("/api/license/find-email", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name, phone: ph })
+          });
+          var j = await r.json().catch(function () { return {}; });
+          if (r.status === 200 && j.ok && j.email) {
+            val.textContent = j.email; box.hidden = false; form.style.display = "none";
+            return;
+          }
+          say(REASON[j.reason] || "찾지 못했어요. 잠시 후 다시 시도해 주세요.", false);
+        } catch (err) {
+          say("네트워크 오류예요. 잠시 후 다시 시도해 주세요.", false);
+        } finally { btn.disabled = false; btn.textContent = o; }
+      });
+    })();
+  </script>
+  <script src="footer.js"></script>
+</body>
+</html>

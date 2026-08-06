@@ -654,3 +654,56 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 @media (max-width: 700px) {
   .detail-desc, .detail-note, .detail-tagline, .feature-list { max-width: 100%; }
 }
+
+/* ── 인증 화면 (login / signup) — 담백한 형태 ───────────────────
+   ★박스 입력을 «밑줄»로 바꾸는 것이 심플해 보이는 가장 큰 요인이다.
+   기존 .signup-input 을 «대체»하지 않고 .auth 안에서만 모양을 바꾼다
+   (다른 곳의 입력창은 그대로 — 룩어라이크 클래스를 새로 만들지 않는다). */
+.auth { max-width: 400px; margin: 0 auto; padding: 64px 24px 72px; }
+.auth-mark { width: 52px; height: 52px; display: block; margin: 0 auto 14px; }
+.auth-title { font-size: var(--fs-h2); font-weight: 800; letter-spacing: -.03em; text-align: center; color: var(--fg); }
+.auth-sub { font-size: var(--fs-sm); color: var(--muted); text-align: center; line-height: 1.7; margin-top: 8px; }
+
+.auth-card {
+  margin-top: 26px; border: 1px solid var(--border); border-radius: 12px;
+  padding: 26px 22px 22px; display: flex; flex-direction: column; gap: 4px; background: transparent;
+}
+/* 밑줄 입력 */
+.auth-card .signup-input {
+  background: transparent; border: 0; border-bottom: 1px solid var(--border-strong);
+  border-radius: 0; padding: 13px 2px; text-align: left; font-size: var(--fs-body);
+}
+.auth-card .signup-input:focus { border-bottom-color: var(--accent); background: transparent; box-shadow: none; }
+.auth-card .signup-input::placeholder { color: var(--subtle); }
+.auth-card .signup-label { align-self: flex-start; margin-top: 12px; }
+.auth-card .signup-form { max-width: 100%; gap: 2px; align-items: stretch; }
+.auth-card .signup-submit {
+  width: 100%; margin-top: 20px; padding: 13px 0; font-size: var(--fs-body); font-weight: 700;
+  background: var(--accent); color: var(--accent-fg); border-color: var(--accent);
+}
+.auth-card .signup-submit:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-fg); }
+.auth-card .signup-msg { text-align: center; }
+
+/* ★카드 «밖» 하단 링크 한 줄 — 지금 우리에겐 이게 없었다 */
+.auth-links {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  margin-top: 20px; font-size: var(--fs-sm); color: var(--subtle);
+}
+.auth-links a { color: var(--muted); }
+.auth-links a:hover { color: var(--fg); }
+.auth-links .sep { color: var(--border-strong); }
+
+@media (max-width: 560px) { .auth { padding: 48px 20px 56px; } }
+.auth-inner { display: flex; flex-direction: column; align-items: center; }
+.auth .auth-card { width: 100%; }
+.auth-card .agree-box { margin-top: 18px; }
+.auth-card .field-row { margin-top: 2px; }
+.auth-card .field-btn { border-radius: 0; border: 0; border-bottom: 1px solid var(--border-strong); padding: 0 10px; }
+.find-result { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.find-result[hidden] { display: none; }
+.find-result-label { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); text-transform: uppercase; letter-spacing: .06em; }
+.find-result-value { font-size: 20px; font-weight: 700; color: var(--fg); margin: 8px 0 10px; letter-spacing: -.01em; word-break: break-all; }
+.find-result-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.7; }
+.find-result-note a { color: var(--accent); }
+.find-manual { font-size: var(--fs-body); color: var(--muted); line-height: 1.85; margin-bottom: 18px; }
+.find-manual b { color: var(--fg); }

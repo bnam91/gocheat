@@ -25,72 +25,47 @@
     </nav>
   </header>
 
-  <section class="signup">
-    <div class="signup-inner">
-      <img src="/public/icons/goditor.png" alt="" class="brand-mark" id="lg-mark" width="48" height="48" hidden />
-      <p class="section-label" id="lg-label">소문의섬 로그인</p>
-      <h1 class="signup-title" id="login-title">소문의섬 계정으로 로그인하세요.</h1>
-      <p class="signup-sub" id="login-sub">계정 하나로 소문의섬의 앱을 모두 쓰실 수 있어요.</p>
+  <section class="auth">
+    <img src="/public/icons/goditor.png" alt="" class="auth-mark" id="lg-mark" width="52" height="52" hidden />
+    <p class="section-label" id="lg-label">소문의섬 로그인</p>
+    <h1 class="auth-title" id="login-title">계정 하나로 앱을 씁니다</h1>
+    <p class="auth-sub" id="login-sub">가입할 때 쓴 이메일과 비밀번호를 입력하세요.</p>
 
+    <div class="auth-card">
       <form id="login-form" class="signup-form" novalidate>
         <label class="signup-label" for="email">이메일</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          class="signup-input"
-          placeholder="you@example.com"
-          autocomplete="email"
-          required
-        />
+        <input id="email" name="email" type="email" class="signup-input"
+               placeholder="you@example.com" autocomplete="email" required />
 
         <label class="signup-label" for="password">비밀번호</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          class="signup-input"
-          placeholder="••••••••"
-          autocomplete="current-password"
-          required
-        />
+        <input id="password" name="password" type="password" class="signup-input"
+               placeholder="••••••••" autocomplete="current-password" required />
 
-        <button type="submit" class="signup-submit" id="login-submit">로그인 →</button>
+        <button type="submit" class="signup-submit" id="login-submit">로그인</button>
         <p class="signup-msg" id="login-msg" role="status" aria-live="polite"></p>
       </form>
 
       <!-- 로그인 성공 후 상태 패널 -->
       <div class="account-panel" id="account-panel">
         <div class="account-rows">
-          <div class="account-row">
-            <span class="account-key">계정</span>
-            <span class="account-val" id="acc-email">—</span>
-          </div>
-          <div class="account-row">
-            <span class="account-key">이용 등급</span>
-            <span class="account-val account-val-accent" id="acc-plan">—</span>
-          </div>
-          <div class="account-row">
-            <span class="account-key">이용 기한</span>
-            <span class="account-val" id="acc-until">—</span>
-          </div>
+          <div class="account-row"><span class="account-key">계정</span><span class="account-val" id="acc-email">—</span></div>
+          <div class="account-row"><span class="account-key">이용 등급</span><span class="account-val account-val-accent" id="acc-plan">—</span></div>
+          <div class="account-row"><span class="account-key">이용 기한</span><span class="account-val" id="acc-until">—</span></div>
         </div>
-        <a
-          id="download-link"
-          class="plan-cta"
-          style="display:block;text-decoration:none;max-width:260px;"
-          href="https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
-          target="_blank"
-          rel="noopener"
-         id="go-app">앱 목록으로 →</a>
-        <p class="order-warn" id="acc-note">
-          같은 이메일·비밀번호로 앱에서도 로그인하실 수 있어요.
-        </p>
+        <a id="go-app" class="plan-cta" style="display:block;text-decoration:none;max-width:260px;" href="/#apps">앱 목록으로 →</a>
+        <p class="order-warn" id="acc-note">같은 이메일·비밀번호로 앱에서도 로그인하실 수 있어요.</p>
         <button type="button" class="plan-cta plan-cta-quiet" id="logout-btn" style="max-width:200px;">다른 계정으로 로그인</button>
       </div>
-
-      <p class="login-alt" id="login-alt">아직 계정이 없으신가요? <a href="signup.html">회원가입하기 →</a></p>
     </div>
+
+    <!-- ★카드 밖 한 줄. 네이버가 심플해 보이는 이유 중 하나다 -->
+    <p class="auth-links" id="login-alt">
+      <a href="find-email.html">이메일 찾기</a>
+      <span class="sep">|</span>
+      <a href="find-password.html">비밀번호 찾기</a>
+      <span class="sep">|</span>
+      <a href="signup.html">회원가입</a>
+    </p>
   </section>
 
   <footer>
