@@ -1,5 +1,5 @@
 [
-  {"id":"goditor","name":"GODITOR","tagline":"상세페이지 전용 디자인 에디터","description":"상세페이지를 블록 단위로 조립하는 디자인 에디터. 섹션·이미지·텍스트를 드래그로 배치하고 즉시 미리보기로 확인하세요.","category":"Design","price":"paid","badge":"이벤트 무료","downloadUrl":"","buyUrl":"","detailUrl":"goditor.html","icon":"public/icons/goditor.png","minOS":"macOS 13","tags":["paid","macOS","design"],"plans":[
+  {"id":"goditor","name":"GODITOR","tagline":"상세페이지 전용 디자인 에디터","description":"상세페이지를 블록 단위로 조립하는 디자인 에디터. 섹션·이미지·텍스트를 드래그로 배치하고 즉시 미리보기로 확인하세요.","category":"Design","price":"paid","badge":"이벤트 무료","downloadUrl":"","buyUrl":"","detailUrl":"goditor.html","icon":"public/icons/goditor.png","minOS":"macOS 12","tags":["paid","macOS","design"],"plans":[
   {"id":"free","name":"무료","price":"₩0","per":"월","ribbon":"","now":true,"features":[
   {"t":"프로젝트 1개 · 섹션 10개","ok":true},
   {"t":"AI 이미지 월 5장","ok":true},
