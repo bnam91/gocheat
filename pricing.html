@@ -28,7 +28,7 @@
 
   <section class="pricing">
     <div class="pricing-inner">
-      <p class="section-label">Goditor 요금제</p>
+      <p class="section-label">GODITOR 요금제</p>
 
       <div class="event-banner">
         <span class="event-banner-tag">Event</span>
@@ -41,6 +41,12 @@
         아래 유료 등급은 이벤트 종료 이후를 위한 준비 중인 안내입니다.
       </p>
 
+      <p class="dummy-notice">
+        <span class="dummy-tag">예시</span>
+        아래 유료 등급의 <b>가격과 기능은 확정 전 예시</b>입니다. 실제 출시 내용과 다를 수 있어요.
+        지금은 이벤트 기간이라 <b>전 기능이 무료</b>이고, 결제는 아직 받지 않습니다.
+      </p>
+
       <!-- ★결제수단은 «버튼을 누르기 전에» 알려야 한다. 카드 결제를 기대하고 눌렀다가 어긋나지 않게. -->
       <p class="pay-notice">
         <span class="pay-notice-tag">결제 수단</span>
@@ -49,7 +55,7 @@
 
       <div class="plan-grid">
         <!-- 무료 -->
-        <div class="plan-card plan-card-featured">
+        <div class="plan-card plan-card-now">
           <p class="plan-ribbon">지금 이용 가능</p>
           <h2 class="plan-name">무료</h2>
           <p class="plan-price">₩0</p>
@@ -67,24 +73,32 @@
         <div class="plan-card">
           <p class="plan-ribbon"></p>
           <h2 class="plan-name">베이직</h2>
-          <p class="plan-price">준비 중</p>
-          <p class="plan-price-note">가격 안내 예정</p>
+          <p class="plan-price">₩9,900 <span class="plan-per">/ 월</span></p>
+          <p class="plan-price-note"><span class="dummy-tag dummy-tag-sm">예시</span> 가격 확정 전</p>
           <div class="plan-divider"></div>
           <ul class="plan-features">
-            <li><span class="feature-dot">·</span> <span class="plan-feature-tbd">제공 기능 준비 중</span></li>
+            <li><span class="feature-dot">·</span> 프로젝트 3개 · 섹션 30개</li>
+            <li><span class="feature-dot">·</span> AI 이미지 월 20장</li>
+            <li><span class="feature-dot">·</span> 내보내기 1× (워터마크 있음)</li>
+            <li class="plan-feat-off"><span class="feature-dot">×</span> 피그마 연동</li>
+            <li class="plan-feat-off"><span class="feature-dot">×</span> 마켓 동기화</li>
           </ul>
           <button type="button" class="plan-cta" data-plan="basic" data-plan-label="베이직">구매 신청하기</button>
         </div>
 
         <!-- 프로 -->
-        <div class="plan-card">
-          <p class="plan-ribbon"></p>
+        <div class="plan-card plan-card-featured">
+          <p class="plan-ribbon">추천</p>
           <h2 class="plan-name">프로</h2>
-          <p class="plan-price">준비 중</p>
-          <p class="plan-price-note">가격 안내 예정</p>
+          <p class="plan-price">₩29,000 <span class="plan-per">/ 월</span></p>
+          <p class="plan-price-note"><span class="dummy-tag dummy-tag-sm">예시</span> 가격 확정 전</p>
           <div class="plan-divider"></div>
           <ul class="plan-features">
-            <li><span class="feature-dot">·</span> <span class="plan-feature-tbd">제공 기능 준비 중</span></li>
+            <li><span class="feature-dot">·</span> 프로젝트 20개 · 섹션 무제한</li>
+            <li><span class="feature-dot">·</span> AI 이미지 월 200장</li>
+            <li><span class="feature-dot">·</span> 내보내기 2× (워터마크 없음)</li>
+            <li><span class="feature-dot">·</span> 피그마 연동</li>
+            <li class="plan-feat-off"><span class="feature-dot">×</span> 마켓 동기화</li>
           </ul>
           <button type="button" class="plan-cta" data-plan="pro" data-plan-label="프로">구매 신청하기</button>
         </div>
@@ -93,11 +107,15 @@
         <div class="plan-card">
           <p class="plan-ribbon"></p>
           <h2 class="plan-name">프로맥스</h2>
-          <p class="plan-price">준비 중</p>
-          <p class="plan-price-note">가격 안내 예정</p>
+          <p class="plan-price">₩59,000 <span class="plan-per">/ 월</span></p>
+          <p class="plan-price-note"><span class="dummy-tag dummy-tag-sm">예시</span> 가격 확정 전</p>
           <div class="plan-divider"></div>
           <ul class="plan-features">
-            <li><span class="feature-dot">·</span> <span class="plan-feature-tbd">제공 기능 준비 중</span></li>
+            <li><span class="feature-dot">·</span> 프로젝트 무제한</li>
+            <li><span class="feature-dot">·</span> AI 이미지 월 1,000장</li>
+            <li><span class="feature-dot">·</span> 내보내기 3× (워터마크 없음)</li>
+            <li><span class="feature-dot">·</span> 피그마 연동</li>
+            <li><span class="feature-dot">·</span> 마켓 동기화</li>
           </ul>
           <button type="button" class="plan-cta" data-plan="promax" data-plan-label="프로맥스">구매 신청하기</button>
         </div>
@@ -141,7 +159,7 @@
 
   <footer>
     <div class="footer-inner">
-      <span>비밀이라 부르기엔 아까운 기술들 © 소문의섬<br />hello@example.com</span>
+      <span>비밀이라 부르기엔 아까운 기술들 © 소문의섬<br />coq3820@gmail.com</span>
       <div class="footer-links">
         <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
         <a href="https://github.com/bnam91" target="_blank" rel="noopener">GitHub</a>
