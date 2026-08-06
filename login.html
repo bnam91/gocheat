@@ -19,7 +19,7 @@
       <a href="/" class="logo">소문의섬</a>
       <div class="nav-links">
         <a href="/#apps">앱</a>
-        <a href="pricing.html">요금제</a>
+        <a href="/goditor.html#pricing">요금제</a>
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
       </div>
@@ -173,7 +173,7 @@
         document.getElementById('acc-plan').textContent  = '기간 만료';
         document.getElementById('acc-until').textContent = fmtDate(data.accessUntil);
         dlLink.textContent = '요금제 보고 연장하기 →';
-        dlLink.href = data.purchaseUrl || 'pricing.html';
+        dlLink.href = data.purchaseUrl || '/goditor.html#pricing';
         dlLink.removeAttribute('target');
         accNote.textContent = '이용 기간이 끝났어요. 요금제를 선택하면 계속 사용할 수 있습니다.';
         form.style.display = 'none';

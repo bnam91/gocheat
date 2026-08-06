@@ -6,273 +6,43 @@
   <meta name="color-scheme" content="dark" />
   <meta name="theme-color" content="#0B0B0E" />
   <title>요금제 · 소문의섬</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" sizes="32x32" href="/public/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png" />
+  <!--
+    ★이 페이지는 «넘겨주는» 페이지다.
+
+    소문의섬은 플랫폼이고 요금제는 «앱별»이다. 앱이 늘면 pricing.html 하나로는
+    감당이 안 되므로, 실제 요금제는 각 앱 상세 페이지 안에 둔다
+    (지금은 GODITOR 하나 → /goditor.html#pricing).
+
+    그런데 이 주소를 없애면 안 된다:
+      api/license/login.js 의 PURCHASE_URL 기본값이 '/pricing.html' 이고,
+      만료된 사용자의 앱 화면 "요금제 보기" 버튼이 이 주소로 온다.
+    지워버리면 그 버튼이 404 가 된다. 그래서 «살려두고 넘긴다» —
+    이러면 Vercel 환경변수(PURCHASE_URL)를 건드릴 필요가 없다.
+  -->
+  <link rel="canonical" href="/goditor.html#pricing" />
+  <meta http-equiv="refresh" content="0; url=/goditor.html#pricing" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="/" class="logo">소문의섬</a>
-      <div class="nav-links">
-        <a href="/#apps">앱</a>
-        <a href="pricing.html">요금제</a>
-        <a href="login.html">로그인</a>
-        <a href="signup.html">회원가입</a>
-      </div>
-    </nav>
-  </header>
-
-  <section class="pricing">
-    <div class="pricing-inner">
+  <section class="signup">
+    <div class="signup-inner">
+      <img src="/public/icons/goditor.png" alt="GODITOR" class="brand-mark" width="48" height="48" />
       <p class="section-label">GODITOR 요금제</p>
-
-      <div class="event-banner">
-        <span class="event-banner-tag">Event</span>
-        <span class="event-banner-text">이벤트 기간 — 전체 기능 무료</span>
-      </div>
-
-      <h1 class="pricing-title">지금은 전부 무료입니다.</h1>
-      <p class="pricing-sub">
-        이벤트 기간에는 가입만 하면 모든 기능을 쓸 수 있어요.<br />
-        아래 유료 등급은 이벤트 종료 이후를 위한 준비 중인 안내입니다.
+      <h1 class="signup-title">요금제 페이지로 이동합니다.</h1>
+      <p class="signup-sub">
+        요금제는 앱마다 따로 있어요. GODITOR 요금제는 앱 소개 페이지 안에 있습니다.<br />
+        자동으로 넘어가지 않으면 아래를 눌러주세요.
       </p>
-
-      <p class="dummy-notice">
-        <span class="dummy-tag">예시</span>
-        아래 유료 등급의 <b>가격과 기능은 확정 전 예시</b>입니다. 실제 출시 내용과 다를 수 있어요.
-        지금은 이벤트 기간이라 <b>전 기능이 무료</b>이고, 결제는 아직 받지 않습니다.
-      </p>
-
-      <!-- ★결제수단은 «버튼을 누르기 전에» 알려야 한다. 카드 결제를 기대하고 눌렀다가 어긋나지 않게. -->
-      <p class="pay-notice">
-        <span class="pay-notice-tag">결제 수단</span>
-        아직 정식 서비스 전이라 <strong>계좌이체(무통장입금)만</strong> 가능해요. 카드·간편결제는 준비 중입니다.
-      </p>
-
-      <div class="plan-grid">
-        <!-- 무료 -->
-        <div class="plan-card plan-card-now">
-          <p class="plan-ribbon">지금 이용 가능</p>
-          <h2 class="plan-name">무료</h2>
-          <p class="plan-price">₩0</p>
-          <p class="plan-price-note">이벤트 기간 한정</p>
-          <div class="plan-divider"></div>
-          <ul class="plan-features">
-            <li><span class="feature-dot">·</span> 이벤트 기간 전체 기능 이용</li>
-            <li><span class="feature-dot">·</span> 가입 즉시 사용 (이메일 인증 없음)</li>
-            <li><span class="feature-dot">·</span> macOS 13 이상</li>
-          </ul>
-          <a href="signup.html" class="plan-cta" style="display:block;text-decoration:none;">지금 시작하기 →</a>
-        </div>
-
-        <!-- 베이직 -->
-        <div class="plan-card">
-          <p class="plan-ribbon"></p>
-          <h2 class="plan-name">베이직</h2>
-          <p class="plan-price">₩9,900 <span class="plan-per">/ 월</span></p>
-          <p class="plan-price-note"><span class="dummy-tag dummy-tag-sm">예시</span> 가격 확정 전</p>
-          <div class="plan-divider"></div>
-          <ul class="plan-features">
-            <li><span class="feature-dot">·</span> 프로젝트 3개 · 섹션 30개</li>
-            <li><span class="feature-dot">·</span> AI 이미지 월 20장</li>
-            <li><span class="feature-dot">·</span> 내보내기 1× (워터마크 있음)</li>
-            <li class="plan-feat-off"><span class="feature-dot">×</span> 피그마 연동</li>
-            <li class="plan-feat-off"><span class="feature-dot">×</span> 마켓 동기화</li>
-          </ul>
-          <button type="button" class="plan-cta" data-plan="basic" data-plan-label="베이직">구매 신청하기</button>
-        </div>
-
-        <!-- 프로 -->
-        <div class="plan-card plan-card-featured">
-          <p class="plan-ribbon">추천</p>
-          <h2 class="plan-name">프로</h2>
-          <p class="plan-price">₩29,000 <span class="plan-per">/ 월</span></p>
-          <p class="plan-price-note"><span class="dummy-tag dummy-tag-sm">예시</span> 가격 확정 전</p>
-          <div class="plan-divider"></div>
-          <ul class="plan-features">
-            <li><span class="feature-dot">·</span> 프로젝트 20개 · 섹션 무제한</li>
-            <li><span class="feature-dot">·</span> AI 이미지 월 200장</li>
-            <li><span class="feature-dot">·</span> 내보내기 2× (워터마크 없음)</li>
-            <li><span class="feature-dot">·</span> 피그마 연동</li>
-            <li class="plan-feat-off"><span class="feature-dot">×</span> 마켓 동기화</li>
-          </ul>
-          <button type="button" class="plan-cta" data-plan="pro" data-plan-label="프로">구매 신청하기</button>
-        </div>
-
-        <!-- 프로맥스 -->
-        <div class="plan-card">
-          <p class="plan-ribbon"></p>
-          <h2 class="plan-name">프로맥스</h2>
-          <p class="plan-price">₩59,000 <span class="plan-per">/ 월</span></p>
-          <p class="plan-price-note"><span class="dummy-tag dummy-tag-sm">예시</span> 가격 확정 전</p>
-          <div class="plan-divider"></div>
-          <ul class="plan-features">
-            <li><span class="feature-dot">·</span> 프로젝트 무제한</li>
-            <li><span class="feature-dot">·</span> AI 이미지 월 1,000장</li>
-            <li><span class="feature-dot">·</span> 내보내기 3× (워터마크 없음)</li>
-            <li><span class="feature-dot">·</span> 피그마 연동</li>
-            <li><span class="feature-dot">·</span> 마켓 동기화</li>
-          </ul>
-          <button type="button" class="plan-cta" data-plan="promax" data-plan-label="프로맥스">구매 신청하기</button>
-        </div>
-      </div>
-
-      <!-- 구매 신청 폼 -->
-      <div class="order-panel" id="order-panel">
-        <p class="order-panel-plan" id="order-plan-label">—</p>
-        <p class="order-panel-title">무통장입금 구매 신청</p>
-        <p class="pay-notice pay-notice-inline">
-          현재 가능한 결제 수단은 <strong>계좌이체(무통장입금)</strong> 하나예요.<br />
-          신청하면 입금 안내를 받으실 수 있고, <strong>이 단계에서 결제되지는 않습니다.</strong>
-        </p>
-        <form id="order-form" class="signup-form" novalidate>
-          <label class="signup-label" for="order-email">가입한 이메일</label>
-          <input id="order-email" type="email" class="signup-input" placeholder="you@example.com" autocomplete="email" required />
-          <label class="signup-label" for="order-depositor">입금자명</label>
-          <input id="order-depositor" type="text" class="signup-input" placeholder="입금하실 분 성함" autocomplete="name" maxlength="40" required />
-          <button type="submit" class="signup-submit" id="order-submit">신청하기 →</button>
-          <p class="signup-msg" id="order-msg" role="status" aria-live="polite"></p>
-        </form>
-        <p class="order-warn">
-          입금자명이 신청과 다르면 확인이 늦어질 수 있어요.<br />
-          아직 계정이 없다면 <a href="signup.html" style="color:var(--accent);font-weight:600;">먼저 가입</a>해 주세요.
-        </p>
-      </div>
-
-      <!-- 신청 완료 결과 -->
-      <div class="order-panel" id="result-panel">
-        <p class="order-panel-plan">신청 접수 완료</p>
-        <p class="order-panel-title">계좌이체(무통장입금) 안내</p>
-        <div class="order-result" id="result-rows"></div>
-        <p class="order-warn">
-          ⚠️ <strong>이 화면을 캡처해 두세요.</strong> 주문번호는 이 화면에서만 확인할 수 있어요.<br />
-          입금이 확인되면 계정에 반영됩니다. (보통 1영업일 이내)
-        </p>
-        <button type="button" class="plan-cta plan-cta-quiet" id="result-close" style="max-width:200px;">닫기</button>
-      </div>
+      <a href="/goditor.html#pricing" class="cta-primary">GODITOR 요금제 보기 →</a>
     </div>
   </section>
 
-  <footer>
-    <div class="footer-inner">
-      <span>비밀이라 부르기엔 아까운 기술들 © 소문의섬<br />coq3820@gmail.com</span>
-      <div class="footer-links">
-        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
-        <a href="https://github.com/bnam91" target="_blank" rel="noopener">GitHub</a>
-      </div>
-    <div id="biz-info"></div>
-    </div>
-  </footer>
-
   <script>
-    (function () {
-      const panel      = document.getElementById('order-panel');
-      const resultPnl  = document.getElementById('result-panel');
-      const resultRows = document.getElementById('result-rows');
-      const planLabel  = document.getElementById('order-plan-label');
-      const form       = document.getElementById('order-form');
-      const emailInput = document.getElementById('order-email');
-      const depInput   = document.getElementById('order-depositor');
-      const submit     = document.getElementById('order-submit');
-      const msg        = document.getElementById('order-msg');
-      const emailRe    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      let currentPlan  = null;
-
-      function show(text, ok) {
-        msg.textContent = text;
-        msg.className = 'signup-msg ' + (ok ? 'signup-msg-ok' : 'signup-msg-error');
-      }
-
-      // 로그인 페이지에서 남긴 이메일이 있으면 채워준다 (비밀번호·토큰은 저장하지 않는다)
-      try {
-        const saved = sessionStorage.getItem('goditor_email');
-        if (saved) emailInput.value = saved;
-      } catch (e) { /* 스토리지 차단 환경 무시 */ }
-
-      document.querySelectorAll('[data-plan]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          currentPlan = btn.getAttribute('data-plan');
-          planLabel.textContent = btn.getAttribute('data-plan-label') + ' 신청';
-          resultPnl.classList.remove('is-open');
-          panel.classList.add('is-open');
-          show('', true);
-          panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          setTimeout(function () { (emailInput.value ? depInput : emailInput).focus(); }, 350);
-        });
-      });
-
-      document.getElementById('result-close').addEventListener('click', function () {
-        resultPnl.classList.remove('is-open');
-      });
-
-      function row(key, val) {
-        const d = document.createElement('div');
-        d.className = 'order-result-row';
-        const k = document.createElement('span'); k.className = 'order-result-key'; k.textContent = key;
-        const v = document.createElement('span'); v.className = 'order-result-val'; v.textContent = val;
-        d.appendChild(k); d.appendChild(v);
-        return d;
-      }
-
-      const ERRORS = {
-        invalid_email:      '이메일 형식이 올바르지 않아요.',
-        invalid_plan:       '알 수 없는 요금제예요. 다시 선택해 주세요.',
-        depositor_required: '입금자명을 입력해 주세요.',
-        account_not_found:  '가입되지 않은 이메일이에요. 먼저 회원가입을 해주세요.',
-        internal_error:     '서버 오류예요. 잠시 후 다시 시도해 주세요.',
-      };
-
-      form.addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const email = (emailInput.value || '').trim();
-        const depositor = (depInput.value || '').trim();
-
-        if (!emailRe.test(email)) { show('이메일 형식이 올바르지 않아요.', false); emailInput.focus(); return; }
-        if (!depositor)           { show('입금자명을 입력해 주세요.', false); depInput.focus(); return; }
-        if (!currentPlan)         { show('요금제를 먼저 선택해 주세요.', false); return; }
-
-        submit.disabled = true;
-        const original = submit.textContent;
-        submit.textContent = '신청 중…';
-        show('', true);
-
-        try {
-          const r = await fetch('/api/license/order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, plan: currentPlan, depositor: depositor }),
-          });
-          const data = await r.json().catch(function () { return {}; });
-
-          if (!r.ok || !data.ok) {
-            show(ERRORS[data.error] || ('신청에 실패했어요: ' + (data.error || 'HTTP ' + r.status)), false);
-            return;
-          }
-
-          resultRows.innerHTML = '';
-          resultRows.appendChild(row('주문번호', data.orderNo));
-          resultRows.appendChild(row('요금제', data.plan));
-          resultRows.appendChild(row('입금자명', data.depositor));
-          // 라벨을 '입금 안내'로 둔다 — 실제 계좌가 들어와도, 준비 중 안내문이 와도 문장이 자연스럽다
-          resultRows.appendChild(row('입금 안내', data.bank));
-          panel.classList.remove('is-open');
-          resultPnl.classList.add('is-open');
-          resultPnl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          form.reset();
-          try { sessionStorage.setItem('goditor_email', email); } catch (e2) {}
-        } catch (err) {
-          show('네트워크 오류로 신청에 실패했어요. 잠시 후 다시 시도해 주세요.', false);
-        } finally {
-          submit.disabled = false;
-          submit.textContent = original;
-        }
-      });
-    })();
+    // meta refresh 가 막힌 환경 대비. replace 라 뒤로가기 때 이 페이지에 갇히지 않는다.
+    window.location.replace('/goditor.html#pricing');
   </script>
-  <script src="footer.js"></script>
 </body>
 </html>
