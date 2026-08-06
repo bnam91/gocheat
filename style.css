@@ -536,3 +536,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-now{ display:block; font-size:12px; font-weight:700; color:var(--accent); margin-top:2px; letter-spacing:-.01em }
 .plan-empty{ grid-column:1/-1; font-size:12px; color:var(--subtle); padding:20px 0 }
 .pricing-apps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; width:100%; max-width:520px; margin-top:8px }
+.dl-msg{ min-height:18px }
+.dl-msg-ok{ color:var(--success) }
+.dl-msg-warn{ color:var(--warn) }

@@ -19,7 +19,6 @@
       <a href="/" class="logo">소문의섬</a>
       <div class="nav-links">
         <a href="/#apps">앱</a>
-        <a href="/pricing.html">요금제</a>
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
       </div>
@@ -28,10 +27,10 @@
 
   <section class="signup">
     <div class="signup-inner">
-      <img src="/public/icons/goditor.png" alt="GODITOR" class="brand-mark" width="48" height="48" />
-      <p class="section-label">GODITOR 로그인</p>
-      <h1 class="signup-title" id="login-title">로그인하고 GODITOR를 받으세요.</h1>
-      <p class="signup-sub" id="login-sub">가입할 때 쓴 이메일과 비밀번호를 입력하세요.</p>
+      <img src="/public/icons/goditor.png" alt="" class="brand-mark" id="lg-mark" width="48" height="48" hidden />
+      <p class="section-label" id="lg-label">소문의섬 로그인</p>
+      <h1 class="signup-title" id="login-title">소문의섬 계정으로 로그인하세요.</h1>
+      <p class="signup-sub" id="login-sub">계정 하나로 소문의섬의 앱을 모두 쓰실 수 있어요.</p>
 
       <form id="login-form" class="signup-form" novalidate>
         <label class="signup-label" for="email">이메일</label>
@@ -83,9 +82,9 @@
           href="https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
           target="_blank"
           rel="noopener"
-        >GODITOR 다운로드 →</a>
+         id="go-app">앱 목록으로 →</a>
         <p class="order-warn" id="acc-note">
-          macOS 13 이상에서 쓸 수 있어요. 앱에서도 같은 이메일·비밀번호로 로그인하세요.
+          같은 이메일·비밀번호로 앱에서도 로그인하실 수 있어요.
         </p>
         <button type="button" class="plan-cta plan-cta-quiet" id="logout-btn" style="max-width:200px;">다른 계정으로 로그인</button>
       </div>
@@ -162,7 +161,7 @@
         form.style.display = 'none';
         alt.style.display = 'none';
         title.textContent = '로그인되었습니다.';
-        sub.textContent = '아래에서 GODITOR를 내려받으세요.';
+        sub.textContent = '아래에서 이어서 진행하세요.';
         panel.classList.add('is-open');
 
         // ★"받으려다 로그인한" 사람은 다운로드로 돌려보낸다. 로그인 자체가 목적이 아니었다.
@@ -176,7 +175,13 @@
           }
         } catch (e4) {}
         // ★비밀번호·세션토큰은 저장하지 않는다. 표시 연속성에 필요한 이메일만.
-        try { sessionStorage.setItem('goditor_email', data.email || email.value.trim()); } catch (e) {}
+        // ★sessionToken 을 저장한다. 전엔 «검증하는 곳이 없어 보관 이득이 없다»고 안 넣었는데,
+        //   이제 /session·/download 가 이 토큰으로 인증한다 — 저장 근거가 생겼다.
+        //   sessionStorage 라 탭을 닫으면 사라진다. 비밀번호는 여전히 저장하지 않는다.
+        try {
+          sessionStorage.setItem('sms_email', data.email || email.value.trim());
+          if (data.sessionToken) sessionStorage.setItem('sms_token', data.sessionToken);
+        } catch (e) {}
       }
 
       function showExpired(data) {
@@ -195,7 +200,7 @@
       }
 
       document.getElementById('logout-btn').addEventListener('click', function () {
-        try { sessionStorage.removeItem('goditor_email'); } catch (e) {}
+        try { sessionStorage.removeItem('sms_email'); sessionStorage.removeItem('sms_token'); sessionStorage.removeItem('sms_after_login'); } catch (e) {}
         window.location.reload();
       });
 
@@ -241,6 +246,30 @@
           submit.textContent = original;
         }
       });
+    })();
+  </script>
+
+  <script>
+    // ★계정은 «소문의섬» 계정이지 특정 앱 계정이 아니다. 기본 문구는 플랫폼 것으로 둔다.
+    //   다만 앱 페이지에서 넘어온 사람에게는 그 앱을 언급하는 편이 자연스러워서,
+    //   링크에 ?app=<id> 가 실려 오면 그 앱 이름으로 바꿔준다. 없으면 플랫폼 문구 그대로.
+    (function () {
+      var app;
+      try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
+      if (!app) return;
+      fetch('data/apps.json').then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (apps) {
+          if (!apps) return;
+          var a = apps.filter(function (x) { return x.id === app; })[0];
+          if (!a) return;
+          window.__srcApp = a;
+          var label = document.getElementById('lg-label');
+          var mark  = document.getElementById('lg-mark');
+          if (label) label.textContent = a.name + ' 로그인';
+          if (mark && a.icon) { mark.src = a.icon; mark.alt = a.name; mark.hidden = false; }
+          var go = document.getElementById('go-app');
+          if (go && a.detailUrl) { go.textContent = a.name + ' 받으러 가기 →'; go.setAttribute('href', a.detailUrl); }
+        }).catch(function () {});
     })();
   </script>
   <script src="footer.js"></script>

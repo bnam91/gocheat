@@ -19,7 +19,6 @@
       <a href="/" class="logo">소문의섬</a>
       <div class="nav-links">
         <a href="/#apps">앱</a>
-        <a href="/pricing.html">요금제</a>
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
       </div>
@@ -48,19 +47,11 @@
       </p>
 
       <div class="detail-cta">
-        <a
-          id="download-btn"
-          class="cta-primary"
-          href="https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
-          target="_blank"
-          rel="noopener"
-        >
-          GODITOR 다운로드 →
-        </a>
+        <button type="button" id="download-btn" class="cta-primary">
+          이벤트 기간 무료 다운로드 →
+        </button>
       </div>
-      <p class="detail-note dl-resume" id="dl-resume" hidden>
-        ✓ 로그인되었습니다 — <a href="#" target="_blank" rel="noopener">이어서 다운로드하기 →</a>
-      </p>
+      <p class="detail-note dl-msg" id="dl-msg" role="status" aria-live="polite" hidden></p>
       <p class="detail-note">
         지금은 <b>이벤트 기간</b>이라 가입 즉시 전체 기능을 쓸 수 있어요.
         다운로드에는 계정이 필요해요 — 없으시면 받으실 때 안내해 드립니다.
@@ -194,7 +185,7 @@
 
       // 로그인 페이지에서 남긴 이메일이 있으면 채워준다 (비밀번호·토큰은 저장하지 않는다)
       try {
-        const saved = sessionStorage.getItem('goditor_email');
+        const saved = sessionStorage.getItem('sms_email');
         if (saved) emailInput.value = saved;
       } catch (e) { /* 스토리지 차단 환경 무시 */ }
 
@@ -268,7 +259,7 @@
           resultPnl.classList.add('is-open');
           resultPnl.scrollIntoView({ behavior: 'smooth', block: 'center' });
           form.reset();
-          try { sessionStorage.setItem('goditor_email', email); } catch (e2) {}
+          try { sessionStorage.setItem('sms_email', email); } catch (e2) {}
         } catch (err) {
           show('네트워크 오류로 신청에 실패했어요. 잠시 후 다시 시도해 주세요.', false);
         } finally {
@@ -293,63 +284,107 @@
         <b>이벤트 기간이라 가입은 무료</b>이고, 가입 즉시 전 기능을 쓰실 수 있어요.
       </p>
       <div class="modal-actions">
-        <a class="cta-primary" id="dl-login" href="login.html?next=download">로그인 →</a>
-        <a class="plan-cta plan-cta-quiet" id="dl-signup" href="signup.html?next=download">가입하기</a>
+        <a class="cta-primary" id="dl-login" href="login.html?next=download&amp;app=goditor">로그인 →</a>
+        <a class="plan-cta plan-cta-quiet" id="dl-signup" href="signup.html?next=download&amp;app=goditor">가입하기</a>
       </div>
       <button type="button" class="modal-close" data-close>닫기</button>
     </div>
   </div>
 
   <script>
-    // 다운로드 = 로그인 유도 지점. "받으려다 필요해져서" 로그인하게 만든다.
+    // 다운로드 = 로그인 유도 지점 + «받아간 기록» 지점.
+    //
+    // ★차단이 아니다. 드라이브 폴더는 링크 공개라 링크를 아는 사람은 그대로 받는다.
+    //   실제 차단은 앱 로그인이 한다. 여기서 얻는 건 «회원 중 누가 받았나» 뿐이고,
+    //   그래서 문구도 "권한"이 아니라 "로그인이 필요해요"로 쓴다.
+    // ★다운로드 주소를 이 파일에 두지 않는다. 서버가 내려준다 —
+    //   나중에 드라이브 → S3 로 바꿔도 이 페이지는 손댈 필요가 없다.
     (function () {
       var btn   = document.getElementById('download-btn');
       var modal = document.getElementById('dl-modal');
+      var note  = document.getElementById('dl-msg');
       if (!btn || !modal) return;
 
-      var DRIVE = btn.getAttribute('href');   // JS 가 죽어도 href 는 살아 있다
-
-      function loggedIn() {
-        try { return !!sessionStorage.getItem('goditor_email'); } catch (e) { return false; }
+      function auth() {
+        try {
+          return { email: sessionStorage.getItem('sms_email'),
+                   token: sessionStorage.getItem('sms_token') };
+        } catch (e) { return { email: null, token: null }; }
       }
-      function open() {
-        modal.hidden = false;
-        document.body.style.overflow = 'hidden';
-        var f = document.getElementById('dl-login');
-        if (f) f.focus();
+      function say(text, kind) {
+        if (!note) return;
+        note.textContent = text;
+        note.className = 'detail-note dl-msg' + (kind ? ' dl-msg-' + kind : '');
+        note.hidden = !text;
       }
-      function close() {
-        modal.hidden = true;
-        document.body.style.overflow = '';
-        btn.focus();   // 닫으면 원래 누르던 버튼으로 돌아온다
+      function openModal() {
+        modal.hidden = false; document.body.style.overflow = 'hidden';
+        var f = document.getElementById('dl-login'); if (f) f.focus();
       }
-
-      btn.addEventListener('click', function (e) {
-        if (loggedIn()) return;         // 로그인 상태면 그대로 드라이브로 간다
-        e.preventDefault();
-        // 로그인 후 여기로 되돌아와 이어서 받게 한다
-        try { sessionStorage.setItem('goditor_after_login', 'download'); } catch (e2) {}
-        open();
-      });
-
+      function closeModal() {
+        modal.hidden = true; document.body.style.overflow = ''; btn.focus();
+      }
       modal.addEventListener('click', function (e) {
-        if (e.target.hasAttribute('data-close')) close();
+        if (e.target.hasAttribute('data-close')) closeModal();
       });
       document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !modal.hidden) close();
+        if (e.key === 'Escape' && !modal.hidden) closeModal();
       });
 
-      // 로그인하고 돌아왔다면 «하려던 일»을 이어준다
-      try {
-        if (loggedIn() && sessionStorage.getItem('goditor_after_login') === 'download') {
-          sessionStorage.removeItem('goditor_after_login');
-          var back = document.getElementById('dl-resume');
-          if (back) {
-            back.hidden = false;
-            back.querySelector('a').setAttribute('href', DRIVE);
+      function request() {
+        var a = auth();
+        say('확인 중…');
+        btn.disabled = true;
+        return fetch('/api/license/download', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: a.email, sessionToken: a.token, app: 'goditor' }),
+        })
+        .then(function (r) { return r.json().catch(function () { return {}; })
+                              .then(function (j) { return { status: r.status, json: j }; }); })
+        .then(function (r) {
+          var j = r.json || {};
+          if (r.status === 200 && j.ok && j.url) {
+            say('다운로드 페이지를 열었어요. 안 열렸다면 팝업 차단을 확인해 주세요.', 'ok');
+            window.open(j.url, '_blank', 'noopener');
+            return;
           }
+          if (r.status === 200 && j.ok === false && j.reason === 'expired') {
+            say('이용 기간이 끝났어요. 요금제를 확인해 주세요.', 'warn');
+            location.hash = '#pricing';
+            return;
+          }
+          if (r.status === 200 && j.ok === false) {
+            // 세션이 만료됐거나 다른 기기에서 로그인해 토큰이 회전한 경우
+            try { sessionStorage.removeItem('sms_token'); } catch (e) {}
+            say('', null); openModal();
+            return;
+          }
+          say('지금은 연결이 어려워요. 잠시 후 다시 눌러주세요.', 'warn');
+        })
+        .catch(function () { say('네트워크 오류예요. 잠시 후 다시 시도해 주세요.', 'warn'); })
+        .finally(function () { btn.disabled = false; });
+      }
+
+      btn.addEventListener('click', function () {
+        var a = auth();
+        if (!a.email || !a.token) {
+          // 로그인하고 돌아오면 «하려던 일»을 이어준다
+          try { sessionStorage.setItem('sms_after_login', 'download'); } catch (e) {}
+          openModal();
+          return;
         }
-      } catch (e3) {}
+        request();
+      });
+
+      // 로그인하고 돌아왔다면 바로 이어서 받게 한다
+      try {
+        var a0 = auth();
+        if (a0.email && a0.token && sessionStorage.getItem('sms_after_login') === 'download') {
+          sessionStorage.removeItem('sms_after_login');
+          say('로그인되었습니다. 이어서 받는 중…', 'ok');
+          request();
+        }
+      } catch (e) {}
     })();
   </script>
 

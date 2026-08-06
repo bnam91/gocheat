@@ -19,7 +19,6 @@
       <a href="/" class="logo">소문의섬</a>
       <div class="nav-links">
         <a href="/#apps">앱</a>
-        <a href="/pricing.html">요금제</a>
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
       </div>
@@ -28,11 +27,11 @@
 
   <section class="signup">
     <div class="signup-inner">
-      <img src="/public/icons/goditor.png" alt="GODITOR" class="brand-mark" width="48" height="48" />
-      <p class="section-label">GODITOR 계정 만들기</p>
+      <img src="/public/icons/goditor.png" alt="" class="brand-mark" id="su-mark" width="48" height="48" hidden />
+      <p class="section-label" id="su-label">소문의섬 계정 만들기</p>
       <h1 class="signup-title">도구 출시·강의 오픈·실전 노하우. 가장 먼저 받으실 수 있게.</h1>
       <p class="signup-sub">
-        이벤트 기간에는 가입 즉시 GODITOR 전체 기능을 쓸 수 있어요.
+        <span id="su-lead">이벤트 기간에는 가입 즉시 소문의섬 앱을 전부 쓰실 수 있어요.</span>
         도구·콘텐츠 소식만 가끔 보내드리고, 광고는 보내지 않아요.
       </p>
 
@@ -121,7 +120,7 @@
             return;
           }
           // 가입한 이메일은 로그인 화면에서 채워 쓴다 (비밀번호는 저장하지 않는다)
-          try { sessionStorage.setItem('goditor_email', email); } catch (e2) {}
+          try { sessionStorage.setItem('sms_email', email); } catch (e2) {}
 
           if (data.alreadyVerified) {
             show('이미 가입된 계정이에요. 로그인 화면으로 이동할게요…', true);
@@ -143,6 +142,30 @@
           submit.textContent = original;
         }
       });
+    })();
+  </script>
+
+  <script>
+    // ★계정은 «소문의섬» 계정이지 특정 앱 계정이 아니다. 기본 문구는 플랫폼 것으로 둔다.
+    //   다만 앱 페이지에서 넘어온 사람에게는 그 앱을 언급하는 편이 자연스러워서,
+    //   링크에 ?app=<id> 가 실려 오면 그 앱 이름으로 바꿔준다. 없으면 플랫폼 문구 그대로.
+    (function () {
+      var app;
+      try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
+      if (!app) return;
+      fetch('data/apps.json').then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (apps) {
+          if (!apps) return;
+          var a = apps.filter(function (x) { return x.id === app; })[0];
+          if (!a) return;
+          window.__srcApp = a;
+          var label = document.getElementById('su-label');
+          var mark  = document.getElementById('su-mark');
+          if (label) label.textContent = a.name + ' 시작하기';
+          if (mark && a.icon) { mark.src = a.icon; mark.alt = a.name; mark.hidden = false; }
+          var lead = document.getElementById('su-lead');
+          if (lead) lead.textContent = '이벤트 기간에는 가입 즉시 ' + a.name + ' 전체 기능을 쓰실 수 있어요.';
+        }).catch(function () {});
     })();
   </script>
   <script src="footer.js"></script>
