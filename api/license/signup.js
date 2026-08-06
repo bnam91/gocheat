@@ -8,6 +8,8 @@ const { randomToken } = require('../_lib/crypto');
 const { enqueueMail, buildVerifyMail } = require('../_lib/mail');
 
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
+const EVENT_MODE = process.env.EVENT_MODE !== 'off';           // 이벤트 기간엔 이메일 인증 생략
+const EVENT_UNTIL = new Date(process.env.EVENT_UNTIL || '2026-12-31T23:59:59Z');
 
 module.exports = async (req, res) => {
   if (handlePreflight(req, res)) return;
@@ -43,8 +45,10 @@ module.exports = async (req, res) => {
         $set: {
           email,
           passwordHash,
-          verified: false,
-          verifiedAt: null,
+          verified: EVENT_MODE ? true : false,
+          verifiedAt: EVENT_MODE ? now : null,
+          accessUntil: EVENT_UNTIL,
+          plan: 'event_free',
           verificationToken,
           verificationTokenExpiresAt,
           updatedAt: now,
@@ -56,6 +60,11 @@ module.exports = async (req, res) => {
 
     const base = process.env.LICENSE_BASE_URL || `https://${req.headers.host || 'hompageapp.vercel.app'}`;
     const verifyUrl = `${base.replace(/\/$/, '')}/api/license/verify?token=${verificationToken}`;
+
+    if (EVENT_MODE) {
+      // ★이벤트 기간: 보내지도 못할 인증메일을 큐에 쌓지 않는다. 가입 즉시 사용 가능.
+      return json(res, 200, { ok: true, email, ready: true, plan: 'event_free', accessUntil: EVENT_UNTIL });
+    }
 
     await enqueueMail({
       ...buildVerifyMail({ to: email, verifyUrl }),
