@@ -47,14 +47,19 @@ html { scroll-behavior: smooth; background: var(--bg); font-size: 100%; }
 /* ★body 에 본문 크기를 «명시»한다. 전에는 html 이 80%(=12.8px)라
    클래스가 안 붙은 글자(버튼·b·설명 없는 p)가 전부 12.8px 로 떨어졌다.
    토큰을 아무리 올려도 그 글자들은 안 따라온다 — 바닥을 여기서 세운다. */
-body { background: var(--bg); color: var(--fg); font-family: var(--font); -webkit-font-smoothing: antialiased; font-size: var(--fs-body); line-height: 1.6; text-align: center; }
+/* ★word-break: keep-all — 한글은 기본값이 «아무 글자 사이에서나» 줄바꿈이라
+   「예시예요」가 「예시예 / 요」로 잘린다. 어절(띄어쓰기) 단위로만 끊게 한다.
+   대신 끊을 데가 없는 긴 문자열(URL·이메일)은 overflow-wrap 으로 받아준다. */
+body { background: var(--bg); color: var(--fg); font-family: var(--font); -webkit-font-smoothing: antialiased; font-size: var(--fs-body); line-height: 1.6; text-align: center; word-break: keep-all; overflow-wrap: break-word; }
 a { color: inherit; text-decoration: none; }
 
 ::selection { background: var(--accent); color: var(--accent-fg); }
 
 /* ===== NAV ===== */
 header { position: sticky; top: 0; z-index: 100; background: rgba(11,11,14,0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
-nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+/* ★`nav` 가 아니라 `header nav` 다 — 고디터 전용 내비도 <nav> 라
+   범위를 안 좁히면 이 규칙(가운데 정렬·space-between·52px)이 거기까지 걸린다. */
+header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
 .logo { font-size: var(--fs-body); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .nav-links { display: flex; gap: 20px; }
 .nav-links a { font-size: var(--fs-sm); color: var(--muted); transition: color 0.15s; }
@@ -308,8 +313,16 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 /* ===== APP DETAIL (goditor.html) ===== */
 .detail { max-width: var(--read); margin: 0 auto; padding: 56px 24px 40px; text-align: center; }
-.detail-inner { display: flex; flex-direction: column; align-items: center; gap: 26px; }
-.detail-back { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.15s; align-self: center; }
+/* ★히어로의 세로 리듬. gap 하나(26px)로 전부 처리하던 것을 요소별로 나눈다.
+   간격이 하나면 뒤로가기·아이콘·제목·리드·버튼·주석이 전부 같은 거리로 붙어
+   «한 덩어리»로 읽힌다 — 그게 «시원하지 않다»의 정체였다.
+   코덱스는 간격 자체가 위계다: 아이콘↔제목 32 / 제목↔리드 24 / 리드↔버튼 40 / 버튼↔보조 20.
+   ★음수 마진(-8px, -2px)은 전부 걷어냈다. 당겨 붙이는 건 답답함을 «만드는» 짓이다. */
+.detail-inner { display: flex; flex-direction: column; align-items: center; gap: 0; }
+/* 영문 전제로 짜인 스타일이 한글에 그대로 걸려 있었다 —
+   uppercase 는 한글에 아무 효과가 없고, mono 는 한글 글리프가 없어 어차피 폴백된다.
+   남는 건 letter-spacing 뿐이라 «앱  목록»처럼 자간만 벌어져 보였다. 셋 다 뺀다. */
+.detail-back { font-size: var(--fs-xs); color: var(--subtle); transition: color 0.15s; align-self: center; }
 .detail-back:hover { color: var(--fg); }
 .detail-back:focus-visible { outline: none; color: var(--accent); }
 .detail-header { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
@@ -321,7 +334,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .detail-tagline { font-size: var(--fs-lead); color: var(--muted); line-height: 1.55; max-width: 48ch; }
 .detail-desc { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; max-width: 62ch; }
 .detail-cta { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
-.detail-note { font-size: var(--fs-sm); color: var(--subtle); margin-top: -2px; line-height: 1.75; max-width: 62ch; text-align: left; }
+.detail-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.75; max-width: 62ch; text-align: left; }
 .video-embed { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 8px 0; width: 100%; }
 .video-frame { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); }
 .video-frame iframe { width: 100%; height: 100%; display: block; border: 0; }
@@ -389,7 +402,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      스스로 40px 로 내려간다. 두 군데서 크기를 정하면 축이 갈라진다. */
   .app-grid { grid-template-columns: 1fr; }
   .hero, main, .yt-section, footer { padding-left: 20px; padding-right: 20px; }
-  nav { padding: 0 20px; }
+  header nav { padding: 0 20px; }
   .hero-apps { gap: 8px; margin-top: 40px; }
   .hero-app-pill { padding: 6px 10px 6px 6px; }
   .hero-app-pill-icon { width: 28px; height: 28px; font-size: 12px; }
@@ -413,7 +426,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .pricing { max-width: 1040px; margin: 0 auto; padding: 8px 24px 64px; text-align: center; }
 .pricing-inner { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .pricing-title { font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--fg); }
-.pricing-sub { font-size: var(--fs-sm); color: var(--muted); line-height: 1.75; max-width: 62ch; }
+.pricing-sub { font-size: var(--fs-sm); color: var(--muted); line-height: 1.75; max-width: 62ch; text-wrap: balance; }
 
 .event-banner {
   display: inline-flex; align-items: center; gap: 8px;
@@ -435,11 +448,13 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-ribbon { font-family: var(--mono); font-size: var(--fs-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
 /* ★리본이 한 카드에만 있으면 그 카드만 아래로 밀려 이름줄이 어긋난다.
    자리를 «항상» 비워둬서 네 장의 기준선을 맞춘다. */
-.plan-card::before { content: ''; display: block; height: 14px; }
+/* 리본 없는 카드의 자리맞춤. ★고정 14px 이 아니라 «리본 한 줄의 실제 높이»여야
+   등급 이름 baseline 이 네 장 모두 맞는다(--fs-xs × line-height 1.6). */
+.plan-card::before { content: ''; display: block; font-size: var(--fs-xs); height: 1.6em; }
 .plan-card:has(.plan-ribbon)::before { display: none; }
-.plan-name { font-size: var(--fs-body); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
-.plan-price { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; color: var(--fg); }
-.plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 14px; }
+.plan-name { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+.plan-price { font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+.plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 21px; }
 .plan-divider { width: 100%; border-top: 1px solid var(--border); margin: 6px 0; }
 .plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; width: 100%; flex: 1; }
 .plan-features li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; display: flex; gap: 7px; align-items: baseline; justify-content: flex-start; text-align: left; }
@@ -567,7 +582,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .cta-pulse{ box-shadow:0 0 0 3px rgba(201,242,58,.28) }
 
 /* 가격 표기 — 예시 정가와 «지금 무료»를 함께 보여준다 */
-.plan-amount{ font-size:28px; font-weight:800; letter-spacing:-.02em }
+.plan-amount{ font-size:var(--fs-lead); font-weight:700; letter-spacing:-.02em }
 .plan-now{ display:block; font-size:var(--fs-xs); font-weight:600; color:var(--accent); margin-top:1px; letter-spacing:.02em }
 .plan-price-note{ line-height:1.5 }
 .plan-empty{ grid-column:1/-1; font-size:var(--fs-sm); color:var(--subtle); padding:20px 0 }
@@ -742,14 +757,63 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 /* ★틀(머리·바닥)은 «가장 넓은 내용»만큼 넓어야 한다.
    내용이 1040px 인데 머리띠가 680px 이면 영상이 헤더 밖으로 삐져나온 것처럼 보인다.
    넓히는 건 «틀»뿐이고 읽는 글은 그대로 --read 축에 있다. */
-nav, footer { max-width: var(--wide); }
+header nav, footer { max-width: var(--wide); }
+
+/* ── 고디터 전용 내비 (상단 가로 탭) ────────────────────────────
+   전역 내비(소문의섬) 바로 아래 붙는 제품 한 줄. 전역 헤더가 52px 이라
+   그 아래에 «겹쳐서» 고정된다 — 스크롤해도 요금제로 바로 갈 수 있어야 한다. */
+.appnav {
+  position: sticky; top: 52px; z-index: 90;
+  background: rgba(11,11,14,0.72);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.appnav-inner {
+  max-width: var(--wide); margin: 0 auto; padding: 0 24px; height: 46px;
+  display: flex; align-items: center; gap: 24px;
+}
+.appnav-brand { font-size: var(--fs-sm); font-weight: 700; color: var(--fg); letter-spacing: -0.01em; }
+.appnav-links { display: flex; align-items: center; gap: 20px; }
+.appnav-link {
+  font-size: var(--fs-sm); color: var(--muted); transition: color 0.15s;
+  display: inline-flex; align-items: center; gap: 6px;
+  border-bottom: 1.5px solid transparent; padding: 4px 0;
+}
+a.appnav-link:hover { color: var(--fg); }
+a.appnav-link:focus-visible { outline: none; color: var(--accent); }
+/* 지금 보고 있는 구간 표시 — 아래 scrollspy 가 붙인다 */
+.appnav-link.is-current { color: var(--fg); border-bottom-color: var(--accent); }
+/* ★아직 없는 문서. 누를 수 없고, 그렇게 «보이게» 한다 */
+.appnav-link.is-soon { color: var(--subtle); opacity: .6; cursor: default; }
+/* 한글에 mono·letter-spacing 을 걸지 않는다 — «준비  중»처럼 자간만 벌어진다
+   (.detail-back 에서 겪은 것과 같은 함정) */
+.appnav-soon {
+  font-size: var(--fs-xs); color: var(--subtle);
+  border: 1px solid var(--border-strong); border-radius: 4px; padding: 1px 6px;
+}
+/* 고정 내비가 앵커 목적지를 덮지 않게 — 헤더 52 + 앱내비 46 + 숨쉴 틈 */
+#overview, #pricing { scroll-margin-top: 118px; }
+@media (max-width: 560px) {
+  .appnav-inner { gap: 14px; padding: 0 20px; }
+  .appnav-links { gap: 14px; }
+  .appnav-brand { display: none; }   /* 좁으면 이동 항목이 먼저다 */
+}
 
 /* ★뒤로가기 — 좌상단. 페이지 전체 가운데 정렬에 끌려가 있었다 */
 .detail-back { align-self: flex-start; font-size: var(--fs-xs); }
 
-/* 히어로 — 아이콘 · 제목 · 한 줄 · 버튼 하나 */
+/* ── 히어로 세로 리듬 — 간격이 곧 위계다 ─────────────────────────
+   상하 여백이 사실상 0이라 위아래 구간에 눌려 있었다. 코덱스처럼 크게 연다. */
+.detail { padding-top: clamp(96px, 9vw, 128px); padding-bottom: clamp(96px, 9vw, 128px); }
+.detail-back    { margin-bottom: 48px; }   /* 뒤로가기 ↔ 히어로 덩어리 */
+.detail-header  { gap: 32px; }             /* 아이콘 ↔ 제목 */
+.detail-meta    { gap: 24px; }             /* 제목  ↔ 리드 */
+.detail-cta     { margin-top: 40px; }      /* 리드  ↔ 버튼 */
+.detail-alt     { margin-top: 20px; }      /* 버튼  ↔ 보조 문구 */
+.detail-note    { margin-top: 20px; }
+
 .detail-lead { font-size: var(--fs-lead); color: var(--muted); line-height: 1.6; max-width: 40ch; }
-.detail-alt { font-size: var(--fs-sm); color: var(--subtle); margin-top: -8px; }
+.detail-alt { font-size: var(--fs-sm); color: var(--subtle); }
 .detail-alt a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .detail-alt a:hover { color: var(--accent); }
 .cta-download { min-width: 220px; padding: 12px 26px; font-size: var(--fs-body); font-weight: 700; }
@@ -800,7 +864,8 @@ nav, footer { max-width: var(--wide); }
 }
 
 /* 리드는 가운데 정렬 — 왼쪽 축을 맞출 상대(2×2 격자)가 사라졌다 */
-.features-lead { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; text-align: center; }
+/* text-wrap:balance — 마지막 줄에 «다.» 한 글자만 남는 고아 줄을 막는다 */
+.features-lead { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; text-align: center; text-wrap: balance; }
 .features-req { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); margin-top: var(--sp-section); text-align: center; }
 
 /* 좌우 교차는 «나란히 놓을 폭»이 있을 때만 성립한다. 좁아지면 세로로 쌓고
