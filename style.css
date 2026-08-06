@@ -511,3 +511,28 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .order-launch{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
 .order-launch .plan-cta{ width:auto; min-width:120px; margin-top:0; }
 @media(max-width:560px){ .pricing-block{ padding:0 20px; } }
+
+/* 다운로드 로그인 안내 모달 — UX 유도이지 보안 게이트가 아니다 */
+.modal[hidden]{ display:none }
+.modal{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:20px }
+.modal-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(3px) }
+.modal-box{ position:relative; background:var(--bg-elev); border:1px solid var(--border-strong); border-radius:14px;
+  padding:26px 24px 20px; max-width:380px; width:100%; display:flex; flex-direction:column; align-items:center; gap:10px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6); animation:fadeUp .28s cubic-bezier(.22,1,.36,1) both }
+.modal-title{ font-size:16px; font-weight:800; letter-spacing:-.02em; color:var(--fg); text-align:center }
+.modal-sub{ font-size:11.5px; color:var(--muted); line-height:1.75; text-align:center }
+.modal-sub b{ color:var(--fg) }
+.modal-actions{ display:flex; gap:8px; align-items:center; margin-top:6px; flex-wrap:wrap; justify-content:center }
+.modal-actions .plan-cta{ width:auto; min-width:96px; margin-top:0 }
+.modal-close{ background:none; border:0; color:var(--subtle); font-size:10.5px; cursor:pointer; margin-top:2px; font-family:var(--font) }
+.modal-close:hover{ color:var(--fg) }
+.dl-resume{ color:var(--success) }
+.dl-resume a{ color:var(--accent); font-weight:600 }
+.cta-pulse{ box-shadow:0 0 0 3px rgba(201,242,58,.28) }
+
+/* 가격 표기 — 예시 정가와 «지금 무료»를 함께 보여준다 */
+.plan-amount{ font-size:20px; font-weight:800 }
+.plan-amount-was{ font-size:17px; font-weight:700; color:var(--subtle); text-decoration-thickness:1.5px }
+.plan-now{ display:block; font-size:12px; font-weight:700; color:var(--accent); margin-top:2px; letter-spacing:-.01em }
+.plan-empty{ grid-column:1/-1; font-size:12px; color:var(--subtle); padding:20px 0 }
+.pricing-apps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; width:100%; max-width:520px; margin-top:8px }

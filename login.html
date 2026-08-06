@@ -19,7 +19,7 @@
       <a href="/" class="logo">소문의섬</a>
       <div class="nav-links">
         <a href="/#apps">앱</a>
-        <a href="/goditor.html#pricing">요금제</a>
+        <a href="/pricing.html">요금제</a>
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
       </div>
@@ -164,6 +164,17 @@
         title.textContent = '로그인되었습니다.';
         sub.textContent = '아래에서 GODITOR를 내려받으세요.';
         panel.classList.add('is-open');
+
+        // ★"받으려다 로그인한" 사람은 다운로드로 돌려보낸다. 로그인 자체가 목적이 아니었다.
+        try {
+          var wants = new URLSearchParams(location.search).get('next') === 'download'
+                   || sessionStorage.getItem('goditor_after_login') === 'download';
+          if (wants) {
+            title.textContent = '로그인되었습니다. 이어서 받으세요.';
+            sub.textContent = '아래 버튼을 누르면 다운로드 페이지가 열려요.';
+            dlLink.classList.add('cta-pulse');
+          }
+        } catch (e4) {}
         // ★비밀번호·세션토큰은 저장하지 않는다. 표시 연속성에 필요한 이메일만.
         try { sessionStorage.setItem('goditor_email', data.email || email.value.trim()); } catch (e) {}
       }

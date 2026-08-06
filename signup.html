@@ -19,7 +19,7 @@
       <a href="/" class="logo">소문의섬</a>
       <div class="nav-links">
         <a href="/#apps">앱</a>
-        <a href="/goditor.html#pricing">요금제</a>
+        <a href="/pricing.html">요금제</a>
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
       </div>
@@ -132,7 +132,9 @@
           }
           form.reset();
           if (data.alreadyVerified || data.ready) {
-            setTimeout(function () { window.location.href = 'login.html'; }, 1400);
+            var nx = new URLSearchParams(location.search).get('next');
+            var dest = 'login.html' + (nx ? '?next=' + encodeURIComponent(nx) : '');
+            setTimeout(function () { window.location.href = dest; }, 1400);
           }
         } catch (err) {
           show('네트워크 오류로 가입에 실패했어요. 잠시 후 다시 시도해주세요.', false);
