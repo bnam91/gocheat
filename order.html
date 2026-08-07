@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>주문 · 소문의섬</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <!--
+    ★결제 «경로» 화면. 지금까지 요금표에 금액만 있고 「사겠다」는 의사를 받을 곳이 없었다.
+
+    ⚠️★★ 프론트만이다. 실제 주문을 만들지 않는다.
+      - data/business.json 의 사업자정보가 비어 있고
+      - 입금계좌(BANK_INFO)가 자리표시자(000000-00-000000)다.
+      진짜처럼 보이는 결제 화면으로 실제 입금을 받으면 사고다.
+      ⇒ 화면 맨 위에 「연동 전」이라고 «명시»하고, 서버(api/license/order.js)를 부르지 않는다.
+      ⇒ 계좌·사업자정보가 들어오면 이 파일에서 그 한 곳(submit)만 서버 호출로 바꾸면 된다.
+  -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .od-note {
+      background:rgba(255,122,138,.07); border:1px solid rgba(255,122,138,.28);
+      border-radius:var(--radius); padding:14px 16px; margin:0 0 24px;
+      font-size:var(--fs-xs); color:#ffc9d1; line-height:1.7;
+    }
+    .od-note b { color:var(--danger); }
+    .od-steps { display:flex; gap:8px; font-size:12px; color:var(--subtle); margin:0 0 20px; }
+    .od-steps span.on { color:var(--accent); font-weight:600; }
+    .od-box {
+      background:var(--bg-elev); border:1px solid var(--border);
+      border-radius:var(--radius); padding:22px; margin:0 0 18px;
+    }
+    .od-box h2 { font-size:var(--fs-h3); margin:0 0 4px; letter-spacing:-.01em; }
+    .od-box .price { font-size:22px; font-weight:800; color:var(--fg); margin:0 0 18px; }
+    .od-field { margin:0 0 16px; }
+    .od-field label { display:block; font-size:12px; color:var(--subtle); margin:0 0 6px; }
+    .od-field input, .od-field .ro {
+      width:100%; box-sizing:border-box;
+      background:var(--bg); border:1px solid var(--border); border-radius:8px;
+      padding:11px 13px; font-size:var(--fs-sm); color:var(--fg); font-family:inherit;
+    }
+    .od-field .ro { color:var(--muted); }
+    .od-field input:focus { outline:none; border-color:var(--accent); }
+    .od-bank {
+      background:var(--bg); border:1px solid var(--border); border-radius:8px;
+      padding:16px; font-family:var(--mono); font-size:var(--fs-xs); line-height:2.1;
+    }
+    .od-bank .k { color:var(--subtle); display:inline-block; width:82px; }
+    .od-bank .amt { color:var(--accent); font-weight:700; }
+    .od-hide { display:none; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">소문의섬</a>
+      <div class="nav-links">
+        <a href="/#apps">앱</a>
+        <a href="pricing.html">요금제</a>
+        <a href="mypage.html">마이페이지</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="detail">
+    <div class="detail-inner">
+      <h1 class="detail-title">주문</h1>
+
+      <p class="od-note">
+        <b>연동 전 화면입니다.</b> 실제 주문이 만들어지지 않고 입금 안내도 예시입니다.
+        사업자정보와 입금계좌가 확정되면 이 화면 그대로 실제 결제로 연결됩니다.
+      </p>
+
+      <div class="od-steps"><span class="on" id="st1">1 등급 확인</span><span>›</span><span id="st2">2 입금 안내</span></div>
+
+      <!-- 로그인 필요 -->
+      <div id="od-guest" class="od-hide">
+        <p class="dim">주문하시려면 먼저 로그인해 주세요.</p>
+        <a href="login.html" class="plan-cta" style="display:block;max-width:240px;text-decoration:none;text-align:center">로그인하러 가기 →</a>
+      </div>
+
+      <!-- ① 주문서 -->
+      <div id="od-form" class="od-hide">
+        <div class="od-box">
+          <h2 id="od-name">—</h2>
+          <p class="price" id="od-price">—</p>
+          <div class="od-field"><label>이메일</label><div class="ro" id="od-email">—</div></div>
+          <div class="od-field">
+            <label>입금자명 <span style="color:var(--accent)">*</span></label>
+            <input id="od-depositor" type="text" autocomplete="name" placeholder="입금하실 분 이름" />
+            <p style="font-size:12px;color:var(--subtle);margin:7px 0 0">입금하실 분 이름과 같아야 확인이 빨라요.</p>
+          </div>
+          <button type="button" class="plan-cta" id="od-submit" style="max-width:none">주문하고 계좌 받기</button>
+          <p class="order-warn" id="od-err" style="color:var(--danger);display:none"></p>
+        </div>
+      </div>
+
+      <!-- ② 입금 안내 -->
+      <div id="od-done" class="od-hide">
+        <div class="od-box">
+          <h2>아래 계좌로 입금해 주세요</h2>
+          <p style="color:var(--muted);font-size:var(--fs-sm);margin:0 0 16px">입금이 확인되면 등급이 자동으로 올라갑니다.</p>
+          <div class="od-bank">
+            <div><span class="k">은행</span><span id="bk-bank">—</span></div>
+            <div><span class="k">계좌</span><span id="bk-acct">—</span></div>
+            <div><span class="k">예금주</span><span id="bk-owner">—</span></div>
+            <div><span class="k">금액</span><span class="amt" id="bk-amt">—</span></div>
+            <div><span class="k">주문번호</span><span id="bk-no">—</span></div>
+          </div>
+          <a href="mypage.html#orders" class="plan-cta plan-cta-quiet" style="display:block;text-align:center;text-decoration:none;margin-top:16px">내 주문 보기 →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (function () {
+    var $ = function (id) { return document.getElementById(id); };
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+      });
+    }
+
+    var email = null;
+    try { email = sessionStorage.getItem('sms_email'); } catch (e) {}
+    if (!email) { $('od-guest').classList.remove('od-hide'); return; }
+
+    var planId = '';
+    try { planId = new URLSearchParams(location.search).get('plan') || ''; } catch (e) {}
+
+    // ★등급 정보는 apps.json 한 곳에서만 온다 — 요금표와 주문서가 갈리면 안 된다
+    fetch('data/apps.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (apps) {
+      var app = (apps || []).filter(function (a) { return a.id === 'goditor'; })[0];
+      var plan = app && (app.plans || []).filter(function (p) { return p.id === planId; })[0];
+      if (!plan || planId === 'free') { location.replace('pricing.html'); return; }
+
+      $('od-form').classList.remove('od-hide');
+      $('od-name').textContent  = plan.name;
+      $('od-price').textContent = plan.price + ' / ' + plan.per;
+      $('od-email').textContent = email;
+
+      $('od-submit').addEventListener('click', function () {
+        var dep = ($('od-depositor').value || '').trim();
+        if (!dep) {
+          $('od-err').textContent = '입금자명을 입력해 주세요.';
+          $('od-err').style.display = 'block';
+          $('od-depositor').focus();
+          return;
+        }
+        // ⚠️ 서버를 부르지 않는다(위 주석 참고). 화면 흐름만 이어준다.
+        var d = new Date();
+        var orderNo = 'GD' + d.toISOString().slice(2,10).replace(/-/g,'') + '-'
+                    + String(Math.floor(Math.random() * 9000) + 1000);
+        var rec = { orderNo: orderNo, plan: plan.id, planName: plan.name, price: plan.price,
+                    depositor: dep, status: 'awaiting_deposit', at: d.toISOString() };
+        try {
+          var list = JSON.parse(sessionStorage.getItem('sms_orders') || '[]');
+          list.unshift(rec);
+          sessionStorage.setItem('sms_orders', JSON.stringify(list));
+        } catch (e) {}
+
+        $('od-form').classList.add('od-hide');
+        $('od-done').classList.remove('od-hide');
+        $('st1').classList.remove('on'); $('st2').classList.add('on');
+        $('bk-amt').textContent = plan.price;
+        $('bk-no').textContent  = orderNo;
+
+        // 계좌는 business.json 에서. 비어 있으면 «예시»라고 명시한다 — 자리표시자를 진짜처럼 보이지 않게.
+        fetch('data/business.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (b) {
+          b = b || {};
+          $('bk-bank').textContent  = b.bankName   || '(예시) 국민은행';
+          $('bk-acct').textContent  = b.bankAccount|| '(예시) 000000-00-000000';
+          $('bk-owner').textContent = b.bankOwner  || b.ceo || '(예시) 예금주';
+        }).catch(function () {
+          $('bk-bank').textContent = '(예시) 국민은행';
+          $('bk-acct').textContent = '(예시) 000000-00-000000';
+          $('bk-owner').textContent = '(예시) 예금주';
+        });
+      });
+    }).catch(function () { location.replace('pricing.html'); });
+  })();
+  </script>
+  <script src="footer.js"></script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>마이페이지 · 소문의섬</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+  <!--
+    ★로그인한 사람이 «갈 곳». 지금까지 홈페이지엔 이 페이지가 없어서
+      로그인해도 갈 데가 없었다(login.html 안에서만 계정을 보여줬다).
+
+    ★프론트만이다. 등급·기한은 로그인 응답을 sessionStorage 에 넣어 둔 값을 읽고,
+      주문 내역은 order.html 이 남긴 «화면 확인용» 기록이다. 서버 연동 아님.
+  -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* 탭 — style.css 의 토큰만 쓴다. 새 색을 만들지 않는다 */
+    .mp-tabs { display:flex; gap:2px; border-bottom:1px solid var(--border); margin:0 0 26px; }
+    .mp-tabs button {
+      background:none; border:0; border-bottom:2px solid transparent;
+      padding:10px 16px; font-size:var(--fs-sm); color:var(--subtle); cursor:pointer;
+    }
+    .mp-tabs button.on { color:var(--fg); border-bottom-color:var(--accent); font-weight:600; }
+    .mp-pane { display:none; }
+    .mp-pane.on { display:block; }
+    .mp-tier {
+      display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+      background:var(--bg-elev-hi); border:1px solid var(--border-strong);
+      border-radius:var(--radius); padding:20px 22px; margin:0 0 20px;
+    }
+    .mp-tier .big { font-size:26px; font-weight:800; letter-spacing:-.02em; margin:0; }
+    .mp-tier .sm  { font-size:var(--fs-xs); color:var(--subtle); margin:4px 0 0; }
+    .mp-tier .plan-cta { margin:0; max-width:180px; }
+    table.mp-ord { width:100%; border-collapse:collapse; font-size:var(--fs-xs); }
+    table.mp-ord th {
+      text-align:left; color:var(--subtle); font-weight:500;
+      padding:0 10px 9px 0; border-bottom:1px solid var(--border);
+    }
+    table.mp-ord td { padding:13px 10px 13px 0; border-bottom:1px solid var(--border); color:var(--muted); }
+    table.mp-ord td.mono { font-family:var(--mono); color:var(--fg); }
+    .mp-pill { display:inline-block; font-size:12px; padding:3px 10px; border-radius:20px; }
+    .mp-pill.wait { background:rgba(255,122,138,.12); color:var(--danger); border:1px solid rgba(255,122,138,.3); }
+    .mp-pill.done { background:rgba(111,227,162,.12); color:var(--success); border:1px solid rgba(111,227,162,.3); }
+    .mp-dl { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+    .mp-dl a {
+      display:flex; justify-content:space-between; align-items:center;
+      background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
+      padding:15px 17px; text-decoration:none; color:var(--fg); font-size:var(--fs-sm);
+    }
+    .mp-dl a:hover { border-color:var(--border-strong); }
+    .mp-dl .arw { color:var(--subtle); }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">소문의섬</a>
+      <div class="nav-links">
+        <a href="/#apps">앱</a>
+        <a href="pricing.html">요금제</a>
+        <a href="login.html" id="nav-login">로그인</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="detail">
+    <div class="detail-inner">
+      <h1 class="detail-title">마이페이지</h1>
+
+      <!-- 비로그인이면 여기만 보인다 -->
+      <div id="mp-guest" style="display:none">
+        <p class="dim">로그인하시면 이용 등급과 주문 내역을 보실 수 있어요.</p>
+        <a href="login.html?next=mypage" class="plan-cta" style="display:block;max-width:240px;text-decoration:none">로그인하러 가기 →</a>
+      </div>
+
+      <div id="mp-body" style="display:none">
+        <div class="mp-tabs">
+          <button type="button" class="on" data-pane="info">내 정보</button>
+          <button type="button" data-pane="orders">주문 내역</button>
+          <button type="button" data-pane="dl">다운로드</button>
+        </div>
+
+        <!-- ── 내 정보 ── -->
+        <section class="mp-pane on" id="pane-info">
+          <div class="mp-tier">
+            <div>
+              <p class="big" id="mp-plan">—</p>
+              <p class="sm" id="mp-until"></p>
+            </div>
+            <a href="pricing.html" class="plan-cta" style="text-decoration:none;text-align:center">등급 올리기 →</a>
+          </div>
+          <div class="account-panel" style="display:block">
+            <div class="account-rows">
+              <div class="account-row"><span class="account-key">이메일</span><span class="account-val" id="mp-email">—</span></div>
+              <div class="account-row"><span class="account-key">비밀번호</span><span class="account-val"><a href="find-password.html" style="color:var(--accent)">변경 →</a></span></div>
+            </div>
+            <button type="button" class="plan-cta plan-cta-quiet" id="mp-logout" style="max-width:200px">로그아웃</button>
+          </div>
+          <p class="order-warn">같은 이메일·비밀번호로 앱에서도 로그인하실 수 있어요.</p>
+        </section>
+
+        <!-- ── 주문 내역 ── -->
+        <section class="mp-pane" id="pane-orders">
+          <div id="mp-ord-empty" class="dim" style="display:none">아직 주문 내역이 없어요.</div>
+          <table class="mp-ord" id="mp-ord-table" style="display:none">
+            <thead><tr><th>주문번호</th><th>등급</th><th>금액</th><th>상태</th></tr></thead>
+            <tbody id="mp-ord-body"></tbody>
+          </table>
+          <p class="order-warn" style="margin-top:18px">
+            입금 확인은 영업일 기준 하루 안에 처리됩니다. 입금자명이 다르면 확인이 늦어질 수 있어요.
+          </p>
+        </section>
+
+        <!-- ── 다운로드 ── -->
+        <section class="mp-pane" id="pane-dl">
+          <p class="dim" id="mp-dl-ver" style="margin-bottom:16px"></p>
+          <div class="mp-dl" id="mp-dl-links"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  (function () {
+    // 로그인 상태 — login.html 이 넣어 둔 키를 그대로 쓴다
+    var email = null, plan = null, until = null;
+    try {
+      email = sessionStorage.getItem('sms_email');
+      plan  = sessionStorage.getItem('sms_plan');
+      until = sessionStorage.getItem('sms_until');
+    } catch (e) {}
+
+    if (!email) { document.getElementById('mp-guest').style.display = 'block'; return; }
+    document.getElementById('mp-body').style.display = 'block';
+    var navLogin = document.getElementById('nav-login');
+    if (navLogin) { navLogin.textContent = '마이페이지'; navLogin.href = 'mypage.html'; }
+
+    // ★표시명과 코드값을 가른다 — 서버는 코드값을 주고 화면은 표시명을 쓴다.
+    //   beta 는 등급이 아니라 «기간»이다. event_free 는 옛 서버 값으로 뜻이 같다.
+    var PLAN_LABEL = { beta:'BETA', event_free:'BETA', free:'FREE', starter:'STARTER', pro:'PRO', promax:'PRO MAX' };
+    var code = String(plan || '').toLowerCase();
+    document.getElementById('mp-plan').textContent = PLAN_LABEL[code] || (code ? code.toUpperCase() : 'FREE');
+    document.getElementById('mp-email').textContent = email;
+
+    var untilTxt = '';
+    if (until) {
+      var d = new Date(until);
+      if (!isNaN(d)) {
+        var left = Math.ceil((d - Date.now()) / 86400000);
+        untilTxt = d.toISOString().slice(0, 10) + ' 까지' + (left >= 0 && left <= 30 ? ' · ' + left + '일 남음' : '');
+      }
+    }
+    if (code === 'beta' || code === 'event_free') {
+      untilTxt = (untilTxt || '') + (untilTxt ? ' · ' : '') + '베타테스트가 끝나면 FREE 로 전환돼요';
+    }
+    document.getElementById('mp-until').textContent = untilTxt;
+
+    // 탭
+    var tabs = document.querySelectorAll('.mp-tabs button');
+    Array.prototype.forEach.call(tabs, function (b) {
+      b.addEventListener('click', function () {
+        Array.prototype.forEach.call(tabs, function (x) { x.classList.remove('on'); });
+        b.classList.add('on');
+        Array.prototype.forEach.call(document.querySelectorAll('.mp-pane'), function (p) { p.classList.remove('on'); });
+        document.getElementById('pane-' + b.getAttribute('data-pane')).classList.add('on');
+      });
+    });
+
+    // 주문 내역 — ★프론트만이다. order.html 이 남긴 화면 확인용 기록을 읽는다.
+    var orders = [];
+    try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
+    if (!orders.length) {
+      document.getElementById('mp-ord-empty').style.display = 'block';
+    } else {
+      document.getElementById('mp-ord-table').style.display = 'table';
+      document.getElementById('mp-ord-body').innerHTML = orders.map(function (o) {
+        var cls = o.status === 'paid' ? 'done' : 'wait';
+        var txt = o.status === 'paid' ? '완료' : '입금 확인 중';
+        return '<tr><td class="mono">' + esc(o.orderNo) + '</td><td>' + esc(o.planName)
+             + '</td><td>' + esc(o.price) + '</td><td><span class="mp-pill ' + cls + '">' + txt + '</span></td></tr>';
+      }).join('');
+    }
+
+    // 다운로드
+    fetch('data/downloads.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      var g = (d && d.goditor) || {};
+      document.getElementById('mp-dl-ver').textContent = g.version ? ('GODITOR ' + g.version) : '';
+      var NAME = { 'mac-arm64': '맥 (Apple Silicon)', 'mac-intel': '맥 (Intel)', 'win': '윈도우' };
+      var html = '';
+      Object.keys(NAME).forEach(function (k) {
+        if (g[k]) html += '<a href="' + esc(g[k]) + '" target="_blank" rel="noopener">'
+                        + '<span>' + NAME[k] + '</span><span class="arw">→</span></a>';
+      });
+      document.getElementById('mp-dl-links').innerHTML = html || '<p class="dim">다운로드 정보를 불러오지 못했어요.</p>';
+    }).catch(function () {});
+
+    document.getElementById('mp-logout').addEventListener('click', function () {
+      try {
+        sessionStorage.removeItem('sms_email'); sessionStorage.removeItem('sms_token');
+        sessionStorage.removeItem('sms_plan');  sessionStorage.removeItem('sms_until');
+      } catch (e) {}
+      location.href = 'login.html';
+    });
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+      });
+    }
+  })();
+  </script>
+  <script src="footer.js"></script>
+</body>
+</html>

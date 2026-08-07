@@ -53,6 +53,7 @@
           <div class="account-row"><span class="account-key">이용 기한</span><span class="account-val" id="acc-until">—</span></div>
         </div>
         <a id="go-app" class="plan-cta" style="display:block;text-decoration:none;max-width:260px;" href="/#apps">앱 목록으로 →</a>
+          <a class="plan-cta plan-cta-quiet" style="display:block;text-decoration:none;text-align:center;max-width:260px;margin-top:8px" href="mypage.html">마이페이지 →</a>
         <p class="order-warn" id="acc-note">같은 이메일·비밀번호로 앱에서도 로그인하실 수 있어요.</p>
         <button type="button" class="plan-cta plan-cta-quiet" id="logout-btn" style="max-width:200px;">다른 계정으로 로그인</button>
       </div>
@@ -163,6 +164,9 @@
         try {
           sessionStorage.setItem('sms_email', data.email || email.value.trim());
           if (data.sessionToken) sessionStorage.setItem('sms_token', data.sessionToken);
+          // ★마이페이지가 읽는다. 등급·기한은 서버가 «판정해서» 준 값이라 여기서 보관한다.
+          if (data.plan) sessionStorage.setItem('sms_plan', data.plan);
+          if (data.accessUntil) sessionStorage.setItem('sms_until', data.accessUntil);
         } catch (e) {}
       }
 

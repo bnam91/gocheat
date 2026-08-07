@@ -56,7 +56,11 @@
           + '<p class="plan-price-note">' + (p.id === 'free' ? '언제나 무료' : '') + '</p>'
           + '<div class="plan-divider"></div>'
           + '<ul class="plan-features">' + feats + '</ul>'
-          + '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
+          + (p.id === 'free'
+              ? '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
+              // ★유료 등급은 «주문서»로 보낸다. 전에는 넷 다 가입 페이지로 가서
+              //   「돈을 내겠다」는 의사를 받을 곳이 아예 없었다.
+              : '<a href="order.html?plan=' + encodeURIComponent(p.id) + '" class="plan-cta">이 등급으로 →</a>')
           + '</div>';
       }).join('');
 
