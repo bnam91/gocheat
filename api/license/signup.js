@@ -83,47 +83,70 @@ module.exports = async (req, res) => {
     const now = new Date();
 
     const existing = await users.findOne({ email });
-    if (existing && existing.verified) {
-      return json(res, 200, { ok: true, email, alreadyVerified: true });
-    }
 
     const passwordHash = await bcrypt.hash(password, 10);
     const verificationToken = randomToken(32);
     const verificationTokenExpiresAt = new Date(now.getTime() + TOKEN_TTL_MS);
 
-    await users.updateOne(
-      { email },
-      {
-        $set: {
-          email,
-          passwordHash,
-          verified: EVENT_MODE ? true : false,
-          verifiedAt: EVENT_MODE ? now : null,
-          accessUntil: EVENT_UNTIL,
-          plan: 'event_free',
-          verificationToken,
-          verificationTokenExpiresAt,
-          updatedAt: now,
-          ...(profile ? { profile } : {}),
-          ...(consents ? { consents: buildConsents(consents, now) } : {}),
-        },
-        $setOnInsert: { createdAt: now },
-      },
-      { upsert: true },
-    );
+    // ★★가입은 «만들기»지 «덮어쓰기»가 아니다.
+    //   전에는 계정 전체를 $set 으로 덮었다. 그래서 «미인증 계정»에 다른 비밀번호로
+    //   다시 가입하면 passwordHash 가 갈렸다. 거기서 탈취가 완성된다:
+    //     ① 피해자 가입(미인증) → ② 공격자가 같은 이메일로 재가입해 비밀번호를 갈아치움
+    //     → ③ 새 인증링크가 «피해자 메일함»으로 감 → ④ 피해자가 자기 메일인 줄 알고 누름
+    //     → verified:true 인데 비밀번호는 공격자 것 → ⑤ 공격자 로그인
+    //   ★마지막 칸을 피해자 «본인의 클릭»이 채운다. 공격자는 메일함 접근이 필요 없다.
+    //   지금은 EVENT_MODE 가 켜져 있어 안 터지지만, 이벤트 종료로 off 가 되는 순간 열린다.
+    //
+    //   ⇒ 자격증명과 신원은 «만들 때만» 쓴다($setOnInsert). 기존 문서는 건드리지 않는다.
+    //     비밀번호를 바꾸는 길은 «비밀번호 찾기»뿐이어야 한다.
+    const setOnInsert = {
+      email,
+      passwordHash,
+      createdAt: now,
+      plan: 'event_free',
+      accessUntil: EVENT_UNTIL,
+      verified: EVENT_MODE ? true : false,
+      verifiedAt: EVENT_MODE ? now : null,
+      ...(profile ? { profile } : {}),
+      ...(consents ? { consents: buildConsents(consents, now) } : {}),
+    };
+
+    // 기존 문서에 손대도 되는 건 «인증 링크» 하나뿐이다 — 그것도 아직 미인증일 때만.
+    // 링크를 새로 줘도 그 링크가 인증하는 건 «원래 주인의 비밀번호»라 안전하다.
+    // ⚠️ 다만 이 경로로 남의 메일함에 인증메일을 반복 발송할 수는 있다(스팸).
+    //    호출 빈도 제한은 아직 없다 — 메일이 실제로 나가기 전에 붙여야 한다.
+    const set = { updatedAt: now };
+    const needsVerifyLink = !EVENT_MODE && !(existing && existing.verified);
+    if (needsVerifyLink) {
+      set.verificationToken = verificationToken;
+      set.verificationTokenExpiresAt = verificationTokenExpiresAt;
+    }
+
+    await users.updateOne({ email }, { $set: set, $setOnInsert: setOnInsert }, { upsert: true });
 
     const base = process.env.LICENSE_BASE_URL || `https://${req.headers.host || 'hompageapp.vercel.app'}`;
     const verifyUrl = `${base.replace(/\/$/, '')}/api/license/verify?token=${verificationToken}`;
 
+    // ★★응답은 «계정이 있든 없든 똑같다». 다르면 그 자체가 계정 열거 도구가 된다.
+    //   전에는 이미 가입된 이메일에 alreadyVerified:true 를 돌려줬다 — 아무나 이메일을
+    //   넣어보고 «이 사람이 가입했는지»를 알아낼 수 있었다. find-email 에서 주소를
+    //   fi*****@ 로 가린 것과 같은 이유다. 가리는 곳과 흘리는 곳이 따로 있으면 소용없다.
     if (EVENT_MODE) {
       // ★이벤트 기간: 보내지도 못할 인증메일을 큐에 쌓지 않는다. 가입 즉시 사용 가능.
       return json(res, 200, { ok: true, email, ready: true, plan: 'event_free', accessUntil: EVENT_UNTIL });
     }
 
-    await enqueueMail({
-      ...buildVerifyMail({ to: email, verifyUrl }),
-      idempotencyKey: `verify:${email}:${verificationToken}`,
-    });
+    // 인증 링크가 필요한 계정에만 메일을 보낸다. 이미 인증된 계정이면 아무것도 안 보내되,
+    // 응답은 «위와 같다» — 안 보냈다는 사실이 밖으로 드러나면 안 된다.
+    // ⚠️ TODO(메일 가동 후): 이미 가입된 주소에는 «누군가 이 이메일로 가입을 시도했습니다.
+    //    이미 계정이 있으니 로그인하거나 비밀번호를 재설정하세요» 메일을 보내는 게 옳다.
+    //    지금은 메일 경로 자체가 이벤트 기간 동안 꺼져 있어 그 설계를 미룬다.
+    if (needsVerifyLink) {
+      await enqueueMail({
+        ...buildVerifyMail({ to: email, verifyUrl }),
+        idempotencyKey: `verify:${email}:${verificationToken}`,
+      });
+    }
 
     return json(res, 200, { ok: true, email, pendingVerification: true });
   } catch (err) {

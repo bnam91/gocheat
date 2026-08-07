@@ -230,9 +230,12 @@
             return;
           }
           try { sessionStorage.setItem('sms_email', email); } catch (e2) {}
-          if (data.alreadyVerified) {
-            show('이미 가입된 계정이에요. 로그인 화면으로 이동할게요…', true);
-          } else if (data.ready) {
+          // ★alreadyVerified 분기를 뗐다. 서버가 그 값을 «더 이상 주지 않는다» —
+          //   이미 가입된 이메일인지 알려주는 것 자체가 계정 열거 도구였다.
+          //   그래서 화면 문구도 계정 유무와 «무관하게» 같아야 한다.
+          //   이미 계정이 있던 사람은 로그인 화면에서 자기 비밀번호로 들어가면 되고,
+          //   기억이 안 나면 그 화면의 «비밀번호 찾기»로 간다.
+          if (data.ready) {
             show('가입 완료! 바로 사용할 수 있어요. 로그인 화면으로 이동할게요…', true);
           } else {
             show('가입 완료! 인증 메일을 확인해주세요.', true);
@@ -240,7 +243,7 @@
           // ★`all` 은 확장 구간 안에 있다 — 잠겨 있으면 없다. form.reset() 이
           //   체크박스도 되돌리므로 별도 처리는 없어도 된다.
           form.reset();
-          if (data.alreadyVerified || data.ready) {
+          if (data.ready) {
             var nx = new URLSearchParams(location.search).get('next');
             var ap = new URLSearchParams(location.search).get('app');
             var q  = [];
