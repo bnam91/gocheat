@@ -190,6 +190,17 @@
 
       var againBtn = $('od-again');
       if (againBtn) againBtn.addEventListener('click', function () {
+        // ★R3-02: 「다시 입력하기」는 «아까 것을 고친다»로 읽힌다. 그런데 예전엔 last_order 만
+        //   지우고 목록은 그대로 둬서 «한 건 더» 만들었다 — 4번 고치면 4건이 쌓이고 지울 수도 없었다.
+        //   ⇒ 되돌리는 김에 «그 주문»도 목록에서 뺀다. 그래야 말과 동작이 같아진다.
+        try {
+          var lastRec = JSON.parse(sessionStorage.getItem('sms_last_order') || 'null');
+          if (lastRec && lastRec.orderNo) {
+            var kept = (JSON.parse(sessionStorage.getItem('sms_orders') || '[]') || [])
+              .filter(function (o) { return o.orderNo !== lastRec.orderNo; });
+            sessionStorage.setItem('sms_orders', JSON.stringify(kept));
+          }
+        } catch (e) {}
         try { sessionStorage.removeItem('sms_last_order'); } catch (e) {}
         submitted = false;
         $('od-submit').disabled = false;

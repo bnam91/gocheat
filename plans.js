@@ -42,19 +42,6 @@
             : '<li class="plan-feat-off"><span class="feature-dot">×</span> ' + esc(f.t) + '</li>';
         }).join('');
 
-      // ★UL-017(+NEW-03: map 콜백 «안»에 있어 등급 수만큼 4번 찍혔다 — 밖으로 뺀다): apps.json 의 plansNote 를 «아무도 안 읽어» 화면에 안 나왔다.
-      //   화면은 「금액은 예시」라고만 말해서 「AI 이미지 월 200장」이 확정 스펙처럼 읽혔다.
-      var note = [];
-      if (app.plansNote) note.push(app.plansNote);
-      if (!payLive) note.push('결제는 아직 연동 전입니다 — 주문 화면은 흐름 확인용이고 실제로 접수되지 않습니다.');
-      if (note.length && grid.parentNode) {
-        var noteEl = document.createElement('p');
-        noteEl.className = 'plan-empty';
-        noteEl.style.marginTop = '18px';
-        noteEl.textContent = note.join(' ');
-        grid.parentNode.insertBefore(noteEl, grid.nextSibling);
-      }
-
 
         // ★카드에서 «제일 큰 글자»는 등급 이름이다. 금액은 그 아래다.
         //   전에는 네 장 모두 「무료」가 제일 컸다. 이벤트로 전부 무료인 건 맞지만,
@@ -84,6 +71,21 @@
                   + (payLive ? '이 등급으로 →' : '주문 화면 미리보기 →') + '</a>')
           + '</div>';
       }).join('');
+
+      // ★UL-017/NEW-03: apps.json 의 plansNote 를 아무도 안 읽어 화면에 안 나왔다.
+      //   ⚠️ 그리고 이 블록이 «map 콜백 안»에 있어 등급 수(4)만큼 반복 출력됐다.
+      //   카드 렌더가 «끝난 뒤» 한 번만 돈다. 카드마다 도는 게 아니다.
+      //   화면은 「금액은 예시」라고만 말해서 「AI 이미지 월 200장」이 확정 스펙처럼 읽혔다.
+      var note = [];
+      if (app.plansNote) note.push(app.plansNote);
+      if (!payLive) note.push('결제는 아직 연동 전입니다 — 주문 화면은 흐름 확인용이고 실제로 접수되지 않습니다.');
+      if (note.length && grid.parentNode) {
+        var noteEl = document.createElement('p');
+        noteEl.className = 'plan-empty';
+        noteEl.style.marginTop = '18px';
+        noteEl.textContent = note.join(' ');
+        grid.parentNode.insertBefore(noteEl, grid.nextSibling);
+      }
 
       // 이벤트 종료 후 결제용 신청 버튼도 같은 데이터에서 만든다(무료 등급 제외)
       var launch = document.getElementById('order-launch');

@@ -35,10 +35,15 @@
     .mp-tier .big { font-size:var(--fs-h3); font-weight:800; letter-spacing:-.02em; margin:0; }
     .mp-tier .sm  { font-size:var(--fs-xs); color:var(--subtle); margin:4px 0 0; }
     .mp-tier .plan-cta { margin:0; max-width:180px; }
-    /* ★NEW-02: 열이 4→6개로 늘고 주문번호에 nowrap 이 붙으면서 표 최소폭이 화면을 넘겼다.
-       가운데 정렬된 채 넘쳐 «왼쪽 43px 가 스크롤로도 못 닿는» 상태가 됐다.
-       ⇒ 표를 «자기 안에서» 가로 스크롤하게 가둔다. 페이지 본문은 절대 가로로 안 밀린다. */
-    .mp-ord-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -2px; }
+    /* ★★NEW-02 (2차): overflow-x:auto 만으로는 «아무 일도 안 일어났다».
+       뿌리는 감싼 박스가 아니라 «flex 조상»이다 — .detail-inner 가 flex 컨테이너라
+       그 자손들이 min-width:auto(기본값) 때문에 min-content(=표 최소폭)까지 부풀어 오른다.
+       부모가 안 잡아주니 .mp-ord-wrap 도 같이 커져서 «넘칠 게 없어» 스크롤이 안 생겼다.
+       게다가 align-items:center 라 좌우로 균등하게 흘러 «왼쪽은 스크롤로도 도달 불가»였다.
+       ⇒ flex 자손 사슬에 min-width:0 을 건다. 그래야 wrap 이 화면 폭에 갇히고 그 «안에서» 스크롤한다.
+       (1차 때 min-width:520px 를 더해 오히려 43px→72px 로 악화시켰다 — 증상만 보고 손댄 결과다) */
+    #mp-body, .mp-pane { min-width:0; max-width:100%; }
+    .mp-ord-wrap { min-width:0; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
     table.mp-ord { width:100%; min-width:520px; border-collapse:collapse; font-size:var(--fs-xs); }
     table.mp-ord th {
       text-align:left; color:var(--subtle); font-weight:500;
