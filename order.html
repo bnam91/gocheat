@@ -110,6 +110,10 @@
             <div><span class="k">금액</span><span class="amt" id="bk-amt">—</span></div>
             <div><span class="k">주문번호</span><span id="bk-no">—</span></div>
           </div>
+          <p class="od-note" id="bk-dummy" style="display:none;margin:16px 0 0">
+            <b>이 계좌는 테스트용 더미입니다.</b> 실제로 입금하지 마세요.
+            손님을 받기 전 화면 흐름을 점검하는 단계라 아직 진짜 계좌가 아닙니다.
+          </p>
           <a href="mypage.html#orders" class="plan-cta plan-cta-quiet" style="display:block;text-align:center;text-decoration:none;margin-top:16px">내 주문 보기 →</a>
         </div>
       </div>
@@ -170,16 +174,24 @@
         $('bk-no').textContent  = orderNo;
 
         // 계좌는 business.json 에서. 비어 있으면 «예시»라고 명시한다 — 자리표시자를 진짜처럼 보이지 않게.
-        fetch('data/business.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (b) {
+        // ★계좌는 data/business.json 한 곳에서만 온다.
+        //   bankIsDummy 가 true 면 «실제 입금 금지» 를 크게 띄운다 — 라이브라 아무나 볼 수 있고,
+        //   진짜처럼 보이는 계좌번호로 돈이 움직이면 되돌릴 수 없다.
+        //   실계좌가 오면 business.json 세 값 + bankIsDummy=false 만 바꾸면 경고가 사라진다.
+        fetch('data/business.json').then(function (r) { return r.ok ? r.json() : null; }).then(paintBank)
+          .catch(function () { paintBank(null); });
+
+        function paintBank(b) {
           b = b || {};
-          $('bk-bank').textContent  = b.bankName   || '(예시) 국민은행';
-          $('bk-acct').textContent  = b.bankAccount|| '(예시) 000000-00-000000';
-          $('bk-owner').textContent = b.bankOwner  || b.ceo || '(예시) 예금주';
-        }).catch(function () {
-          $('bk-bank').textContent = '(예시) 국민은행';
-          $('bk-acct').textContent = '(예시) 000000-00-000000';
-          $('bk-owner').textContent = '(예시) 예금주';
-        });
+          $('bk-bank').textContent  = b.bankName    || '테스트은행';
+          $('bk-acct').textContent  = b.bankAccount || '0000-00-0000000';
+          $('bk-owner').textContent = b.bankOwner   || '테스트';
+          if (b.bankIsDummy !== false) {
+            $('bk-dummy').style.display = 'block';
+            $('bk-acct').style.textDecoration = 'line-through';
+            $('bk-acct').style.opacity = '.6';
+          }
+        }
       });
     }).catch(function () { location.replace('pricing.html'); });
   })();
