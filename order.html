@@ -116,6 +116,8 @@
             손님을 받기 전 화면 흐름을 점검하는 단계라 아직 진짜 계좌가 아닙니다.
           </p>
           <a href="mypage.html#orders" class="plan-cta plan-cta-quiet" style="display:block;text-align:center;text-decoration:none;margin-top:16px">내 주문 보기 →</a>
+          <!-- ★NEW-06: 입금자명을 잘못 적으면 탈출구가 «탭 닫기» 뿐이었다(그러면 내역도 사라진다). -->
+          <button type="button" class="plan-cta plan-cta-quiet" id="od-again" style="margin-top:8px">다시 입력하기</button>
         </div>
       </div>
     </div>
@@ -169,8 +171,10 @@
         submitted = true;
         $('od-submit').disabled = true;
         // ⚠️ 서버를 부르지 않는다(위 주석 참고). 화면 흐름만 이어준다.
+        // ★NEW-04: toISOString 은 UTC — 00~09시 KST 주문이 «어제» 번호를 받았다.
         var d = new Date();
-        var orderNo = 'GD' + d.toISOString().slice(2,10).replace(/-/g,'') + '-'
+        var kst = new Date(d.getTime() + 9 * 3600 * 1000);
+        var orderNo = 'GD' + kst.toISOString().slice(2,10).replace(/-/g,'') + '-'
                     + String(Math.floor(Math.random() * 9000) + 1000);
         var rec = { orderNo: orderNo, plan: plan.id, planName: plan.name, price: plan.price,
                     depositor: dep, status: 'awaiting_deposit', at: d.toISOString() };
@@ -182,6 +186,16 @@
 
         try { sessionStorage.setItem('sms_last_order', JSON.stringify(rec)); } catch (e) {}
         showDone(rec);
+      });
+
+      var againBtn = $('od-again');
+      if (againBtn) againBtn.addEventListener('click', function () {
+        try { sessionStorage.removeItem('sms_last_order'); } catch (e) {}
+        submitted = false;
+        $('od-submit').disabled = false;
+        $('od-done').classList.add('od-hide');
+        $('od-form').classList.remove('od-hide');
+        $('st2').classList.remove('on'); $('st1').classList.add('on');
       });
 
       // ★UL-004: 은행 앱 갔다가 돌아오면 새로고침이 된다 — 그때 주문번호·계좌가 사라졌었다.
