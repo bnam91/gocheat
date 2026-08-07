@@ -1,11 +1,22 @@
 const { MongoClient } = require('mongodb');
 
-// ★DB 이름을 «환경변수»로 뺀다 — 이게 없으면 프리뷰 배포가 라이브와 «같은 DB»를 쓴다.
-//   그러면 개발 중인 걸 확인하려면 라이브에 올리는 수밖에 없고, 실데이터가 오염된다.
-//   Atlas 는 클러스터 하나에 DB 를 여럿 둘 수 있다 — 클러스터를 새로 살 필요가 없다.
-//   Vercel 환경변수를 «Preview 에만» MONGO_DB=goditor_license_dev 로 두면
-//   브랜치 프리뷰가 자동으로 개발 DB 를 본다. Production 은 값이 없어 기존 이름 그대로다.
-const DB_NAME = process.env.MONGO_DB || 'goditor_license';
+/* ★프리뷰 배포는 «자동으로» 개발 DB 를 본다 — 대시보드 설정이 필요 없다.
+ *
+ *   전엔 DB 이름이 하드코딩이라 브랜치 프리뷰가 «라이브와 같은 DB» 를 썼다. 그래서
+ *   개발 중인 걸 확인하려면 라이브에 올리는 수밖에 없었고 실데이터가 오염됐다.
+ *
+ *   1차 안은 Vercel 환경변수를 「Preview 에만」 걸게 하는 것이었다. 동작은 하지만
+ *   ★«사람이 잊으면 조용히 라이브 DB 를 쓴다» — 실수의 대가가 너무 크다.
+ *   ⇒ VERCEL_ENV 는 Vercel 이 «항상» 넣어준다(production | preview | development).
+ *     production 이 아니면 개발 DB. 설정할 것도, 잊을 것도 없다.
+ *
+ *   MONGO_DB 를 명시하면 그게 이긴다(로컬 실험·일회성 격리용).
+ *   ★Atlas 는 클러스터 하나에 DB 를 여럿 둔다 — 클러스터를 새로 살 필요가 없다.
+ */
+const DB_NAME = process.env.MONGO_DB
+  || (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production'
+        ? 'goditor_license_dev'
+        : 'goditor_license');
 
 let cached = global.__goditorMongo;
 if (!cached) {
