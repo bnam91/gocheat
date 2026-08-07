@@ -1,38 +1,243 @@
 [
-  {"id":"goditor","name":"GODITOR","tagline":"상세페이지 전용 디자인 에디터","description":"상세페이지를 블록 단위로 조립하는 디자인 에디터. 섹션·이미지·텍스트를 드래그로 배치하고 즉시 미리보기로 확인하세요.","category":"Design","price":"paid","badge":"이벤트 무료","downloadUrl":"","buyUrl":"","detailUrl":"goditor.html","icon":"public/icons/goditor.png","minOS":"macOS 12","tags":["paid","macOS","design"],"plans":[
-  {"id":"free","name":"무료","price":"₩0","per":"월","ribbon":"","now":true,"features":[
-  {"t":"프로젝트 1개 · 섹션 10개","ok":true},
-  {"t":"AI 이미지 월 5장","ok":true},
-  {"t":"내보내기 1× (워터마크 있음)","ok":true},
-  {"t":"피그마 연동","ok":false},
-  {"t":"마켓 동기화","ok":false}
-]},
-  {"id":"basic","name":"베이직","price":"₩9,900","per":"월","ribbon":"","features":[
-  {"t":"프로젝트 3개 · 섹션 30개","ok":true},
-  {"t":"AI 이미지 월 20장","ok":true},
-  {"t":"내보내기 1× (워터마크 없음)","ok":true},
-  {"t":"피그마 연동","ok":false},
-  {"t":"마켓 동기화","ok":false}
-]},
-  {"id":"pro","name":"프로","price":"₩29,000","per":"월","ribbon":"추천","features":[
-  {"t":"프로젝트 20개 · 섹션 무제한","ok":true},
-  {"t":"AI 이미지 월 200장","ok":true},
-  {"t":"내보내기 2× (워터마크 없음)","ok":true},
-  {"t":"피그마 연동","ok":true},
-  {"t":"마켓 동기화","ok":false}
-]},
-  {"id":"promax","name":"프로맥스","price":"₩59,000","per":"월","ribbon":"","features":[
-  {"t":"프로젝트 무제한","ok":true},
-  {"t":"AI 이미지 월 1,000장","ok":true},
-  {"t":"내보내기 3× (워터마크 없음)","ok":true},
-  {"t":"피그마 연동","ok":true},
-  {"t":"마켓 동기화","ok":true}
-]}
-],"plansNote":"등급별 기능·금액은 예시입니다. 실제 적용 내용과 다를 수 있어요."},
-  {"id":"focusflow","name":"FocusFlow","tagline":"딴짓 안 하려고 만들었어요","description":"집중 세션을 관리하는 포모도로 타이머.","category":"Productivity","price":"free","downloadUrl":"","buyUrl":"","icon":"public/icons/focusflow.png","minOS":"macOS 13","releaseDate":"2026-03-28","tags":["free","macOS"]},
-  {"id":"clipboardpro","name":"ClipBoard Pro","tagline":"Cmd+C를 믿을 수 있게","description":"클립보드 히스토리를 정리하고 검색하세요.","category":"Utility","price":"paid","downloadUrl":"","buyUrl":"","icon":"public/icons/clipboardpro.png","minOS":"macOS 13","releaseDate":"2026-03-28","tags":["paid","macOS"]},
-  {"id":"quietmode","name":"QuietMode","tagline":"중요한 것만 남기고, 나머지는 조용히","description":"클릭 한 번으로 불필요한 알림을 차단하세요.","category":"Utility","price":"free","downloadUrl":"","buyUrl":"","icon":"public/icons/quietmode.png","minOS":"macOS 13","releaseDate":"2026-03-28","tags":["free","macOS"]},
-  {"id":"batteryguard","name":"BatteryGuard","tagline":"배터리 걱정 없이 만들 수 있게","description":"스마트 충전 제한으로 MacBook 배터리 수명을 늘리세요.","category":"Utility","price":"paid","downloadUrl":"","buyUrl":"","icon":"public/icons/batteryguard.png","minOS":"macOS 13","releaseDate":"2026-03-28","tags":["paid","macOS"]},
-  {"id":"swiftlaunch","name":"SwiftLaunch","tagline":"손이 키보드에서 안 떨어지게","description":"군더더기 없는 키보드 중심의 앱 런처.","category":"Productivity","price":"free","downloadUrl":"","buyUrl":"","icon":"public/icons/swiftlaunch.png","minOS":"macOS 13","releaseDate":"2026-03-28","tags":["free","macOS"]},
-  {"id":"nightshiftpro","name":"NightShift Pro","tagline":"새벽 2시에도 눈이 아직 괜찮아요","description":"고급 화면 색온도 조절. 늦은 밤에도 눈을 보호하세요.","category":"Utility","price":"paid","downloadUrl":"","buyUrl":"","icon":"public/icons/nightshiftpro.png","minOS":"macOS 13","releaseDate":"2026-03-28","tags":["paid","macOS"]}
+  {
+    "id": "goditor",
+    "name": "GODITOR",
+    "tagline": "상세페이지 전용 디자인 에디터",
+    "description": "상세페이지를 블록 단위로 조립하는 디자인 에디터. 섹션·이미지·텍스트를 드래그로 배치하고 즉시 미리보기로 확인하세요.",
+    "category": "Design",
+    "price": "paid",
+    "badge": "이벤트 무료",
+    "downloadUrl": "",
+    "buyUrl": "",
+    "detailUrl": "goditor.html",
+    "icon": "public/icons/goditor.png",
+    "minOS": "macOS 12",
+    "tags": [
+      "paid",
+      "macOS",
+      "design"
+    ],
+    "plans": [
+      {
+        "id": "free",
+        "name": "FREE",
+        "price": "₩0",
+        "per": "월",
+        "ribbon": "",
+        "now": true,
+        "features": [
+          {
+            "t": "프로젝트 1개 · 섹션 10개",
+            "ok": true
+          },
+          {
+            "t": "AI 이미지 월 5장",
+            "ok": true
+          },
+          {
+            "t": "내보내기 1× (워터마크 있음)",
+            "ok": true
+          },
+          {
+            "t": "피그마 연동",
+            "ok": false
+          },
+          {
+            "t": "마켓 동기화",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "id": "starter",
+        "name": "STARTER",
+        "price": "₩50,000",
+        "per": "월",
+        "ribbon": "",
+        "features": [
+          {
+            "t": "프로젝트 3개 · 섹션 30개",
+            "ok": true
+          },
+          {
+            "t": "AI 이미지 월 20장",
+            "ok": true
+          },
+          {
+            "t": "내보내기 1× (워터마크 없음)",
+            "ok": true
+          },
+          {
+            "t": "피그마 연동",
+            "ok": false
+          },
+          {
+            "t": "마켓 동기화",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "id": "pro",
+        "name": "PRO",
+        "price": "₩120,000",
+        "per": "월",
+        "ribbon": "추천",
+        "features": [
+          {
+            "t": "프로젝트 20개 · 섹션 무제한",
+            "ok": true
+          },
+          {
+            "t": "AI 이미지 월 200장",
+            "ok": true
+          },
+          {
+            "t": "내보내기 2× (워터마크 없음)",
+            "ok": true
+          },
+          {
+            "t": "피그마 연동",
+            "ok": true
+          },
+          {
+            "t": "마켓 동기화",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "id": "promax",
+        "name": "PRO MAX",
+        "price": "₩300,000",
+        "per": "월",
+        "ribbon": "",
+        "features": [
+          {
+            "t": "프로젝트 무제한",
+            "ok": true
+          },
+          {
+            "t": "AI 이미지 월 1,000장",
+            "ok": true
+          },
+          {
+            "t": "내보내기 3× (워터마크 없음)",
+            "ok": true
+          },
+          {
+            "t": "피그마 연동",
+            "ok": true
+          },
+          {
+            "t": "마켓 동기화",
+            "ok": true
+          }
+        ]
+      }
+    ],
+    "plansNote": "등급별 기능·금액은 예시입니다. 실제 적용 내용과 다를 수 있어요."
+  },
+  {
+    "id": "focusflow",
+    "name": "FocusFlow",
+    "tagline": "딴짓 안 하려고 만들었어요",
+    "description": "집중 세션을 관리하는 포모도로 타이머.",
+    "category": "Productivity",
+    "price": "free",
+    "downloadUrl": "",
+    "buyUrl": "",
+    "icon": "public/icons/focusflow.png",
+    "minOS": "macOS 13",
+    "releaseDate": "2026-03-28",
+    "tags": [
+      "free",
+      "macOS"
+    ]
+  },
+  {
+    "id": "clipboardpro",
+    "name": "ClipBoard Pro",
+    "tagline": "Cmd+C를 믿을 수 있게",
+    "description": "클립보드 히스토리를 정리하고 검색하세요.",
+    "category": "Utility",
+    "price": "paid",
+    "downloadUrl": "",
+    "buyUrl": "",
+    "icon": "public/icons/clipboardpro.png",
+    "minOS": "macOS 13",
+    "releaseDate": "2026-03-28",
+    "tags": [
+      "paid",
+      "macOS"
+    ]
+  },
+  {
+    "id": "quietmode",
+    "name": "QuietMode",
+    "tagline": "중요한 것만 남기고, 나머지는 조용히",
+    "description": "클릭 한 번으로 불필요한 알림을 차단하세요.",
+    "category": "Utility",
+    "price": "free",
+    "downloadUrl": "",
+    "buyUrl": "",
+    "icon": "public/icons/quietmode.png",
+    "minOS": "macOS 13",
+    "releaseDate": "2026-03-28",
+    "tags": [
+      "free",
+      "macOS"
+    ]
+  },
+  {
+    "id": "batteryguard",
+    "name": "BatteryGuard",
+    "tagline": "배터리 걱정 없이 만들 수 있게",
+    "description": "스마트 충전 제한으로 MacBook 배터리 수명을 늘리세요.",
+    "category": "Utility",
+    "price": "paid",
+    "downloadUrl": "",
+    "buyUrl": "",
+    "icon": "public/icons/batteryguard.png",
+    "minOS": "macOS 13",
+    "releaseDate": "2026-03-28",
+    "tags": [
+      "paid",
+      "macOS"
+    ]
+  },
+  {
+    "id": "swiftlaunch",
+    "name": "SwiftLaunch",
+    "tagline": "손이 키보드에서 안 떨어지게",
+    "description": "군더더기 없는 키보드 중심의 앱 런처.",
+    "category": "Productivity",
+    "price": "free",
+    "downloadUrl": "",
+    "buyUrl": "",
+    "icon": "public/icons/swiftlaunch.png",
+    "minOS": "macOS 13",
+    "releaseDate": "2026-03-28",
+    "tags": [
+      "free",
+      "macOS"
+    ]
+  },
+  {
+    "id": "nightshiftpro",
+    "name": "NightShift Pro",
+    "tagline": "새벽 2시에도 눈이 아직 괜찮아요",
+    "description": "고급 화면 색온도 조절. 늦은 밤에도 눈을 보호하세요.",
+    "category": "Utility",
+    "price": "paid",
+    "downloadUrl": "",
+    "buyUrl": "",
+    "icon": "public/icons/nightshiftpro.png",
+    "minOS": "macOS 13",
+    "releaseDate": "2026-03-28",
+    "tags": [
+      "paid",
+      "macOS"
+    ]
+  }
 ]

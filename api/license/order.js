@@ -2,7 +2,8 @@ const { getDb } = require('../_lib/mongo');
 const { enqueueMail } = require('../_lib/mail');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
-const PLANS = ['basic', 'pro', 'promax'];
+// ★data/apps.json 의 유료 등급 id 와 «같아야» 한다. 갈리면 주문이 400 으로 튕긴다.
+const PLANS = ['starter', 'pro', 'promax'];
 const BANK = process.env.BANK_INFO || '국민은행 000000-00-000000 (예금주: 신현빈)';
 
 // 무통장입금 구매 신청. 결제 확인은 사람이 한다 — 여기서는 주문만 남기고 안내 메일 1통.
