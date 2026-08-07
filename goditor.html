@@ -14,46 +14,47 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/public/apple-touch-icon.png" />
 </head>
 <body>
+  <!-- ★내비는 «한 줄»이다. 전에는 전역(53) + 앱전용(47) 두 줄로 100px 을 먹었다.
+       코덱스 실측(oa-full.png 1440×8047 원본 상단) — 제품 페이지인데 제품 전용 내비가
+       «따로 없다». 전역 한 줄뿐이고, 우리가 만들려던 「개발자문서」에 해당하는 「개발자」도
+       그 한 줄 안에 있다. 왼쪽=브랜드+이동 / 오른쪽=계정. 한 줄 안에서 좌우로 나뉜다.
+
+       ★왼쪽에 «계층»을 드러낸다: 소문의섬 › GODITOR.
+         그러면 「소문의섬」이 곧 상위로 가는 길이라 «← 앱 목록» 뒤로가기가 필요 없어진다.
+         (뒤로가기는 히어로 패딩 안에 홀로 떠서 제목과 175px 떨어져 있었다. 뗐다.)
+
+       ★앱 항목(개요·요금제·개발자문서)은 «이 페이지에만» 있다.
+         다른 페이지의 <header><nav> 는 손대지 않았다 — header nav 로 범위를 좁혀둔
+         전역 규칙을 그대로 쓴다. -->
   <header>
-    <nav>
-      <a href="/" class="logo">소문의섬</a>
+    <nav class="nav--app" aria-label="소문의섬 · GODITOR 내비게이션">
+      <div class="nav-left">
+        <a href="/" class="logo">소문의섬</a>
+        <span class="nav-crumb-sep" aria-hidden="true">›</span>
+        <span class="nav-crumb-current">GODITOR</span>
+
+        <div class="nav-sections">
+          <a href="#overview" class="appnav-link" data-spy="overview">개요</a>
+          <a href="#pricing" class="appnav-link" data-spy="pricing">요금제</a>
+          <!-- ★개발자문서는 «아직 없다». 링크로 만들어 빈 페이지로 보내면 거짓말이 된다.
+               누를 수 없는 상태로 두고, 화면이 직접 «준비 중»이라고 말하게 한다.
+               MCP 안내는 현빈이 «나중에»라고 했다 — 자리도 아직 만들지 않는다. -->
+          <span class="appnav-link is-soon" aria-disabled="true">
+            개발자문서<span class="appnav-soon">준비 중</span>
+          </span>
+        </div>
+      </div>
+
       <div class="nav-links">
-        <a href="/#apps">앱</a>
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
       </div>
     </nav>
   </header>
 
-  <!-- ★고디터 전용 내비 — «이 앱 안에서만» 도는 이동.
-       상단 가로 탭으로 간다. 사이드바가 아니다. 근거:
-         · 코덱스 실측(oa-full.png 1440폭) — 사이드바가 «없다». 내비는 상단 가로 하나뿐이고
-           제품 레벨 항목(개발자 등)이 그 한 줄에 들어가 있다.
-         · 우리 페이지는 세로 스크롤 서사다. 사이드바가 먹는 좌측 폭이 곧 기능 구간의
-           이미지 폭이라 좌우 교차 구조와 정면으로 충돌한다.
-         · 항목이 셋뿐이다. 사이드바는 항목이 열 개 넘는 «문서형»일 때 값을 한다.
-       위 전역 내비(소문의섬)는 플랫폼용이라 그대로 두고, 그 아래 제품용 한 줄을 얹는다. -->
-  <nav class="appnav" aria-label="GODITOR 페이지 내비게이션">
-    <div class="appnav-inner">
-      <span class="appnav-brand">GODITOR</span>
-      <div class="appnav-links">
-        <a href="#overview" class="appnav-link" data-spy="overview">개요</a>
-        <a href="#pricing" class="appnav-link" data-spy="pricing">요금제</a>
-        <!-- ★개발자문서는 «아직 없다». 링크로 만들어 빈 페이지로 보내면 거짓말이 된다.
-             누를 수 없는 상태로 두고, 화면이 직접 «준비 중»이라고 말하게 한다.
-             MCP 안내는 현빈이 «나중에»라고 했다 — 자리도 아직 만들지 않는다. -->
-        <span class="appnav-link is-soon" aria-disabled="true">
-          개발자문서<span class="appnav-soon">준비 중</span>
-        </span>
-      </div>
-    </div>
-  </nav>
-
   <!-- ① 히어로 — 말하는 한 가지: «이게 뭔지 · 받아라» -->
   <section class="detail" id="overview">
     <div class="detail-inner">
-      <a href="/#apps" class="detail-back">← 앱 목록</a>
-
       <div class="detail-header">
         <div class="detail-icon">
           <img src="/public/icons/goditor.png" alt="GODITOR 앱 아이콘" width="72" height="72" />
@@ -524,16 +525,26 @@
         });
       }
 
-      var READ_LINE = 120;   // 고정 내비(52+46) 바로 아래 = 실제로 읽기 시작하는 선
+      // «읽는 선» — 이 선을 지난 마지막 구간이 «지금 보고 있는 것»이다.
+      // ★고정값(120)이었는데 내비가 두 줄(100px)에서 한 줄(65px)로 줄면서 어긋났다.
+      //   높이를 손으로 적어두면 내비를 고칠 때마다 여기도 같이 고쳐야 한다 —
+      //   실제 헤더 높이를 «재서» 쓴다. 거기에 화면 높이의 1/5 를 여유로 둔다:
+      //   구간 머리가 화면 위쪽에 «들어오면» 그 구간을 읽기 시작한 것으로 본다.
+      //   (딱 헤더 밑선으로 잡으면 앵커 착지 오차 몇십 px 에 판정이 뒤집힌다)
+      function readLine() {
+        var h = document.querySelector('header');
+        return (h ? h.getBoundingClientRect().height : 64) + window.innerHeight * 0.2;
+      }
       function pick() {
         var doc = document.documentElement;
         if (window.innerHeight + window.scrollY >= doc.scrollHeight - 4) {
           return ids[ids.length - 1];        // 바닥 = 마지막 구간
         }
         var cur = ids[0];
+        var line = readLine();
         ids.forEach(function (id) {
           var el = document.getElementById(id);
-          if (el && el.getBoundingClientRect().top <= READ_LINE) cur = id;
+          if (el && el.getBoundingClientRect().top <= line) cur = id;
         });
         return cur;
       }

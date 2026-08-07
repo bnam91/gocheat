@@ -59,7 +59,7 @@ a { color: inherit; text-decoration: none; }
 header { position: sticky; top: 0; z-index: 100; background: rgba(11,11,14,0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
 /* ★`nav` 가 아니라 `header nav` 다 — 고디터 전용 내비도 <nav> 라
    범위를 안 좁히면 이 규칙(가운데 정렬·space-between·52px)이 거기까지 걸린다. */
-header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 52px; display: flex; align-items: center; justify-content: space-between; }
+header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
 .logo { font-size: var(--fs-body); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .nav-links { display: flex; gap: 20px; }
 .nav-links a { font-size: var(--fs-sm); color: var(--muted); transition: color 0.15s; }
@@ -768,21 +768,18 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    넓히는 건 «틀»뿐이고 읽는 글은 그대로 --read 축에 있다. */
 header nav, footer { max-width: var(--wide); }
 
-/* ── 고디터 전용 내비 (상단 가로 탭) ────────────────────────────
-   전역 내비(소문의섬) 바로 아래 붙는 제품 한 줄. 전역 헤더가 52px 이라
-   그 아래에 «겹쳐서» 고정된다 — 스크롤해도 요금제로 바로 갈 수 있어야 한다. */
-.appnav {
-  position: sticky; top: 52px; z-index: 90;
-  background: rgba(11,11,14,0.72);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-}
-.appnav-inner {
-  max-width: var(--wide); margin: 0 auto; padding: 0 24px; height: 46px;
-  display: flex; align-items: center; gap: 24px;
-}
-.appnav-brand { font-size: var(--fs-sm); font-weight: 700; color: var(--fg); letter-spacing: -0.01em; }
-.appnav-links { display: flex; align-items: center; gap: 20px; }
+/* ── 내비 «한 줄» (소문의섬 › GODITOR + 구간 + 계정) ──────────────
+   전에는 전역(53px) + 앱전용(47px) 두 줄로 화면 위 100px 을 이동수단이 먹었다.
+   코덱스는 64px 한 줄이고, 제품 페이지인데도 «제품 전용 내비가 따로 없다».
+   그래서 합쳤다. 왼쪽=계층+이동 / 오른쪽=계정 — 코덱스와 같은 배치다.
+
+   ★.nav--app 은 고디터 페이지에만 붙는다. 다른 페이지의 header nav 는 그대로다. */
+.nav-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.nav-crumb-sep { color: var(--subtle); font-size: var(--fs-sm); }
+.nav-crumb-current { font-size: var(--fs-sm); font-weight: 700; color: var(--fg); letter-spacing: -0.01em; }
+/* 구간 링크는 계층에서 한 칸 떨어뜨린다 — «어디에 있나»와 «어디로 가나»는 다른 말이다 */
+.nav-sections { display: flex; align-items: center; gap: 20px; margin-left: 18px; }
+
 .appnav-link {
   font-size: var(--fs-sm); color: var(--muted); transition: color 0.15s;
   display: inline-flex; align-items: center; gap: 6px;
@@ -794,27 +791,35 @@ a.appnav-link:focus-visible { outline: none; color: var(--accent); }
 .appnav-link.is-current { color: var(--fg); border-bottom-color: var(--accent); }
 /* ★아직 없는 문서. 누를 수 없고, 그렇게 «보이게» 한다 */
 .appnav-link.is-soon { color: var(--subtle); opacity: .6; cursor: default; }
-/* 한글에 mono·letter-spacing 을 걸지 않는다 — «준비  중»처럼 자간만 벌어진다
-   (.detail-back 에서 겪은 것과 같은 함정) */
+/* 한글에 mono·letter-spacing 을 걸지 않는다 — «준비  중»처럼 자간만 벌어진다 */
 .appnav-soon {
   font-size: var(--fs-xs); color: var(--subtle);
   border: 1px solid var(--border-strong); border-radius: 4px; padding: 1px 6px;
 }
-/* 고정 내비가 앵커 목적지를 덮지 않게 — 헤더 52 + 앱내비 46 + 숨쉴 틈 */
-#overview, #pricing { scroll-margin-top: 118px; }
-@media (max-width: 560px) {
-  .appnav-inner { gap: 14px; padding: 0 20px; }
-  .appnav-links { gap: 14px; }
-  .appnav-brand { display: none; }   /* 좁으면 이동 항목이 먼저다 */
+
+/* 고정 내비가 앵커 목적지를 덮지 않게 — 한 줄(64) + 숨쉴 틈.
+   ★두 줄일 때는 118 이었다. 높이가 줄면 이 값도 같이 줄어야 한다. */
+#overview, #pricing { scroll-margin-top: 88px; }
+
+@media (max-width: 860px) {
+  /* 좁아지면 «어디로 가나»(구간)가 «어디에 있나»(계층)보다 급하다 */
+  .nav-crumb-sep, .nav-crumb-current { display: none; }
+  .nav-sections { margin-left: 0; gap: 16px; }
+}
+@media (max-width: 620px) {
+  /* 더 좁으면 준비 중 배지부터 접는다 — 링크 자체는 남긴다 */
+  .appnav-soon { display: none; }
+  .nav-sections { gap: 14px; }
 }
 
-/* ★뒤로가기 — 좌상단. 페이지 전체 가운데 정렬에 끌려가 있었다 */
-.detail-back { align-self: flex-start; font-size: var(--fs-xs); }
+/* ★«← 앱 목록» 뒤로가기 제거(현빈).
+   히어로 패딩 안에 홀로 앉아 제목과 175px 떨어져 아무 관계도 못 맺고 있었다.
+   상위로 가는 길은 이제 내비 왼쪽의 «소문의섬 ›» 이 맡는다 — 코덱스도 로고가 그 일을 한다.
+   .detail-back 규칙은 남겨둔다: 다른 앱 상세가 생기면 그 페이지가 쓸 수도 있다. */
 
 /* ── 히어로 세로 리듬 — 간격이 곧 위계다 ─────────────────────────
    상하 여백이 사실상 0이라 위아래 구간에 눌려 있었다. 코덱스처럼 크게 연다. */
 .detail { padding-top: clamp(96px, 9vw, 128px); padding-bottom: clamp(96px, 9vw, 128px); }
-.detail-back    { margin-bottom: 48px; }   /* 뒤로가기 ↔ 히어로 덩어리 */
 .detail-header  { gap: 32px; }             /* 아이콘 ↔ 제목 */
 .detail-meta    { gap: 24px; }             /* 제목  ↔ 리드 */
 .detail-cta     { margin-top: 40px; }      /* 리드  ↔ 버튼 */
