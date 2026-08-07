@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { randomToken } = require('../_lib/crypto');
 const { getDb } = require('../_lib/mongo');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
+const { normalizeAppId, resolvePlan, registerApp } = require('../_lib/plan');
 
 const PURCHASE_URL = process.env.PURCHASE_URL || 'https://hompageapp.vercel.app/pricing.html';
 
@@ -35,12 +36,25 @@ module.exports = async (req, res) => {
       $set: { lastLoginAt: new Date(), sessionToken, sessionIssuedAt: new Date() },
     });
 
+    // ★앱에서 온 로그인이면 «그 앱의 유저»로 등록한다(처음 한 번만).
+    //   예전엔 앱과 홈페이지가 «완전히 같은 body» 를 보내 구분이 불가능했다 —
+    //   앱이 app:'goditor' 를 싣기 시작하면서 비로소 「누가 고디터 유저인가」를 셀 수 있다.
+    //   ⚠️ app 이 없으면(구버전 앱·홈페이지 로그인) 예전과 «똑같이» 동작한다.
+    const appId = normalizeAppId(body.app);
+    let pi = null;
+    if (appId) {
+      await registerApp(db, email, appId);
+      const fresh = await db.collection('users').findOne({ email }, { projection: { apps: 1 } });
+      pi = resolvePlan(fresh, appId);
+    }
+
     return json(res, 200, {
       ok: !expired,
       email,
-      plan: user.plan || 'event_free',
+      plan: pi ? pi.plan : (user.plan || 'event_free'),
+      ...(pi ? { planSource: pi.source, app: appId } : {}),
       sessionToken,
-      accessUntil: until,
+      accessUntil: pi ? pi.accessUntil : until,
       // ★막기만 하고 어디로 가라고 안 하면 사용자는 또 헤맨다 — 갈 곳을 함께 준다
       ...(expired ? { reason: 'expired', purchaseUrl: PURCHASE_URL } : {}),
     });
