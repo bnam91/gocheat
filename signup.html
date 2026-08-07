@@ -36,7 +36,7 @@
       <p class="section-label" id="su-label" hidden></p>
       <h1 class="auth-title">소문의섬 계정 만들기</h1>
       <p class="auth-sub">
-        <span id="su-lead">이벤트 기간에는 가입 즉시 소문의섬 앱을 전부 쓰실 수 있어요.</span>
+        <span id="su-lead">베타테스트 기간에는 가입 즉시 소문의섬 앱을 전부 쓰실 수 있어요.</span>
         가입 정보는 계정 관리와 고객 지원에만 씁니다.
       </p>
 
@@ -104,7 +104,7 @@
       </form>
       </div>
 
-      <p class="auth-sub" style="margin-top:16px">이벤트 기간에는 이메일 인증 없이 가입 즉시 이용할 수 있어요.</p>
+      <p class="auth-sub" style="margin-top:16px">베타테스트 기간에는 이메일 인증 없이 가입 즉시 이용할 수 있어요.</p>
       <p class="auth-links">
         <a href="login.html">이미 계정이 있어요</a>
         <span class="sep">|</span>
@@ -282,7 +282,7 @@
           if (label) { label.textContent = a.name + ' 시작하기'; label.hidden = false; }
           if (mark && a.icon) { mark.src = a.icon; mark.alt = a.name; mark.hidden = false; }
           var lead = document.getElementById('su-lead');
-          if (lead) lead.textContent = '이벤트 기간에는 가입 즉시 ' + a.name + ' 전체 기능을 쓰실 수 있어요.';
+          if (lead) lead.textContent = '베타테스트 기간에는 가입 즉시 ' + a.name + ' 전체 기능을 쓰실 수 있어요.';
         }).catch(function () {});
     })();
   </script>
