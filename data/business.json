@@ -7,5 +7,10 @@
   "address": "",
   "phone": "",
   "email": "",
-  "privacyOfficer": ""
+  "privacyOfficer": "",
+  "_결제": "★테스트용 더미다. 손님 받기 전 플로우 점검용. bankIsDummy 가 true 면 주문 화면이 「실제 입금 금지」를 크게 띄운다. 실계좌가 오면 세 값을 바꾸고 bankIsDummy 를 false 로 — 그 순간 경고가 사라진다.",
+  "bankIsDummy": true,
+  "bankName": "테스트은행",
+  "bankAccount": "0000-00-0000000",
+  "bankOwner": "테스트"
 }
