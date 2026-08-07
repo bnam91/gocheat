@@ -218,8 +218,30 @@
            앱이 늘면 그 앱 JSON 에 plans 만 적으면 된다 — 여기 HTML 은 그대로. -->
       <div class="plan-grid" data-app="goditor"></div>
 
-      <!-- ★이벤트 종료 후를 위한 무통장입금 흐름. 지금 크게 두면 «결제가 된다»고 오해한다.
-           지우지 않고 접어둔다 — 구조는 이미 동작한다. -->
+      <!-- ══════════════════════════════════════════════════════════════
+           ⚠️ 2026-08-07: 무통장입금 결제 흐름을 «화면에서 뗐다»(현빈: 지금 필요없을듯).
+              지우지 않고 <template> 안에 넣어 보존한다 —
+              이벤트가 끝나면 그대로 필요해지는 물건이고, 삭제하면 그때 다시 만들어야 한다.
+
+           ★뗀 이유 — «완료될 수 없는 절차»라서다:
+             · 실제 입금계좌가 없다. 신청을 받아놓고 「입금 안내」 자리에 «준비 중»이 뜬다.
+             · 사업자정보가 없다. 결제 흐름을 보여주면서 사업자 표기가 없으면 안 된다.
+             · 지금은 전 등급 무료다. 이벤트 페이지에 결제 절차가 접혀 있을 이유가 없다.
+
+           ★되살리는 조건: «실제 입금계좌 + 사업자정보»가 들어오고 «이벤트가 끝나면».
+              그때 <template> 태그 두 줄만 벗기면 된다(아래 스크립트 감싼 것도 함께).
+
+           ★백엔드(api/license/order.js)는 «그대로» 살아 있다. 진입점만 뗀 것이다.
+
+           ★왜 hidden 도 주석도 아니고 <template> 인가:
+             · hidden — .auth-mark 에서 겪었듯 display 를 가진 요소는 [hidden] 을 이겨
+               «안 사라진다». 여기 .future-pay 도 display 를 가진 규칙이 있다.
+             · 주석 — 본문에 style="…var(--accent)…" 의 «--» 가 있어 주석이 거기서 끊긴다.
+               (실제로 감싸려다 이걸로 막혔다. HTML 주석은 중첩도 안 된다.)
+             · <template> — 파싱은 되지만 «문서에 들어가지 않는다». 렌더 안 되고,
+               getElementById 로도 안 잡히고, 안의 스크립트도 안 돈다. 이 용도의 정답이다.
+           ══════════════════════════════════════════════════════════════ -->
+      <template id="future-pay-parked">
       <details class="future-pay">
         <summary>이벤트가 끝나면 어떻게 결제하나요?</summary>
         <div class="future-pay-body">
@@ -257,6 +279,7 @@
           </div>
         </div>
       </details>
+      </template>
     </div>
   </section>
 
@@ -272,7 +295,12 @@
     <div id="biz-info"></div>
     </div>
   </footer>
-  <script>
+  <!-- ⚠️ 위 <template id="future-pay-parked"> 와 «한 세트»다. 마크업만 떼면
+       이 스크립트가 null 을 붙잡고 던진다(getElementById 는 template 안을 안 본다).
+       ★지우지 않고 type 을 바꿔 «실행만» 멈춘다 — 브라우저는 모르는 type 의
+         <script> 를 데이터로 두고 실행하지 않는다. 코드는 그대로 남는다.
+       되살릴 때: type 을 지우고 위 <template> 태그를 벗기면 된다. -->
+  <script type="text/plain" data-parked="future-pay">
     (function () {
       const panel      = document.getElementById('order-panel');
       const resultPnl  = document.getElementById('result-panel');
