@@ -35,7 +35,11 @@
     .mp-tier .big { font-size:var(--fs-h3); font-weight:800; letter-spacing:-.02em; margin:0; }
     .mp-tier .sm  { font-size:var(--fs-xs); color:var(--subtle); margin:4px 0 0; }
     .mp-tier .plan-cta { margin:0; max-width:180px; }
-    table.mp-ord { width:100%; border-collapse:collapse; font-size:var(--fs-xs); }
+    /* ★NEW-02: 열이 4→6개로 늘고 주문번호에 nowrap 이 붙으면서 표 최소폭이 화면을 넘겼다.
+       가운데 정렬된 채 넘쳐 «왼쪽 43px 가 스크롤로도 못 닿는» 상태가 됐다.
+       ⇒ 표를 «자기 안에서» 가로 스크롤하게 가둔다. 페이지 본문은 절대 가로로 안 밀린다. */
+    .mp-ord-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -2px; }
+    table.mp-ord { width:100%; min-width:520px; border-collapse:collapse; font-size:var(--fs-xs); }
     table.mp-ord th {
       text-align:left; color:var(--subtle); font-weight:500;
       padding:0 10px 9px 0; border-bottom:1px solid var(--border);
@@ -112,10 +116,10 @@
         <!-- ── 주문 내역 ── -->
         <section class="mp-pane" id="pane-orders">
           <div id="mp-ord-empty" class="dim" style="display:none">아직 주문 내역이 없어요.</div>
-          <table class="mp-ord" id="mp-ord-table" style="display:none">
+          <div class="mp-ord-wrap"><table class="mp-ord" id="mp-ord-table" style="display:none">
             <thead><tr><th>주문번호</th><th>등급</th><th>금액</th><th>입금자</th><th>주문일</th><th>상태</th></tr></thead>
             <tbody id="mp-ord-body"></tbody>
-          </table>
+          </table></div>
           <!-- ★UL-002: 「연동 전」은 order.html 에만 있었다. 완료 화면에서 여기로 넘어오면
                경고가 0개라, 다시 열면 «완전히 정상적인 주문»으로 읽혔다. 같은 근거(bankIsDummy)로 여기서도 띄운다. -->
           <p class="mp-dummy" id="mp-dummy" style="display:none">
@@ -190,26 +194,34 @@
     // 주문 내역 — ★프론트만이다. order.html 이 남긴 화면 확인용 기록을 읽는다.
     var orders = [];
     try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
+    // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
+    fetch('data/business.json').then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
+
+    function renderOrders() {
     if (!orders.length) {
       document.getElementById('mp-ord-empty').style.display = 'block';
     } else {
       document.getElementById('mp-ord-table').style.display = 'table';
       // ★UL-002: 연동 여부는 business.json 한 곳에서만 판단한다(주문 화면과 같은 근거).
-      fetch('data/business.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (b) {
-        var dummy = !b || b.bankIsDummy !== false;
-        document.getElementById('mp-dummy').style.display    = dummy ? 'block' : 'none';
-        document.getElementById('mp-ord-note').style.display = dummy ? 'none'  : 'block';
-      }).catch(function () { document.getElementById('mp-dummy').style.display = 'block'; });
+      document.getElementById('mp-dummy').style.display    = window.__smsDummy ? 'block' : 'none';
+      document.getElementById('mp-ord-note').style.display = window.__smsDummy ? 'none'  : 'block';
       document.getElementById('mp-ord-body').innerHTML = orders.map(function (o) {
+        // ★NEW-08: 연동 전인데 「입금 확인 중」이라 적으면 실제로 접수된 것처럼 읽힌다.
+        //   CTA 도 「주문 화면 미리보기」라 말해놓고 상태만 진짜처럼 굴면 앞뒤가 안 맞는다.
         var cls = o.status === 'paid' ? 'done' : 'wait';
-        var txt = o.status === 'paid' ? '완료' : '입금 확인 중';
+        var txt = o.status === 'paid' ? '완료' : (window.__smsDummy ? '미리보기' : '입금 확인 중');
+        // ★NEW-04: toISOString 은 UTC 다 — 00~09시 KST 주문이 전부 «어제»로 찍혔다.
+        //   login.html 은 이미 한국시간으로 고정돼 있는데 주문 쪽만 안 따라갔다.
         var day = '';
-        try { var d = new Date(o.at); if (!isNaN(d)) day = d.toISOString().slice(0,10); } catch (e) {}
+        try { var d = new Date(o.at); if (!isNaN(d)) day = kstDate(d); } catch (e) {}
         return '<tr><td class="mono">' + esc(o.orderNo) + '</td><td>' + esc(o.planName)
              + '</td><td>' + esc(o.price) + '</td><td>' + esc(o.depositor || '—')
              + '</td><td>' + esc(day || '—')
              + '</td><td><span class="mp-pill ' + cls + '">' + txt + '</span></td></tr>';
       }).join('');
+    }
     }
 
     // 다운로드
@@ -226,12 +238,21 @@
     }).catch(function () {});
 
     document.getElementById('mp-logout').addEventListener('click', function () {
+      // ★NEW-01: 여기가 R1 에서 유출을 재현한 «바로 그 경로»인데 login.html 만 고쳤었다.
+      //   그 사이 UL-012(입금자 실명 열)·UL-004(sms_last_order)가 들어가 «유출 정보가 늘었다».
+      //   ⇒ 키를 하나씩 지우지 않는다. sms_ 접두를 전부 지운다.
       try {
-        sessionStorage.removeItem('sms_email'); sessionStorage.removeItem('sms_token');
-        sessionStorage.removeItem('sms_plan');  sessionStorage.removeItem('sms_until');
+        Object.keys(sessionStorage).filter(function (k) { return k.indexOf('sms_') === 0; })
+              .forEach(function (k) { sessionStorage.removeItem(k); });
+        sessionStorage.removeItem('goditor_after_login');
       } catch (e) {}
       location.href = 'login.html';
     });
+
+    // 한국시간 기준 YYYY-MM-DD. 보는 사람 시간대에 따라 날짜가 달라지면 안 된다.
+    function kstDate(d) {
+      return new Date(d.getTime() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+    }
 
     function esc(s) {
       return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {

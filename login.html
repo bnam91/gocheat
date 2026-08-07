@@ -53,7 +53,7 @@
           <div class="account-row"><span class="account-key">이용 기한</span><span class="account-val" id="acc-until">—</span></div>
         </div>
         <a id="go-app" class="plan-cta" style="display:block;text-decoration:none;max-width:260px;" href="/#apps">앱 목록으로 →</a>
-          <a class="plan-cta plan-cta-quiet" style="display:block;text-decoration:none;text-align:center;max-width:260px;margin-top:8px" href="mypage.html">마이페이지 →</a>
+          <a id="go-mypage" class="plan-cta plan-cta-quiet" style="display:block;text-decoration:none;text-align:center;max-width:260px;margin-top:8px" href="mypage.html">마이페이지 →</a>
         <p class="order-warn" id="acc-note">같은 이메일·비밀번호로 앱에서도 로그인하실 수 있어요.</p>
         <button type="button" class="plan-cta plan-cta-quiet" id="logout-btn" style="max-width:200px;">다른 계정으로 로그인</button>
       </div>
@@ -166,13 +166,22 @@
             dlLink.textContent = '마이페이지로 →';
             dlLink.href = 'mypage.html';
             dlLink.removeAttribute('target'); dlLink.classList.add('cta-pulse');
+            // ★NEW-07: 같은 곳으로 가는 버튼이 위아래로 둘 생겼다 — 고정 버튼을 숨긴다.
+            var gm = document.getElementById('go-mypage'); if (gm) gm.style.display = 'none';
           }
           var wants = nx === 'download'
                    || sessionStorage.getItem('goditor_after_login') === 'download';
-          if (wants) {
-            title.textContent = '로그인되었습니다. 이어서 받으세요.';
-            sub.textContent = '아래 버튼을 누르면 다운로드 페이지가 열려요.';
+          if (wants && dlLink) {
+            // ★UL-006: 전엔 문구만 「다운로드가 열려요」로 바꾸고 «버튼은 앱 목록 그대로»였다.
+            //   약속과 버튼이 어긋나 사용자는 없는 버튼을 찾았다. 버튼도 같이 바꾼다.
+            var appq = 'goditor';
+            try { appq = new URLSearchParams(location.search).get('app') || 'goditor'; } catch (e5) {}
+            dlLink.textContent = 'GODITOR 받으러 가기 →';
+            dlLink.href = '/' + appq + '.html#download';
+            dlLink.removeAttribute('target');
             dlLink.classList.add('cta-pulse');
+            title.textContent = '로그인되었습니다. 이어서 받으세요.';
+            sub.textContent = '아래 버튼을 누르면 다운로드로 이동해요.';
           }
         } catch (e4) {}
         // ★비밀번호·세션토큰은 저장하지 않는다. 표시 연속성에 필요한 이메일만.

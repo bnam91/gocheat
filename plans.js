@@ -42,7 +42,7 @@
             : '<li class="plan-feat-off"><span class="feature-dot">×</span> ' + esc(f.t) + '</li>';
         }).join('');
 
-      // ★UL-017: apps.json 의 plansNote 를 «아무도 안 읽어» 화면에 안 나왔다.
+      // ★UL-017(+NEW-03: map 콜백 «안»에 있어 등급 수만큼 4번 찍혔다 — 밖으로 뺀다): apps.json 의 plansNote 를 «아무도 안 읽어» 화면에 안 나왔다.
       //   화면은 「금액은 예시」라고만 말해서 「AI 이미지 월 200장」이 확정 스펙처럼 읽혔다.
       var note = [];
       if (app.plansNote) note.push(app.plansNote);
@@ -54,6 +54,7 @@
         noteEl.textContent = note.join(' ');
         grid.parentNode.insertBefore(noteEl, grid.nextSibling);
       }
+
 
         // ★카드에서 «제일 큰 글자»는 등급 이름이다. 금액은 그 아래다.
         //   전에는 네 장 모두 「무료」가 제일 컸다. 이벤트로 전부 무료인 건 맞지만,
