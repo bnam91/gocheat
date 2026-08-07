@@ -79,14 +79,23 @@
            href="https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
            target="_blank" rel="noopener">다운로드</a>
       </div>
-      <!-- 맥은 ARM64/Intel 로 갈린다. 칩을 «단정»하지 않고 기본을 제시하되
-           반대 경로를 항상 나란히 둔다 — 틀려도 한 번에 고칠 수 있게.
-           이 링크도 innerHTML 로 조립하지 않고 마크업에 둔다 — 주소만 갈아끼운다. -->
+      <!-- 버튼 아래 «보조 한 줄». 두 가지가 여기 같이 산다:
+             ① 지금 올라가 있는 버전  ② 맥이면 칩 안내
+           ★한 줄에 모은 건 히어로 세로 리듬을 안 늘리기 위해서다.
+             줄을 새로 만들면 아이콘→제목→리드→버튼 리듬에 한 칸이 더 끼어든다.
+
+           ★버전은 «마크업에 안 박는다». data/downloads.json 에서만 온다.
+             박아두면 두 벌이 되고, 다음 릴리스에 반드시 한쪽이 낡는다.
+             못 읽으면 이 조각을 «안 그린다» — 안 보이는 건 괜찮지만 틀린 값이 보이면 안 된다.
+
+           맥은 ARM64/Intel 로 갈린다. 칩을 «단정»하지 않고 기본을 제시하되
+           반대 경로를 항상 나란히 둔다. 이 링크는 마크업에 있어 JS 가 죽어도 산다. -->
       <p class="detail-alt" id="dl-alt" hidden>
-        Apple Silicon 용입니다.
-        <a id="dl-intel"
-           href="https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu"
-           target="_blank" rel="noopener">Intel 맥을 쓰시나요?</a>
+        <span id="dl-ver" hidden></span>
+        <span id="dl-mac" hidden>Apple Silicon 용입니다.
+          <a id="dl-intel"
+             href="https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu"
+             target="_blank" rel="noopener">Intel 맥을 쓰시나요?</a></span>
       </p>
     </div>
   </section>
@@ -502,6 +511,8 @@
       var btn   = document.getElementById('download-btn');
       var alt   = document.getElementById('dl-alt');
       var intel = document.getElementById('dl-intel');
+      var mac   = document.getElementById('dl-mac');
+      var ver   = document.getElementById('dl-ver');
       if (!btn) return;
 
       var ua = navigator.userAgent || '';
@@ -512,9 +523,9 @@
       var platform = isMac ? 'mac-arm64' : (isWin ? 'win' : '');
       btn.textContent = LABEL[platform];
 
-      // 맥이면 Intel 경로를 «먼저» 보여준다. 주소는 이미 마크업에 있으니
+      // 맥이면 칩 안내를 «먼저» 보여준다. 주소는 이미 마크업에 있으니
       // downloads.json 을 못 읽어도 링크는 산다.
-      if (isMac && alt) alt.hidden = false;
+      if (isMac && mac) { mac.hidden = false; alt.hidden = false; }
 
       // 주소의 단 한 벌은 data/downloads.json 이다(서버도 같은 파일을 본다).
       // 못 읽으면 마크업의 기본 주소가 그대로 남는다 — 아무 데도 못 가는 상태가 없다.
@@ -525,8 +536,17 @@
           if (!u) return;
           if (u[platform]) btn.href = u[platform];
           if (intel && u['mac-intel']) intel.href = u['mac-intel'];
+
+          // ★버전은 «여기서만» 온다. 마크업에 기본값을 안 박았으므로
+          //   못 읽으면 이 조각이 아예 안 그려진다 — 낡은 값이 보이는 일이 구조적으로 없다.
+          //   (현빈: «현재 홈페이지에 실제로 올라가 있는 파일»의 버전이어야 한다)
+          if (ver && typeof u.version === 'string' && u.version) {
+            ver.textContent = '버전 ' + u.version;
+            ver.hidden = false;
+            alt.hidden = false;
+          }
         })
-        .catch(function () { /* 기본 주소로 간다 */ });
+        .catch(function () { /* 기본 주소로 간다. 버전은 안 그린다 */ });
 
       // ★기록은 «곁다리»다. 로그인한 사람만 세고, 결과를 기다리지 않는다.
       //   (비회원은 원래도 세지 않았다 — 익명 카운트는 오염된다)

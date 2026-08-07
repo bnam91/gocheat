@@ -877,6 +877,11 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 
 .detail-lead { font-size: var(--fs-lead); color: var(--muted); line-height: 1.6; max-width: 40ch; }
 .detail-alt { font-size: var(--fs-sm); color: var(--subtle); }
+/* 버전과 칩 안내가 «둘 다» 있을 때만 가운뎃점을 넣는다.
+   한쪽만 보이는 경우(윈도우 = 버전만 / json 실패 = 칩 안내만)에 점이 뜨면 안 된다. */
+#dl-ver:not([hidden]) ~ #dl-mac:not([hidden])::before {
+  content: '·'; margin: 0 7px; color: var(--border-strong);
+}
 .detail-alt a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .detail-alt a:hover { color: var(--accent); }
 .cta-download { min-width: 220px; padding: 12px 26px; font-size: var(--fs-body); font-weight: 700; }
