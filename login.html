@@ -93,7 +93,10 @@
       const title   = document.getElementById('login-title');
       const sub     = document.getElementById('login-sub');
       const alt     = document.getElementById('login-alt');
-      const dlLink  = document.getElementById('download-link');
+      // ★UL-005: 'download-link' 는 «없는 id» 다(go-app 으로 이름이 바뀌며 JS 가 안 따라왔다).
+      //   null 이라 showExpired() 첫 줄에서 TypeError → 바깥 catch 가 「서버에 연결할 수 없어요」로
+      //   덮어써서, «만료 사용자에게 요금제 안내가 한 번도 안 나갔다». 결제 갱신 퍼널이 통째로 끊겼던 자리.
+      const dlLink  = document.getElementById('download-link') || document.getElementById('go-app');
       const accNote = document.getElementById('acc-note');
       const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -149,7 +152,22 @@
 
         // ★"받으려다 로그인한" 사람은 다운로드로 돌려보낸다. 로그인 자체가 목적이 아니었다.
         try {
-          var wants = new URLSearchParams(location.search).get('next') === 'download'
+          // ★UL-010: next 가 order/mypage 면 «사려던 그 자리»로 돌려보낸다.
+          //   전에는 next=download 만 처리해서, 주문하려고 로그인한 사람이 앱 목록으로 떨어졌다.
+          var q = new URLSearchParams(location.search);
+          var nx = q.get('next') || '';
+          if (dlLink && nx === 'order' && q.get('plan')) {
+            dlLink.textContent = '주문 이어서 하기 →';
+            dlLink.href = 'order.html?plan=' + encodeURIComponent(q.get('plan'));
+            dlLink.removeAttribute('target'); dlLink.classList.add('cta-pulse');
+            title.textContent = '로그인되었습니다. 주문을 이어서 하세요.';
+            sub.textContent = '아래 버튼을 누르면 주문서로 돌아갑니다.';
+          } else if (dlLink && nx === 'mypage') {
+            dlLink.textContent = '마이페이지로 →';
+            dlLink.href = 'mypage.html';
+            dlLink.removeAttribute('target'); dlLink.classList.add('cta-pulse');
+          }
+          var wants = nx === 'download'
                    || sessionStorage.getItem('goditor_after_login') === 'download';
           if (wants) {
             title.textContent = '로그인되었습니다. 이어서 받으세요.';
@@ -165,8 +183,9 @@
           sessionStorage.setItem('sms_email', data.email || email.value.trim());
           if (data.sessionToken) sessionStorage.setItem('sms_token', data.sessionToken);
           // ★마이페이지가 읽는다. 등급·기한은 서버가 «판정해서» 준 값이라 여기서 보관한다.
-          if (data.plan) sessionStorage.setItem('sms_plan', data.plan);
-          if (data.accessUntil) sessionStorage.setItem('sms_until', data.accessUntil);
+          // ★UL-008: 값이 없으면 «지운다». 안 지우면 앞 계정 등급이 그대로 남는다.
+          if (data.plan) sessionStorage.setItem('sms_plan', data.plan); else sessionStorage.removeItem('sms_plan');
+          if (data.accessUntil) sessionStorage.setItem('sms_until', data.accessUntil); else sessionStorage.removeItem('sms_until');
         } catch (e) {}
       }
 
@@ -186,7 +205,11 @@
       }
 
       document.getElementById('logout-btn').addEventListener('click', function () {
-        try { sessionStorage.removeItem('sms_email'); sessionStorage.removeItem('sms_token'); sessionStorage.removeItem('sms_after_login'); } catch (e) {}
+        // ★UL-007: sms_ 로 시작하는 걸 «전부» 지운다. 하나씩 지우면 새 키가 늘 때마다 빠뜨린다 —
+        //   실제로 sms_orders·sms_plan 이 남아서 «다음 사람에게 앞사람 주문·등급»이 보였다.
+        try { Object.keys(sessionStorage).filter(function (k) { return k.indexOf('sms_') === 0; })
+                    .forEach(function (k) { sessionStorage.removeItem(k); });
+              sessionStorage.removeItem('goditor_after_login'); } catch (e) {}
         window.location.reload();
       });
 

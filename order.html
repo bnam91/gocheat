@@ -24,32 +24,33 @@
     .od-note {
       background:rgba(255,122,138,.07); border:1px solid rgba(255,122,138,.28);
       border-radius:var(--radius); padding:14px 16px; margin:0 0 24px;
-      font-size:var(--fs-xs); color:#ffc9d1; line-height:1.7;
+      font-size:var(--fs-xs); color:var(--muted); line-height:1.7;
     }
     .od-note b { color:var(--danger); }
-    .od-steps { display:flex; gap:8px; font-size:12px; color:var(--subtle); margin:0 0 20px; }
+    .od-steps { display:flex; gap:8px; font-size:var(--fs-xs); color:var(--subtle); margin:0 0 20px; }
     .od-steps span.on { color:var(--accent); font-weight:600; }
     .od-box {
       background:var(--bg-elev); border:1px solid var(--border);
       border-radius:var(--radius); padding:22px; margin:0 0 18px;
     }
     .od-box h2 { font-size:var(--fs-h3); margin:0 0 4px; letter-spacing:-.01em; }
-    .od-box .price { font-size:22px; font-weight:800; color:var(--fg); margin:0 0 18px; }
+    .od-box .price { font-size:var(--fs-lead); font-weight:800; color:var(--fg); margin:0 0 18px; }
     .od-field { margin:0 0 16px; }
-    .od-field label { display:block; font-size:12px; color:var(--subtle); margin:0 0 6px; }
+    .od-field label { display:block; font-size:var(--fs-xs); color:var(--subtle); margin:0 0 6px; }
     .od-field input, .od-field .ro {
       width:100%; box-sizing:border-box;
-      background:var(--bg); border:1px solid var(--border); border-radius:8px;
+      background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);
       padding:11px 13px; font-size:var(--fs-sm); color:var(--fg); font-family:inherit;
     }
     .od-field .ro { color:var(--muted); }
     .od-field input:focus { outline:none; border-color:var(--accent); }
     .od-bank {
-      background:var(--bg); border:1px solid var(--border); border-radius:8px;
+      background:var(--bg); border:1px solid var(--border); border-radius:var(--radius);
       padding:16px; font-family:var(--mono); font-size:var(--fs-xs); line-height:2.1;
     }
     .od-bank .k { color:var(--subtle); display:inline-block; width:82px; }
     .od-bank .amt { color:var(--accent); font-weight:700; }
+    .od-hint { font-size:var(--fs-xs); color:var(--subtle); margin:7px 0 0; }
     .od-hide { display:none; }
   </style>
 </head>
@@ -79,7 +80,7 @@
       <!-- 로그인 필요 -->
       <div id="od-guest" class="od-hide">
         <p class="dim">주문하시려면 먼저 로그인해 주세요.</p>
-        <a href="login.html" class="plan-cta" style="display:block;max-width:240px;text-decoration:none;text-align:center">로그인하러 가기 →</a>
+        <a id="od-login" href="login.html" class="plan-cta" style="display:block;max-width:240px;text-decoration:none;text-align:center">로그인하러 가기 →</a>
       </div>
 
       <!-- ① 주문서 -->
@@ -91,7 +92,7 @@
           <div class="od-field">
             <label>입금자명 <span style="color:var(--accent)">*</span></label>
             <input id="od-depositor" type="text" autocomplete="name" placeholder="입금하실 분 이름" />
-            <p style="font-size:12px;color:var(--subtle);margin:7px 0 0">입금하실 분 이름과 같아야 확인이 빨라요.</p>
+            <p class="od-hint">입금하실 분 이름과 같아야 확인이 빨라요.</p>
           </div>
           <button type="button" class="plan-cta" id="od-submit" style="max-width:none">주문하고 계좌 받기</button>
           <p class="order-warn" id="od-err" style="color:var(--danger);display:none"></p>
@@ -131,7 +132,15 @@
 
     var email = null;
     try { email = sessionStorage.getItem('sms_email'); } catch (e) {}
-    if (!email) { $('od-guest').classList.remove('od-hide'); return; }
+    if (!email) {
+      // ★UL-010: 「사겠다」고 온 사람을 로그인 뒤에 다시 여기로 돌려보낸다.
+      var lg = $('od-login');
+      try {
+        var pl = new URLSearchParams(location.search).get('plan') || '';
+        if (lg && pl) lg.href = 'login.html?next=order&plan=' + encodeURIComponent(pl);
+      } catch (e) {}
+      $('od-guest').classList.remove('od-hide'); return;
+    }
 
     var planId = '';
     try { planId = new URLSearchParams(location.search).get('plan') || ''; } catch (e) {}
@@ -147,7 +156,9 @@
       $('od-price').textContent = plan.price + ' / ' + plan.per;
       $('od-email').textContent = email;
 
+      var submitted = false;                     // ★UL-003: 연타로 주문이 5건 쌓이던 것
       $('od-submit').addEventListener('click', function () {
+        if (submitted) return;
         var dep = ($('od-depositor').value || '').trim();
         if (!dep) {
           $('od-err').textContent = '입금자명을 입력해 주세요.';
@@ -155,6 +166,8 @@
           $('od-depositor').focus();
           return;
         }
+        submitted = true;
+        $('od-submit').disabled = true;
         // ⚠️ 서버를 부르지 않는다(위 주석 참고). 화면 흐름만 이어준다.
         var d = new Date();
         var orderNo = 'GD' + d.toISOString().slice(2,10).replace(/-/g,'') + '-'
@@ -167,13 +180,23 @@
           sessionStorage.setItem('sms_orders', JSON.stringify(list));
         } catch (e) {}
 
+        try { sessionStorage.setItem('sms_last_order', JSON.stringify(rec)); } catch (e) {}
+        showDone(rec);
+      });
+
+      // ★UL-004: 은행 앱 갔다가 돌아오면 새로고침이 된다 — 그때 주문번호·계좌가 사라졌었다.
+      try {
+        var last = JSON.parse(sessionStorage.getItem('sms_last_order') || 'null');
+        if (last && last.plan === plan.id) { showDone(last); }
+      } catch (e) {}
+
+      function showDone(rec) {
         $('od-form').classList.add('od-hide');
         $('od-done').classList.remove('od-hide');
         $('st1').classList.remove('on'); $('st2').classList.add('on');
-        $('bk-amt').textContent = plan.price;
-        $('bk-no').textContent  = orderNo;
+        $('bk-amt').textContent = rec.price;
+        $('bk-no').textContent  = rec.orderNo;
 
-        // 계좌는 business.json 에서. 비어 있으면 «예시»라고 명시한다 — 자리표시자를 진짜처럼 보이지 않게.
         // ★계좌는 data/business.json 한 곳에서만 온다.
         //   bankIsDummy 가 true 면 «실제 입금 금지» 를 크게 띄운다 — 라이브라 아무나 볼 수 있고,
         //   진짜처럼 보이는 계좌번호로 돈이 움직이면 되돌릴 수 없다.
@@ -192,7 +215,7 @@
             $('bk-acct').style.opacity = '.6';
           }
         }
-      });
+      }
     }).catch(function () { location.replace('pricing.html'); });
   })();
   </script>
