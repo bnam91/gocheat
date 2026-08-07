@@ -10,7 +10,7 @@
     "downloadUrl": "",
     "buyUrl": "",
     "detailUrl": "goditor.html",
-    "icon": "public/icons/goditor.png",
+    "icon": "/assets/icons/goditor.png",
     "minOS": "macOS 12",
     "tags": [
       "paid",
@@ -147,7 +147,7 @@
     "price": "free",
     "downloadUrl": "",
     "buyUrl": "",
-    "icon": "public/icons/focusflow.png",
+    "icon": "/assets/icons/focusflow.png",
     "minOS": "macOS 13",
     "releaseDate": "2026-03-28",
     "tags": [
@@ -164,7 +164,7 @@
     "price": "paid",
     "downloadUrl": "",
     "buyUrl": "",
-    "icon": "public/icons/clipboardpro.png",
+    "icon": "/assets/icons/clipboardpro.png",
     "minOS": "macOS 13",
     "releaseDate": "2026-03-28",
     "tags": [
@@ -181,7 +181,7 @@
     "price": "free",
     "downloadUrl": "",
     "buyUrl": "",
-    "icon": "public/icons/quietmode.png",
+    "icon": "/assets/icons/quietmode.png",
     "minOS": "macOS 13",
     "releaseDate": "2026-03-28",
     "tags": [
@@ -198,7 +198,7 @@
     "price": "paid",
     "downloadUrl": "",
     "buyUrl": "",
-    "icon": "public/icons/batteryguard.png",
+    "icon": "/assets/icons/batteryguard.png",
     "minOS": "macOS 13",
     "releaseDate": "2026-03-28",
     "tags": [
@@ -215,7 +215,7 @@
     "price": "free",
     "downloadUrl": "",
     "buyUrl": "",
-    "icon": "public/icons/swiftlaunch.png",
+    "icon": "/assets/icons/swiftlaunch.png",
     "minOS": "macOS 13",
     "releaseDate": "2026-03-28",
     "tags": [
@@ -232,7 +232,7 @@
     "price": "paid",
     "downloadUrl": "",
     "buyUrl": "",
-    "icon": "public/icons/nightshiftpro.png",
+    "icon": "/assets/icons/nightshiftpro.png",
     "minOS": "macOS 13",
     "releaseDate": "2026-03-28",
     "tags": [
