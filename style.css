@@ -851,7 +851,7 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
   background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.42) 50%, transparent 62%);
   background-size: 300% 100%; background-position: 150% 0; background-repeat: no-repeat;
-  -webkit-mask-image: url(/public/icons/goditor.png); mask-image: url(/public/icons/goditor.png);
+  -webkit-mask-image: url(/assets/icons/goditor.png); mask-image: url(/assets/icons/goditor.png);
   -webkit-mask-size: 100% 100%;                       mask-size: 100% 100%;
 }
 .hero-in .detail-icon::after { animation: heroSheen 1.15s cubic-bezier(.4,0,.2,1) .62s; }
