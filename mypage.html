@@ -32,7 +32,7 @@
       background:var(--bg-elev-hi); border:1px solid var(--border-strong);
       border-radius:var(--radius); padding:20px 22px; margin:0 0 20px;
     }
-    .mp-tier .big { font-size:26px; font-weight:800; letter-spacing:-.02em; margin:0; }
+    .mp-tier .big { font-size:var(--fs-h3); font-weight:800; letter-spacing:-.02em; margin:0; }
     .mp-tier .sm  { font-size:var(--fs-xs); color:var(--subtle); margin:4px 0 0; }
     .mp-tier .plan-cta { margin:0; max-width:180px; }
     table.mp-ord { width:100%; border-collapse:collapse; font-size:var(--fs-xs); }
@@ -41,8 +41,8 @@
       padding:0 10px 9px 0; border-bottom:1px solid var(--border);
     }
     table.mp-ord td { padding:13px 10px 13px 0; border-bottom:1px solid var(--border); color:var(--muted); }
-    table.mp-ord td.mono { font-family:var(--mono); color:var(--fg); }
-    .mp-pill { display:inline-block; font-size:12px; padding:3px 10px; border-radius:20px; }
+    table.mp-ord td.mono { font-family:var(--mono); color:var(--fg); white-space:nowrap; }
+    .mp-pill { display:inline-block; white-space:nowrap; font-size:var(--fs-xs); padding:3px 10px; border-radius:20px; }
     .mp-pill.wait { background:rgba(255,122,138,.12); color:var(--danger); border:1px solid rgba(255,122,138,.3); }
     .mp-pill.done { background:rgba(111,227,162,.12); color:var(--success); border:1px solid rgba(111,227,162,.3); }
     .mp-dl { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
@@ -53,6 +53,12 @@
     }
     .mp-dl a:hover { border-color:var(--border-strong); }
     .mp-dl .arw { color:var(--subtle); }
+    .mp-dummy {
+      background:rgba(255,122,138,.07); border:1px solid rgba(255,122,138,.28);
+      border-radius:var(--radius); padding:14px 16px; margin:18px 0 0;
+      font-size:var(--fs-xs); color:var(--muted); line-height:1.7;
+    }
+    .mp-dummy b { color:var(--danger); }
   </style>
 </head>
 <body>
@@ -96,7 +102,7 @@
           <div class="account-panel" style="display:block">
             <div class="account-rows">
               <div class="account-row"><span class="account-key">이메일</span><span class="account-val" id="mp-email">—</span></div>
-              <div class="account-row"><span class="account-key">비밀번호</span><span class="account-val"><a href="find-password.html" style="color:var(--accent)">변경 →</a></span></div>
+              <div class="account-row"><span class="account-key">비밀번호</span><span class="account-val"><a href="find-password.html" style="color:var(--accent)">재설정 요청 →</a></span></div>
             </div>
             <button type="button" class="plan-cta plan-cta-quiet" id="mp-logout" style="max-width:200px">로그아웃</button>
           </div>
@@ -107,11 +113,22 @@
         <section class="mp-pane" id="pane-orders">
           <div id="mp-ord-empty" class="dim" style="display:none">아직 주문 내역이 없어요.</div>
           <table class="mp-ord" id="mp-ord-table" style="display:none">
-            <thead><tr><th>주문번호</th><th>등급</th><th>금액</th><th>상태</th></tr></thead>
+            <thead><tr><th>주문번호</th><th>등급</th><th>금액</th><th>입금자</th><th>주문일</th><th>상태</th></tr></thead>
             <tbody id="mp-ord-body"></tbody>
           </table>
-          <p class="order-warn" style="margin-top:18px">
+          <!-- ★UL-002: 「연동 전」은 order.html 에만 있었다. 완료 화면에서 여기로 넘어오면
+               경고가 0개라, 다시 열면 «완전히 정상적인 주문»으로 읽혔다. 같은 근거(bankIsDummy)로 여기서도 띄운다. -->
+          <p class="mp-dummy" id="mp-dummy" style="display:none">
+            <b>아직 연동 전입니다.</b> 위 주문은 화면 흐름 점검용이고 실제로 접수되지 않았습니다.
+            입금하지 마세요 — 계좌도 테스트용 더미입니다.
+          </p>
+          <p class="order-warn" id="mp-ord-note" style="margin-top:18px;display:none">
             입금 확인은 영업일 기준 하루 안에 처리됩니다. 입금자명이 다르면 확인이 늦어질 수 있어요.
+          </p>
+          <!-- ★UL-009: 세션 저장이라 탭을 닫으면 사라진다. 「처음부터 없었다」고 읽히면 안 된다. -->
+          <p class="order-warn" style="margin-top:10px">
+            주문 내역은 <b>이 탭에서만</b> 유지됩니다. 탭을 닫으면 목록이 비어 보일 수 있어요 —
+            주문번호는 따로 적어 두세요.
           </p>
         </section>
 
@@ -155,7 +172,7 @@
       }
     }
     if (code === 'beta' || code === 'event_free') {
-      untilTxt = (untilTxt || '') + (untilTxt ? ' · ' : '') + '베타테스트가 끝나면 FREE 로 전환돼요';
+      untilTxt = (untilTxt || '') + (untilTxt ? ' · ' : '') + '베타테스트가 끝나면 FREE로 전환돼요';
     }
     document.getElementById('mp-until').textContent = untilTxt;
 
@@ -177,11 +194,21 @@
       document.getElementById('mp-ord-empty').style.display = 'block';
     } else {
       document.getElementById('mp-ord-table').style.display = 'table';
+      // ★UL-002: 연동 여부는 business.json 한 곳에서만 판단한다(주문 화면과 같은 근거).
+      fetch('data/business.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (b) {
+        var dummy = !b || b.bankIsDummy !== false;
+        document.getElementById('mp-dummy').style.display    = dummy ? 'block' : 'none';
+        document.getElementById('mp-ord-note').style.display = dummy ? 'none'  : 'block';
+      }).catch(function () { document.getElementById('mp-dummy').style.display = 'block'; });
       document.getElementById('mp-ord-body').innerHTML = orders.map(function (o) {
         var cls = o.status === 'paid' ? 'done' : 'wait';
         var txt = o.status === 'paid' ? '완료' : '입금 확인 중';
+        var day = '';
+        try { var d = new Date(o.at); if (!isNaN(d)) day = d.toISOString().slice(0,10); } catch (e) {}
         return '<tr><td class="mono">' + esc(o.orderNo) + '</td><td>' + esc(o.planName)
-             + '</td><td>' + esc(o.price) + '</td><td><span class="mp-pill ' + cls + '">' + txt + '</span></td></tr>';
+             + '</td><td>' + esc(o.price) + '</td><td>' + esc(o.depositor || '—')
+             + '</td><td>' + esc(day || '—')
+             + '</td><td><span class="mp-pill ' + cls + '">' + txt + '</span></td></tr>';
       }).join('');
     }
 

@@ -19,9 +19,15 @@
     });
   }
 
-  fetch('data/apps.json')
-    .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (apps) {
+  // ★결제가 «연동 전»인지는 business.json 한 곳에서만 판단한다(주문·마이페이지와 같은 근거).
+  //   UL-001: 「금액은 예시」라고 써놓고 바로 아래 버튼이 실제 입금 안내로 이어지면 안 된다.
+  Promise.all([
+    fetch('data/apps.json').then(function (r) { return r.ok ? r.json() : null; }),
+    fetch('data/business.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+  ])
+    .then(function (both) {
+      var apps = both[0], biz = both[1];
+      var payLive = !!(biz && biz.bankIsDummy === false);
       if (!apps) throw new Error('apps.json');
       var app = apps.filter(function (a) { return a.id === appId; })[0];
       if (!app || !app.plans || !app.plans.length) {
@@ -35,6 +41,19 @@
             ? '<li><span class="feature-dot">·</span> ' + esc(f.t) + '</li>'
             : '<li class="plan-feat-off"><span class="feature-dot">×</span> ' + esc(f.t) + '</li>';
         }).join('');
+
+      // ★UL-017: apps.json 의 plansNote 를 «아무도 안 읽어» 화면에 안 나왔다.
+      //   화면은 「금액은 예시」라고만 말해서 「AI 이미지 월 200장」이 확정 스펙처럼 읽혔다.
+      var note = [];
+      if (app.plansNote) note.push(app.plansNote);
+      if (!payLive) note.push('결제는 아직 연동 전입니다 — 주문 화면은 흐름 확인용이고 실제로 접수되지 않습니다.');
+      if (note.length && grid.parentNode) {
+        var noteEl = document.createElement('p');
+        noteEl.className = 'plan-empty';
+        noteEl.style.marginTop = '18px';
+        noteEl.textContent = note.join(' ');
+        grid.parentNode.insertBefore(noteEl, grid.nextSibling);
+      }
 
         // ★카드에서 «제일 큰 글자»는 등급 이름이다. 금액은 그 아래다.
         //   전에는 네 장 모두 「무료」가 제일 컸다. 이벤트로 전부 무료인 건 맞지만,
@@ -60,7 +79,8 @@
               ? '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
               // ★유료 등급은 «주문서»로 보낸다. 전에는 넷 다 가입 페이지로 가서
               //   「돈을 내겠다」는 의사를 받을 곳이 아예 없었다.
-              : '<a href="order.html?plan=' + encodeURIComponent(p.id) + '" class="plan-cta">이 등급으로 →</a>')
+              : '<a href="order.html?plan=' + encodeURIComponent(p.id) + '" class="plan-cta">'
+                  + (payLive ? '이 등급으로 →' : '주문 화면 미리보기 →') + '</a>')
           + '</div>';
       }).join('');
 
