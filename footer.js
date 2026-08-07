@@ -51,3 +51,24 @@
     })
     .catch(function () { /* 사업자정보는 보조 정보 — 실패해도 페이지는 정상 동작 */ });
 })();
+
+/**
+ * ★배포 배지 — 지금 보고 있는 게 «라이브가 아니면» 화면 위에 띠를 띄운다.
+ *   프리뷰를 라이브로 착각해서 「반영됐네」라고 판단하는 사고를 막는다.
+ *   production 이면 아무것도 그리지 않는다.
+ */
+(function () {
+  fetch('/api/env', { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (e) {
+      if (!e || e.env === 'production') return;
+      var bar = document.createElement('div');
+      bar.textContent = '개발 배포 (' + e.env + (e.branch ? ' · ' + e.branch : '') + ' · DB ' + e.db + ')';
+      bar.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:9999;'
+        + 'background:#C9F23A;color:#0B0B0E;font:600 12px/1 Inter,sans-serif;'
+        + 'padding:7px 12px;text-align:center;letter-spacing:.02em';
+      document.body.appendChild(bar);
+      document.body.style.paddingTop = '26px';
+    })
+    .catch(function () {});
+})();
