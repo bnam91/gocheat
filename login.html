@@ -174,8 +174,17 @@
           if (wants && dlLink) {
             // ★UL-006: 전엔 문구만 「다운로드가 열려요」로 바꾸고 «버튼은 앱 목록 그대로»였다.
             //   약속과 버튼이 어긋나 사용자는 없는 버튼을 찾았다. 버튼도 같이 바꾼다.
+            // ★★R3-01: 여기가 «오픈 리다이렉트»였다. app=//example.org/x 를 주면
+            //   '/' + '//example.org/x' = '///example.org/x' 가 되고 브라우저가 이를
+            //   scheme-relative 로 읽어 «남의 호스트»로 나간다. 그것도 «다운로드 버튼»에서 —
+            //   사용자는 진짜 사이트에서 진짜로 로그인한 «직후»에 남의 설치파일을 받는다.
+            //   ⇒ 소독하지 않는다. «허용목록»으로 막는다(.gdt 엔트리명과 같은 원칙).
+            var APP_OK = /^[a-z][a-z0-9-]{0,31}$/;
             var appq = 'goditor';
-            try { appq = new URLSearchParams(location.search).get('app') || 'goditor'; } catch (e5) {}
+            try {
+              var rawApp = new URLSearchParams(location.search).get('app') || '';
+              if (APP_OK.test(rawApp)) appq = rawApp;
+            } catch (e5) {}
             dlLink.textContent = 'GODITOR 받으러 가기 →';
             dlLink.href = '/' + appq + '.html#download';
             dlLink.removeAttribute('target');
@@ -221,6 +230,25 @@
               sessionStorage.removeItem('goditor_after_login'); } catch (e) {}
         window.location.reload();
       });
+
+      // ★NEW-05: 「사겠다」고 온 사람 중 «계정 없는 쪽»은 가입 후 주문서로 못 돌아왔다.
+      //   signup.html 은 next/app 을 받으면 되돌려주게 돼 있는데 «링크가 안 실어줬다».
+      //   ⚠️ next 는 남이 준 값이다 — 허용목록으로 거른다(R3-01 과 같은 이유).
+      (function () {
+        try {
+          var q0 = new URLSearchParams(location.search);
+          var nx0 = q0.get('next') || '';
+          if (!/^(order|mypage|download)$/.test(nx0)) return;
+          var qs = 'next=' + encodeURIComponent(nx0);
+          var pl0 = q0.get('plan') || '';
+          if (/^[a-z][a-z0-9_-]{0,31}$/.test(pl0)) qs += '&plan=' + encodeURIComponent(pl0);
+          var ap0 = q0.get('app') || '';
+          if (/^[a-z][a-z0-9-]{0,31}$/.test(ap0)) qs += '&app=' + encodeURIComponent(ap0);
+          Array.prototype.forEach.call(document.querySelectorAll('a[href^="signup.html"]'), function (a) {
+            a.href = 'signup.html?' + qs;
+          });
+        } catch (e0) {}
+      })();
 
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
