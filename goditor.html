@@ -407,31 +407,78 @@
     })();
   </script>
 
-  <!-- ⚠️ (구) 다운로드 로그인 안내 모달 — 지금은 «죽어 있다». 부르는 코드가 없다.
-       ★2026-08-07 2차 전환으로 «되살릴 길도 끊겼다». 정직하게 적어둔다:
-         전에는 「DOWNLOAD_REQUIRE_LOGIN=on 으로 켜면 다시 쓴다」고 적어뒀는데,
-         이제 다운로드는 JS 를 거치지 않고 <a href> 로 곧장 드라이브로 간다.
-         서버 env 를 켜도 화면은 그 사실을 «묻지 않으므로» 이 모달은 안 뜬다.
-         다시 쓰려면 링크를 가로채는 코드를 새로 붙여야 한다.
-       ★지우지 않고 남기는 건 마크업·문구가 그때 출발점이 되기 때문이다.
-         화면에는 안 나온다(.modal[hidden]{display:none} 확인함).
+  <!-- ⚠️ (구) 다운로드 로그인 안내 모달 — 2026-08-07 «지웠다». 문구만 남긴다.
+       ★기준: «스위치 하나로 되살아나는 것은 남기고, 어차피 새로 짜야 하는 것은
+         지우되 문구만 남긴다.» (결제 아코디언은 백엔드가 살아 있어 <template> 로 남겼다)
+         이 모달은 되살릴 길이 끊겼다 — 다운로드가 JS 를 안 거치고 <a href> 로 곧장 간다.
+         DOWNLOAD_REQUIRE_LOGIN=on 을 켜도 화면은 묻지 않는다. 다시 쓰려면 링크를
+         가로채는 코드를 «새로» 짜야 하고, 그러면 마크업도 새로 쓰게 된다.
+         ⇒ 남는 값은 «문구»뿐이다.
+       ★죽은 DOM 은 값이 없으면서 비용은 있다. .auth-mark 에서 데인 게
+         정확히 «안 보이는 줄 알았던 마크업»이다.
+
+       되살릴 때 쓸 문구 — «차단됐다»가 아니라 «로그인하면 이어서 받는다» 톤이 핵심이다:
+         제목  : 로그인하면 바로 받으실 수 있어요
+         본문  : 로그인해두면 앱에서도 같은 계정으로 바로 들어갑니다. 가입은 1분이면 끝나요.
+         버튼  : [로그인 →] login.html?next=download&app=goditor
+                 [가입하기] signup.html?next=download&app=goditor
+         닫기  : 닫기
        ★보안 게이트가 아니었다 — 드라이브 폴더가 링크 공개라 원래 아무것도 못 막았다.
-         실제 차단은 앱의 로그인이 한다. -->
-  <div class="modal" id="dl-modal" role="dialog" aria-modal="true" aria-labelledby="dl-modal-title" hidden>
-    <div class="modal-backdrop" data-close></div>
-    <div class="modal-box">
-      <img src="/public/icons/goditor.png" alt="GODITOR" class="brand-mark" width="44" height="44" />
-      <h2 class="modal-title" id="dl-modal-title">로그인하면 바로 받으실 수 있어요</h2>
-      <p class="modal-sub">
-        로그인해두면 앱에서도 같은 계정으로 바로 들어갑니다. 가입은 1분이면 끝나요.
-      </p>
-      <div class="modal-actions">
-        <a class="cta-primary" id="dl-login" href="login.html?next=download&amp;app=goditor">로그인 →</a>
-        <a class="plan-cta plan-cta-quiet" id="dl-signup" href="signup.html?next=download&amp;app=goditor">가입하기</a>
-      </div>
-      <button type="button" class="modal-close" data-close>닫기</button>
-    </div>
-  </div>
+         실제 차단은 앱의 로그인이 한다. 그래서 문구도 «차단»이 아니라 «유도»였다. -->
+
+  <!-- ★히어로 진입 애니메이션 «부트». 다른 어떤 스크립트보다 먼저, 그리고 «따로» 둔다.
+       이유: CSS 가 html.js 일 때만 opacity:0 을 건다. 이 두 줄이 안 돌면
+             감추지도 않으므로 히어로가 «안 보이는» 사고가 구조적으로 없다.
+             아래 스크립트 중 하나가 던져도 이건 이미 돌아 있다.
+       ★rAF 안에서 붙이는 건 «첫 페인트 뒤»여야 애니메이션이 보이기 때문이다.
+         바로 붙이면 브라우저가 시작 상태를 그리지 않고 끝 상태로 건너뛸 수 있다. -->
+  <script>
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { document.body.classList.add('hero-in'); });
+      });
+    })();
+  </script>
+
+  <!-- 히어로 아이콘 호버 틸트 (현빈 E안). 마우스가 있는 기기에서만. -->
+  <script>
+    (function () {
+      var el = document.querySelector('.detail-icon');
+      if (!el) return;
+      // 터치 기기엔 «호버»가 없다. 붙여봐야 첫 탭이 틸트로 먹힌다.
+      if (!window.matchMedia('(hover: hover)').matches) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      function enable() {
+        el.addEventListener('mousemove', function (e) {
+          // 좌표는 «추측하지 않고» rect 로 잰다 — 아이콘 크기가 바뀌어도 따라온다
+          var r = el.getBoundingClientRect();
+          var px = (e.clientX - r.left) / r.width  - 0.5;
+          var py = (e.clientY - r.top)  / r.height - 0.5;
+          el.classList.add('is-tilt');
+          el.style.transform = 'perspective(420px) rotateY(' + (px * 16).toFixed(2) + 'deg)'
+                             + ' rotateX(' + (-py * 16).toFixed(2) + 'deg) scale(1.06)';
+        });
+        el.addEventListener('mouseleave', function () {
+          el.classList.remove('is-tilt');
+          el.style.transform = '';
+        });
+      }
+
+      // ★진입 애니메이션과 틸트가 «같은 transform 을 두고 다툰다».
+      //   진입 중에 마우스를 올리면 인라인 transform 이 애니메이션을 중간에 덮어 튄다.
+      //   그래서 진입이 «끝난 뒤에» 틸트를 붙인다.
+      //   ::after 광택도 animationend 를 올려보내므로 이름으로 걸러낸다.
+      var armed = false;
+      el.addEventListener('animationend', function (e) {
+        if (armed || e.animationName !== 'heroRise') return;
+        armed = true;
+        enable();
+      });
+    })();
+  </script>
 
   <script>
     // 다운로드 — 누르면 «바로» 드라이브로 간다. 로그인도, 서버도 필요 없다.

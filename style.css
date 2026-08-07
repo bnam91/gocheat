@@ -564,6 +564,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 @media(max-width:560px){ .pricing-block{ padding:0 20px; } }
 
 /* 다운로드 로그인 안내 모달 — UX 유도이지 보안 게이트가 아니다 */
+/* ⚠️ (구) 다운로드 로그인 모달 스타일 — 마크업은 2026-08-07 에 지웠다(문구는 goditor.html 주석에).
+   스타일만 남긴다: 모달이 다시 필요해지면 클래스 이름째 재사용된다. 지금은 아무 데서도 안 쓴다. */
 .modal[hidden]{ display:none }
 .modal{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:20px }
 .modal-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(3px) }
@@ -824,6 +826,53 @@ a.appnav-link:focus-visible { outline: none; color: var(--accent); }
 .detail-meta    { gap: 24px; }             /* 제목  ↔ 리드 */
 .detail-cta     { margin-top: 40px; }      /* 리드  ↔ 버튼 */
 .detail-alt     { margin-top: 20px; }      /* 버튼  ↔ 보조 문구 */
+
+/* ── 히어로 아이콘 진입 + 광택 + 호버 틸트 (현빈 E안) ───────────────
+   ★컨테이너는 :has(img) 로 이미 radius 0 · overflow visible 이다
+     (goditor.png 에 모서리가 «이미 구워져» 있어 컨테이너가 물러난 설계).
+     그래서 광택을 overflow:hidden 으로 자르면 «네모로» 쓸린다.
+     ⇒ 아이콘 PNG 자체를 마스크로 쓴다. 모서리 알파가 0이라(실측: 96×96, 네 모서리 알파 0,
+       투명 5.5%) 실루엣이 정확히 맞고, ★아이콘 모양이 바뀌어도 CSS 를 안 고쳐도 된다.
+
+   ★html.js 로 «잠근다» — 이 한 글자가 안전장치다.
+     opacity:0 을 무조건 걸면 JS 가 안 도는 환경에서 히어로가 «통째로 안 보인다».
+     .js 는 아래 부트 스크립트가 붙이므로, JS 가 없으면 애초에 감추지 않는다. */
+html.js .detail-icon,
+html.js .detail-title,
+html.js .detail-lead { opacity: 0; transform: translateY(14px); }
+
+.hero-in .detail-icon  { animation: heroRise .62s cubic-bezier(.2,.7,.2,1) 0s   forwards; }
+.hero-in .detail-title { animation: heroRise .62s cubic-bezier(.2,.7,.2,1) .09s forwards; }
+.hero-in .detail-lead  { animation: heroRise .62s cubic-bezier(.2,.7,.2,1) .18s forwards; }
+@keyframes heroRise { to { opacity: 1; transform: none; } }
+
+.detail-icon { position: relative; transition: box-shadow .18s ease-out; will-change: transform; }
+.detail-icon::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.42) 50%, transparent 62%);
+  background-size: 300% 100%; background-position: 150% 0; background-repeat: no-repeat;
+  -webkit-mask-image: url(/public/icons/goditor.png); mask-image: url(/public/icons/goditor.png);
+  -webkit-mask-size: 100% 100%;                       mask-size: 100% 100%;
+}
+.hero-in .detail-icon::after { animation: heroSheen 1.15s cubic-bezier(.4,0,.2,1) .62s; }
+.detail-icon:hover::after    { animation: heroSheen 1.15s cubic-bezier(.4,0,.2,1); }
+@keyframes heroSheen { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+
+/* 틸트 그림자는 box-shadow 가 아니라 drop-shadow — 컨테이너가 네모라 box-shadow 면
+   둥근 아이콘 뒤로 «네모 그림자»가 진다 */
+.detail-icon.is-tilt img { filter: drop-shadow(0 16px 26px rgba(0,0,0,.55)); }
+
+/* ★「움직임 줄이기」를 켠 사람에겐 전부 끈다.
+   전정기관 질환·멀미로 실제로 필요한 사람이 있다 — 접근성 요건이다.
+   ★opacity 를 1 로 «되돌리는» 게 핵심이다. 애니메이션만 끄면 opacity:0 이 남아
+     그 설정을 쓰는 사람에게 히어로가 통째로 안 보인다. */
+@media (prefers-reduced-motion: reduce) {
+  html.js .detail-icon,
+  html.js .detail-title,
+  html.js .detail-lead { opacity: 1; transform: none; animation: none !important; }
+  .detail-icon::after  { animation: none !important; }
+  .detail-icon         { transition: none !important; }
+}
 .detail-note    { margin-top: 20px; }
 
 .detail-lead { font-size: var(--fs-lead); color: var(--muted); line-height: 1.6; max-width: 40ch; }
