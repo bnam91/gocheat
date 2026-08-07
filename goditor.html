@@ -67,12 +67,26 @@
       </div>
 
       <div class="detail-cta">
-        <button type="button" id="download-btn" class="cta-primary cta-download">다운로드</button>
+        <!-- ★진짜 링크다. 전에는 <button> 이 API 로 주소를 «받아와서» 열었는데,
+             API 가 없거나 죽으면(프리뷰는 POST 자체가 501) 아무 일도 안 일어났다.
+             API 가 막아주는 게 없는데 API 가 죽으면 다운로드가 죽는다 — 순손실이다.
+             ★href 기본값은 «상위 폴더»다. JS 가 죽어도 여기로는 간다.
+               주소의 단 한 벌은 data/downloads.json 이고, 아래 스크립트가
+               OS 에 맞는 주소로 갈아끼운다. 이 한 줄만 마크업에 있는 이유는
+               «JS 없이도 갈 곳»이 마크업에 있어야 하기 때문이다. -->
+        <a id="download-btn" class="cta-primary cta-download"
+           href="https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
+           target="_blank" rel="noopener">다운로드</a>
       </div>
       <!-- 맥은 ARM64/Intel 로 갈린다. 칩을 «단정»하지 않고 기본을 제시하되
-           반대 경로를 항상 나란히 둔다 — 틀려도 한 번에 고칠 수 있게. -->
-      <p class="detail-alt" id="dl-alt" hidden></p>
-      <p class="detail-note dl-msg" id="dl-msg" role="status" aria-live="polite" hidden></p>
+           반대 경로를 항상 나란히 둔다 — 틀려도 한 번에 고칠 수 있게.
+           이 링크도 innerHTML 로 조립하지 않고 마크업에 둔다 — 주소만 갈아끼운다. -->
+      <p class="detail-alt" id="dl-alt" hidden>
+        Apple Silicon 용입니다.
+        <a id="dl-intel"
+           href="https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu"
+           target="_blank" rel="noopener">Intel 맥을 쓰시나요?</a>
+      </p>
     </div>
   </section>
 
@@ -364,12 +378,16 @@
     })();
   </script>
 
-  <!-- ⚠️ 2026-08-07: 다운로드가 비회원도 되게 바뀌어 «이 모달은 다운로드 경로에서 뗐다».
-       지우지 않고 남겨둔다 — 이벤트 종료 후 DOWNLOAD_REQUIRE_LOGIN=on 으로 켜면 다시 쓴다.
-  (구) 다운로드 로그인 안내 모달.
-       ★보안 게이트가 아니다 — 드라이브 링크를 아는 사람은 그대로 받을 수 있다.
-         실제 차단은 앱의 로그인이 한다. 여기서는 «계정을 먼저 만들게 유도»만 한다.
-         그래서 문구도 "차단됐다"가 아니라 "로그인하면 이어서 받는다"로 쓴다. -->
+  <!-- ⚠️ (구) 다운로드 로그인 안내 모달 — 지금은 «죽어 있다». 부르는 코드가 없다.
+       ★2026-08-07 2차 전환으로 «되살릴 길도 끊겼다». 정직하게 적어둔다:
+         전에는 「DOWNLOAD_REQUIRE_LOGIN=on 으로 켜면 다시 쓴다」고 적어뒀는데,
+         이제 다운로드는 JS 를 거치지 않고 <a href> 로 곧장 드라이브로 간다.
+         서버 env 를 켜도 화면은 그 사실을 «묻지 않으므로» 이 모달은 안 뜬다.
+         다시 쓰려면 링크를 가로채는 코드를 새로 붙여야 한다.
+       ★지우지 않고 남기는 건 마크업·문구가 그때 출발점이 되기 때문이다.
+         화면에는 안 나온다(.modal[hidden]{display:none} 확인함).
+       ★보안 게이트가 아니었다 — 드라이브 폴더가 링크 공개라 원래 아무것도 못 막았다.
+         실제 차단은 앱의 로그인이 한다. -->
   <div class="modal" id="dl-modal" role="dialog" aria-modal="true" aria-labelledby="dl-modal-title" hidden>
     <div class="modal-backdrop" data-close></div>
     <div class="modal-box">
@@ -387,18 +405,27 @@
   </div>
 
   <script>
-    // 다운로드 — 누르면 «바로» 받는다. 로그인은 필요 없다(2026-08-07 방향 전환).
-    // 로그인 상태면 서버가 기록만 남긴다. 게이트가 아니라 «선택적 기록»이다.
+    // 다운로드 — 누르면 «바로» 드라이브로 간다. 로그인도, 서버도 필요 없다.
+    //
+    // ★2026-08-07 구조 전환. 전에는 <button> 이 /api/license/download 로 주소를
+    //   «받아와서» window.open 했다. 그런데 그 API 는 아무것도 막지 않는다
+    //   (드라이브 폴더가 링크 공개라 원래 게이트가 아니었다). 막는 게 없는데
+    //   API 가 죽으면 다운로드만 죽는다 — 순손실이다. 실제로 그랬다:
+    //     프리뷰(python http.server) POST → 501,  미배포 라이브 → 404
+    //   그러면 r.json() 이 깨져 «지금은 연결이 어려워요» 회색 한 줄만 남는다.
+    //   현빈 눈에는 «눌러도 아무 일도 안 일어난다»로 보였다. 맞는 지적이었다.
+    //
+    // ★그래서 이동은 <a href> 가 하고, 이 스크립트는 «주소를 정교하게 만드는» 일만 한다.
+    //   기록은 곁다리로 쏘고 결과를 «기다리지 않는다» — 기록 실패가 이동을 막으면 안 된다.
     //
     // ★플랫폼을 감지하되 «칩은 단정하지 않는다».
     //   맥은 ARM64/Intel 로 갈리는데 브라우저로 구분할 방법이 없다.
     //   그래서 ARM64 를 기본으로 «제시»하고 Intel 경로를 항상 나란히 둔다 —
-    //   틀려도 사용자가 한 번에 고칠 수 있다. 추측으로 단정하면
-    //   안 돌아가는 파일을 받게 된다.
+    //   틀려도 사용자가 한 번에 고칠 수 있다.
     (function () {
-      var btn = document.getElementById('download-btn');
-      var alt = document.getElementById('dl-alt');
-      var note = document.getElementById('dl-msg');
+      var btn   = document.getElementById('download-btn');
+      var alt   = document.getElementById('dl-alt');
+      var intel = document.getElementById('dl-intel');
       if (!btn) return;
 
       var ua = navigator.userAgent || '';
@@ -409,55 +436,42 @@
       var platform = isMac ? 'mac-arm64' : (isWin ? 'win' : '');
       btn.textContent = LABEL[platform];
 
-      if (isMac && alt) {
-        alt.innerHTML = 'Apple Silicon 용입니다. '
-          + '<a href="#" id="dl-intel">Intel 맥을 쓰시나요?</a>';
-        alt.hidden = false;
-      }
+      // 맥이면 Intel 경로를 «먼저» 보여준다. 주소는 이미 마크업에 있으니
+      // downloads.json 을 못 읽어도 링크는 산다.
+      if (isMac && alt) alt.hidden = false;
 
-      function say(t, kind) {
-        if (!note) return;
-        note.textContent = t || '';
-        note.className = 'detail-note dl-msg' + (kind ? ' dl-msg-' + kind : '');
-        note.hidden = !t;
-      }
+      // 주소의 단 한 벌은 data/downloads.json 이다(서버도 같은 파일을 본다).
+      // 못 읽으면 마크업의 기본 주소가 그대로 남는다 — 아무 데도 못 가는 상태가 없다.
+      fetch('data/downloads.json')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          var u = d && d.goditor;
+          if (!u) return;
+          if (u[platform]) btn.href = u[platform];
+          if (intel && u['mac-intel']) intel.href = u['mac-intel'];
+        })
+        .catch(function () { /* 기본 주소로 간다 */ });
 
-      function auth() {
+      // ★기록은 «곁다리»다. 로그인한 사람만 세고, 결과를 기다리지 않는다.
+      //   (비회원은 원래도 세지 않았다 — 익명 카운트는 오염된다)
+      function log(pf) {
+        var email, token;
         try {
-          return { email: sessionStorage.getItem('sms_email'), token: sessionStorage.getItem('sms_token') };
-        } catch (e) { return {}; }
+          email = sessionStorage.getItem('sms_email');
+          token = sessionStorage.getItem('sms_token');
+        } catch (e) { return; }
+        if (!email || !token) return;
+        try {
+          fetch('/api/license/download', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            keepalive: true,   // 탭이 바뀌어도 요청이 끊기지 않게
+            body: JSON.stringify({ email: email, sessionToken: token, app: 'goditor', platform: pf }),
+          }).catch(function () {});
+        } catch (e) { /* 기록 실패는 삼킨다 — 이동을 막지 않는다 */ }
       }
 
-      function get(pf) {
-        var a = auth();
-        say('준비 중…');
-        btn.disabled = true;
-        return fetch('/api/license/download', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: a.email, sessionToken: a.token, app: 'goditor', platform: pf }),
-        })
-        .then(function (r) { return r.json().catch(function () { return {}; }); })
-        .then(function (j) {
-          if (j && j.ok && j.url) {
-            say('다운로드 페이지를 열었어요. 안 열렸다면 팝업 차단을 확인해 주세요.', 'ok');
-            window.open(j.url, '_blank', 'noopener');
-            return;
-          }
-          if (j && j.reason === 'expired') {
-            say('이용 기간이 끝났어요. 요금제를 확인해 주세요.', 'warn');
-            location.hash = '#pricing';
-            return;
-          }
-          say('지금은 연결이 어려워요. 잠시 후 다시 눌러주세요.', 'warn');
-        })
-        .catch(function () { say('네트워크 오류예요. 잠시 후 다시 시도해 주세요.', 'warn'); })
-        .finally(function () { btn.disabled = false; });
-      }
-
-      btn.addEventListener('click', function () { get(platform); });
-      document.addEventListener('click', function (e) {
-        if (e.target && e.target.id === 'dl-intel') { e.preventDefault(); get('mac-intel'); }
-      });
+      btn.addEventListener('click', function () { log(platform); });
+      if (intel) intel.addEventListener('click', function () { log('mac-intel'); });
     })();
   </script>
 

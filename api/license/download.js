@@ -3,23 +3,23 @@ const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = re
 
 const PURCHASE_URL = process.env.PURCHASE_URL || 'https://hompageapp.vercel.app/pricing.html';
 
-// ★다운로드 주소는 «여기 한 곳»에서만 내려준다.
-//   화면에 박아두면 배포처를 바꿀 때 페이지를 다시 고쳐야 한다.
-//   드라이브 → S3 로 옮길 때 env 만 갈아끼우면 끝나게 해 둔다.
+// ★다운로드 주소는 data/downloads.json «한 벌»뿐이다.
+//   전에는 이 파일 안에 박혀 있었고, 화면은 그걸 API 로 «받아다» 썼다.
+//   2026-08-07 부터 화면이 <a href> 로 직접 간다 — 그래서 두 곳이 같은 파일을 봐야 한다.
+//   두 벌로 갈라두면 한쪽만 고치는 사고가 난다(오늘 릴리스 게이트에서 막으려던 그 병이다).
+//   ★env 는 «덮어쓰기»로 남긴다 — 드라이브→S3 이전 때 배포만으로 바꿀 길을 잃지 않는다.
 //
 // ★플랫폼별로 «다른 파일»을 준다. 버튼이 "macOS 버전"이라고 말했는데
 //   세 폴더가 든 상위 주소로 보내면 말과 화면이 어긋난다.
-const FALLBACK = process.env.DOWNLOAD_URL_GODITOR
-  || 'https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0';
+const DOWNLOAD_FILE = require('../../data/downloads.json');
+
+const FALLBACK = process.env.DOWNLOAD_URL_GODITOR || DOWNLOAD_FILE.goditor[''];
 
 const DOWNLOAD_URLS = {
   goditor: {
-    'mac-arm64': process.env.DOWNLOAD_URL_GODITOR_MAC_ARM64
-      || 'https://drive.google.com/drive/folders/1HqfwZGX18Yjqx_paqmLdMNKeSMMSGMc_',
-    'mac-intel': process.env.DOWNLOAD_URL_GODITOR_MAC_INTEL
-      || 'https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu',
-    'win': process.env.DOWNLOAD_URL_GODITOR_WIN
-      || 'https://drive.google.com/drive/folders/1FmBX7zcWuBg5bYXFDCd006mZs0I5lNKH',
+    'mac-arm64': process.env.DOWNLOAD_URL_GODITOR_MAC_ARM64 || DOWNLOAD_FILE.goditor['mac-arm64'],
+    'mac-intel': process.env.DOWNLOAD_URL_GODITOR_MAC_INTEL || DOWNLOAD_FILE.goditor['mac-intel'],
+    'win': process.env.DOWNLOAD_URL_GODITOR_WIN || DOWNLOAD_FILE.goditor['win'],
     '': FALLBACK,          // 모르는 OS → 전부 보이는 상위 폴더
   },
 };

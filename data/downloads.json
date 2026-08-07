@@ -1,0 +1,12 @@
+{
+  "_why": "다운로드 주소의 «단 한 벌». 화면(goditor.html)과 서버(api/license/download.js)가 둘 다 이 파일을 본다 — 두 벌로 갈라두면 한쪽만 고치는 사고가 난다. 드라이브→S3 로 옮길 때도 여기 한 파일만 고치면 된다.",
+  "_note": "서버는 여전히 env(DOWNLOAD_URL_GODITOR_*)로 덮어쓸 수 있다. env 가 있으면 env 가 이긴다.",
+  "_platforms": "'' 는 «모르는 OS» — 세 폴더가 다 보이는 상위 폴더로 보낸다. 화면의 <a href> 기본값도 이 값이다.",
+
+  "goditor": {
+    "mac-arm64": "https://drive.google.com/drive/folders/1HqfwZGX18Yjqx_paqmLdMNKeSMMSGMc_",
+    "mac-intel": "https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu",
+    "win": "https://drive.google.com/drive/folders/1FmBX7zcWuBg5bYXFDCd006mZs0I5lNKH",
+    "": "https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
+  }
+}
