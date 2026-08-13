@@ -56,6 +56,8 @@ async function ensureIndexes(db) {
   await Promise.all([
     db.collection('users').createIndex({ email: 1 }, { unique: true }),
     db.collection('users').createIndex({ verificationToken: 1 }, { sparse: true }),
+    // session.js 가 토큰만으로 찾는다 — 인덱스가 없으면 컬렉션 전수주사가 된다
+    db.collection('users').createIndex({ sessionToken: 1 }, { sparse: true }),
     db.collection('licenses').createIndex({ key: 1 }, { unique: true }),
     db.collection('licenses').createIndex({ userEmail: 1, status: 1 }),
     db.collection('mail_queue').createIndex({ idempotencyKey: 1 }, { unique: true }),
