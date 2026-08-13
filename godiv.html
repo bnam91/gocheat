@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>godiv · 소문의섬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ★이 파일은 goditor.html(90줄)에서 파생한 스캐폴드다. 구조·클래스는 그대로 두고
+       (TODO 장영실:) 부분만 채우면 된다. style.css 에 필요한 클래스가 이미 전부 있다. -->
+  <header>
+    <nav>
+      <a href="/" class="logo">소문의섬</a>
+      <div class="nav-links">
+        <a href="/#apps">앱</a>
+        <a href="signup.html">회원가입</a>
+        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="detail">
+    <div class="detail-inner">
+      <a href="/#apps" class="detail-back">← 앱 목록</a>
+
+      <div class="detail-header">
+        <!-- detail-icon 은 이미지가 아니라 «이모지 텍스트»다. goditor 는 📐 를 썼다. -->
+        <div class="detail-icon">📦</div>
+        <div class="detail-meta">
+          <p class="detail-badge">Utility · (TODO: 지원 OS)</p>
+          <h1 class="detail-title">godiv</h1>
+          <p class="detail-tagline">(TODO 장영실: 한 줄 후킹 문구)</p>
+        </div>
+      </div>
+
+      <p class="detail-desc">
+        (TODO 장영실: 3~4줄 설명. goditor 는 「왜 만들었나 → 무엇을 바꿨나」 순서로 썼다.)
+      </p>
+
+      <div class="detail-cta">
+        <!-- ⚠️ goditor 는 이 자리에 https://drive.google.com/ «플레이스홀더»가 들어가 있다(실링크 아님).
+             godiv 는 패키지 후 실제 배포 URL 로 교체할 것. 그때까지 # 로 둔다. -->
+        <a id="download-btn" class="cta-primary" href="#">
+          무료 라이센스 받고 다운로드 →
+        </a>
+        <span class="cta-sep">·</span>
+        <a href="signup.html" class="cta-secondary">먼저 가입하기 →</a>
+      </div>
+      <!-- ⚠️★이 문구는 현재 «사실이 아니다» — 메일 발송기가 없어 키가 실제로 오지 않는다.
+           발송기가 붙기 전까지는 이 문장을 그대로 쓰지 마라(없는 기능을 있는 것처럼 보이게 된다). -->
+      <p class="detail-note">(TODO: 발급·메일 경로가 실제로 도는지 확인한 뒤 문구 확정)</p>
+
+      <!-- 데뷔 영상이 생기면 goditor.html 54~66행의 figure.video-embed 블록을 그대로 복사해 온다. -->
+
+      <hr />
+
+      <p class="section-label">주요 기능</p>
+      <ul class="feature-list">
+        <li><span class="feature-dot">·</span> (TODO 장영실: 기능 1)</li>
+        <li><span class="feature-dot">·</span> (TODO 장영실: 기능 2)</li>
+        <li><span class="feature-dot">·</span> (TODO 장영실: 기능 3)</li>
+        <li><span class="feature-dot">·</span> (TODO 장영실: 기능 4)</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />hello@example.com</span>
+      <div class="footer-links">
+        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://github.com" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
