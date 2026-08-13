@@ -2,6 +2,7 @@
   "_why": "다운로드 주소의 «단 한 벌». 화면(goditor.html)과 서버(api/license/download.js)가 둘 다 이 파일을 본다 — 두 벌로 갈라두면 한쪽만 고치는 사고가 난다. 드라이브→S3 로 옮길 때도 여기 한 파일만 고치면 된다.",
   "_note": "서버는 여전히 env(DOWNLOAD_URL_GODITOR_*)로 덮어쓸 수 있다. env 가 있으면 env 가 이긴다.",
   "_platforms": "'' 는 «모르는 OS» — 세 폴더가 다 보이는 상위 폴더로 보낸다. 화면의 <a href> 기본값도 이 값이다.",
+  "_manual": "★이 경로는 «수동 배포»다 — 드라이브에 사람이 올리고, 여기 주소를 사람이 고친다. ⛔electron-updater 자동업데이트 서버로는 드라이브를 쓸 수 없다(직접 다운로드 URL이 불안정하고, 대용량은 바이러스 검사 경고 페이지가 끼어 바이너리 대신 HTML이 온다). 자동업데이트가 필요하면 별도 피드(GitHub Releases·S3 등)가 있어야 하고, 그건 이 파일이 풀어주지 않는다.",
   "goditor": {
     "version": "0.7.2",
     "_version": "★드라이브에 «실제로 올라가 있는» 파일의 버전이다. 레포 package.json 도, 로컬 빌드도 아니다 — 배포본 실물에서 확인했다. 0.7.2 확인: 드라이브 3폴더 실물 대조 — GODITOR-0.7.2-arm64.dmg(190,308,831B) · GODITOR-0.7.2.dmg(198,592,021B) · GODITOR-Setup-0.7.2.exe(176,078,199B). 구버전 0.7.1 은 「v0.7.1 (구버전)」 하위 폴더로 내려가 있다. ★드라이브 파일을 갈면 여기도 «같이» 고친다 — 주소와 버전은 같이 바뀌는 값이라 한 자리에 뒀다. release-gate.sh drive 가 대조한다. ★순서: 드라이브 교체가 «먼저», 표기가 «나중». 뒤집으면 «0.7.2라고 써놓고 0.7.1이 받아지는» 상태가 생긴다.",
@@ -9,5 +10,21 @@
     "mac-intel": "https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu",
     "win": "https://drive.google.com/drive/folders/1FmBX7zcWuBg5bYXFDCd006mZs0I5lNKH",
     "": "https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
+  },
+  "godiv": {
+    "version": null,
+    "_todo": "★godiv 자리만 잡아둔 것이다(빌드 전). 드라이브 폴더가 생기면 «폴더» 공유 URL 4개를 아래에 꽂고 version 에 드라이브에 실제로 올라간 버전을 적는다. ⛔파일 직링크가 아니라 폴더 링크다. ★순서 = 드라이브 교체가 먼저, 이 표기가 나중.",
+    "mac-arm64": "",
+    "mac-intel": "",
+    "win": "",
+    "": ""
+  },
+  "goshot": {
+    "version": null,
+    "_todo": "★goshot 자리만 잡아둔 것이다(빌드 전). 드라이브 폴더가 생기면 «폴더» 공유 URL 4개를 아래에 꽂고 version 에 드라이브에 실제로 올라간 버전을 적는다. ⛔파일 직링크가 아니라 폴더 링크다. ★순서 = 드라이브 교체가 먼저, 이 표기가 나중.",
+    "mac-arm64": "",
+    "mac-intel": "",
+    "win": "",
+    "": ""
   }
 }
