@@ -12,8 +12,9 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- ★이 파일은 goditor.html(90줄)에서 파생한 스캐폴드다. 구조·클래스는 그대로 두고
-       (TODO 장영실:) 부분만 채우면 된다. style.css 에 필요한 클래스가 이미 전부 있다. -->
+  <!-- ★goditor.html 에서 파생한 스캐폴드(구조·클래스 손대지 않음). 문안·아이콘은 2026-08-13 장영실이 채웠다.
+       ★머지 전 남은 것은 «다운로드 링크» 하나뿐이다 — 아래 detail-cta 주석 참고.
+       ⚠️Windows 표기는 지혜윈도우 실행 검증 후 detail-badge 에 추가한다. -->
   <header>
     <nav>
       <a href="/" class="logo">소문의섬</a>
@@ -33,28 +34,36 @@
         <!-- detail-icon 은 이미지가 아니라 «이모지 텍스트»다. goditor 는 📐 를 썼다. -->
         <div class="detail-icon">📦</div>
         <div class="detail-meta">
-          <p class="detail-badge">Utility · (TODO: 지원 OS)</p>
+          <!-- ⚠️Windows 빌드 설정(nsis/portable)은 있으나 «실행 검증 전»이라 아직 안 적었다.
+               지혜윈도우 검증이 끝나면 「macOS 13 · Windows 10」으로 바꾼다. -->
+          <p class="detail-badge">Utility · macOS 13</p>
           <h1 class="detail-title">godiv</h1>
-          <p class="detail-tagline">(TODO 장영실: 한 줄 후킹 문구)</p>
+          <p class="detail-tagline">상세페이지 받아서 자르는 것까지, 한 창에서</p>
         </div>
       </div>
 
       <p class="detail-desc">
-        (TODO 장영실: 3~4줄 설명. goditor 는 「왜 만들었나 → 무엇을 바꿨나」 순서로 썼다.)
+        상세페이지 이미지를 모으는 일은 대개 캡처 도구와 편집기를 오가며 끝납니다.
+        스크롤하며 조각조각 캡처하고, 다른 앱을 열어 자르고, 다시 이어 붙이고.
+        godiv는 그 왕복을 없앴습니다. 링크를 넣으면 상세페이지 이미지를 화면에 놓인 순서 그대로 받아오고,
+        같은 창의 캔버스에서 바로 자르고 이어 붙입니다.
       </p>
 
       <div class="detail-cta">
         <!-- ⚠️ goditor 는 이 자리에 https://drive.google.com/ «플레이스홀더»가 들어가 있다(실링크 아님).
              godiv 는 패키지 후 실제 배포 URL 로 교체할 것. 그때까지 # 로 둔다. -->
+        <!-- ★머지 전 여기만 바꾸면 된다:
+             ⑴href="#" → G드라이브 설치파일 링크(현빈 확정 배포경로). ⛔플레이스홀더 URL 금지.
+             ⑵버튼 문구 → 「무료 다운로드 →」
+             ⑶data/apps.json 의 godiv.downloadUrl 도 같은 값으로.
+             ★지금 비워 둔 이유 = 설치파일이 아직 G드라이브에 올라가 있지 않다(릴리스 자산 0건). -->
         <a id="download-btn" class="cta-primary" href="#">
-          무료 라이센스 받고 다운로드 →
+          다운로드 준비 중
         </a>
-        <span class="cta-sep">·</span>
-        <a href="signup.html" class="cta-secondary">먼저 가입하기 →</a>
       </div>
-      <!-- ⚠️★이 문구는 현재 «사실이 아니다» — 메일 발송기가 없어 키가 실제로 오지 않는다.
-           발송기가 붙기 전까지는 이 문장을 그대로 쓰지 마라(없는 기능을 있는 것처럼 보이게 된다). -->
-      <p class="detail-note">(TODO: 발급·메일 경로가 실제로 도는지 확인한 뒤 문구 확정)</p>
+      <!-- ⚠️「무료 키를 메일로 받습니다」류 문구는 ★쓰지 않았다 — 메일 발송기가 없어 지금은 사실이 아니다.
+           로그인·무료등급이 붙고 발송기가 생기면 그때 문구를 올린다. -->
+      <p class="detail-note">무료입니다. 설치 파일 링크는 준비되는 대로 이 자리에 올라옵니다.</p>
 
       <!-- 데뷔 영상이 생기면 goditor.html 54~66행의 figure.video-embed 블록을 그대로 복사해 온다. -->
 
@@ -62,10 +71,10 @@
 
       <p class="section-label">주요 기능</p>
       <ul class="feature-list">
-        <li><span class="feature-dot">·</span> (TODO 장영실: 기능 1)</li>
-        <li><span class="feature-dot">·</span> (TODO 장영실: 기능 2)</li>
-        <li><span class="feature-dot">·</span> (TODO 장영실: 기능 3)</li>
-        <li><span class="feature-dot">·</span> (TODO 장영실: 기능 4)</li>
+        <li><span class="feature-dot">·</span> 링크를 넣으면 플랫폼(네이버·쿠팡·와디즈)을 알아서 판별하고, 상세페이지 이미지를 화면에 놓인 순서대로 내려받습니다. GIF는 원본 그대로 저장합니다.</li>
+        <li><span class="feature-dot">·</span> 가로 절단선을 옮겨 클릭하면 그 자리에서 잘립니다. 자른 두 조각이 각각 파일로 남습니다.</li>
+        <li><span class="feature-dot">·</span> 여러 장을 골라 세로로 이어 붙입니다. 폭이 서로 달라도 맞춰 주고, 너무 길어지면 알아서 나눠 저장합니다.</li>
+        <li><span class="feature-dot">·</span> GIF는 프레임을 넘겨 보며 원하는 장면만 PNG로 뽑아 쓸 수 있습니다.</li>
       </ul>
     </div>
   </section>
