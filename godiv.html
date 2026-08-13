@@ -52,11 +52,16 @@
       <div class="detail-cta">
         <!-- ⚠️ goditor 는 이 자리에 https://drive.google.com/ «플레이스홀더»가 들어가 있다(실링크 아님).
              godiv 는 패키지 후 실제 배포 URL 로 교체할 것. 그때까지 # 로 둔다. -->
-        <!-- ★머지 전 여기만 바꾸면 된다:
-             ⑴href="#" → G드라이브 설치파일 링크(현빈 확정 배포경로). ⛔플레이스홀더 URL 금지.
-             ⑵버튼 문구 → 「무료 다운로드 →」
-             ⑶data/apps.json 의 godiv.downloadUrl 도 같은 값으로.
-             ★지금 비워 둔 이유 = 설치파일이 아직 G드라이브에 올라가 있지 않다(릴리스 자산 0건). -->
+        <!-- ⛔여기에 URL 을 «박지 마라». 주소의 단 한 벌은 data/downloads.json 이다(지디 설계).
+             goditor.html 이 본보기다 — 마크업 href 에는 «JS 가 죽어도 갈 곳»(상위 폴더)만 두고,
+             스크립트가 OS(mac-arm64/mac-intel/win)에 맞는 주소로 갈아끼운다. 버전도 그 파일에서만 온다.
+             ★그래서 apps.json 의 godiv.downloadUrl 도 «빈 값»으로 뒀다 — goditor 도 빈 값이다.
+
+             ★남은 일(⛔링크버튼 배선은 지디 소관, 장영실 아님):
+               ⑴드라이브에 설치파일 업로드 → data/downloads.json 의 godiv 슬롯 4개 + version 채우기
+               ⑵goditor.html 의 download-btn 스크립트 패턴을 이 파일에 이식
+             ★지금 비워 둔 이유 = 설치파일이 아직 드라이브에 없다(godiv 릴리스 자산 0건).
+             ⚠️순서는 지디가 downloads.json 에 적어둔 그대로 — «드라이브 업로드가 먼저, 표기가 나중». -->
         <a id="download-btn" class="cta-primary" href="#">
           다운로드 준비 중
         </a>
