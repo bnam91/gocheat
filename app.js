@@ -1,4 +1,4 @@
-const EMOJI_FALLBACK = { goditor:'✦', focusflow:'⏱', clipboardpro:'📋', quietmode:'🔕', batteryguard:'🔋', swiftlaunch:'🚀', nightshiftpro:'🌙' };
+const EMOJI_FALLBACK = { goditor:'✦', godiv:'📦', focusflow:'⏱', clipboardpro:'📋', quietmode:'🔕', batteryguard:'🔋', swiftlaunch:'🚀', nightshiftpro:'🌙' };
 const RECENT_VIDEOS = [
   { title:'맥 앱 혼자 만들기 — 처음부터 배포까지', date:'2026-03-20' },
   { title:'1인 개발자가 마케팅하는 법', date:'2026-03-13' },

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>godiv · 소문의섬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+</head>
+<body>
+  <!-- ★문안(제목·리드·설명·기능 4줄)은 2026-08-13 장영실이 쓴 것을 그대로 옮겼다 — 다시 짓지 않았다.
+       ★이 파일이 서 있는 자리만 바꿨다: 원래 초안은 «54커밋 낡은 main» 위에 있었다(구 apps.json 형식·
+         public/icons 경로·example.com 푸터). 그대로 머지하면 그 54커밋을 되돌린다.
+       ★그래서 현재 main 규약에 맞췄다 — 아이콘 /assets/icons, 내비 계층(소문의섬 › godiv),
+         푸터 = footer.js + #biz-info(사업자정보는 data/business.json 한 곳에서만 온다).
+       ⚠️Windows 표기는 지혜윈도우 실행 검증 후 detail-badge 에 추가한다. -->
+  <header>
+    <nav aria-label="소문의섬 · godiv 내비게이션">
+      <div class="nav-left">
+        <a href="/" class="logo">소문의섬</a>
+        <span class="nav-crumb-sep" aria-hidden="true">›</span>
+        <span class="nav-crumb-current">godiv</span>
+      </div>
+
+      <div class="nav-links">
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="detail" id="overview">
+    <div class="detail-inner">
+      <div class="detail-header">
+        <div class="detail-icon">
+          <img src="/assets/icons/godiv.png" alt="godiv 앱 아이콘" width="72" height="72" />
+        </div>
+        <div class="detail-meta">
+          <!-- ⚠️Windows 빌드는 «실행 검증 전»이라 아직 안 적었다.
+               지혜윈도우 검증이 끝나면 「Utility · macOS 13 · Windows 10」으로 바꾼다. -->
+          <p class="detail-badge">Utility · macOS 13</p>
+          <h1 class="detail-title">godiv</h1>
+          <p class="detail-tagline">상세페이지 받아서 자르는 것까지, 한 창에서</p>
+        </div>
+      </div>
+
+      <p class="detail-desc">
+        상세페이지 이미지를 모으는 일은 대개 캡처 도구와 편집기를 오가며 끝납니다.
+        스크롤하며 조각조각 캡처하고, 다른 앱을 열어 자르고, 다시 이어 붙이고.
+        godiv는 그 왕복을 없앴습니다. 링크를 넣으면 상세페이지 이미지를 화면에 놓인 순서 그대로 받아오고,
+        같은 창의 캔버스에서 바로 자르고 이어 붙입니다.
+      </p>
+
+      <div class="detail-cta">
+        <!-- ⛔여기에 URL 을 «박지 마라». 주소의 단 한 벌은 data/downloads.json 이다.
+             goditor.html 이 본보기다 — 다만 goditor 와 «다른 점이 하나» 있다:
+             goditor 는 마크업 href 에 상위 폴더 주소를 박아둔다(JS 가 죽어도 갈 곳이 있다).
+             godiv 는 ★갈 곳 자체가 아직 없다 — 드라이브에 올라간 설치파일이 0건이다.
+
+             ★그래서 버튼을 «숨겨서» 낸다. 눌러도 아무 데도 못 가는 버튼을 회색으로 깔아두면
+               사용자는 「내 브라우저가 이상한가」를 의심한다. 갈 곳이 생겼을 때만 버튼이 존재한다.
+               (죽은 CTA 를 위해 새 CSS 를 만들지도 않았다 — 공용 .cta-primary/.cta-download 그대로다)
+             ★아래 스크립트가 data/downloads.json 의 godiv 슬롯을 읽어
+               링크가 «채워져 있을 때만» 버튼을 켠다. 그래서 남은 일은 오직 ⑴뿐이다:
+                 ⑴드라이브에 설치파일 업로드 → downloads.json 의 godiv 슬롯 4개 + version 채우기
+               HTML 은 다시 안 고친다.
+             ⚠️순서 = «드라이브 업로드가 먼저, 표기가 나중». 뒤집으면 「없는 파일로 보내는 버튼」이 산다. -->
+        <a id="download-btn" class="cta-primary cta-download" hidden
+           target="_blank" rel="noopener">다운로드</a>
+      </div>
+
+      <!-- 버튼 아래 «보조 한 줄» — ①올라가 있는 버전 ②맥이면 칩 안내.
+           ★버전은 마크업에 안 박는다. downloads.json 에서만 온다 — 못 읽으면 안 그린다.
+             (낡은 값이 보이는 일이 구조적으로 없어야 한다) -->
+      <p class="detail-alt" id="dl-alt" hidden>
+        <span id="dl-ver" hidden></span>
+        <span id="dl-mac" hidden>Apple Silicon 용입니다.
+          <a id="dl-intel" target="_blank" rel="noopener" hidden>Intel 맥을 쓰시나요?</a></span>
+      </p>
+
+      <!-- ⚠️「무료 키를 메일로 받습니다」류 문구는 ★쓰지 않았다 — 메일 발송기가 없어 지금은 사실이 아니다.
+           로그인·무료등급이 붙고 발송기가 생기면 그때 문구를 올린다.
+           ★이 줄은 링크가 채워지면 스크립트가 «치운다» — 준비 중이라고 말하면서 버튼이 같이 있으면 안 된다. -->
+      <p class="detail-note" id="dl-soon">무료입니다. 설치 파일 링크는 준비되는 대로 이 자리에 올라옵니다.</p>
+
+      <!-- 데뷔 영상이 생기면 goditor.html 의 figure.video-embed 블록을 그대로 복사해 온다. -->
+
+      <hr />
+
+      <p class="section-label">주요 기능</p>
+      <ul class="feature-list">
+        <li><span class="feature-dot">·</span> 링크를 넣으면 플랫폼(네이버·쿠팡·와디즈)을 알아서 판별하고, 상세페이지 이미지를 화면에 놓인 순서대로 내려받습니다. GIF는 원본 그대로 저장합니다.</li>
+        <li><span class="feature-dot">·</span> 가로 절단선을 옮겨 클릭하면 그 자리에서 잘립니다. 자른 두 조각이 각각 파일로 남습니다.</li>
+        <li><span class="feature-dot">·</span> 여러 장을 골라 세로로 이어 붙입니다. 폭이 서로 달라도 맞춰 주고, 너무 길어지면 알아서 나눠 저장합니다.</li>
+        <li><span class="feature-dot">·</span> GIF는 프레임을 넘겨 보며 원하는 장면만 PNG로 뽑아 쓸 수 있습니다.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />coq3820@gmail.com</span>
+      <div class="footer-links">
+        <a href="terms.html">이용약관</a>
+        <a href="privacy.html">개인정보 처리방침</a>
+        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://github.com/bnam91" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    <div id="biz-info"></div>
+    </div>
+  </footer>
+
+  <script>
+    // 받기 버튼 — goditor.html 의 패턴을 옮겼다. 다른 점은 «링크가 없을 수 있다»는 것 하나다.
+    (function () {
+      var btn   = document.getElementById('download-btn');
+      var alt   = document.getElementById('dl-alt');
+      var intel = document.getElementById('dl-intel');
+      var mac   = document.getElementById('dl-mac');
+      var ver   = document.getElementById('dl-ver');
+      var soon  = document.getElementById('dl-soon');
+      if (!btn) return;
+
+      var ua = navigator.userAgent || '';
+      var isWin = /Windows/i.test(ua);
+      var isMac = /Mac OS X|Macintosh/i.test(ua) && !/iPhone|iPad/i.test(ua);
+
+      var LABEL = { 'mac-arm64': 'macOS 버전 다운로드', 'win': 'Windows 버전 다운로드', '': '다운로드' };
+      // 맥 칩은 브라우저로 구분할 수 없다 → ARM64 를 기본으로 제시하고 Intel 을 나란히 둔다.
+      var platform = isMac ? 'mac-arm64' : (isWin ? 'win' : '');
+
+      fetch('data/downloads.json')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          var u = d && d.godiv;
+          if (!u) return;                       // 슬롯 자체가 없다 → 준비 중 그대로
+
+          // ★«이 OS 로 갈 곳»이 실제로 있을 때만 버튼을 켠다.
+          //   상위 폴더('')로 흘려보내지 않는다 — 폴더가 비어 있으면 빈손으로 도착한다.
+          var href = u[platform] || u[''];
+          if (!href) return;
+
+          btn.href = href;
+          btn.textContent = LABEL[platform];
+          btn.hidden = false;
+          if (soon) soon.hidden = true;         // 버튼이 살아났으면 «준비 중»은 거짓말이 된다
+
+          if (isMac && mac && u['mac-intel']) {
+            intel.href = u['mac-intel'];
+            intel.hidden = false;
+            mac.hidden = false;
+            alt.hidden = false;
+          }
+
+          // 버전은 여기서만 온다. 문자열이 아니거나 비어 있으면(=null, 아직 미배포) 안 그린다.
+          if (ver && typeof u.version === 'string' && u.version) {
+            ver.textContent = '버전 ' + u.version;
+            ver.hidden = false;
+            alt.hidden = false;
+          }
+        })
+        .catch(function () { /* 준비 중 상태로 남는다 — 죽은 버튼을 켜지 않는다 */ });
+
+      // ★기록은 «곁다리»다. 로그인한 사람만 세고, 결과를 기다리지 않는다.
+      //   (비회원 익명 카운트는 오염된다 — goditor 와 같은 규칙)
+      function log(pf) {
+        var email, token;
+        try {
+          email = sessionStorage.getItem('sms_email');
+          token = sessionStorage.getItem('sms_token');
+        } catch (e) { return; }
+        if (!email || !token) return;
+        try {
+          fetch('/api/license/download', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            keepalive: true,
+            body: JSON.stringify({ email: email, sessionToken: token, app: 'godiv', platform: pf }),
+          }).catch(function () {});
+        } catch (e) { /* 기록 실패는 삼킨다 — 이동을 막지 않는다 */ }
+      }
+
+      btn.addEventListener('click', function () { log(platform); });
+      if (intel) intel.addEventListener('click', function () { log('mac-intel'); });
+    })();
+  </script>
+  <script src="footer.js"></script>
+</body>
+</html>

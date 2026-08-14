@@ -139,6 +139,24 @@
     "plansNote": "등급별 기능·금액은 예시입니다. 실제 적용 내용과 다를 수 있어요."
   },
   {
+    "id": "godiv",
+    "name": "godiv",
+    "tagline": "상세페이지 받아서 자르는 것까지, 한 창에서",
+    "description": "네이버·쿠팡·와디즈 상세페이지 이미지를 순서대로 내려받고, 그 자리에서 가로로 자르거나 세로로 이어 붙입니다.",
+    "category": "Utility",
+    "price": "free",
+    "downloadUrl": "",
+    "buyUrl": "",
+    "detailUrl": "godiv.html",
+    "icon": "/assets/icons/godiv.png",
+    "minOS": "macOS 13",
+    "tags": [
+      "free",
+      "macOS",
+      "utility"
+    ]
+  },
+  {
     "id": "focusflow",
     "name": "FocusFlow",
     "tagline": "딴짓 안 하려고 만들었어요",
