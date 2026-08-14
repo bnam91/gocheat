@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>GODITOR 개발자문서 · 소문의섬</title>
+  <meta name="description" content="Claude(데스크톱·Claude Code)가 GODITOR를 직접 조작하는 MCP 도구 70개. 연결 방법과 규약." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+</head>
+<body>
+  <!-- ★내비는 goditor.html 의 «그것»이다. 새로 만들지 않았다.
+       달라지는 건 둘뿐: ⑴ 크럼의 GODITOR 가 «돌아가는 링크»가 된다(여기가 그 하위니까)
+       ⑵ 개요·요금제는 goditor.html 의 앵커로 나가고, 개발자문서가 is-current 를 쓴다. -->
+  <header>
+    <nav class="nav--app" aria-label="소문의섬 · GODITOR 내비게이션">
+      <div class="nav-left">
+        <a href="/" class="logo">소문의섬</a>
+        <span class="nav-crumb-sep" aria-hidden="true">›</span>
+        <a href="goditor.html" class="nav-crumb-current">GODITOR</a>
+
+        <div class="nav-sections">
+          <a href="goditor.html#overview" class="appnav-link">개요</a>
+          <a href="goditor.html#pricing" class="appnav-link">요금제</a>
+          <a href="goditor-api.html" class="appnav-link is-current" aria-current="page">개발자문서</a>
+        </div>
+      </div>
+
+      <div class="nav-links">
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ★본문 뼈대는 약관 페이지(.legal-*)의 «그 클래스»를 그대로 쓴다.
+       이 사이트에서 「왼쪽 정렬 긴 글」은 이미 그 한 벌로 정해져 있다 —
+       개발자문서라고 새 룩을 만들면 같은 사이트에 서체·여백이 두 벌 생긴다.
+       새로 추가한 건 코드블록·노트박스·도구칩 셋뿐이다(style.css 「개발자문서」 구간). -->
+  <section class="legal">
+    <div class="legal-inner">
+      <a href="goditor.html" class="detail-back">← GODITOR</a>
+      <h1 class="legal-title">개발자문서</h1>
+      <p class="legal-meta">MCP 도구 70개 · 로컬 HTTP(127.0.0.1) · Claude 데스크톱 / Claude Code</p>
+
+      <p class="legal-p">
+        GODITOR는 <b>MCP 서버를 앱 안에 내장</b>하고 있습니다. Claude가 이 서버에 붙으면
+        캔버스를 직접 읽고, 섹션을 만들고, 블록을 고칩니다. 사람이 화면을 보고 있는
+        <b>바로 그 프로젝트</b>를 조작합니다 — 따로 파일을 주고받지 않습니다.
+      </p>
+
+      <!-- ⑴ 앱이 실행 중이어야 한다 — 이걸 맨 위에 두는 이유:
+           이 서버는 앱 «안»에서 산다. 앱이 꺼져 있으면 붙을 대상 자체가 없는데,
+           증상은 「Claude가 도구를 못 찾는다」로만 보여서 설정을 의심하며 시간을 태우게 된다. -->
+      <div class="doc-note doc-note--warn">
+        <p class="doc-note-title">먼저: GODITOR 앱이 켜져 있어야 합니다.</p>
+        <p class="doc-note-body">
+          MCP 서버는 별도 프로그램이 아니라 <b>앱에 내장</b>되어 있습니다.
+          앱을 켜면 <code class="doc-c">127.0.0.1:9345</code> 에서 함께 뜨고, 앱을 끄면 같이 사라집니다.
+          앱이 꺼져 있으면 Claude 쪽에서는 「도구가 없다」 또는 「연결 실패」로만 보입니다.
+          <br />
+          <b>바깥에서는 접속할 수 없습니다.</b> 이 서버는 내 컴퓨터(<code class="doc-c">127.0.0.1</code>) 안에서만 열립니다.
+          인터넷으로 열려 있지 않고, 원격에서 붙일 방법도 제공하지 않습니다.
+        </p>
+      </div>
+
+      <section class="legal-sec">
+        <h2 class="legal-h">1. 연결하기</h2>
+        <p class="legal-p">
+          앱의 <b>환경설정 → 개발자</b> 탭을 열면 「연결 명령」이 그대로 준비되어 있습니다.
+          아래는 그 명령이 무엇인지에 대한 설명입니다.
+        </p>
+
+        <h3 class="doc-h3">Claude Code (터미널)</h3>
+        <p class="legal-p">
+          환경설정 → 개발자 탭에서 <b>연결 명령</b>을 복사해 터미널에 붙여넣습니다. 모양은 이렇습니다:
+        </p>
+        <pre class="doc-code"><code>claude mcp add goditor -- node "&lt;브리지 스크립트 경로&gt;"</code></pre>
+        <p class="legal-p">
+          <code class="doc-c">&lt;브리지 스크립트 경로&gt;</code> 는 앱이 자기 사용자 폴더에 복사해 둔
+          <code class="doc-c">claude-pm/mcp-stdio-bridge.cjs</code> 입니다. 경로는 설치 위치·계정마다 다르므로
+          <b>개발자 탭에 표시된 값을 그대로</b> 쓰세요(직접 조합하지 마세요).
+        </p>
+
+        <h3 class="doc-h3">Claude 데스크톱</h3>
+        <p class="legal-p">
+          <code class="doc-c">claude_desktop_config.json</code> 의 <code class="doc-c">mcpServers</code> 에 다음을 넣습니다:
+        </p>
+<pre class="doc-code"><code>{
+  "mcpServers": {
+    "goditor": {
+      "command": "node",
+      "args": ["&lt;브리지 스크립트 경로&gt;"]
+    }
+  }
+}</code></pre>
+        <p class="legal-p">
+          <b>토큰은 여기 적지 않습니다.</b> 브리지가 실행될 때마다 앱에서 최신 토큰을 직접 읽어갑니다 —
+          그래서 앱을 재시작해 토큰이 바뀌어도 설정을 다시 고칠 필요가 없습니다.
+        </p>
+
+        <h3 class="doc-h3">앱을 두 개 띄웠다면</h3>
+        <p class="legal-p">
+          포트가 겹치면 <code class="doc-c">9345</code> 부터 하나씩 올라갑니다(<code class="doc-c">9345~9365</code>).
+          브리지는 기본적으로 살아 있는 인스턴스 중 <b>가장 낮은 포트</b>에 붙습니다.
+          특정 인스턴스에 못박으려면 환경변수 <code class="doc-c">GODITOR_MCP_PORT</code> 로 포트를 지정하세요.
+        </p>
+      </section>
+
+      <!-- ⑵ 토큰 발급/확인 절차 -->
+      <section class="legal-sec">
+        <h2 class="legal-h">2. 접속 토큰</h2>
+        <p class="legal-p">
+          도구 호출은 <b>전부 토큰을 요구합니다.</b> 토큰이 없거나 틀리면 <code class="doc-c">401</code> 입니다.
+          내 컴퓨터 안에서만 열리는 서버지만, 같은 컴퓨터의 다른 프로그램이 마음대로 캔버스를
+          고치게 둘 수는 없기 때문입니다.
+        </p>
+        <ul class="doc-list">
+          <li><b>발급</b> — 앱을 켤 때 자동으로 새로 만들어집니다. 사람이 신청하거나 결제할 것은 없습니다.</li>
+          <li><b>확인</b> — 앱의 <b>환경설정 → 개발자</b> 탭 「접속 토큰」에서 보거나 복사합니다.</li>
+          <li><b>보관</b> — 현재 토큰은 사용자 폴더의 <code class="doc-c">claude-pm/mcp-&lt;포트&gt;.json</code>
+            (권한 <code class="doc-c">0600</code>, 소유자만 읽기)에 기록됩니다. 개발자 탭에 그 경로가 표시됩니다.</li>
+          <li><b>재발급</b> — 같은 탭의 「재발급」 버튼. 눌러도 브리지로 연결한 Claude는 다음 호출부터 새 토큰을
+            자동으로 읽습니다. <b>토큰을 설정 파일에 직접 적어둔 경우에만</b> 그 값을 갈아 끼워야 합니다.</li>
+        </ul>
+        <p class="legal-p">
+          직접 HTTP로 호출한다면 헤더에 실으세요 — <code class="doc-c">x-goditor-token: &lt;토큰&gt;</code>
+          또는 <code class="doc-c">Authorization: Bearer &lt;토큰&gt;</code>.
+          엔드포인트는 <code class="doc-c">POST /mcp</code> (JSON-RPC 2.0), 상태 확인은
+          <code class="doc-c">GET /health</code> 입니다. <code class="doc-c">/health</code> 는 토큰 없이 열려 있지만
+          <b>토큰 값은 절대 실어 주지 않습니다</b> — 어느 인스턴스인지와 토큰 파일의 «경로»만 알려줍니다.
+        </p>
+        <div class="doc-note">
+          <p class="doc-note-body">
+            토큰은 <b>내 캔버스를 고칠 수 있는 열쇠</b>입니다. 화면 공유·스크린샷·이슈 붙여넣기에
+            섞여 나가지 않게 하세요. 새어 나갔다면 「재발급」 한 번이면 됩니다.
+          </p>
+        </div>
+      </section>
+
+      <!-- ⑶ USER_BUSY 규약 -->
+      <section class="legal-sec">
+        <h2 class="legal-h">3. <code class="doc-c">USER_BUSY</code> — 사람이 우선입니다</h2>
+        <p class="legal-p">
+          사용자가 캔버스에서 <b>무언가를 입력하고 있는 동안</b>에는, 화면을 바꾸는 도구가
+          거부됩니다. 응답은 이렇게 옵니다:
+        </p>
+<pre class="doc-code"><code>{
+  "ok": false,
+  "code": "USER_BUSY",
+  "message": "사용자가 편집 중입니다.",
+  "retryAfter": 2000
+}</code></pre>
+        <p class="legal-p">
+          자동화가 사람이 치는 글자 위에 덮어쓰면, 사용자 입장에서는 <b>앱이 글자를 먹은 것</b>으로 보입니다.
+          그래서 「기다리게」 만들어 두었습니다. 지키는 쪽이 따를 규약은 짧습니다:
+        </p>
+        <ul class="doc-list">
+          <li><b>1회만</b> 잠시 뒤 재시도합니다(<code class="doc-c">retryAfter</code> 만큼). 무한 재시도 금지.</li>
+          <li>그래도 막히면 <b>사람에게 말합니다</b> — 「지금 편집 중이신 것 같아요, 끝나면 다시 적용할게요」.</li>
+          <li>우회하지 않습니다. 프로젝트 파일(<code class="doc-c">proj_*.json</code>)을 직접 고치는 건 금지입니다 —
+            열려 있는 앱이 그 위에 다시 저장해 버리므로 바뀐 내용이 조용히 사라집니다.</li>
+        </ul>
+        <p class="legal-p">
+          <b>읽기 도구에는 이 가드가 없습니다.</b> <code class="doc-c">get_canvas_state</code>,
+          <code class="doc-c">read_section</code>, <code class="doc-c">get_section_memo</code> 같은 조회는
+          사용자가 편집 중이어도 언제나 돌아옵니다. 그 외에 자주 만나는 코드는
+          <code class="doc-c">NOT_FOUND</code>(blockId가 사라졌거나 잘못됨 — <code class="doc-c">get_canvas_state</code> 로 다시 읽으세요) 입니다.
+        </p>
+      </section>
+
+      <!-- ⑷ 도구 목록 -->
+      <section class="legal-sec">
+        <h2 class="legal-h">4. 도구 70개</h2>
+        <p class="legal-p">
+          각 도구의 파라미터는 MCP <code class="doc-c">tools/list</code> 로 언제든 받아볼 수 있습니다
+          (스키마가 «정본»입니다 — 아래 목록은 무엇이 있는지 훑어보기 위한 것입니다).
+        </p>
+
+        <h3 class="doc-h3">읽기 · 검색 · 상태 <span class="doc-count">8</span></h3>
+        <p class="doc-tools">
+          <code>get_canvas_state</code> <code>get_section_memo</code> <code>list_memories</code>
+          <code>list_scratch_items</code> <code>read_project</code> <code>read_scratch_item</code>
+          <code>read_section</code> <code>search_iconify</code>
+        </p>
+
+        <h3 class="doc-h3">섹션 제어 <span class="doc-count">6</span></h3>
+        <p class="doc-tools">
+          <code>add_section</code> <code>build_basic_section</code> <code>delete_section</code>
+          <code>move_section</code> <code>set_section_memo</code> <code>update_section</code>
+        </p>
+
+        <h3 class="doc-h3">블록 추가 <span class="doc-count">27</span></h3>
+        <p class="doc-tools">
+          <code>add_text_block</code> <code>add_asset_block</code> <code>add_canvas_block</code>
+          <code>add_frame_block</code> <code>add_gap_block</code> <code>add_table_block</code>
+          <code>add_step_block</code> <code>add_comparison_block</code> <code>add_graph_block</code>
+          <code>add_chat_block</code> <code>add_speech_bubble_block</code> <code>add_sticker_block</code>
+          <code>add_label_group_block</code> <code>add_laurel_block</code> <code>add_liner_block</code>
+          <code>add_divider_block</code> <code>add_gradient_block</code> <code>add_shape_block</code>
+          <code>add_vector_block</code> <code>add_iconify_block</code> <code>add_icon_circle_block</code>
+          <code>add_icon_text_block</code> <code>add_mockup_block</code> <code>add_banner_block</code>
+          <code>add_banner02_block</code> <code>add_card_block</code> <code>add_checklist_item</code>
+        </p>
+
+        <h3 class="doc-h3">블록 수정 <span class="doc-count">26</span></h3>
+        <p class="doc-tools">
+          <code>update_block</code> <code>update_asset_block</code> <code>update_canvas_block</code>
+          <code>update_frame_block</code> <code>update_gap_block</code> <code>update_table_block</code>
+          <code>update_step_block</code> <code>update_comparison_block</code> <code>update_graph_block</code>
+          <code>update_chat_block</code> <code>update_speech_bubble_block</code> <code>update_sticker_block</code>
+          <code>update_label_group_block</code> <code>update_laurel_block</code> <code>update_liner_block</code>
+          <code>update_divider_block</code> <code>update_gradient_block</code> <code>update_shape_block</code>
+          <code>update_vector_block</code> <code>update_iconify_block</code> <code>update_icon_circle_block</code>
+          <code>update_icon_text_block</code> <code>update_mockup_block</code> <code>update_banner02_block</code>
+          <code>update_card_block</code> <code>update_checklist_item</code>
+        </p>
+
+        <h3 class="doc-h3">삭제 · 구조 <span class="doc-count">2</span></h3>
+        <p class="doc-tools">
+          <code>delete_block</code> <code>insert_gap_after_block</code>
+        </p>
+
+        <h3 class="doc-h3">프로젝트 <span class="doc-count">1</span></h3>
+        <p class="doc-tools">
+          <code>duplicate_project</code>
+        </p>
+      </section>
+
+      <section class="legal-sec">
+        <h2 class="legal-h">5. 짧은 예시</h2>
+        <p class="legal-p">
+          연결이 끝났으면, Claude에게 평소 말로 시키면 됩니다. 도구 이름을 외울 필요는 없습니다:
+        </p>
+<pre class="doc-code"><code>「지금 열려 있는 캔버스 읽어서, 두 번째 섹션 제목을
+ '무릎이 편한 하루'로 바꿔줘」
+
+→ get_canvas_state 로 blockId 를 찾고
+→ update_block 으로 그 블록만 고칩니다
+→ 사용자가 마침 그 블록을 입력 중이면 USER_BUSY 로 물러났다가 다시 시도합니다</code></pre>
+        <p class="legal-p">
+          <code class="doc-c">update_block</code> 한 번은 되돌리기(<code class="doc-c">Cmd+Z</code>) 한 단계와
+          같습니다. 한 의미 단위는 한 호출로 담는 편이 사용자에게 편합니다.
+        </p>
+      </section>
+
+      <section class="legal-sec">
+        <h2 class="legal-h">6. 알아둘 것</h2>
+        <ul class="doc-list">
+          <li>도구 목록과 스키마는 <b>앱 버전을 따라갑니다.</b> 이 페이지는 훑어보기용이고,
+            정확한 값은 언제나 접속한 앱의 <code class="doc-c">tools/list</code> 응답입니다.</li>
+          <li>블록 <b>삭제·이동·순서 변경</b>은 도구로 되는 것과 안 되는 것이 갈립니다.
+            안 되는 요청에는 「현재는 안 됩니다」라고 답하는 편이 낫습니다 — 우회하다 캔버스가 깨집니다.</li>
+          <li>이미지는 <code class="doc-c">data:</code> URL 로 밀어넣을 수 있지만 길이 제한이 있습니다
+            (대개 20만 자). 큰 이미지는 앱의 자산·스크래치패드를 거치세요.</li>
+          <li>문의는 <a href="mailto:coq3820@gmail.com">coq3820@gmail.com</a> 입니다.</li>
+        </ul>
+      </section>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />coq3820@gmail.com</span>
+      <div class="footer-links">
+        <a href="terms.html">이용약관</a>
+        <a href="privacy.html">개인정보 처리방침</a>
+        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://github.com/bnam91" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    <div id="biz-info"></div>
+    </div>
+  </footer>
+  <script src="footer.js"></script>
+</body>
+</html>
