@@ -57,7 +57,8 @@ module.exports = async (req, res) => {
       },
     );
 
-    return html(res, 200, page('이메일 인증 완료', '이제 라이센스를 발급받을 수 있어요. 앱에서 로그인 후 다운로드해주세요.'));
+    // ★«라이선스 발급» 언급 금지 — 키 제도는 폐지됐고 발급받을 곳이 없다(있던 문구가 거짓 안내였다).
+    return html(res, 200, page('이메일 인증 완료', '인증이 끝났어요. 홈페이지에서 앱을 다운로드하고, 설치 후 앱에서 같은 이메일로 로그인해주세요.'));
   } catch (err) {
     console.error('[verify] error', err);
     return html(res, 500, page('서버 오류', '잠시 후 다시 시도해주세요.'));

@@ -90,12 +90,15 @@
 
            맥은 ARM64/Intel 로 갈린다. 칩을 «단정»하지 않고 기본을 제시하되
            반대 경로를 항상 나란히 둔다. 이 링크는 마크업에 있어 JS 가 죽어도 산다. -->
-      <p class="detail-alt" id="dl-alt" hidden>
+      <p class="detail-alt" id="dl-alt">
         <span id="dl-ver" hidden></span>
         <span id="dl-mac" hidden>Apple Silicon 용입니다.
           <a id="dl-intel"
              href="https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu"
              target="_blank" rel="noopener">Intel 맥을 쓰시나요?</a></span>
+        <!-- ★로그인 안내는 «정적»이다 — 버전·칩과 달리 틀릴 수 없는 값이라
+             JS 가 죽어도 보여야 한다. 그래서 p 의 hidden 도 뗐다(빈 줄 리스크 없음). -->
+        <span id="dl-login-hint">설치 후 앱에서 같은 이메일로 로그인하세요.</span>
       </p>
     </div>
   </section>

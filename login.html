@@ -135,8 +135,10 @@
       }
 
       // 가입 직후 넘어온 이메일이 있으면 채워준다
+      // ★키는 sms_email — signup.html:232 가 쓰는 키다. (구 goditor_email 은 쓰는 곳이 없어
+      //   자동입력이 «한 번도» 동작한 적 없던 죽은 키였다.)
       try {
-        const saved = sessionStorage.getItem('goditor_email');
+        const saved = sessionStorage.getItem('sms_email');
         if (saved) email.value = saved;
       } catch (e) { /* 스토리지 차단 환경 무시 */ }
 
