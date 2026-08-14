@@ -4,6 +4,15 @@ const {
   isInviteId, authenticate, unauthorized, notFound,
 } = require('../_lib/collab');
 
+/* 초대가 없다/내 것이 아니다/이미 처리됐다 — 전부 «같은» 404 다.
+ * ★404 에도 반드시 JSON 본문이 있다(앱 계약): 본문 없는 404 를 앱은 「미배포」로 읽는다.
+ * ★reason 을 not_a_member 로 뭉뚱그리지 않는 이유: 여기서 실패하는 건 «초대»지 «멤버십»이 아니다.
+ *   앱이 「이미 처리된 초대입니다」라고 말할 수 있어야 배지가 안 지워지는 사고를 설명할 수 있다.
+ *   inviteId 는 18자리 난수라 이 이름만으로 남의 협업 존재가 새지 않는다. */
+function inviteNotFound(res) {
+  return json(res, 404, { ok: false, reason: 'invite_not_found' });
+}
+
 /* 초대에 답한다.
  *
  * 입력  { sessionToken, inviteId, action: 'accept' | 'decline' }
@@ -23,7 +32,7 @@ module.exports = async (req, res) => {
 
   const action = body.action === 'accept' || body.action === 'decline' ? body.action : null;
   if (!action) return json(res, 400, { ok: false, reason: 'invalid_action' });
-  if (!isInviteId(body.inviteId)) return notFound(res);
+  if (!isInviteId(body.inviteId)) return inviteNotFound(res);
 
   try {
     const db = await getDb();
@@ -37,7 +46,7 @@ module.exports = async (req, res) => {
     const invite = await invites.findOne({
       inviteId: body.inviteId, email: user.email, status: 'pending',
     });
-    if (!invite) return notFound(res);
+    if (!invite) return inviteNotFound(res);
 
     if (action === 'decline') {
       await invites.updateOne(

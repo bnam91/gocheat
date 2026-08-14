@@ -16,16 +16,22 @@ const { json } = require('./util');
  */
 
 /* ── 크기 한도 ─────────────────────────────────────────────────────────────
- * 섹션 HTML 하나가 수 MB 일 수 있다 — 캔버스에 base64 이미지가 박힌다.
+ * 섹션 HTML 하나가 수 MB 일 수 있다 — 캔버스에 base64 이미지가 박힌다(실측 85MB 프로젝트 사례).
  * 두 개의 «다른» 천장이 있다는 걸 알고 잡은 숫자다:
  *   ① _lib/util.readJsonBody 는 스트림으로 읽을 때 1e6(1MB)에서 끊는다.
  *   ② Vercel 은 함수에 들어오기 «전에» req.body 를 자기가 파싱하고(그래서 ①의 가드가 안 탄다)
  *      4.5MB 를 넘으면 우리 코드가 돌기도 전에 413 을 뱉는다.
  * ⇒ 둘 중 «낮은 쪽»(1MB) 아래로 우리 한도를 잡아야 로컬과 배포가 같게 군다.
- *   여기서 막으면 이유를 말해줄 수 있지만, ①/②에서 막히면 앱은 정체불명의 오류만 받는다.
+ *   여기서 막으면 «어느 섹션이 몇 바이트라서» 막혔는지 말해줄 수 있지만,
+ *   ①/②에서 막히면 앱은 정체불명의 오류만 받고 사용자에게 아무 말도 못 한다.
+ *
+ * ★단위는 «문자»가 아니라 «바이트»다(2026-08-15 정정). base64·한글이 섞이면 UTF-8 바이트가
+ *   문자 수보다 크다 — 천장 ①②가 바이트로 재므로 우리도 바이트로 재야 «먼저» 걸린다.
  */
-const MAX_HTML_CHARS = 700000;      // 섹션 1개
-const MAX_PAYLOAD_CHARS = 900000;   // patches / snapshot 전체 (1MB 천장 아래)
+const MAX_SECTION_BYTES = 700000;   // 섹션 1개
+const MAX_PAYLOAD_BYTES = 900000;   // 한 요청 전체 (1MB 천장 아래)
+/* ★한 요청 = 섹션 «1개»가 기본이다(지디 2026-08-15). 배열도 받지만 실질 제한은 합계 크기다 —
+ *   이미지 박힌 섹션 둘만 담아도 한도를 넘는다. 개수 상한은 사고 방지용 뚜껑일 뿐이다. */
 const MAX_PATCHES_PER_PUSH = 50;
 
 /* 패치 보존 정책 (근거를 남긴다)
@@ -80,13 +86,34 @@ function unauthorized(res) {
   return json(res, 401, { ok: false, reason: 'invalid_session' });
 }
 
-// ★존재 자체를 알려주지 않는다 — 「내 것이 아님」과 「없음」이 같은 응답이다.
+/* ★404 에는 «반드시 JSON 본문»이 있어야 한다 (앱 계약, 2026-08-15).
+ *   앱은 「404 인데 JSON 이 없다」를 «아직 배포 안 된 엔드포인트»로 읽는다.
+ *   본문 없이 404 를 뱉으면 멤버가 아닌 게 아니라 서버가 없는 걸로 오판한다.
+ *
+ * ★그리고 「없는 프로젝트」와 「내 것이 아님」은 «똑같은» 응답이다 — reason 까지 같다.
+ *   reason 을 갈라 말하면(project_not_found / not_a_member) collabId 를 넣어보는 것만으로
+ *   「그 방은 실재한다」를 알아낼 수 있다. 403 을 피한 이유가 그거였으니 여기서 도로 흘리면 안 된다.
+ *   ⇒ 실재하지 않는 방에도 not_a_member 라고 답한다. 이름이 살짝 헐렁한 게 아니라 «그게 요점»이다. */
 function notFound(res) {
-  return json(res, 404, { ok: false, reason: 'project_not_found' });
+  return json(res, 404, { ok: false, reason: 'not_a_member' });
 }
 
+/* 413 — «어느 섹션이 몇 바이트라서» 막혔는지 반드시 짚어준다.
+ * 그냥 413 만 주면 앱은 사용자에게 아무 말도 못 한다.
+ * ★limit 도 같이 실어 보낸다 — 앱이 한도를 하드코딩하지 않게(서버가 바꾸면 그날부터 따라온다). */
 function tooLarge(res, detail) {
   return json(res, 413, { ok: false, reason: 'payload_too_large', ...detail });
+}
+
+function sectionTooLarge(res, { sectionId, bytes, limit }) {
+  return json(res, 413, { ok: false, reason: 'section_too_large', sectionId, bytes, limit });
+}
+
+// UTF-8 실바이트. 한도가 바이트 기준이므로 문자 수로 재면 큰 페이로드를 놓친다.
+function byteLen(value) {
+  if (typeof value === 'string') return Buffer.byteLength(value, 'utf8');
+  try { return Buffer.byteLength(JSON.stringify(value ?? null), 'utf8'); }
+  catch { return Infinity; }
 }
 
 /* 멤버인 활성 프로젝트만 돌려준다. 아니면 null → 호출부는 무조건 notFound() 로 답한다. */
@@ -99,10 +126,54 @@ async function loadProject(db, collabId, email) {
   });
 }
 
-/* JSON 으로 직렬화했을 때의 문자 수. 크기 판정은 «보낸 값 기준»이어야 말이 된다. */
-function jsonSize(value) {
-  try { return JSON.stringify(value ?? null).length; }
-  catch { return Infinity; }
+function isSectionId(v) {
+  return typeof v === 'string' && v.length > 0 && v.length <= 100;
+}
+
+/* 목차(sections) 병합 — «합집합»이다. 서버에만 있는 항목을 지우지 않는다.
+ *
+ * ★왜 덮어쓰지 않나: register 는 소유자가 앱을 켤 때마다 다시 부를 수 있다(멱등).
+ *   그 사이 상대가 새 섹션을 push 했다면, 소유자가 보낸 목차엔 그게 «아직 없다».
+ *   소유자 목차로 통째 덮으면 상대가 만든 섹션이 목차에서 조용히 사라진다 —
+ *   그러면 「누가 무엇을 아직 못 받았나」 판단이 틀어진다.
+ *   ⇒ 들어온 것으로 hash 를 갱신하고, 서버에만 있던 항목은 그대로 둔다.
+ *   ⚠️섹션 «삭제»는 이 경로로 못 한다. 삭제 동기화가 필요해지면 별도 패치 종류로 낼 일이다.
+ */
+function mergeSections(existing, incoming) {
+  const out = (existing || []).map((s) => ({ ...s }));
+  const byId = new Map(out.map((s) => [s.sectionId, s]));
+  for (const s of incoming || []) {
+    const hit = byId.get(s.sectionId);
+    if (hit) {
+      if (s.hash) hit.hash = s.hash;
+      if (s.pageId) hit.pageId = s.pageId;
+    } else {
+      const row = { sectionId: s.sectionId, pageId: s.pageId || null, hash: s.hash || null, seq: 0 };
+      out.push(row);
+      byId.set(row.sectionId, row);
+    }
+  }
+  return out;
+}
+
+/* 앱이 보낸 목차를 «정리»해서 돌려준다. 모양이 틀리면 null(→ 400). */
+function normalizeSections(input) {
+  if (input === undefined || input === null) return [];
+  if (!Array.isArray(input)) return null;
+  if (input.length > 500) return null;          // 상세페이지 한 장에 섹션 500개는 사고다
+  const out = [];
+  const seen = new Set();
+  for (const s of input) {
+    if (!s || !isSectionId(s.sectionId)) return null;
+    if (seen.has(s.sectionId)) continue;        // 중복은 조용히 접는다(앱이 두 번 담아도 사고가 아니다)
+    seen.add(s.sectionId);
+    out.push({
+      sectionId: s.sectionId,
+      pageId: typeof s.pageId === 'string' ? s.pageId.slice(0, 100) : null,
+      hash: typeof s.hash === 'string' ? s.hash.slice(0, 128) : null,
+    });
+  }
+  return out;
 }
 
 /* presence 맵 → 화면에 줄 배열. 오래된 항목은 빼고 준다(문서에서 지우는 건 pull 이 따로 한다). */
@@ -143,8 +214,8 @@ async function prunePatches(db, collabId) {
 }
 
 module.exports = {
-  MAX_HTML_CHARS,
-  MAX_PAYLOAD_CHARS,
+  MAX_SECTION_BYTES,
+  MAX_PAYLOAD_BYTES,
   MAX_PATCHES_PER_PUSH,
   MAX_PATCHES_PER_PROJECT,
   MAX_PATCHES_PER_PULL,
@@ -156,12 +227,16 @@ module.exports = {
   isActorId,
   isCollabId,
   isInviteId,
+  isSectionId,
   authenticate,
   unauthorized,
   notFound,
   tooLarge,
+  sectionTooLarge,
   loadProject,
-  jsonSize,
+  byteLen,
+  mergeSections,
+  normalizeSections,
   presenceList,
   prunePatches,
 };

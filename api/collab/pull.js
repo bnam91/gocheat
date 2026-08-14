@@ -7,18 +7,21 @@ const {
 
 /* 상대의 변경분을 받아온다. + presence 하트비트.
  *
- * 입력  { sessionToken, collabId, actorId, sinceSeq, editingSectionId? }
- * 출력  { ok, seq, patches:[...], presence:[...], hasMore, resync?, snapshot? }
+ * 입력  { sessionToken, collabId, actorId, sinceSeq, editingSectionId?, wantSections? }
+ * 출력  { ok, seq, patches, presence, hasMore, sections?, resync? }
  *
  * ★«내가 만든 패치»는 빼고 준다 — 에코 방지. 안 그러면 방금 내가 친 글이 서버를 돌아
  *   내 캔버스를 다시 덮어쓴다(커서가 튀고, 입력 중이면 글자가 씹힌다).
+ *   이게 에코 가드의 «1차 방어선»이다 — 이 규칙을 빼지 마라.
  *
  * ★이 엔드포인트«만» 쓰기를 한다 — presence 갱신. pull 요청 자체가 하트비트다.
  *   별도 heartbeat 엔드포인트를 두면 앱이 두 개의 타이머를 돌려야 하고, 둘이 어긋나면
  *   「접속 중인데 편집 표시가 없다」 같은 상태가 생긴다. 폴링 한 번 = 살아있다는 신호로 묶는다.
  *
- * ★sinceSeq=0 이면 snapshot 을 함께 준다 — 합류자의 초기 상태. 이후 폴링은 sinceSeq>0 이라
- *   두 번 다시 실리지 않는다(2초마다 MB 를 태우면 안 된다).
+ * ★합류자는 sinceSeq=0 부터 당겨 문서를 «쌓아올린다» — 스냅샷 같은 건 없다(register 주석 참고).
+ *   그래서 sinceSeq=0 일 때 «목차»를 함께 준다: 목차에 10개인데 7개만 받았으면
+ *   3개는 소유자가 아직 push 하지 않은 것이다(앱이 기다릴지 재촉할지 판단할 근거).
+ *   ⚠️목차는 2초 폴링에 매번 싣지 않는다. 필요하면 wantSections:true 로 명시해 받아간다.
  */
 module.exports = async (req, res) => {
   if (handlePreflight(req, res, { origin: '*' })) return;
@@ -89,6 +92,9 @@ module.exports = async (req, res) => {
       }
     }
 
+    // 목차는 «필요할 때만». 첫 동기화·재동기화·명시 요청 셋뿐이다.
+    const wantSections = body.wantSections === true || sinceSeq === 0 || gapLost;
+
     return json(res, 200, {
       ok: true,
       seq,
@@ -98,16 +104,7 @@ module.exports = async (req, res) => {
       // 내 하트비트를 나에게 되돌려줄 이유가 없다 (방금 위에서 찍은 값이다)
       presence: presenceList(project, now.getTime()).filter((p) => p.actorId !== actorId),
       ...(gapLost ? { resync: true, reason: 'patches_pruned', patchFloorSeq: floor } : {}),
-      // 합류자 초기 상태 — sinceSeq=0 일 때만 (또는 재동기화 지시를 받은 직후)
-      ...(sinceSeq === 0 || gapLost ? {
-        snapshot: project.snapshot || null,
-        snapshotSeq: project.snapshotSeq || 0,
-        /* ★정직하게 말한다: snapshot 이 오래됐고 그 뒤 구간이 이미 잘려나갔으면
-         *   「snapshot + 남은 패치」로도 «완전»하지 않다. 서버는 그 구멍을 메울 수 없다
-         *   — 소유자가 register 를 다시 불러 snapshot 을 새로 올려야 한다.
-         *   빈틈을 숨기고 온전한 척하면 두 사람 화면이 소리 없이 달라진다. */
-        snapshotStale: floor > (project.snapshotSeq || 0) + 1,
-      } : {}),
+      ...(wantSections ? { sections: project.sections || [] } : {}),
     });
   } catch (err) {
     console.error('[collab/pull] error', err);
