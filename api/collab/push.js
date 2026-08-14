@@ -146,8 +146,15 @@ module.exports = async (req, res) => {
         (r) => r.sectionId === p.sectionId && r.seq > baseSeq && r.actorId !== actorId,
       );
       if (clashed.length) {
+        // rivals 는 seq 내림차순이라 [0] 이 «가장 최근»에 그 섹션을 건드린 사람이다.
+        const latest = clashed[0];
         conflicts.push({
           sectionId: p.sectionId,
+          /* ★otherActor = 앱 계약의 «한 줄 요약» 필드다(스텁과 같은 이름·같은 뜻).
+           *   화면엔 「누구와 부딪혔나」 한 명만 띄우면 되고, 자세한 건 conflictWith 를 본다.
+           *   둘 중 하나만 두면 안 된다 — 이름이 다르면 앱이 조용히 undefined 를 읽는다. */
+          otherActor: latest.actorId,
+          otherEmail: latest.actorEmail || null,
           seq,
           baseSeq,
           conflictWith: clashed.map((r) => ({

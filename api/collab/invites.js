@@ -59,6 +59,9 @@ module.exports = async (req, res) => {
       invites: invites.map((iv) => ({
         inviteId: iv.inviteId,
         collabId: iv.collabId,
+        // ★name 이 앱 계약의 이름이다. projectName 은 초대 문서의 원래 필드명이라 같이 둔다 —
+        //   이름이 어긋나면 앱은 오류 없이 «빈 제목»을 띄운다(조용해서 더 늦게 발견된다).
+        name: iv.projectName,
         projectName: iv.projectName,
         invitedBy: iv.invitedBy,
         createdAt: iv.createdAt,
@@ -68,6 +71,8 @@ module.exports = async (req, res) => {
         name: p.name,
         seq: p.seq,
         owner: p.ownerEmail,
+        // ★role 이 앱 계약의 이름이다. isOwner 는 그 값을 불리언으로 한 번 더 준 것뿐이다.
+        role: p.ownerEmail === user.email ? 'owner' : 'member',
         isOwner: p.ownerEmail === user.email,
         members: p.members,
         // 로컬 프로젝트와 이어붙이려면 앱이 «자기가 올린 것»의 로컬 id 를 알아야 한다.
