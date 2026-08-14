@@ -1,8 +1,8 @@
-const { getDb } = require('../_lib/mongo');
-const { json, handlePreflight, readJsonBody } = require('../_lib/util');
+const { getDb } = require('../mongo');
+const { json, handlePreflight, readJsonBody } = require('../util');
 const {
   authenticate, unauthorized, notFound, loadProject,
-} = require('../_lib/collab');
+} = require('../collab');
 
 /* 협업에서 빠진다.
  *

@@ -1,9 +1,9 @@
-const { getDb } = require('../_lib/mongo');
-const { json, handlePreflight, readJsonBody } = require('../_lib/util');
+const { getDb } = require('../mongo');
+const { json, handlePreflight, readJsonBody } = require('../util');
 const {
   MAX_PAYLOAD_BYTES, newId, isActorId, authenticate, unauthorized, tooLarge,
   mergeSections, normalizeSections,
-} = require('../_lib/collab');
+} = require('../collab');
 
 /* 로컬 프로젝트를 «원격으로 올린다» — 정확히는 «방을 연다».
  *

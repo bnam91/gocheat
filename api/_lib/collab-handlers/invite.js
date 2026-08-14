@@ -1,11 +1,11 @@
-const { getDb } = require('../_lib/mongo');
+const { getDb } = require('../mongo');
 const {
   json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail,
-} = require('../_lib/util');
+} = require('../util');
 const {
   newId, authenticate, unauthorized, notFound, loadProject,
-} = require('../_lib/collab');
-const { enqueueMail } = require('../_lib/mail');
+} = require('../collab');
+const { enqueueMail } = require('../mail');
 
 /* 협업 초대 만들기.
  *

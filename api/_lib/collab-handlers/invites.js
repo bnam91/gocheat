@@ -1,6 +1,6 @@
-const { getDb } = require('../_lib/mongo');
-const { json, handlePreflight, readJsonBody } = require('../_lib/util');
-const { authenticate, unauthorized, presenceList } = require('../_lib/collab');
+const { getDb } = require('../mongo');
+const { json, handlePreflight, readJsonBody } = require('../util');
+const { authenticate, unauthorized, presenceList } = require('../collab');
 
 /* 내가 받은 pending 초대 + 내가 들어가 있는 프로젝트 목록.
  *

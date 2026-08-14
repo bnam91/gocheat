@@ -1,9 +1,9 @@
-const { getDb } = require('../_lib/mongo');
-const { json, handlePreflight, readJsonBody } = require('../_lib/util');
+const { getDb } = require('../mongo');
+const { json, handlePreflight, readJsonBody } = require('../util');
 const {
   MAX_PATCHES_PER_PULL, PRESENCE_EVICT_MS,
   isActorId, authenticate, unauthorized, notFound, loadProject, presenceList,
-} = require('../_lib/collab');
+} = require('../collab');
 
 /* 상대의 변경분을 받아온다. + presence 하트비트.
  *

@@ -1,10 +1,10 @@
-const { getDb } = require('../_lib/mongo');
-const { json, handlePreflight, readJsonBody } = require('../_lib/util');
+const { getDb } = require('../mongo');
+const { json, handlePreflight, readJsonBody } = require('../util');
 const {
   MAX_SECTION_BYTES, MAX_PAYLOAD_BYTES, MAX_PATCHES_PER_PUSH, PRUNE_EVERY,
   isActorId, isSectionId, authenticate, unauthorized, notFound, tooLarge, sectionTooLarge,
   loadProject, byteLen, prunePatches,
-} = require('../_lib/collab');
+} = require('../collab');
 
 /* 내 변경분을 올린다.
  *

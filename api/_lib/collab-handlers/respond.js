@@ -1,8 +1,8 @@
-const { getDb } = require('../_lib/mongo');
-const { json, handlePreflight, readJsonBody } = require('../_lib/util');
+const { getDb } = require('../mongo');
+const { json, handlePreflight, readJsonBody } = require('../util');
 const {
   isInviteId, authenticate, unauthorized, notFound,
-} = require('../_lib/collab');
+} = require('../collab');
 
 /* 초대가 없다/내 것이 아니다/이미 처리됐다 — 전부 «같은» 404 다.
  * ★404 에도 반드시 JSON 본문이 있다(앱 계약): 본문 없는 404 를 앱은 「미배포」로 읽는다.
