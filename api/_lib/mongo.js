@@ -62,6 +62,24 @@ async function ensureIndexes(db) {
     db.collection('licenses').createIndex({ userEmail: 1, status: 1 }),
     db.collection('mail_queue').createIndex({ idempotencyKey: 1 }, { unique: true }),
     db.collection('mail_queue').createIndex({ status: 1, createdAt: 1 }),
+
+    // ── 원격 동시협업 (api/collab/*) ──────────────────────────────────────
+    // ★인덱스는 이 파일 «한 곳»에 모은다 — 컬렉션마다 흩어두면 어디를 봐야 할지 모르게 된다.
+    //   createIndex 는 이미 있으면 no-op 이라 콜드스타트마다 불러도 안전하다.
+    db.collection('collab_projects').createIndex({ collabId: 1 }, { unique: true }),
+    db.collection('collab_projects').createIndex({ members: 1 }),
+    // register 멱등성 — 같은 로컬 프로젝트를 두 번 올려도 하나여야 한다
+    db.collection('collab_projects').createIndex({ ownerEmail: 1, localProjectId: 1 }),
+    db.collection('collab_invites').createIndex({ inviteId: 1 }, { unique: true }),
+    db.collection('collab_invites').createIndex({ email: 1, status: 1 }),
+    db.collection('collab_invites').createIndex({ collabId: 1, email: 1, status: 1 }),
+    db.collection('collab_patches').createIndex({ collabId: 1, seq: 1 }, { unique: true }),
+    // ★TTL 은 «버려진 프로젝트» 청소용 안전망이다. 살아있는 프로젝트는 500개 상한(prunePatches)이
+    //   항상 먼저 걸리므로, 최신 패치가 이 TTL 로 사라지는 일은 없다. (근거: _lib/collab.js 주석)
+    db.collection('collab_patches').createIndex(
+      { createdAt: 1 },
+      { expireAfterSeconds: 7 * 24 * 60 * 60 },
+    ),
   ]).catch((err) => {
     indexesEnsured = false;
     throw err;

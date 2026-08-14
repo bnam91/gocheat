@@ -3,6 +3,9 @@
   "functions": {
     "api/license/*.js": {
       "maxDuration": 10
+    },
+    "api/collab/*.js": {
+      "maxDuration": 10
     }
   },
   "regions": ["icn1"]
