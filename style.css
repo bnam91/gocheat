@@ -98,6 +98,11 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 }
 .cta-primary:hover { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
 .cta-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); }
+/* ★display 를 가진 클래스는 [hidden] 속성을 «이긴다» — 브라우저 기본 [hidden]{display:none} 보다
+   .cta-primary 의 특이도가 높다. hidden 을 걸어도 버튼이 그대로 보인다.
+   ⚠️2026-08-14 실제로 밟았다: godiv 처럼 «받을 게 아직 없는» 페이지에서 hidden 을 건 CTA 가
+   화면에 그대로 떴다(href 없는 죽은 버튼). JS 로 hidden 을 읽으면 true 라 «안 보인다»고 착각한다. */
+.cta-primary[hidden] { display: none; }
 .cta-sep { color: var(--border-strong); font-size: var(--fs-sm); margin: 0 4px; }
 .cta-secondary { font-size: var(--fs-sm); color: var(--subtle); transition: color 0.15s; }
 .cta-secondary:hover { color: var(--fg); }
@@ -334,6 +339,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .detail-tagline { font-size: var(--fs-lead); color: var(--muted); line-height: 1.55; max-width: 48ch; }
 .detail-desc { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; max-width: 62ch; }
 .detail-cta { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+/* 버튼이 숨겨졌으면 «버튼 자리»도 같이 접는다 — 빈 껍데기가 margin-top:40px 을 그대로 남긴다.
+   (goditor 처럼 버튼이 살아 있는 페이지는 걸리지 않는다) */
+.detail-cta:has(> .cta-primary[hidden]) { display: none; }
 .detail-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.75; max-width: 62ch; text-align: left; }
 .video-embed { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 8px 0; width: 100%; }
 .video-frame { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); }
