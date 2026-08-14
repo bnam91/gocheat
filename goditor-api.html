@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark" />
   <meta name="theme-color" content="#0B0B0E" />
   <title>GODITOR 개발자문서 · 소문의섬</title>
-  <meta name="description" content="Claude(데스크톱·Claude Code)가 GODITOR를 직접 조작하는 MCP 도구 70개. 연결 방법과 규약." />
+  <meta name="description" content="Claude(데스크톱·Claude Code)가 GODITOR를 직접 조작하는 MCP 도구 71개. 연결 방법과 규약." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
@@ -47,7 +47,7 @@
     <div class="legal-inner">
       <a href="goditor.html" class="detail-back">← GODITOR</a>
       <h1 class="legal-title">개발자문서</h1>
-      <p class="legal-meta">MCP 도구 70개 · 로컬 HTTP(127.0.0.1) · Claude 데스크톱 / Claude Code</p>
+      <p class="legal-meta">MCP 도구 71개 · 로컬 HTTP(127.0.0.1) · Claude 데스크톱 / Claude Code</p>
 
       <p class="legal-p">
         GODITOR는 <b>MCP 서버를 앱 안에 내장</b>하고 있습니다. Claude가 이 서버에 붙으면
@@ -177,7 +177,7 @@
 
       <!-- ⑷ 도구 목록 -->
       <section class="legal-sec">
-        <h2 class="legal-h">4. 도구 70개</h2>
+        <h2 class="legal-h">4. 도구 71개</h2>
         <p class="legal-p">
           각 도구의 파라미터는 MCP <code class="doc-c">tools/list</code> 로 언제든 받아볼 수 있습니다
           (스키마가 «정본»입니다 — 아래 목록은 무엇이 있는지 훑어보기 위한 것입니다).
@@ -231,6 +231,14 @@
         <p class="doc-tools">
           <code>duplicate_project</code>
         </p>
+
+        <h3 class="doc-h3">연결 진단 <span class="doc-count">1</span></h3>
+        <p class="doc-tools">
+          <code>goditor_which_instance</code>
+        </p>
+        <p class="doc-note">이 하나는 앱이 아니라 <b>브리지가 직접 답합니다</b> — 앱을 여러 개 띄웠을 때
+          지금 어느 인스턴스(포트·pid·열린 프로젝트)에 붙어 있는지 알려줍니다.
+          그래서 <code class="doc-c">POST /mcp</code> 를 직접 부르면 이 도구는 보이지 않습니다.</p>
       </section>
 
       <section class="legal-sec">
