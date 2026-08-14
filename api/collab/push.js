@@ -87,7 +87,9 @@ module.exports = async (req, res) => {
       ? await patchesCol.find(
         { collabId, sectionId: { $in: sectionIds }, seq: { $gt: minBase } },
         { projection: { seq: 1, sectionId: 1, actorId: 1, hash: 1, actorEmail: 1 } },
-      ).sort({ seq: 1 }).limit(200).toArray()
+        // ★«최신»부터 가져온다. 오래된 것부터 자르면 상한(200)에 걸렸을 때 정작 방금 들어온
+        //   상대의 패치를 못 보고 「충돌 없음」이라고 답한다 — 조용한 오답이다.
+      ).sort({ seq: -1 }).limit(200).toArray()
       : [];
 
     // ── ② seq 를 통째로 끊어 받는다(원자적)

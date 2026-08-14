@@ -95,8 +95,8 @@ module.exports = async (req, res) => {
       serverSeq: project.seq,
       patches,
       hasMore,
-      presence: presenceList({ ...project, presence: { ...(project.presence || {}) } }, now.getTime())
-        .filter((p) => p.actorId !== actorId),   // 내 하트비트를 나에게 되돌려줄 이유가 없다
+      // 내 하트비트를 나에게 되돌려줄 이유가 없다 (방금 위에서 찍은 값이다)
+      presence: presenceList(project, now.getTime()).filter((p) => p.actorId !== actorId),
       ...(gapLost ? { resync: true, reason: 'patches_pruned', patchFloorSeq: floor } : {}),
       // 합류자 초기 상태 — sinceSeq=0 일 때만 (또는 재동기화 지시를 받은 직후)
       ...(sinceSeq === 0 || gapLost ? {
