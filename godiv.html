@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>고디브 이미지 다운로더 · 소문의섬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+</head>
+<body>
+  <header>
+    <nav class="nav--app" aria-label="소문의섬 · 고디브 내비게이션">
+      <div class="nav-left">
+        <a href="/" class="logo">소문의섬</a>
+        <span class="nav-crumb-sep" aria-hidden="true">›</span>
+        <span class="nav-crumb-current">고디브</span>
+        <div class="nav-sections">
+          <a href="#overview" class="appnav-link" data-spy="overview">개요</a>
+          <a href="#how" class="appnav-link" data-spy="how">사용법</a>
+          <a href="#privacy" class="appnav-link" data-spy="privacy">개인정보</a>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ① 히어로 — 이게 뭔지 한 줄 -->
+  <section class="detail" id="overview">
+    <div class="detail-inner">
+      <div class="detail-header">
+        <div class="detail-icon">
+          <img src="/assets/icons/godiv.png" alt="고디브 앱 아이콘" width="72" height="72" />
+        </div>
+        <div class="detail-meta">
+          <h1 class="detail-title">고디브 이미지 다운로더</h1>
+          <p class="detail-lead">상품 상세페이지 이미지를, 클릭 한 번에 순서 그대로 저장합니다.</p>
+        </div>
+      </div>
+      <div class="detail-cta">
+        <a class="cta-primary" href="#how">사용법 보기</a>
+      </div>
+      <p class="detail-alt">
+        <span>크롬 확장 프로그램 · 곧 웹스토어에 출시됩니다.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ② 소개 + 특징 3 -->
+  <section class="features">
+    <div class="features-inner">
+      <p class="features-lead">
+        지금 브라우저에서 보고 있는 상품 상세페이지의 본문 이미지를, 위에서 아래 순서 그대로
+        다운로드 폴더에 저장해 줍니다. 네이버 스마트스토어·브랜드스토어, 쿠팡, 와디즈를 지원합니다.
+      </p>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-copy">
+        <h3 class="feature-h">끝까지 다 받습니다</h3>
+        <p class="feature-body">접힌 상세정보를 자동으로 펼치고, 늦게 뜨는 이미지까지 기다렸다가 수집합니다.
+          몇 장을 찾아 몇 장을 저장했는지 항상 함께 표시합니다(예: 「완료: 33/33장」). 일부가 실패하면
+          성공한 척하지 않고 사유를 그대로 보여줍니다.</p>
+      </div>
+      <figure class="feature-shot" data-pending="앱 화면 준비 중 — 완료 33/33장"></figure>
+    </div>
+
+    <div class="feature-row feature-row--rev">
+      <div class="feature-copy">
+        <h3 class="feature-h">순서 그대로, 폴더 정리까지</h3>
+        <p class="feature-body">상세페이지 배치 순서대로 01, 02, 03… 번호를 붙여
+          <code>다운로드 › godiv › 상품명</code> 폴더에 저장합니다.</p>
+      </div>
+      <figure class="feature-shot" data-pending="앱 화면 준비 중 — 폴더 정리"></figure>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-copy">
+        <h3 class="feature-h">내 브라우저 안에서만</h3>
+        <p class="feature-body">사용자가 이미 열어 본 페이지의 화면만 읽습니다. 별도 서버로 페이지를 다시
+          긁지 않고, 어떤 페이지에서 무엇을 받았는지 서버로 전송하지 않습니다.</p>
+      </div>
+      <figure class="feature-shot" data-pending="앱 화면 준비 중 — 로그인 패널"></figure>
+    </div>
+  </section>
+
+  <!-- ③ 사용법 3스텝 -->
+  <section class="features" id="how">
+    <div class="features-inner">
+      <p class="section-label">사용 방법</p>
+      <h2 class="pricing-title">세 번이면 끝입니다.</h2>
+      <ol class="how-steps">
+        <li>지원 사이트의 상품 상세페이지를 엽니다.</li>
+        <li>우측 상단 고디브 패널에 <b>고디터 계정</b>으로 로그인합니다.</li>
+        <li>「이 페이지 이미지 내려받기」를 누릅니다 — 끝.</li>
+      </ol>
+      <p class="pricing-sub">고디터(goditor) 계정으로 로그인해 사용합니다. 계정이 없으면
+        <a href="signup.html">먼저 가입</a>해 주세요.</p>
+    </div>
+  </section>
+
+  <!-- ④ 개인정보처리방침 — ★심사용 공개 URL: /godiv.html#privacy -->
+  <section class="pricing" id="privacy">
+    <div class="pricing-inner">
+      <p class="section-label">개인정보처리방침</p>
+      <h2 class="pricing-title">최소한의 정보만 처리합니다.</h2>
+      <p class="pricing-sub">시행일: 2026-08-15</p>
+      <div class="privacy-body">
+        <h3>1. 수집·이용하는 정보</h3>
+        <ul>
+          <li>이메일 주소: 계정 로그인 및 이용권 확인에 사용합니다.</li>
+          <li>비밀번호: 로그인 시 당사 서버로 암호화된 연결(HTTPS)을 통해 전송되어 확인 용도로만 사용되며, 확장 프로그램에 저장되지 않습니다.</li>
+          <li>세션 토큰: 로그인 유지를 위해 브라우저의 확장 프로그램 저장소에만 보관됩니다.</li>
+        </ul>
+        <h3>2. 수집하지 않는 정보</h3>
+        <ul>
+          <li>방문 기록, 페이지 내용, 검색어, 위치정보, 금융정보 등 위 1항 외의 어떠한 정보도 수집하지 않습니다.</li>
+          <li>이미지 다운로드는 전적으로 사용자의 기기 안에서 이루어지며, 어떤 페이지에서 무엇을 받았는지 당사 서버로 전송하지 않습니다.</li>
+        </ul>
+        <h3>3. 보유 및 파기</h3>
+        <ul>
+          <li>세션 토큰은 로그아웃 시 즉시 삭제됩니다.</li>
+          <li>계정 정보의 보유·파기는 고디터(goditor) 서비스 약관 및 개인정보처리방침을 따릅니다.</li>
+        </ul>
+        <h3>4. 제3자 제공</h3>
+        <ul><li>수집한 정보를 제3자에게 판매·제공하지 않습니다.</li></ul>
+        <h3>5. 문의처</h3>
+        <ul><li>coq3820@gmail.com</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />coq3820@gmail.com</span>
+      <div class="footer-links">
+        <a href="/">소문의섬</a>
+        <a href="#privacy">개인정보 처리방침</a>
+        <a href="https://github.com/bnam91" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
