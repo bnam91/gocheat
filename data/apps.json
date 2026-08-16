@@ -156,6 +156,43 @@
     ]
   },
   {
+    "id": "goshot",
+    "name": "goshot",
+    "tagline": "윈도우 화면 캡처 · 주석",
+    "description": "윈도우 화면을 캡처하고 주석을 추가하는 도구 (CleanShot X 스타일).",
+    "category": "Utility",
+    "price": "",
+    "badge": "베타",
+    "downloadUrl": "https://github.com/bnam91/goshot/releases/latest",
+    "buyUrl": "",
+    "detailUrl": "",
+    "icon": "/assets/icons/goshot.png",
+    "minOS": "Windows 10",
+    "tags": [
+      "Windows",
+      "utility"
+    ]
+  },
+  {
+    "id": "reviewcrawler",
+    "name": "Review Crawler",
+    "tagline": "네이버 · 쿠팡 리뷰 수집",
+    "description": "네이버·쿠팡 상품 리뷰를 자동 수집·정리하는 도구.",
+    "category": "Utility",
+    "price": "",
+    "badge": "정식",
+    "downloadUrl": "https://github.com/bnam91/client-review-crawler/releases/latest",
+    "buyUrl": "",
+    "detailUrl": "",
+    "icon": "/assets/icons/reviewcrawler.png",
+    "minOS": "macOS 12 · Windows 10",
+    "tags": [
+      "macOS",
+      "Windows",
+      "utility"
+    ]
+  },
+  {
     "id": "focusflow",
     "name": "FocusFlow",
     "tagline": "딴짓 안 하려고 만들었어요",
@@ -170,7 +207,8 @@
     "tags": [
       "free",
       "macOS"
-    ]
+    ],
+    "hidden": true
   },
   {
     "id": "clipboardpro",
@@ -187,7 +225,8 @@
     "tags": [
       "paid",
       "macOS"
-    ]
+    ],
+    "hidden": true
   },
   {
     "id": "quietmode",
@@ -204,7 +243,8 @@
     "tags": [
       "free",
       "macOS"
-    ]
+    ],
+    "hidden": true
   },
   {
     "id": "batteryguard",
@@ -221,7 +261,8 @@
     "tags": [
       "paid",
       "macOS"
-    ]
+    ],
+    "hidden": true
   },
   {
     "id": "swiftlaunch",
@@ -238,7 +279,8 @@
     "tags": [
       "free",
       "macOS"
-    ]
+    ],
+    "hidden": true
   },
   {
     "id": "nightshiftpro",
@@ -255,6 +297,7 @@
     "tags": [
       "paid",
       "macOS"
-    ]
+    ],
+    "hidden": true
   }
 ]

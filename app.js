@@ -1,4 +1,4 @@
-const EMOJI_FALLBACK = { goditor:'✦', focusflow:'⏱', clipboardpro:'📋', quietmode:'🔕', batteryguard:'🔋', swiftlaunch:'🚀', nightshiftpro:'🌙' };
+const EMOJI_FALLBACK = { goditor:'✦', godiv:'🖼', goshot:'📸', reviewcrawler:'🔍', focusflow:'⏱', clipboardpro:'📋', quietmode:'🔕', batteryguard:'🔋', swiftlaunch:'🚀', nightshiftpro:'🌙' };
 const RECENT_VIDEOS = [
   { title:'맥 앱 혼자 만들기 — 처음부터 배포까지', date:'2026-03-20' },
   { title:'1인 개발자가 마케팅하는 법', date:'2026-03-13' },
@@ -7,7 +7,8 @@ const RECENT_VIDEOS = [
 ];
 
 async function loadApps() {
-  const apps = await fetch('data/apps.json').then(r=>r.json());
+  // hidden:true 앱은 메인페이지에서 숨긴다(지우지 않음 — apps.json에서 hidden 제거하면 되살아난다).
+  const apps = (await fetch('data/apps.json').then(r=>r.json())).filter(a => !a.hidden);
 
   // Hero pills — 개별 stagger: 0.78s 기준, 0.08s 간격
   const bobDurations = [3.5, 4.0, 3.7, 4.1, 3.6, 3.9];
