@@ -18,7 +18,11 @@ module.exports = async (req, res) => {
   const email = normalizeEmail(body.email);
   const password = body.password;
 
-  if (!isValidEmail(email) || !password) return json(res, 400, { error: 'invalid_credentials' });
+  // ★login.js 와 같은 이유 — password 가 문자열이 아니면 bcrypt 로 넘기기 «전»에 끊는다.
+  //   한쪽만 막으면 다른 엔드포인트로 같은 가입-여부 오라클이 샌다.
+  if (!isValidEmail(email) || typeof password !== 'string' || !password) {
+    return json(res, 400, { error: 'invalid_credentials' });
+  }
 
   try {
     const db = await getDb();

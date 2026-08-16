@@ -16,7 +16,13 @@ module.exports = async (req, res) => {
 
   const email = normalizeEmail(body.email);
   const password = body.password;
-  if (!isValidEmail(email) || !password) return json(res, 401, { ok: false, reason: 'invalid_credentials' });
+  // ★password 는 «문자열»만 받는다. 객체({$ne:...} 등)가 그대로 bcrypt.compare 로 넘어가면
+  //   존재하는 계정에서만 던져 500 이 나고, 없는 계정은 401 이라 「가입 여부」가 새어 나갔다.
+  //   여기서 문자열이 아니면 DB 조회 «전»에 401 로 끊어, 있는 계정·없는 계정이 «같은» 응답을 낸다.
+  //   (email 은 normalizeEmail→isValidEmail 이 이미 문자열로 강제하므로 안전)
+  if (!isValidEmail(email) || typeof password !== 'string' || !password) {
+    return json(res, 401, { ok: false, reason: 'invalid_credentials' });
+  }
 
   try {
     const db = await getDb();
