@@ -140,7 +140,7 @@
   },
   {
     "id": "godiv",
-    "name": "GODIV2",
+    "name": "GODIV",
     "tagline": "상품 상세페이지 이미지 다운로더",
     "description": "상품 상세페이지 본문 이미지를 위에서 아래 순서 그대로 저장하는 크롬 확장. 네이버 스마트스토어·브랜드스토어, 쿠팡, 와디즈 지원.",
     "category": "Utility",
