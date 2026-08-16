@@ -157,7 +157,7 @@
   },
   {
     "id": "goshot",
-    "name": "goshot",
+    "name": "GOSHOT",
     "tagline": "윈도우 화면 캡처 · 주석",
     "description": "윈도우 화면을 캡처하고 주석을 추가하는 도구 (CleanShot X 스타일).",
     "category": "Utility",
@@ -175,7 +175,7 @@
   },
   {
     "id": "reviewcrawler",
-    "name": "Review Crawler",
+    "name": "REVIEW CRAWLER",
     "tagline": "네이버 · 쿠팡 리뷰 수집",
     "description": "네이버·쿠팡 상품 리뷰를 자동 수집·정리하는 도구.",
     "category": "Utility",
