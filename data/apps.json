@@ -165,7 +165,7 @@
     "badge": "베타",
     "downloadUrl": "https://github.com/bnam91/goshot/releases/latest",
     "buyUrl": "",
-    "detailUrl": "",
+    "detailUrl": "goshot.html",
     "icon": "/assets/icons/goshot.png",
     "minOS": "Windows 10",
     "tags": [
@@ -183,7 +183,7 @@
     "badge": "정식",
     "downloadUrl": "https://github.com/bnam91/client-review-crawler/releases/latest",
     "buyUrl": "",
-    "detailUrl": "",
+    "detailUrl": "reviewcrawler.html",
     "icon": "/assets/icons/reviewcrawler.png",
     "minOS": "macOS 12 · Windows 10",
     "tags": [

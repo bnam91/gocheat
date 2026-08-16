@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>Review Crawler 리뷰 수집 · 소문의섬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+
+  <!-- ★reviewcrawler.html 전용 스코프 스타일 — 공유 style.css 는 «건드리지 않는다».
+       goshot.html·godiv.html 과 같은 패밀리(.app-* 공용 스코프). 같은 토큰·서체, 새 색 없음. -->
+  <style>
+    /* 아이콘 PNG 미제작 시 이모지 폴백을 크게 (72px 박스에 맞춰) */
+    .detail-icon.icon-fallback { font-size: 40px; }
+
+    .app-identity { max-width: var(--read); margin: 0 auto; padding: 0 24px var(--sp-section); }
+    .app-identity-card {
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+      padding: 30px 30px; display: flex; flex-direction: column; gap: 16px; text-align: left;
+    }
+    .app-identity-eyebrow { font-size: var(--fs-xs); color: var(--accent); font-weight: 600; letter-spacing: -0.01em; text-align: left; }
+    .app-identity-card h2 { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; color: var(--fg); text-align: left; text-wrap: balance; }
+    .app-identity-card p { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; }
+    .app-identity-card p .hl { color: var(--fg); font-weight: 600; }
+    .app-identity-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.75; text-align: left; padding-top: 4px; border-top: 1px solid var(--border); }
+    .app-identity-note b { color: var(--muted); font-weight: 600; }
+
+    .app-feature-list { display: flex; flex-direction: column; gap: 14px; margin-top: var(--sp-section); }
+    .app-feature-item {
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+      padding: 24px 26px; display: flex; flex-direction: column; gap: 9px; text-align: left;
+    }
+    .app-feature-item h3 { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; color: var(--fg); text-align: left; }
+    .app-feature-item p { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; text-align: left; max-width: none; }
+    .app-feature-item code {
+      font-family: var(--mono); font-size: var(--fs-sm); background: var(--bg-elev-hi);
+      border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--fg); white-space: nowrap;
+    }
+
+    .how-steps {
+      list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 12px;
+      max-width: var(--read); margin: 24px auto 0; text-align: left;
+    }
+    .how-steps li {
+      counter-increment: step; position: relative; padding-left: 46px;
+      font-size: var(--fs-body); color: var(--muted); line-height: 1.6; min-height: 32px; padding-top: 3px;
+    }
+    .how-steps li::before {
+      content: counter(step); position: absolute; left: 0; top: 0;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(201,242,58,0.10); border: 1px solid rgba(201,242,58,0.32);
+      color: var(--accent); font-family: var(--mono); font-size: var(--fs-sm);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .how-steps b { color: var(--fg); font-weight: 600; }
+
+    .privacy-details {
+      max-width: var(--read); margin: 22px auto 0; text-align: left;
+      border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+    }
+    .privacy-details > summary {
+      list-style: none; cursor: pointer; padding: 18px 22px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      font-size: var(--fs-body); font-weight: 600; color: var(--fg);
+    }
+    .privacy-details > summary::-webkit-details-marker { display: none; }
+    .privacy-details > summary::after { content: '펼치기 +'; font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0; }
+    .privacy-details[open] > summary::after { content: '접기 −'; }
+    .privacy-details[open] > summary { border-bottom: 1px solid var(--border); }
+    .privacy-details > summary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); border-radius: var(--radius); }
+    .privacy-body { padding: 10px 22px 22px; text-align: left; display: flex; flex-direction: column; gap: 4px; }
+    .privacy-body h3 { font-size: var(--fs-sm); font-weight: 700; color: var(--fg); margin-top: 16px; text-align: left; }
+    .privacy-body ul { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+    .privacy-body li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.7; padding-left: 14px; position: relative; text-align: left; }
+    .privacy-body li::before { content: '·'; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
+
+    @media (max-width: 600px) {
+      .app-identity, .app-feature-list { padding-left: 20px; padding-right: 20px; }
+      .app-identity-card { padding: 22px 18px; }
+      .app-feature-item { padding: 20px 18px; }
+      .privacy-details > summary { padding: 16px 18px; }
+      .privacy-body { padding: 10px 18px 18px; }
+      .detail-header, .detail-meta { width: 100%; }
+      .detail-title { font-size: clamp(30px, 8.5vw, 40px); max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav--app" aria-label="소문의섬 · Review Crawler 내비게이션">
+      <div class="nav-left">
+        <a href="/" class="logo">소문의섬</a>
+        <span class="nav-crumb-sep" aria-hidden="true">›</span>
+        <span class="nav-crumb-current">Review Crawler</span>
+        <div class="nav-sections">
+          <a href="#overview" class="appnav-link" data-spy="overview">개요</a>
+          <a href="#how" class="appnav-link" data-spy="how">사용법</a>
+          <a href="#privacy" class="appnav-link" data-spy="privacy">개인정보</a>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ① 히어로 -->
+  <section class="detail" id="overview">
+    <div class="detail-inner">
+      <div class="detail-header">
+        <div class="detail-icon">
+          <!-- reviewcrawler.png 미제작 상태 — 메인페이지와 같은 이모지 폴백(아이콘 만들어지면 자동으로 이미지 표시) -->
+          <img src="/assets/icons/reviewcrawler.png" alt="Review Crawler 앱 아이콘" width="72" height="72"
+               onerror="this.parentElement.classList.add('icon-fallback');this.parentElement.textContent='🔍';" />
+        </div>
+        <div class="detail-meta">
+          <h1 class="detail-title">Review Crawler</h1>
+          <p class="detail-lead">네이버·쿠팡 상품 리뷰를, 별점·본문·사진까지 한 번에 표로 모읍니다.</p>
+        </div>
+      </div>
+      <div class="detail-cta">
+        <a class="cta-primary cta-download" href="https://github.com/bnam91/client-review-crawler/releases/latest" target="_blank" rel="noopener">다운로드</a>
+        <a class="cta-primary" href="#how">사용법 보기</a>
+      </div>
+      <p class="detail-alt">
+        <span>macOS · Windows · GitHub에서 내려받기</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ② 정체성 -->
+  <section class="app-identity" aria-label="Review Crawler 소개">
+    <div class="app-identity-card">
+      <p class="app-identity-eyebrow">스크롤하며 복붙하던 리뷰를, 표 한 장으로</p>
+      <h2>상품 리뷰를 한 줄씩 긁어 옮기는 대신, 별점·본문·사진까지 자동으로 모읍니다.</h2>
+      <p>네이버 스마트스토어·브랜드스토어와 쿠팡의 상품 리뷰를 <span class="hl">같은 방식으로</span> 수집합니다.
+        크롬 창을 실제로 열어 사람이 보는 화면 그대로 모으고, 결과는 <span class="hl">엑셀(.xlsx)과 JSON</span>으로
+        내 컴퓨터에 저장합니다 — 리뷰 사진까지 엑셀 셀 안에.</p>
+      <p>URL을 붙여넣으면 바로, 검색어를 넣으면 상품을 골라 수집합니다. 수집할 <span class="hl">페이지 수</span>도
+        고를 수 있고, 요청이 몰리면 스스로 속도를 늦춰 무리하지 않습니다.</p>
+      <p class="app-identity-note">설치형 데스크톱 앱이라 <b>수집한 리뷰는 내 컴퓨터에 파일로</b> 저장됩니다(당사 서버로 보내지 않음).
+        네이버는 처음 한 번 <b>본인 계정으로 로그인</b>해 두면 이후 자동으로 이어집니다.</p>
+    </div>
+  </section>
+
+  <!-- ③ 기능 -->
+  <section class="features" aria-label="Review Crawler 기능">
+    <div class="features-inner">
+      <p class="features-lead">
+        네이버·쿠팡 상품 리뷰를 별점·본문·작성일·사진까지 모아 엑셀과 JSON으로 저장합니다.
+        네이버는 상품문의(Q&amp;A)도 함께 수집합니다.
+      </p>
+    </div>
+
+    <div class="app-feature-list">
+      <div class="app-feature-item">
+        <h3>네이버·쿠팡을 한 도구로</h3>
+        <p>네이버 스마트스토어·브랜드스토어와 쿠팡 상품평을 같은 방식으로 수집합니다.
+          네이버는 상품문의(Q&amp;A) — 질문·답변까지 함께 담을 수 있습니다.</p>
+      </div>
+      <div class="app-feature-item">
+        <h3>별점·본문·작성일·사진까지</h3>
+        <p>리뷰의 별점, 작성자 표시명, 작성일, 본문, 리뷰 유형(일반·한달사용기·재구매), 첨부 사진을 함께 모읍니다.</p>
+      </div>
+      <div class="app-feature-item">
+        <h3>엑셀과 JSON으로, 내 PC에</h3>
+        <p>결과를 엑셀(.xlsx)과 JSON으로 동시에 저장합니다. 엑셀에는 리뷰 사진이 셀 안에 이미지로 들어갑니다.
+          모든 파일은 내 컴퓨터의 저장 폴더에 남습니다.</p>
+      </div>
+      <div class="app-feature-item">
+        <h3>URL을 붙여넣거나, 검색해서</h3>
+        <p>상품 URL을 붙여넣으면 바로, 검색어를 넣으면 검색 결과에서 상품을 골라 수집합니다.
+          수집할 페이지 수(5·15·50·최대)도 고를 수 있습니다.</p>
+      </div>
+      <div class="app-feature-item">
+        <h3>실제 브라우저로, 무리 없이</h3>
+        <p>크롬 창을 실제로 열어 사람이 보는 화면 그대로 수집하고, 요청이 몰리면 스스로 잠시 기다렸다가
+          이어받아 대상 사이트에 무리를 주지 않습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ 사용법 -->
+  <section class="features" id="how">
+    <div class="features-inner">
+      <p class="section-label">사용 방법</p>
+      <h2 class="pricing-title">붙여넣고, 모으고, 엑셀로.</h2>
+      <ol class="how-steps">
+        <li>네이버·쿠팡 상품 URL을 붙여넣거나, 검색어로 상품을 찾습니다.</li>
+        <li>수집할 페이지 수를 고르고 시작하면, 크롬 창에서 리뷰를 순서대로 모읍니다.</li>
+        <li>끝나면 <b>엑셀(.xlsx)·JSON</b> 파일이 저장 폴더에 만들어집니다 — 사진까지.</li>
+      </ol>
+      <p class="pricing-sub">네이버는 처음 한 번 본인 계정으로 로그인해 두면 이후 자동으로 이어집니다.
+        수집한 데이터는 대상 플랫폼의 이용약관과 관련 법령을 지켜 사용해 주세요.</p>
+    </div>
+  </section>
+
+  <!-- ⑤ 개인정보처리방침 — 접기. 앵커 id="privacy" -->
+  <section class="pricing" id="privacy">
+    <div class="pricing-inner">
+      <p class="section-label">개인정보처리방침</p>
+      <h2 class="pricing-title">모으는 데이터는 내 PC에, 서버엔 최소한만.</h2>
+      <p class="pricing-sub">시행일: 2026-08-16 · 전문은 아래에서 펼쳐 볼 수 있습니다.</p>
+      <details class="privacy-details">
+        <summary>개인정보처리방침 전문</summary>
+        <div class="privacy-body">
+          <h3>1. 수집·이용하는 정보 (이용자)</h3>
+          <ul>
+            <li>이용 등록(기기 인증)을 위한 접속 IP 주소: 라이선스 확인에 사용되며 당사 서버에 저장됩니다.</li>
+            <li>(선택) 진단 로그: 사용자가 「진단 로그 전송」을 켠 경우에만, 앱 버전·실행 환경·입력한 상품 주소·수집 건수 등이 오류 개선 목적으로 전송됩니다. 리뷰 본문·작성자 정보·이미지는 포함되지 않습니다.</li>
+          </ul>
+          <h3>2. 수집한 리뷰 데이터의 처리</h3>
+          <ul>
+            <li>대상 상품 페이지에서 수집한 리뷰(별점·작성자 표시명·본문·사진 등)는 전적으로 사용자 PC에 파일로 저장되며, 당사 서버로 전송하지 않습니다.</li>
+            <li>수집 데이터에는 리뷰 작성자의 공개 표시명 등 제3자의 정보가 포함될 수 있으므로, 대상 플랫폼의 이용약관과 관련 법령을 준수하여 이용해야 합니다.</li>
+          </ul>
+          <h3>3. 보유 및 파기</h3>
+          <ul>
+            <li>수집 결과 파일의 보관·삭제는 사용자가 직접 관리합니다.</li>
+            <li>라이선스 확인용 IP 등 계정 정보의 보유·파기는 소문의섬 서비스 정책을 따릅니다.</li>
+          </ul>
+          <h3>4. 제3자 제공</h3>
+          <ul><li>당사가 보관하는 이용자 정보를 제3자에게 판매·제공하지 않습니다.</li></ul>
+          <h3>5. 문의처</h3>
+          <ul><li>coq3820@gmail.com</li></ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />coq3820@gmail.com</span>
+      <div class="footer-links">
+        <a href="/">소문의섬</a>
+        <a href="#privacy">개인정보 처리방침</a>
+        <a href="https://github.com/bnam91/client-review-crawler" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
