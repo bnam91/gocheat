@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <title>칼럼 · 소문의섬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+
+  <!-- ★columns.html 전용 스코프 — 공유 style.css 무접촉. 「준비 중」 빈 상태만 담는다(글은 지어내지 않음). -->
+  <style>
+    .col-empty {
+      max-width: var(--read); margin: 0 auto; padding: 0 24px clamp(96px, 12vw, 160px);
+      display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+    }
+    .col-empty-card {
+      width: 100%; border: 1px dashed var(--border-strong); border-radius: var(--radius);
+      background: var(--bg-elev); padding: 44px 28px;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .col-empty-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.04em; }
+    .col-empty-title { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+    .col-empty-desc { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; text-wrap: balance; max-width: 46ch; }
+    .col-empty-cta { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo">소문의섬</a>
+      <div class="nav-links">
+        <a href="/#apps">앱</a>
+        <a href="columns.html">칼럼</a>
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
+        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="detail" id="overview">
+    <div class="detail-inner">
+      <div class="detail-meta">
+        <h1 class="detail-title">칼럼</h1>
+        <p class="detail-lead">쇼핑몰·셀러·1인 사업가를 위한 기록과 생각을 이곳에 씁니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="col-empty" aria-label="칼럼 준비 중">
+    <div class="col-empty-card">
+      <p class="col-empty-badge">준비 중</p>
+      <p class="col-empty-title">첫 글을 준비하고 있습니다.</p>
+      <p class="col-empty-desc">아직 올라온 칼럼이 없습니다. 곧 첫 글로 찾아뵙겠습니다.
+        그동안 도구와 영상은 메인에서 볼 수 있어요.</p>
+      <a class="cta-primary col-empty-cta" href="/#apps">도구 보러 가기 →</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-inner">
+      <span>비밀이라 부르기엔 아까운 기술들 © 소문의섬<br />coq3820@gmail.com</span>
+      <div class="footer-links">
+        <a href="terms.html">이용약관</a>
+        <a href="privacy.html">개인정보 처리방침</a>
+        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener">YouTube</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
