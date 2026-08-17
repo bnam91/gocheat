@@ -156,7 +156,11 @@ main { padding-bottom: 0; margin-top: 0; }
 /* ===== FOOTER ===== */
 footer { padding-top: 0; padding-bottom: 56px; margin-top: 48px; }
 hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
-.footer-inner { display: flex; align-items: center; justify-content: center; flex-direction: column; flex-wrap: wrap; gap: 12px; text-align: center; }
+/* 한 줄 배치(현빈): 저작권/이메일은 왼쪽, 링크는 오른쪽. 좁으면 자연히 감싼다. */
+.footer-inner { display: flex; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; text-align: left; }
+/* 사업자정보(footer.js가 있을 때만 채움)는 한 줄 아래로 내리고, 비어 있으면 숨긴다 */
+.footer-inner > #biz-info { flex-basis: 100%; }
+#biz-info:empty { display: none; }
 .footer-inner span { font-size: var(--fs-sm); color: var(--subtle); }
 .footer-links { display: flex; justify-content: center; gap: 16px; }
 .footer-links a { font-size: var(--fs-sm); color: var(--subtle); transition: color 0.15s; }
