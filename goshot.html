@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark" />
   <meta name="theme-color" content="#0B0B0E" />
-  <title>GOSHOT 화면 캡처 · 주석 · 소문의섬</title>
+  <title>GOSHOT — Screen capture · annotate · OCR · 소문의섬</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
@@ -13,14 +13,14 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 
-  <!-- ★goshot.html 전용 스코프 스타일 — 공유 style.css 는 «건드리지 않는다».
-       고디브(godiv.html)와 같은 패밀리 디자인. 같은 토큰·서체만, 새 색 없음.
-       클래스명은 상세페이지 공용으로 중립화(.app-*) — 다른 상세페이지와 같은 스코프를 재사용. -->
+  <!-- ★Scope styles for goshot.html only — the shared style.css is «left untouched».
+       Same family design as godiv.html. Same tokens and typefaces only, no new colors.
+       Class names are neutralized for shared detail-page use (.app-*) — reusing the same scope as other detail pages. -->
   <style>
-    /* 아이콘 PNG 미제작 시 이모지 폴백을 크게 (72px 박스에 맞춰) */
+    /* When the icon PNG isn't made yet, enlarge the emoji fallback (to fit the 72px box) */
     .detail-icon.icon-fallback { font-size: 40px; }
 
-    /* ── 정체성 밴드 — 히어로 바로 아래 ── */
+    /* ── Identity band — right below the hero ── */
     .app-identity { max-width: var(--read); margin: 0 auto; padding: 0 24px var(--sp-section); }
     .app-identity-card {
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
@@ -33,8 +33,8 @@
     .app-identity-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.75; text-align: left; padding-top: 4px; border-top: 1px solid var(--border); }
     .app-identity-note b { color: var(--muted); font-weight: 600; }
 
-    /* ── 기능 — 앱 스크린샷이 아직 없어 좌우 2단 격자 대신 한 단 카드로 정리
-         (스샷 없이 빈 칸을 좌우로 벌리면 미완성으로 읽힌다) ── */
+    /* ── Features — there are no app screenshots yet, so we stack single-column cards
+         instead of a two-column grid (spreading empty slots left/right reads as unfinished) ── */
     .app-feature-list { display: flex; flex-direction: column; gap: 14px; margin-top: var(--sp-section); }
     .app-feature-item {
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
@@ -47,7 +47,7 @@
       border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--fg); white-space: nowrap;
     }
 
-    /* ── 사용법 — 좌측정렬 번호 스텝 (공유 css 에 .how-steps 정의가 없어 여기서 잡는다) ── */
+    /* ── How to use — left-aligned numbered steps (the shared css has no .how-steps, so we pin it here) ── */
     .how-steps {
       list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 12px;
       max-width: var(--read); margin: 24px auto 0; text-align: left;
@@ -69,7 +69,7 @@
       border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--fg); white-space: nowrap;
     }
 
-    /* ── 개인정보처리방침 — 접기(요약+펼치기). 앵커 id="privacy" 유지 ── */
+    /* ── Privacy policy — collapsible (summary + expand). The anchor id="privacy" stays as is ── */
     .privacy-details {
       max-width: var(--read); margin: 22px auto 0; text-align: left;
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
@@ -80,8 +80,8 @@
       font-size: var(--fs-body); font-weight: 600; color: var(--fg);
     }
     .privacy-details > summary::-webkit-details-marker { display: none; }
-    .privacy-details > summary::after { content: '펼치기 +'; font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0; }
-    .privacy-details[open] > summary::after { content: '접기 −'; }
+    .privacy-details > summary::after { content: 'Expand +'; font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0; }
+    .privacy-details[open] > summary::after { content: 'Collapse −'; }
     .privacy-details[open] > summary { border-bottom: 1px solid var(--border); }
     .privacy-details > summary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); border-radius: var(--radius); }
     .privacy-body { padding: 10px 22px 22px; text-align: left; display: flex; flex-direction: column; gap: 4px; }
@@ -90,7 +90,7 @@
     .privacy-body li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.7; padding-left: 14px; position: relative; text-align: left; }
     .privacy-body li::before { content: '·'; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
 
-    /* ── 폰 — 가로 잘림 방지 ── */
+    /* ── Mobile — prevent horizontal clipping ── */
     @media (max-width: 600px) {
       .app-identity, .app-feature-list { padding-left: 20px; padding-right: 20px; }
       .app-identity-card { padding: 22px 18px; }
@@ -104,143 +104,145 @@
 </head>
 <body>
   <header>
-    <nav class="nav--app" aria-label="소문의섬 · GOSHOT 내비게이션">
+    <nav class="nav--app" aria-label="소문의섬 · GOSHOT navigation">
       <div class="nav-left">
         <a href="/" class="logo">소문의섬</a>
         <span class="nav-crumb-sep" aria-hidden="true">›</span>
         <span class="nav-crumb-current">GOSHOT</span>
         <div class="nav-sections">
-          <a href="#overview" class="appnav-link" data-spy="overview">개요</a>
-          <a href="#how" class="appnav-link" data-spy="how">사용법</a>
-          <a href="#privacy" class="appnav-link" data-spy="privacy">개인정보</a>
+          <a href="#overview" class="appnav-link" data-spy="overview">Overview</a>
+          <a href="#how" class="appnav-link" data-spy="how">How to use</a>
+          <a href="#privacy" class="appnav-link" data-spy="privacy">Privacy</a>
         </div>
       </div>
       <div class="nav-links">
-        <a href="login.html">로그인</a>
-        <a href="signup.html">회원가입</a>
+        <a href="login.html">Log in</a>
+        <a href="signup.html">Sign up</a>
       </div>
     </nav>
   </header>
 
-  <!-- ① 히어로 -->
+  <!-- ① Hero -->
   <section class="detail" id="overview">
     <div class="detail-inner">
       <div class="detail-header">
         <div class="detail-icon">
-          <!-- goshot.png 미제작 상태 — 메인페이지와 같은 이모지 폴백(아이콘 만들어지면 자동으로 이미지 표시) -->
-          <img src="/assets/icons/goshot.png" alt="GOSHOT 앱 아이콘" width="72" height="72"
+          <!-- goshot.png not made yet — same emoji fallback as the main page (shows the image automatically once the icon exists) -->
+          <img src="/assets/icons/goshot.png" alt="GOSHOT app icon" width="72" height="72"
                onerror="this.parentElement.classList.add('icon-fallback');this.parentElement.textContent='📸';" />
         </div>
         <div class="detail-meta">
           <h1 class="detail-title">GOSHOT</h1>
-          <p class="detail-lead">윈도우 화면을 캡처하고, 찍은 그 자리에서 주석·모자이크·OCR까지 끝냅니다.</p>
+          <p class="detail-lead">Capture your Windows screen and finish annotating, blurring, and OCR right where you shot it.</p>
         </div>
       </div>
       <div class="detail-cta">
-        <a class="cta-primary cta-download" href="https://github.com/bnam91/goshot/releases/latest" target="_blank" rel="noopener">다운로드</a>
+        <a class="cta-primary cta-download" href="https://github.com/bnam91/goshot/releases/latest" target="_blank" rel="noopener">Download</a>
       </div>
       <p class="detail-alt">
-        <span>Windows 10 이상 · 무료</span>
+        <span>Windows 10 or later · Free</span>
       </p>
     </div>
   </section>
 
-  <!-- ② 정체성 -->
-  <section class="app-identity" aria-label="GOSHOT 소개">
+  <!-- ② Identity -->
+  <section class="app-identity" aria-label="About GOSHOT">
     <div class="app-identity-card">
-      <p class="app-identity-eyebrow">찍고 · 다듬고 · 공유까지 한 흐름</p>
-      <h2>캡처 도구를 따로 열고 닫는 대신, 찍은 그 자리에서 바로 다듬습니다.</h2>
-      <p>GOSHOT은 화면을 <span class="hl">찍는 순간</span> 편집 오버레이가 함께 떠서, 다른 앱으로 옮기지 않고
-        화살표·번호·텍스트·모자이크를 <span class="hl">그 위에 바로</span> 얹습니다. CleanShot X 스타일의 흐름을
-        윈도우에서 그대로.</p>
-      <p>화면 속 <span class="hl">글자</span>는 오프라인 OCR로 텍스트가 되고(인터넷 없이, 한글·영문),
-        결과는 배경·그림자까지 입혀 <span class="hl">그대로 써도 되는</span> 이미지로 저장·복사·공유됩니다.</p>
-      <p class="app-identity-note">캡처·편집·OCR은 전부 <b>내 PC 안에서</b> 처리됩니다 — 화면 이미지를 서버로 보내지 않습니다
-        (공유 링크를 직접 만들 때만 예외). 로그인은 <b>소문의섬 계정</b>으로 하며, 현재 모든 기능이 무료입니다.</p>
+      <p class="app-identity-eyebrow">Capture · polish · share in one flow</p>
+      <h2>Instead of opening and closing a separate capture tool, you polish right where you shot it.</h2>
+      <p>The <span class="hl">moment you capture</span> the screen, GOSHOT pops up an editing overlay alongside it, so you
+        lay arrows, numbers, text, and mosaics <span class="hl">right on top of it</span> without moving to another app. A
+        CleanShot X-style flow, on Windows.</p>
+      <p>The <span class="hl">text</span> on your screen becomes real text through offline OCR (no internet needed, Korean and
+        English), and the result is dressed up with a background and shadow into an image
+        <span class="hl">ready to use as is</span> — save, copy, or share it.</p>
+      <p class="app-identity-note">Capture, editing, and OCR all happen <b>on your own PC</b> — the screen image is never sent
+        to a server (the only exception is when you create a share link yourself). You log in with your
+        <b>소문의섬 account</b>, and every feature is currently free.</p>
     </div>
   </section>
 
-  <!-- ③ 기능 -->
-  <section class="features" aria-label="GOSHOT 기능">
+  <!-- ③ Features -->
+  <section class="features" aria-label="GOSHOT features">
     <div class="features-inner">
       <p class="features-lead">
-        영역·전체화면을 찍고, 그 위에 바로 그리고 가리고, 글자를 텍스트로 뽑고, 배경까지 입혀
-        저장·복사·공유합니다. 주 모니터 기준으로 동작합니다.
+        Capture a region or the full screen, draw and cover right on top of it, pull text out of the pixels, dress it up
+        with a background, then save, copy, or share. It works on the primary monitor.
       </p>
     </div>
 
     <div class="app-feature-list">
       <div class="app-feature-item">
-        <h3>찍은 자리에 바로 그립니다</h3>
-        <p>화살표·사각형·텍스트·번호(1, 2, 3…)·하이라이트로 표시하고, 가려야 할 곳은 블러·모자이크·스포트라이트로
-          덮습니다. 잘라내기와 실행취소(<code>Ctrl+Z</code>)도 됩니다.</p>
+        <h3>Draw right where you shot it</h3>
+        <p>Mark things up with arrows, rectangles, text, numbers (1, 2, 3…), and highlights, and cover what needs hiding with
+          blur, mosaic, or spotlight. Crop and undo (<code>Ctrl+Z</code>) work too.</p>
       </div>
       <div class="app-feature-item">
-        <h3>화면 속 글자를 텍스트로 (OCR)</h3>
-        <p>선택한 영역의 글자를 읽어 클립보드에 복사합니다. 한글·영문을 <b>인터넷 없이</b>, 이미지를 서버로 보내지 않고
-          내 PC 안에서 처리합니다.</p>
+        <h3>Turn on-screen text into text (OCR)</h3>
+        <p>It reads the text in the selected region and copies it to your clipboard. Korean and English are processed
+          <b>without internet</b>, on your own PC, without sending the image to a server.</p>
       </div>
       <div class="app-feature-item">
-        <h3>배경까지 입혀 보기 좋게</h3>
-        <p>그라디언트·단색 배경, 여백·그림자·둥근 모서리, 1:1·4:5·16:9 비율까지. 발표 자료나 SNS에 그대로 올릴 수 있는
-          모양으로 다듬습니다.</p>
+        <h3>Dress it up with a background</h3>
+        <p>Gradient or solid backgrounds, padding, shadow, and rounded corners, plus 1:1, 4:5, and 16:9 ratios. Polish it into
+          a shape you can post straight to a presentation or social media.</p>
       </div>
       <div class="app-feature-item">
-        <h3>띄워두고 보면서 작업</h3>
-        <p>캡처를 <b>항상 위에 뜨는</b> 작은 창으로 고정(핀)해, 참고 화면을 보면서 다른 일을 할 수 있습니다.
-          여러 개를 동시에 띄울 수 있습니다.</p>
+        <h3>Keep it floating while you work</h3>
+        <p>Pin a capture as a small <b>always-on-top</b> window so you can keep a reference on screen while doing other work.
+          You can float several at once.</p>
       </div>
       <div class="app-feature-item">
-        <h3>찍으면 곧바로, 손이 안 멈추게</h3>
-        <p>캡처 직후 화면 모서리에 미리보기 카드가 떠서 편집·복사·저장·핀·공유를 바로 누릅니다.
-          단축키는 영역 <code>Ctrl+Shift+2</code>, 전체화면 <code>Ctrl+Shift+3</code>(변경 가능).</p>
+        <h3>Right after the shot, so you never stop</h3>
+        <p>A preview card appears in the corner right after capture, so you can edit, copy, save, pin, or share on the spot.
+          The shortcuts are <code>Ctrl+Shift+2</code> for a region and <code>Ctrl+Shift+3</code> for the full screen (changeable).</p>
       </div>
     </div>
   </section>
 
-  <!-- ④ 사용법 -->
+  <!-- ④ How to use -->
   <section class="features" id="how">
     <div class="features-inner">
-      <p class="section-label">사용 방법</p>
-      <h2 class="pricing-title">찍고, 다듬고, 내보내기.</h2>
+      <p class="section-label">How to use</p>
+      <h2 class="pricing-title">Capture, polish, export.</h2>
       <ol class="how-steps">
-        <li>단축키로 영역을 드래그하거나(<code>Ctrl+Shift+2</code>), 전체화면을 찍습니다(<code>Ctrl+Shift+3</code>).</li>
-        <li>함께 뜨는 편집 오버레이에서 <b>주석·모자이크·OCR·배경 꾸미기</b>로 다듬습니다.</li>
-        <li><b>PNG 저장</b>·클립보드 복사·핀·공유 링크 중 하나로 내보냅니다 — 끝.</li>
+        <li>Drag a region with the shortcut (<code>Ctrl+Shift+2</code>), or capture the full screen (<code>Ctrl+Shift+3</code>).</li>
+        <li>In the editing overlay that pops up alongside, polish it with <b>annotations, mosaic, OCR, and background styling</b>.</li>
+        <li>Export by <b>saving a PNG</b>, copying to the clipboard, pinning, or making a share link — done.</li>
       </ol>
-      <p class="pricing-sub">실행에는 소문의섬 계정 로그인이 필요합니다(현재 전 기능 무료). 계정이 없으면
-        <a href="signup.html">먼저 가입</a>해 주세요.</p>
+      <p class="pricing-sub">Running it requires logging in with your 소문의섬 account (every feature is currently free). If you don't have one,
+        <a href="signup.html">sign up first</a>.</p>
     </div>
   </section>
 
-  <!-- ⑤ 개인정보처리방침 — 접기. 앵커 id="privacy" -->
+  <!-- ⑤ Privacy policy — collapsible. Anchor id="privacy" -->
   <section class="pricing" id="privacy">
     <div class="pricing-inner">
-      <p class="section-label">개인정보처리방침</p>
-      <h2 class="pricing-title">최소한의 정보만 처리합니다.</h2>
-      <p class="pricing-sub">시행일: 2026-08-16 · 전문은 아래에서 펼쳐 볼 수 있습니다.</p>
+      <p class="section-label">Privacy Policy</p>
+      <h2 class="pricing-title">We process the minimum information only.</h2>
+      <p class="pricing-sub">Effective date: 2026-08-16 · You can read the full text by expanding below.</p>
       <details class="privacy-details">
-        <summary>개인정보처리방침 전문</summary>
+        <summary>Full privacy policy</summary>
         <div class="privacy-body">
-          <h3>1. 수집·이용하는 정보</h3>
+          <h3>1. Information we collect and use</h3>
           <ul>
-            <li>이메일 주소: 계정 로그인 및 이용권 확인에 사용합니다.</li>
-            <li>비밀번호: 로그인 시 암호화된 연결(HTTPS)을 통해 전송되어 확인 용도로만 사용되며, 앱에 저장되지 않습니다.</li>
-            <li>세션 토큰: 로그인 유지를 위해 사용자 PC에만 보관됩니다.</li>
+            <li>Email address: used for account login and to verify your subscription.</li>
+            <li>Password: sent over an encrypted connection (HTTPS) at login for verification only; it is not stored in the app.</li>
+            <li>Session token: stored only on your PC to keep you logged in.</li>
           </ul>
-          <h3>2. 수집하지 않는 정보</h3>
+          <h3>2. Information we do not collect</h3>
           <ul>
-            <li>캡처한 화면 이미지와 OCR로 추출한 텍스트는 전적으로 사용자 PC 안에서 처리되며, 당사 서버로 전송하지 않습니다.</li>
-            <li>예외: 사용자가 「공유 링크 만들기」를 직접 실행한 경우에만, 해당 이미지가 공유를 위해 업로드됩니다.</li>
+            <li>Captured screen images and text extracted by OCR are processed entirely on your own PC and are not sent to our server.</li>
+            <li>Exception: only when you run "Create share link" yourself, that image is uploaded for sharing.</li>
           </ul>
-          <h3>3. 보유 및 파기</h3>
+          <h3>3. Retention and destruction</h3>
           <ul>
-            <li>세션 토큰은 로그아웃 시 즉시 삭제됩니다.</li>
-            <li>계정 정보의 보유·파기는 소문의섬 서비스 정책을 따릅니다.</li>
+            <li>The session token is deleted immediately when you log out.</li>
+            <li>Retention and destruction of account information follow the 소문의섬 service policy.</li>
           </ul>
-          <h3>4. 제3자 제공</h3>
-          <ul><li>수집한 정보를 제3자에게 판매·제공하지 않습니다.</li></ul>
-          <h3>5. 문의처</h3>
+          <h3>4. Provision to third parties</h3>
+          <ul><li>We do not sell or provide collected information to any third party.</li></ul>
+          <h3>5. Contact</h3>
           <ul><li>coq3820@gmail.com</li></ul>
         </div>
       </details>
@@ -249,10 +251,10 @@
 
   <footer>
     <div class="footer-inner">
-      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />coq3820@gmail.com</span>
+      <span>Built out of frustration. Shared so we could use it together. © 소문의섬<br />coq3820@gmail.com</span>
       <div class="footer-links">
         <a href="/">소문의섬</a>
-        <a href="#privacy">개인정보 처리방침</a>
+        <a href="#privacy">Privacy Policy</a>
       </div>
     </div>
   </footer>
