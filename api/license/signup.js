@@ -124,7 +124,10 @@ module.exports = async (req, res) => {
 
     await users.updateOne({ email }, { $set: set, $setOnInsert: setOnInsert }, { upsert: true });
 
-    const base = process.env.LICENSE_BASE_URL || `https://${req.headers.host || 'hompageapp.vercel.app'}`;
+    // ★2026-08-18 도메인 통일(현빈 승인): Host 헤더가 없을 때의 «최후» 폴백도 라이브(blacksheepwall.kr)로.
+    //   평소엔 req.headers.host 가 잡히므로 이 값이 쓰일 일은 드물지만, 쓰이는 그 순간은
+    //   «인증메일 링크»라 사용자가 직접 클릭한다 — 개발용 주소가 메일로 나가면 안 된다.
+    const base = process.env.LICENSE_BASE_URL || `https://${req.headers.host || 'blacksheepwall.kr'}`;
     const verifyUrl = `${base.replace(/\/$/, '')}/api/license/verify?token=${verificationToken}`;
 
     // ★★응답은 «계정이 있든 없든 똑같다». 다르면 그 자체가 계정 열거 도구가 된다.
