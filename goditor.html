@@ -191,8 +191,9 @@
     </div>
 
     <!-- 동작 요구사항.
-         ★macOS 12 : 태양이 배포 산출물을 마운트해 Info.plist 를 «직접 읽은» 값이다.
-            GODITOR-0.7.1-arm64.dmg / GODITOR-0.7.1.dmg 둘 다 LSMinimumSystemVersion = 12.0.
+         ★macOS 12 : 배포 산출물 Info.plist 를 «직접 읽은» 값이다.
+            0.8.2 기준 실측 — 수지맥 설치본 GODITOR.app/Contents/Info.plist LSMinimumSystemVersion = 12.0 (2026-08-20 확인).
+            앞선 0.7.1 배포본(GODITOR-0.7.1-arm64.dmg / GODITOR-0.7.1.dmg)도 동일하게 12.0 이었다 — 버전이 올라도 값은 그대로다.
             우리가 minimumSystemVersion 을 지정하지 않아 상류 Electron 41 값(Monterey and up)이
             그대로 실린다(app-builder-lib macPackager.js:462-464 — 설정됐을 때만 덮어쓴다).
             ⚠️ 전에 적혀 있던 "13"은 근거가 0인 추정값이었다. 실측값으로 바꾼다.
