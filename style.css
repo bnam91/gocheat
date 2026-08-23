@@ -82,10 +82,7 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
   color: var(--fg);
 }
 .gradient-text {
-  background: linear-gradient(135deg, var(--fg) 0%, var(--fg) 30%, var(--subtle) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--muted);
 }
 .hero-sub { font-size: var(--fs-lead); color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
 .hero-cta { display: flex; align-items: center; justify-content: center; gap: 12px; }
