@@ -107,6 +107,16 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 .cta-secondary:hover { color: var(--fg); }
 .cta-secondary:focus-visible { outline: none; color: var(--accent); }
 
+/* 소셜프루프 — 더미. proof-badge 가 "예시" 임을 항상 함께 말해 실측치로 오인되지 않게 한다. */
+.proof-strip { margin-top: 20px; font-size: var(--fs-xs); color: var(--subtle); display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 10px; }
+.proof-stat strong { color: var(--muted); font-weight: 600; }
+.proof-sep { color: var(--border-strong); }
+.proof-badge { font-family: var(--mono); font-size: 11px; color: var(--subtle); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; }
+
+/* ===== PROBLEM (P1-7) ===== */
+.problem { max-width: var(--width); margin: 56px auto 40px; padding: 0 24px; text-align: center; }
+.problem-lead { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; }
+
 /* ===== MAIN SECTIONS ===== */
 main, .yt-section, footer { max-width: var(--width); margin: 0 auto; padding-left: 24px; padding-right: 24px; text-align: center; }
 main { padding-bottom: 0; margin-top: 0; }
@@ -148,10 +158,20 @@ main { padding-bottom: 0; margin-top: 0; }
 /* ===== YOUTUBE ===== */
 .yt-section { margin-top: 48px; padding-bottom: 0; }
 .yt-list { list-style: none; }
-.yt-item { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; padding: 11px 0; border-bottom: 1px solid var(--border); text-align: center; }
+.yt-item { padding: 0; border-bottom: 1px solid var(--border); text-align: left; }
 .yt-item:first-child { border-top: 1px solid var(--border); }
+.yt-link { display: flex; align-items: center; gap: 14px; padding: 10px 6px; border-radius: 8px; transition: background 0.15s; }
+.yt-link:hover { background: var(--bg-elev); }
+.yt-link:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.20); }
+.yt-thumb { width: 96px; height: 54px; min-width: 96px; object-fit: cover; border-radius: 6px; background: var(--bg-elev); }
+.yt-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .yt-title { font-size: var(--fs-sm); color: var(--fg); line-height: 1.4; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .yt-date { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0; }
+
+/* ===== FINAL CTA (P2-11) ===== */
+.final-cta { max-width: var(--width); margin: 72px auto 0; padding: 0 24px; text-align: center; }
+.final-cta-sub { font-size: var(--fs-sm); color: var(--muted); margin: 12px 0 24px; }
+.cta-primary--lg { font-size: var(--fs-body); padding: 13px 28px; }
 
 /* ===== FOOTER ===== */
 footer { padding-top: 0; padding-bottom: 56px; margin-top: 48px; }

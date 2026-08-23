@@ -1,10 +1,4 @@
 const EMOJI_FALLBACK = { goditor:'✦', godiv:'🖼', goshot:'📸', reviewcrawler:'🔍', focusflow:'⏱', clipboardpro:'📋', quietmode:'🔕', batteryguard:'🔋', swiftlaunch:'🚀', nightshiftpro:'🌙' };
-const RECENT_VIDEOS = [
-  { title:'맥 앱 혼자 만들기 — 처음부터 배포까지', date:'2026-03-20' },
-  { title:'1인 개발자가 마케팅하는 법', date:'2026-03-13' },
-  { title:'SwiftUI로 사이드바 앱 만들기', date:'2026-03-06' },
-  { title:'유튜브 + 개발 병행 6개월 후기', date:'2026-02-27' },
-];
 
 async function loadApps() {
   // hidden:true 앱은 메인페이지에서 숨긴다(지우지 않음 — apps.json에서 hidden 제거하면 되살아난다).
@@ -46,9 +40,18 @@ async function loadApps() {
   initEntrance('.card-hidden', 'card-visible', 0.1, 70);
 }
 
-function loadVideos() {
-  document.getElementById('yt-list').innerHTML = RECENT_VIDEOS.map(v=>`
-    <li class="yt-item yt-hidden"><span class="yt-title">${v.title}</span><span class="yt-date">${v.date}</span></li>`).join('');
+async function loadVideos() {
+  const videos = await fetch('data/videos.json').then(r=>r.json());
+  document.getElementById('yt-list').innerHTML = videos.map(v=>`
+    <li class="yt-item yt-hidden">
+      <a class="yt-link" href="${v.url}" target="_blank" rel="noopener">
+        <img class="yt-thumb" src="${v.thumbnail}" alt="" loading="lazy" />
+        <span class="yt-text">
+          <span class="yt-title">${v.title}</span>
+          <span class="yt-date">${v.date}</span>
+        </span>
+      </a>
+    </li>`).join('');
   initEntrance('.yt-hidden', 'yt-visible', 0.2, 50);
 }
 

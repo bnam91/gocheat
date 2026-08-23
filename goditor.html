@@ -14,19 +14,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 </head>
 <body>
-  <!-- ★내비는 «한 줄»이다. 전에는 전역(53) + 앱전용(47) 두 줄로 100px 을 먹었다.
-       코덱스 실측(oa-full.png 1440×8047 원본 상단) — 제품 페이지인데 제품 전용 내비가
-       «따로 없다». 전역 한 줄뿐이고, 우리가 만들려던 「개발자문서」에 해당하는 「개발자」도
-       그 한 줄 안에 있다. 왼쪽=브랜드+이동 / 오른쪽=계정. 한 줄 안에서 좌우로 나뉜다.
-
-       ★왼쪽에 «계층»을 드러낸다: 소문의섬 › GODITOR.
-         그러면 「소문의섬」이 곧 상위로 가는 길이라 «← 앱 목록» 뒤로가기가 필요 없어진다.
-         (뒤로가기는 히어로 패딩 안에 홀로 떠서 제목과 175px 떨어져 있었다. 뗐다.)
-
-       ★앱 항목(개요·요금제·개발자문서)은 «이 페이지에만» 있다.
-         다른 페이지의 <header><nav> 는 손대지 않았다 — header nav 로 범위를 좁혀둔
-         전역 규칙을 그대로 쓴다. -->
-  <header>
+    <header>
     <nav class="nav--app" aria-label="소문의섬 · GODITOR 내비게이션">
       <div class="nav-left">
         <a href="/" class="logo">소문의섬</a>
@@ -36,9 +24,7 @@
         <div class="nav-sections">
           <a href="#overview" class="appnav-link" data-spy="overview">개요</a>
           <a href="#pricing" class="appnav-link" data-spy="pricing">요금제</a>
-          <!-- ★2026-08-15 «준비 중» 해제 — goditor-api.html 이 실제로 생겼다.
-               (내용 없이 링크만 먼저 켜면 거짓말이 된다는 원칙은 그대로다. 페이지가 선 뒤에 켰다.) -->
-          <a href="goditor-api.html" class="appnav-link">개발자문서</a>
+                    <a href="goditor-api.html" class="appnav-link">개발자문서</a>
         </div>
       </div>
 
@@ -49,8 +35,7 @@
     </nav>
   </header>
 
-  <!-- ① 히어로 — 말하는 한 가지: «이게 뭔지 · 받아라» -->
-  <section class="detail" id="overview">
+    <section class="detail" id="overview">
     <div class="detail-inner">
       <div class="detail-header">
         <div class="detail-icon">
@@ -58,53 +43,28 @@
         </div>
         <div class="detail-meta">
           <h1 class="detail-title">GODITOR</h1>
-          <!-- 배지·태그라인 제거(현빈). 이 한 줄이 «유일한 제품 설명»이라
-               지어내지 않고 기존 .detail-desc 에서 뽑아 압축했다. -->
-          <p class="detail-lead">상세페이지를 블록으로 쌓고, 바로 미리봅니다.</p>
+                    <p class="detail-lead">상세페이지를 블록으로 쌓고, 바로 미리봅니다.</p>
         </div>
       </div>
 
       <div class="detail-cta">
-        <!-- ★진짜 링크다. 전에는 <button> 이 API 로 주소를 «받아와서» 열었는데,
-             API 가 없거나 죽으면(프리뷰는 POST 자체가 501) 아무 일도 안 일어났다.
-             API 가 막아주는 게 없는데 API 가 죽으면 다운로드가 죽는다 — 순손실이다.
-             ★href 기본값은 «상위 폴더»다. JS 가 죽어도 여기로는 간다.
-               주소의 단 한 벌은 data/downloads.json 이고, 아래 스크립트가
-               OS 에 맞는 주소로 갈아끼운다. 이 한 줄만 마크업에 있는 이유는
-               «JS 없이도 갈 곳»이 마크업에 있어야 하기 때문이다. -->
-        <a id="download-btn" class="cta-primary cta-download"
+                <a id="download-btn" class="cta-primary cta-download"
            href="https://drive.google.com/drive/folders/154OLVED3VKx2BrvYvayNh-SHnQfAuyP0"
            target="_blank" rel="noopener">다운로드</a>
       </div>
-      <!-- 버튼 아래 «보조 한 줄». 두 가지가 여기 같이 산다:
-             ① 지금 올라가 있는 버전  ② 맥이면 칩 안내
-           ★한 줄에 모은 건 히어로 세로 리듬을 안 늘리기 위해서다.
-             줄을 새로 만들면 아이콘→제목→리드→버튼 리듬에 한 칸이 더 끼어든다.
-
-           ★버전은 «마크업에 안 박는다». data/downloads.json 에서만 온다.
-             박아두면 두 벌이 되고, 다음 릴리스에 반드시 한쪽이 낡는다.
-             못 읽으면 이 조각을 «안 그린다» — 안 보이는 건 괜찮지만 틀린 값이 보이면 안 된다.
-
-           맥은 ARM64/Intel 로 갈린다. 칩을 «단정»하지 않고 기본을 제시하되
-           반대 경로를 항상 나란히 둔다. 이 링크는 마크업에 있어 JS 가 죽어도 산다. -->
-      <p class="detail-alt" id="dl-alt">
+            <p class="detail-alt" id="dl-alt">
         <span id="dl-ver" hidden></span>
         <span id="dl-mac" hidden>Apple Silicon 용입니다.
           <a id="dl-intel"
              href="https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu"
              target="_blank" rel="noopener">Intel 맥을 쓰시나요?</a></span>
-        <!-- ★로그인 안내는 «정적»이다 — 버전·칩과 달리 틀릴 수 없는 값이라
-             JS 가 죽어도 보여야 한다. 그래서 p 의 hidden 도 뗐다(빈 줄 리스크 없음). -->
-        <span id="dl-login-hint">설치 후 앱에서 같은 이메일로 로그인하세요.</span>
+                <span id="dl-login-hint">설치 후 앱에서 같은 이메일로 로그인하세요.</span>
       </p>
     </div>
   </section>
 
-  <!-- ② 이벤트 띠 — 말하는 한 가지: «지금 전부 무료».
-       요금제 절에 있던 배너를 여기로 «옮겼다»(첫 화면 근처에서 보여야 한다). -->
-
-  <!-- ③ 영상 — 말하는 한 가지: «어떻게 쓰는지» -->
-  <section class="showcase">
+  
+    <section class="showcase">
       <figure class="video-embed">
         <div class="video-frame">
           <iframe
@@ -120,16 +80,7 @@
       </figure>
   </section>
 
-  <!-- ④ 기능 — 구간 하나가 «기능 하나»를 말한다.
-       전에는 넷을 2×2 목록으로 접어 놨다. 접으면 한 줄짜리 문구 넷이 되고,
-       그러면 카피를 아무리 다듬어도 «기능이 보이지 않는다».
-       그래서 펼치고 좌우로 교차시킨다.
-
-       ★문구는 지어내지 않았다 — 접혀 있던 목록 네 줄을 그대로 풀어 쓴 것이다.
-         ④의 «내보내기»만 data/apps.json 의 등급별 기능 목록에서 왔다.
-       ★이미지는 아직 없다. 파일이 없으면 깨진 아이콘 대신 «준비 중» 판이 뜬다
-         (onerror). 태양이 assets/shots/ 에 넣으면 손 안 대고 살아난다. -->
-  <section class="features">
+    <section class="features">
     <div class="features-inner">
       <h2 class="section-h">주요 기능</h2>
       <p class="features-lead">
@@ -190,65 +141,22 @@
       </figure>
     </div>
 
-    <!-- 동작 요구사항.
-         ★macOS 12 : 배포 산출물 Info.plist 를 «직접 읽은» 값이다.
-            0.8.2 기준 실측 — 수지맥 설치본 GODITOR.app/Contents/Info.plist LSMinimumSystemVersion = 12.0 (2026-08-20 확인).
-            앞선 0.7.1 배포본(GODITOR-0.7.1-arm64.dmg / GODITOR-0.7.1.dmg)도 동일하게 12.0 이었다 — 버전이 올라도 값은 그대로다.
-            우리가 minimumSystemVersion 을 지정하지 않아 상류 Electron 41 값(Monterey and up)이
-            그대로 실린다(app-builder-lib macPackager.js:462-464 — 설정됐을 때만 덮어쓴다).
-            ⚠️ 전에 적혀 있던 "13"은 근거가 0인 추정값이었다. 실측값으로 바꾼다.
-            ⚠️ 단 12.0 이 보장하는 건 «Gatekeeper 가 실행을 막지 않는다»까지다.
-               macOS 12 실기에서 전 기능이 도는지는 아무도 검증하지 않았다(실기 없음).
-               13+ 전용 API 사용 여부는 태양이 별건으로 감사 중이다.
-         ⚠️ Windows  : 빌드가 nsis·x64 하나뿐이라 «64비트»는 확실하다.
-            "Windows 10 이상"은 Electron 41 요구사항에서 온 «추론»이라 적지 않는다.
-            모르는 걸 적는 것보다 비우는 게 낫다. -->
-    <p class="features-req">macOS 12 (Monterey) 이상 · Windows 64비트</p>
+        <p class="features-req">macOS 12 (Monterey) 이상 · Windows 64비트</p>
   </section>
 
   <section class="pricing">
-    <!-- ★요금제는 «앱별»이다. 소문의섬은 플랫폼이고 각 앱이 자기 구독 등급을 갖는다.
-         그래서 플랫폼 레벨 pricing.html 이 아니라 이 앱 페이지 안에 둔다. -->
-    <div class="pricing-inner" id="pricing">
+        <div class="pricing-inner" id="pricing">
       <p class="section-label">GODITOR 요금제</p>
 
       <h2 class="pricing-title">네 가지 등급의 구독제입니다.</h2>
-      <!-- ★«지금 전부 무료»를 여기서 «한 번» 말한다.
-           전에는 카드 네 장이 각자 「무료」를 제일 큰 글자로 외쳤다. 그러면 네 카드가
-           똑같아 보여서 «비교표가 비교를 못 한다». 비교해야 할 건 등급 차이지 이벤트가 아니다. -->
-      <p class="pricing-sub">
+            <p class="pricing-sub">
         지금은 전 등급을 무료로 쓰실 수 있어요. 아래 금액은 <b>예시</b>예요 —
         확정 금액과 구독 주기는 베타테스트 종료 전에 안내드립니다.
       </p>
 
-      <!-- 카드는 data/apps.json 의 goditor.plans 에서 그린다(plans.js).
-           앱이 늘면 그 앱 JSON 에 plans 만 적으면 된다 — 여기 HTML 은 그대로. -->
-      <div class="plan-grid" data-app="goditor"></div>
+            <div class="plan-grid" data-app="goditor"></div>
 
-      <!-- ══════════════════════════════════════════════════════════════
-           ⚠️ 2026-08-07: 무통장입금 결제 흐름을 «화면에서 뗐다»(현빈: 지금 필요없을듯).
-              지우지 않고 <template> 안에 넣어 보존한다 —
-              이벤트가 끝나면 그대로 필요해지는 물건이고, 삭제하면 그때 다시 만들어야 한다.
-
-           ★뗀 이유 — «완료될 수 없는 절차»라서다:
-             · 실제 입금계좌가 없다. 신청을 받아놓고 「입금 안내」 자리에 «준비 중»이 뜬다.
-             · 사업자정보가 없다. 결제 흐름을 보여주면서 사업자 표기가 없으면 안 된다.
-             · 지금은 전 등급 무료다. 이벤트 페이지에 결제 절차가 접혀 있을 이유가 없다.
-
-           ★되살리는 조건: «실제 입금계좌 + 사업자정보»가 들어오고 «이벤트가 끝나면».
-              그때 <template> 태그 두 줄만 벗기면 된다(아래 스크립트 감싼 것도 함께).
-
-           ★백엔드(api/license/order.js)는 «그대로» 살아 있다. 진입점만 뗀 것이다.
-
-           ★왜 hidden 도 주석도 아니고 <template> 인가:
-             · hidden — .auth-mark 에서 겪었듯 display 를 가진 요소는 [hidden] 을 이겨
-               «안 사라진다». 여기 .future-pay 도 display 를 가진 규칙이 있다.
-             · 주석 — 본문에 style="…var(--accent)…" 의 «--» 가 있어 주석이 거기서 끊긴다.
-               (실제로 감싸려다 이걸로 막혔다. HTML 주석은 중첩도 안 된다.)
-             · <template> — 파싱은 되지만 «문서에 들어가지 않는다». 렌더 안 되고,
-               getElementById 로도 안 잡히고, 안의 스크립트도 안 돈다. 이 용도의 정답이다.
-           ══════════════════════════════════════════════════════════════ -->
-      <template id="future-pay-parked">
+            <template id="future-pay-parked">
       <details class="future-pay">
         <summary>베타테스트가 끝나면 어떻게 결제하나요?</summary>
         <div class="future-pay-body">
@@ -301,12 +209,7 @@
     <div id="biz-info"></div>
     </div>
   </footer>
-  <!-- ⚠️ 위 <template id="future-pay-parked"> 와 «한 세트»다. 마크업만 떼면
-       이 스크립트가 null 을 붙잡고 던진다(getElementById 는 template 안을 안 본다).
-       ★지우지 않고 type 을 바꿔 «실행만» 멈춘다 — 브라우저는 모르는 type 의
-         <script> 를 데이터로 두고 실행하지 않는다. 코드는 그대로 남는다.
-       되살릴 때: type 을 지우고 위 <template> 태그를 벗기면 된다. -->
-  <script type="text/plain" data-parked="future-pay">
+    <script type="text/plain" data-parked="future-pay">
     (function () {
       const panel      = document.getElementById('order-panel');
       const resultPnl  = document.getElementById('result-panel');
@@ -412,32 +315,8 @@
     })();
   </script>
 
-  <!-- ⚠️ (구) 다운로드 로그인 안내 모달 — 2026-08-07 «지웠다». 문구만 남긴다.
-       ★기준: «스위치 하나로 되살아나는 것은 남기고, 어차피 새로 짜야 하는 것은
-         지우되 문구만 남긴다.» (결제 아코디언은 백엔드가 살아 있어 <template> 로 남겼다)
-         이 모달은 되살릴 길이 끊겼다 — 다운로드가 JS 를 안 거치고 <a href> 로 곧장 간다.
-         DOWNLOAD_REQUIRE_LOGIN=on 을 켜도 화면은 묻지 않는다. 다시 쓰려면 링크를
-         가로채는 코드를 «새로» 짜야 하고, 그러면 마크업도 새로 쓰게 된다.
-         ⇒ 남는 값은 «문구»뿐이다.
-       ★죽은 DOM 은 값이 없으면서 비용은 있다. .auth-mark 에서 데인 게
-         정확히 «안 보이는 줄 알았던 마크업»이다.
-
-       되살릴 때 쓸 문구 — «차단됐다»가 아니라 «로그인하면 이어서 받는다» 톤이 핵심이다:
-         제목  : 로그인하면 바로 받으실 수 있어요
-         본문  : 로그인해두면 앱에서도 같은 계정으로 바로 들어갑니다. 가입은 1분이면 끝나요.
-         버튼  : [로그인 →] login.html?next=download&app=goditor
-                 [가입하기] signup.html?next=download&app=goditor
-         닫기  : 닫기
-       ★보안 게이트가 아니었다 — 드라이브 폴더가 링크 공개라 원래 아무것도 못 막았다.
-         실제 차단은 앱의 로그인이 한다. 그래서 문구도 «차단»이 아니라 «유도»였다. -->
-
-  <!-- ★히어로 진입 애니메이션 «부트». 다른 어떤 스크립트보다 먼저, 그리고 «따로» 둔다.
-       이유: CSS 가 html.js 일 때만 opacity:0 을 건다. 이 두 줄이 안 돌면
-             감추지도 않으므로 히어로가 «안 보이는» 사고가 구조적으로 없다.
-             아래 스크립트 중 하나가 던져도 이건 이미 돌아 있다.
-       ★rAF 안에서 붙이는 건 «첫 페인트 뒤»여야 애니메이션이 보이기 때문이다.
-         바로 붙이면 브라우저가 시작 상태를 그리지 않고 끝 상태로 건너뛸 수 있다. -->
-  <script>
+  
+    <script>
     (function () {
       var d = document.documentElement;
       d.classList.add('js');
@@ -447,8 +326,7 @@
     })();
   </script>
 
-  <!-- 히어로 아이콘 호버 틸트 (현빈 E안). 마우스가 있는 기기에서만. -->
-  <script>
+    <script>
     (function () {
       var el = document.querySelector('.detail-icon');
       if (!el) return;
