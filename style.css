@@ -362,6 +362,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .detail-desc { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; max-width: 62ch; }
 .detail-cta { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
 .detail-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.75; max-width: 62ch; text-align: left; }
+/* 영상 위 보조 웨이파인딩(2026-08-24) — 상단 sticky nav.nav--app 은 그대로 1차 내비게이션이다.
+   여기는 «가벼운 텍스트 줄»만 — 박스도, scroll-spy 도 없다(data-spy 미부여). */
+.video-jump { max-width: var(--wide); margin: 0 auto; padding: 0 24px 20px; display: flex; justify-content: center; align-items: center; gap: 20px; }
 .video-embed { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 8px 0; width: 100%; }
 .video-frame { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--border); }
 .video-frame iframe { width: 100%; height: 100%; display: block; border: 0; }
