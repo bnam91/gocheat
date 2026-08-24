@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark light" />
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
-  <title>REVIEW CRAWLER — Naver & Coupang review collector · 소문의섬</title>
+  <title>REVIEW CRAWLER — 네이버·쿠팡 리뷰 수집기 · 소문의섬</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
@@ -71,8 +71,8 @@
       font-size: var(--fs-body); font-weight: 600; color: var(--fg);
     }
     .privacy-details > summary::-webkit-details-marker { display: none; }
-    .privacy-details > summary::after { content: 'Expand +'; font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0; }
-    .privacy-details[open] > summary::after { content: 'Collapse −'; }
+    .privacy-details > summary::after { content: '펼치기 +'; font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0; }
+    .privacy-details[open] > summary::after { content: '접기 −'; }
     .privacy-details[open] > summary { border-bottom: 1px solid var(--border); }
     .privacy-details > summary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); border-radius: var(--radius); }
     .privacy-body { padding: 10px 22px 22px; text-align: left; display: flex; flex-direction: column; gap: 4px; }
@@ -100,14 +100,14 @@
         <span class="nav-crumb-sep" aria-hidden="true">›</span>
         <span class="nav-crumb-current">REVIEW CRAWLER</span>
         <div class="nav-sections">
-          <a href="#overview" class="appnav-link" data-spy="overview">Overview</a>
-          <a href="#how" class="appnav-link" data-spy="how">How to use</a>
-          <a href="#privacy" class="appnav-link" data-spy="privacy">Privacy</a>
+          <a href="#overview" class="appnav-link" data-spy="overview">개요</a>
+          <a href="#how" class="appnav-link" data-spy="how">이용방법</a>
+          <a href="#privacy" class="appnav-link" data-spy="privacy">개인정보</a>
         </div>
       </div>
       <div class="nav-links">
-        <a href="login.html">Log in</a>
-        <a href="signup.html">Sign up</a>
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
         <button type="button" class="theme-toggle" aria-label="테마 전환">
           <svg class="theme-icon theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
           <svg class="theme-icon theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>
@@ -121,17 +121,17 @@
     <div class="detail-inner">
       <div class="detail-header">
         <div class="detail-icon">
-          <!-- reviewcrawler.png not made yet — same emoji fallback as the home page (shows the image automatically once the icon exists) -->
-          <img src="/assets/icons/reviewcrawler.png" alt="REVIEW CRAWLER app icon" width="72" height="72"
+          <!-- reviewcrawler.png 아직 없음 — 메인 페이지와 같은 이모지 대체(아이콘 생기면 자동으로 이미지로 바뀜) -->
+          <img src="/assets/icons/reviewcrawler.png" alt="REVIEW CRAWLER 앱 아이콘" width="72" height="72"
                onerror="this.parentElement.classList.add('icon-fallback');this.parentElement.textContent='🔍';" />
         </div>
         <div class="detail-meta">
           <h1 class="detail-title">REVIEW CRAWLER</h1>
-          <p class="detail-lead">Collect Naver and Coupang product reviews — ratings, text, and photos — into a single table at once.</p>
+          <p class="detail-lead">네이버·쿠팡 상품 리뷰 — 평점·본문·사진 — 를 한 번에 표 하나로 모읍니다.</p>
         </div>
       </div>
       <div class="detail-cta">
-        <a class="cta-primary cta-download" href="https://github.com/bnam91/client-review-crawler/releases/latest" target="_blank" rel="noopener">Download</a>
+        <a class="cta-primary cta-download" href="https://github.com/bnam91/client-review-crawler/releases/latest" target="_blank" rel="noopener">다운로드</a>
       </div>
       <p class="detail-alt">
         <span>macOS · Windows</span>
@@ -142,15 +142,15 @@
   <!-- ② Identity -->
   <section class="app-identity" aria-label="About REVIEW CRAWLER">
     <div class="app-identity-card">
-      <p class="app-identity-eyebrow">The reviews you used to scroll and copy-paste, in a single table</p>
-      <h2>Instead of scraping and moving reviews one line at a time, it collects ratings, text, and photos automatically.</h2>
-      <p>It collects product reviews from Naver Smart Store / Brand Store and Coupang <span class="hl">the same way</span>.
-        It opens a real Chrome window and collects exactly what a person sees on screen, and saves the results as
-        <span class="hl">Excel (.xlsx) and JSON</span> on your own computer — with review photos placed right inside the Excel cells.</p>
-      <p>Paste a URL and it goes straight to work; enter a search term and it picks the product to collect. You can also choose how many
-        <span class="hl">pages</span> to collect, and when requests pile up it slows itself down so it doesn't overload.</p>
-      <p class="app-identity-note">Because it's an installed desktop app, <b>the reviews you collect are saved as files on your own computer</b> (not sent to our server).
-        For Naver, once you <b>log in with your own account</b> the first time, it continues automatically after that.</p>
+      <p class="app-identity-eyebrow">스크롤해서 복사-붙여넣기 하던 리뷰를, 표 하나로</p>
+      <h2>한 줄씩 긁어 옮기는 대신, 평점·본문·사진을 자동으로 수집합니다.</h2>
+      <p>네이버 스마트스토어·브랜드스토어와 쿠팡의 상품 리뷰를 <span class="hl">같은 방식으로</span> 수집합니다.
+        실제 크롬 창을 열어 사람이 화면에서 보는 그대로를 수집하고, 결과를
+        <span class="hl">엑셀(.xlsx)과 JSON</span>으로 내 컴퓨터에 저장합니다 — 리뷰 사진은 엑셀 셀 안에 바로 들어갑니다.</p>
+      <p>URL을 붙여넣으면 바로 작업이 시작되고, 검색어를 입력하면 수집할 상품을 고를 수 있습니다.
+        수집할 <span class="hl">페이지 수</span>도 고를 수 있고, 요청이 몰리면 스스로 속도를 늦춰 무리를 주지 않습니다.</p>
+      <p class="app-identity-note">설치형 데스크톱 앱이라 <b>수집한 리뷰는 내 컴퓨터에 파일로 저장</b>됩니다(서버로 전송하지 않음).
+        네이버는 처음 한 번 <b>본인 계정으로 로그인</b>하면 이후엔 자동으로 이어집니다.</p>
     </div>
   </section>
 
@@ -158,35 +158,35 @@
   <section class="features" aria-label="REVIEW CRAWLER features">
     <div class="features-inner">
       <p class="features-lead">
-        It gathers Naver and Coupang product reviews — ratings, text, date written, and photos — and saves them as Excel and JSON.
-        For Naver, it also collects product Q&amp;A.
+        네이버·쿠팡 상품 리뷰 — 평점·본문·작성일·사진 — 을 모아 엑셀과 JSON으로 저장합니다.
+        네이버는 상품 Q&amp;A도 함께 수집합니다.
       </p>
     </div>
 
     <div class="app-feature-list">
       <div class="app-feature-item">
-        <h3>Naver and Coupang in one tool</h3>
-        <p>It collects product reviews from Naver Smart Store / Brand Store and Coupang the same way.
-          For Naver, it can also include product Q&amp;A — questions and answers together.</p>
+        <h3>네이버·쿠팡을 한 도구로</h3>
+        <p>네이버 스마트스토어·브랜드스토어와 쿠팡의 상품 리뷰를 같은 방식으로 수집합니다.
+          네이버는 상품 Q&amp;A — 질문과 답변 — 도 함께 담을 수 있습니다.</p>
       </div>
       <div class="app-feature-item">
-        <h3>Ratings, text, date, and photos</h3>
-        <p>It gathers each review's star rating, author display name, date written, body text, review type (regular / one-month use / repurchase), and attached photos.</p>
+        <h3>평점·본문·작성일·사진까지</h3>
+        <p>리뷰의 별점, 작성자 표시 이름, 작성일, 본문, 리뷰 유형(일반/한달사용/재구매), 첨부 사진을 모읍니다.</p>
       </div>
       <div class="app-feature-item">
-        <h3>As Excel and JSON, on your PC</h3>
-        <p>It saves the results as Excel (.xlsx) and JSON at the same time. In the Excel file, review photos are embedded as images inside the cells.
-          Every file stays in the save folder on your own computer.</p>
+        <h3>엑셀·JSON으로, 내 PC에</h3>
+        <p>결과를 엑셀(.xlsx)과 JSON으로 동시에 저장합니다. 엑셀 파일에서는 리뷰 사진이 셀 안에 이미지로 삽입됩니다.
+          모든 파일은 내 컴퓨터의 저장 폴더에 남습니다.</p>
       </div>
       <div class="app-feature-item">
-        <h3>Paste a URL, or search</h3>
-        <p>Paste a product URL and it goes straight to work; enter a search term and it picks a product from the search results to collect.
-          You can also choose how many pages to collect (5 / 15 / 50 / max).</p>
+        <h3>URL 붙여넣기, 또는 검색</h3>
+        <p>상품 URL을 붙여넣으면 바로 작업이 시작되고, 검색어를 입력하면 검색 결과에서 수집할 상품을 고를 수 있습니다.
+          수집할 페이지 수(5 / 15 / 50 / 최대)도 고를 수 있습니다.</p>
       </div>
       <div class="app-feature-item">
-        <h3>A real browser, without overloading</h3>
-        <p>It opens a real Chrome window and collects exactly what a person sees on screen, and when requests pile up it waits a moment on its own,
-          then resumes — so it doesn't overload the target site.</p>
+        <h3>실제 브라우저로, 무리 없이</h3>
+        <p>실제 크롬 창을 열어 사람이 화면에서 보는 그대로를 수집하고, 요청이 몰리면 스스로 잠깐 멈췄다가
+          다시 이어갑니다 — 대상 사이트에 무리를 주지 않습니다.</p>
       </div>
     </div>
   </section>
@@ -194,45 +194,45 @@
   <!-- ④ How to use -->
   <section class="features" id="how">
     <div class="features-inner">
-      <p class="section-label">How to use</p>
-      <h2 class="pricing-title">Paste, collect, and it's in Excel.</h2>
+      <p class="section-label">이용방법</p>
+      <h2 class="pricing-title">붙여넣고, 수집하면, 엑셀로.</h2>
       <ol class="how-steps">
-        <li>Paste a Naver or Coupang product URL, or find a product by search term.</li>
-        <li>Choose how many pages to collect and start — it gathers the reviews in order in a Chrome window.</li>
-        <li>When it finishes, <b>Excel (.xlsx) and JSON</b> files are created in the save folder — photos included.</li>
+        <li>네이버 또는 쿠팡 상품 URL을 붙여넣거나, 검색어로 상품을 찾습니다.</li>
+        <li>수집할 페이지 수를 정하고 시작하면 — 크롬 창에서 순서대로 리뷰를 모읍니다.</li>
+        <li>완료되면 저장 폴더에 <b>엑셀(.xlsx)과 JSON</b> 파일이 생성됩니다 — 사진 포함.</li>
       </ol>
-      <p class="pricing-sub">For Naver, once you log in with your own account the first time, it continues automatically after that.
-        Please use the collected data in compliance with the target platform's terms of service and applicable laws.</p>
+      <p class="pricing-sub">네이버는 처음 한 번 본인 계정으로 로그인하면 이후엔 자동으로 이어집니다.
+        수집한 데이터는 대상 플랫폼의 이용약관과 관련 법규를 준수해 사용해 주세요.</p>
     </div>
   </section>
 
   <!-- ⑤ Privacy policy — collapsible. Anchor id="privacy" -->
   <section class="pricing" id="privacy">
     <div class="pricing-inner">
-      <p class="section-label">Privacy Policy</p>
-      <h2 class="pricing-title">The data you collect stays on your PC; only the minimum goes to the server.</h2>
-      <p class="pricing-sub">Effective date: 2026-08-16 · You can read the full text by expanding below.</p>
+      <p class="section-label">개인정보 처리방침</p>
+      <h2 class="pricing-title">수집한 데이터는 내 PC에 남고, 서버에는 최소한만 갑니다.</h2>
+      <p class="pricing-sub">시행일: 2026-08-16 · 아래를 펼치면 전문을 볼 수 있습니다.</p>
       <details class="privacy-details">
-        <summary>Full privacy policy</summary>
+        <summary>개인정보 처리방침 전문</summary>
         <div class="privacy-body">
-          <h3>1. Information we collect and use (user)</h3>
+          <h3>1. 수집하는 정보와 이용 목적(이용자)</h3>
           <ul>
-            <li>Access IP address for usage registration (device verification): used for license verification and stored on our server.</li>
-            <li>(Optional) Diagnostic logs: only when you turn on "Send diagnostic logs", information such as the app version, run environment, the product URL you entered, and the number of items collected is sent for the purpose of fixing errors. Review text, author information, and images are not included.</li>
+            <li>접속 IP 주소(이용 등록·기기 확인용): 라이선스 확인에 사용하며 서버에 저장합니다.</li>
+            <li>(선택) 진단 로그: "진단 로그 보내기"를 켰을 때만, 오류 수정 목적으로 앱 버전·실행 환경·입력한 상품 URL·수집 건수 등의 정보를 전송합니다. 리뷰 본문·작성자 정보·이미지는 포함하지 않습니다.</li>
           </ul>
-          <h3>2. Handling of the collected review data</h3>
+          <h3>2. 수집한 리뷰 데이터의 처리</h3>
           <ul>
-            <li>Reviews collected from the target product page (ratings, author display name, body text, photos, etc.) are saved entirely as files on your own PC and are not sent to our server.</li>
-            <li>The collected data may include third-party information such as the review author's public display name, so you must use it in compliance with the target platform's terms of service and applicable laws.</li>
+            <li>대상 상품 페이지에서 수집한 리뷰(평점·작성자 표시 이름·본문·사진 등)는 전부 내 PC에 파일로 저장되며 서버로 전송하지 않습니다.</li>
+            <li>수집한 데이터에는 리뷰 작성자의 공개 표시 이름 같은 제3자 정보가 포함될 수 있으므로, 대상 플랫폼의 이용약관과 관련 법규를 준수해 사용해야 합니다.</li>
           </ul>
-          <h3>3. Retention and destruction</h3>
+          <h3>3. 보유 및 파기</h3>
           <ul>
-            <li>You manage the storage and deletion of the collected result files yourself.</li>
-            <li>Retention and destruction of account information, such as the IP used for license verification, follow the 소문의섬 service policy.</li>
+            <li>수집한 결과 파일의 보관과 삭제는 이용자가 직접 관리합니다.</li>
+            <li>라이선스 확인에 사용된 IP 등 계정 정보의 보유 및 파기는 소문의섬 서비스 정책을 따릅니다.</li>
           </ul>
-          <h3>4. Provision to third parties</h3>
-          <ul><li>We do not sell or provide the user information we hold to any third party.</li></ul>
-          <h3>5. Contact</h3>
+          <h3>4. 제3자 제공</h3>
+          <ul><li>보유한 이용자 정보를 제3자에게 판매하거나 제공하지 않습니다.</li></ul>
+          <h3>5. 문의</h3>
           <ul><li>coq3820@gmail.com</li></ul>
         </div>
       </details>
@@ -241,10 +241,10 @@
 
   <footer>
     <div class="footer-inner">
-      <span>Built out of frustration. Shared so we could use it together. © 소문의섬<br />coq3820@gmail.com</span>
+      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />coq3820@gmail.com</span>
       <div class="footer-links">
         <a href="/">소문의섬</a>
-        <a href="#privacy">Privacy Policy</a>
+        <a href="#privacy">개인정보 처리방침</a>
       </div>
     </div>
   </footer>
