@@ -82,6 +82,20 @@ async function ensureIndexes(db) {
       { createdAt: 1 },
       { expireAfterSeconds: 7 * 24 * 60 * 60 },
     ),
+
+    // ── 고디브 사용 원장 (api/godiv/use.js) ────────────────────────────────
+    // 계정별 조회(추이·재방문)와 전체 일자별 집계(사이트별 성공률)를 «둘 다» 본다.
+    db.collection('godiv_events').createIndex({ email: 1, at: -1 }),
+    db.collection('godiv_events').createIndex({ site: 1, at: -1 }),
+    // ★TTL — 원장은 «자동으로 사라진다». 이건 성능이 아니라 «약속»이다:
+    //   처리방침에 「이용 기록은 최대 180일 보관 후 자동 파기」라고 적어 두었다(godiv.html#privacy).
+    //   ⚠️기간을 바꾸려면 처리방침을 «먼저» 고쳐라. 그리고 createIndex 로는 못 바꾼다
+    //     (이미 있는 인덱스에 다른 expireAfterSeconds → IndexOptionsConflict) — collMod 로 바꿔야 한다.
+    //   ★계정 요약(users.usage.godiv.*)은 여기 안 걸린다 — 누적 카운터라 원본이 사라져도 남는다.
+    db.collection('godiv_events').createIndex(
+      { at: 1 },
+      { expireAfterSeconds: 180 * 24 * 60 * 60 },
+    ),
   ]).catch((err) => {
     indexesEnsured = false;
     throw err;
