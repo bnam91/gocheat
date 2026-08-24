@@ -58,6 +58,8 @@ async function ensureIndexes(db) {
     db.collection('users').createIndex({ verificationToken: 1 }, { sparse: true }),
     // session.js 가 토큰만으로 찾는다 — 인덱스가 없으면 컬렉션 전수주사가 된다
     db.collection('users').createIndex({ sessionToken: 1 }, { sparse: true }),
+    // ★2026-08-25 제품별 세션(_lib/sessions.js) — 배열 안 토큰으로도 찾는다. 없으면 여기도 전수주사.
+    db.collection('users').createIndex({ 'sessions.token': 1 }, { sparse: true }),
     db.collection('licenses').createIndex({ key: 1 }, { unique: true }),
     db.collection('licenses').createIndex({ userEmail: 1, status: 1 }),
     db.collection('mail_queue').createIndex({ idempotencyKey: 1 }, { unique: true }),

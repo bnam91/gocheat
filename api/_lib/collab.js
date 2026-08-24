@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { json } = require('./util');
+const { findUserBySession } = require('./sessions');
 
 /* 원격 동시협업(goditor) 공용 부품.
  *
@@ -8,7 +9,8 @@ const { json } = require('./util');
  *   · 단위  = «섹션 1개». 캔버스가 HTML 문자열이라 CRDT 를 못 얹는다 — 델타는 섹션 통째 교체다.
  *   · 충돌  = seq 기반 last-writer-wins + keep-both. ★서버는 아무것도 «버리지» 않는다.
  *            충돌이라고 표시해 돌려줄 뿐, 어느 쪽을 살릴지는 사람이 앱에서 고른다.
- *   · 인증  = 기존 users.sessionToken 을 그대로 쓴다(앱이 이미 갖고 있다). 새 토큰 체계를 만들지 않는다.
+ *   · 인증  = 기존 로그인 세션을 그대로 쓴다(앱이 이미 갖고 있다). 새 토큰 체계를 만들지 않는다.
+ *            ★조회 규칙은 _lib/sessions.js 한 곳(제품별 sessions[] + 구식 sessionToken).
  *
  * ⛔«없는 프로젝트»와 «남의 프로젝트»는 «같은 404» 다 (403 아님).
  *   403 은 「그 프로젝트는 있다」를 알려준다 — collabId 를 넣어보며 존재를 캐낼 수 있다.
@@ -75,9 +77,9 @@ function isInviteId(v) {
  * ★session.js 와 같은 규칙이다. 「토큰 없음」·「토큰 불일치」·「미인증」을 갈라 말하지 않는다.
  * 조회만 한다 — 여기서 lastSeenAt 같은 걸 찍으면 이 경로 전체가 계측기가 된다(session.js 주석 참고). */
 async function authenticate(db, sessionToken) {
-  const token = typeof sessionToken === 'string' ? sessionToken.trim() : '';
-  if (!token) return null;
-  const user = await db.collection('users').findOne({ sessionToken: token });
+  // ★2026-08-25: 조회 규칙을 _lib/sessions.js 한 곳으로 모았다(제품별 칸 + 구식 한 칸을 둘 다 본다).
+  //   여기만 옛 규칙으로 남으면 «협업은 되는데 확장은 안 되는» 식의 어긋남이 생긴다.
+  const user = await findUserBySession(db, sessionToken);
   if (!user || !user.verified) return null;
   return user;
 }

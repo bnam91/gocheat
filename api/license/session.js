@@ -1,4 +1,5 @@
 const { getDb } = require('../_lib/mongo');
+const { findUserBySession, appOfToken } = require('../_lib/sessions');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -36,7 +37,9 @@ module.exports = async (req, res) => {
   try {
     const db = await getDb();
     // ★토큰만으로 찾는다 — 앱이 이메일을 잃어도 재검증은 돌아야 한다(토큰은 32바이트 난수다).
-    const user = await db.collection('users').findOne({ sessionToken });
+    // ★2026-08-25: 제품별 칸(sessions[])과 구식 한 칸(sessionToken)을 «둘 다» 본다.
+    //   이미 로그인해 둔 사람들은 배열이 없다 — 그들을 여기서 튕기면 «업데이트가 곧 전원 로그아웃»이 된다.
+    const user = await findUserBySession(db, sessionToken);
     // ★「없음」과 「불일치」를 같은 응답으로 돌려준다 — 토큰을 넣어보고 존재를 알아내지 못하게.
     if (!user) return json(res, 401, { ok: false, reason: 'invalid_session' });
 
@@ -61,6 +64,8 @@ module.exports = async (req, res) => {
       accessUntil: until,
       // ★앱이 «세션 자체의 나이»로 판단할 수 있게 같이 준다(서버는 세션 TTL 정책을 갖고 있지 않다).
       sessionIssuedAt: user.sessionIssuedAt || null,
+      // 이 토큰이 들어 있는 제품 칸(구식 토큰이면 null). 진단용 — 클라이언트 판정에 쓰지 않는다.
+      app: appOfToken(user, sessionToken),
       ...(expired ? { reason: 'expired', purchaseUrl: PURCHASE_URL } : {}),
     });
   } catch (err) {

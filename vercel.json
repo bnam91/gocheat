@@ -6,6 +6,9 @@
     },
     "api/collab/**": {
       "maxDuration": 10
+    },
+    "api/godiv/*.js": {
+      "maxDuration": 10
     }
   },
   "regions": ["icn1"]

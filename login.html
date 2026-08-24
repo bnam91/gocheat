@@ -268,7 +268,9 @@
           const res = await fetch('/api/license/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: emailVal, password: pw.value }),
+            // ★app:'web' — 2026-08-25. 토큰을 «홈페이지 칸»에 넣어 달라는 뜻이다.
+            //   전엔 계정당 토큰이 한 칸이라, 이용권 사러 여기 로그인하면 크롬 확장(고디브)이 튕겼다.
+            body: JSON.stringify({ email: emailVal, password: pw.value, app: 'web' }),
           });
           const data = await res.json().catch(function () { return {}; });
 

@@ -1,4 +1,5 @@
 const { getDb } = require('../_lib/mongo');
+const { findUserBySession } = require('../_lib/sessions');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -69,8 +70,10 @@ module.exports = async (req, res) => {
   try {
     const db = await getDb();
     const users = db.collection('users');
-    const user = hasCreds ? await users.findOne({ email }) : null;
-    const authed = !!(user && user.sessionToken && user.sessionToken === sessionToken);
+    // ★2026-08-25: 토큰 대조를 공용 헬퍼로(제품별 칸 + 구식 한 칸). email 은 «짝»만 본다.
+    const found = hasCreds ? await findUserBySession(db, sessionToken) : null;
+    const user = found && found.email === email ? found : null;
+    const authed = !!user;
 
     // 이벤트 종료 후 다시 회원 전용으로 돌릴 자리 (기본은 꺼져 있다)
     if (REQUIRE_LOGIN && !authed) {

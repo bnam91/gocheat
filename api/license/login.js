@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
-const { randomToken } = require('../_lib/crypto');
 const { getDb } = require('../_lib/mongo');
+const { issueSession } = require('../_lib/sessions');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -38,16 +38,19 @@ module.exports = async (req, res) => {
     const until = user.accessUntil ? new Date(user.accessUntil) : null;
     const expired = until ? until.getTime() < Date.now() : false;
     // ★앱이 비밀번호를 저장하면 안 된다 — 토큰만 주고 앱은 그것만 보관한다
-    const sessionToken = randomToken(32);
-    await db.collection('users').updateOne({ email }, {
-      $set: { lastLoginAt: new Date(), sessionToken, sessionIssuedAt: new Date() },
-    });
+    // ★2026-08-25: 토큰을 «제품별 칸»에 넣는다(_lib/sessions.js).
+    //   전엔 한 칸이라 홈페이지에 로그인하면 크롬 확장이 튕겼다 — 사용자는 이유를 모르는 로그아웃이었다.
+    //   app 을 안 보내는 옛 클라이언트는 'legacy' 칸을 공유한다(지금과 동일 — 나빠지지 않는다).
+    const { sessionToken, app } = await issueSession(db, email, body.app);
 
     return json(res, 200, {
       ok: !expired,
       email,
       plan: user.plan || 'event_free',
       sessionToken,
+      // ★어느 칸에 넣었는지 돌려준다 — 클라이언트가 app 을 «보냈다고 믿는» 것과 서버 판단이 어긋나면
+      //   여기서 드러난다(오타로 legacy 칸에 들어가 놓고 자기 칸인 줄 아는 사고를 막는다).
+      app,
       accessUntil: until,
       // ★막기만 하고 어디로 가라고 안 하면 사용자는 또 헤맨다 — 갈 곳을 함께 준다
       ...(expired ? { reason: 'expired', purchaseUrl: PURCHASE_URL } : {}),
