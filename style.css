@@ -198,8 +198,11 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 
 /* 소셜프루프 — 더미 후기 카드(2026-08-24, univai 레퍼런스의 "4+3 두 줄 엇갈림" 밀도에 맞춤).
    ★proof-card-tag 가 "예시 후기"임을 카드마다 항상 함께 말해 실제 후기로 오인되지 않게 한다.
-   ★본문은 그럴싸한 가짜 만족후기를 짓지 않고, 그 자체로 "자리표시자"임을 말하는 문장만 쓴다. */
-.proof-section { max-width: var(--wide); margin: 28px auto 0; padding: 0 24px; }
+   ★본문은 그럴싸한 가짜 만족후기를 짓지 않고, 그 자체로 "자리표시자"임을 말하는 문장만 쓴다.
+
+   ⚠️2026-08-24(같은 날) 현빈: 실제 후기가 생기기 전까지 «숨김». 마크업·카드 7장 그대로
+   두고 이 한 줄로만 끈다 — 실후기 모이면 아래 display:none 한 줄만 지우면 바로 살아난다. */
+.proof-section { display: none; max-width: var(--wide); margin: 28px auto 0; padding: 0 24px; }
 .proof-rows { display: flex; flex-direction: column; gap: 14px; }
 .proof-row { display: flex; gap: 14px; justify-content: center; }
 .proof-row--2 { margin-left: 107px; }
