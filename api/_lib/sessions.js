@@ -8,9 +8,18 @@
  *
  *   ⇒ 토큰을 제품(app)별 칸에 넣는다. 확장의 칸과 홈페이지의 칸은 서로를 밀어내지 않는다.
  *
+ * ★2026-08-25 2차 수정 (코덱스 검수 지적 반영) — 이 두 개가 1차에 빠져 있었다.
+ *   ①**백필** : 이미 로그인해 둔 사람의 토큰은 «구식 한 칸»에만 있다. 그 사람이 홈페이지에 로그인하면
+ *     새 토큰이 그 칸을 덮어써서 «확장이 한 번은 여전히 튕긴다». 고친 줄 알았던 증상이 1회 남는 것이다.
+ *     ⇒ 발급 «전에» 구식 토큰을 legacy 칸으로 «옮겨 담는다». 그러면 튕김이 0회가 된다.
+ *   ②**원자성** : 전엔 $pull → $push 두 번에 나눠 쳤다. 같은 앱에서 로그인이 «동시에» 두 건 들어오면
+ *     둘 다 pull 하고 둘 다 push 해서 앱당 1개 약속이 깨진다(계정 공유 억제가 목적인 규칙이라 구멍이면 안 된다).
+ *     ⇒ «집계 파이프라인 업데이트»로 한 번에 친다. 백필·교체·구버전 칸 갱신이 «한 문서 갱신» 안에서 끝난다.
+ *     ⚠️파이프라인 업데이트는 MongoDB 4.2+ 가 필요하다(Atlas 는 충족). 그 아래 서버로 내려가면 여기가 깨진다.
+ *
  * 저장 모양
- *   users.sessions = [ { app: 'godiv', token: '...', issuedAt: Date }, ... ]   ← 앱당 MAX_PER_APP개
- *   users.sessionToken = '가장 최근 토큰'                                       ← ★구버전 호환용으로 «남긴다»
+ *   users.sessions = [ { app, token, issuedAt, backfilled? } ]   ← 앱당 MAX_PER_APP개
+ *   users.sessionToken = '가장 최근 토큰'                          ← ★구버전 호환용으로 «남긴다»
  *
  * ★구버전 호환이 이 파일의 핵심이다.
  *   · 이미 로그인해 둔 사람들은 sessions 배열이 «없다» — sessionToken 만 있다. 그들도 통과해야 한다.
@@ -48,30 +57,83 @@ async function findUserBySession(db, sessionToken) {
   });
 }
 
+/**
+ * 로그인 성공 시 발급할 «업데이트 파이프라인»을 만든다. (테스트에서 그대로 검사할 수 있게 분리)
+ *
+ * 세 단계다 — 순서가 곧 의미다.
+ *   ①백필 : 구식 sessionToken 이 배열에 «없으면» legacy 칸으로 편입한다.
+ *           ⛔③보다 «먼저» 와야 한다. ③이 sessionToken 을 새 값으로 덮어쓰기 때문이다.
+ *   ②교체 : 이 앱의 옛 칸을 걷어내고 새 토큰을 넣는다. 다른 앱 칸은 건드리지 않는다. 전체 상한도 여기서.
+ *   ③호환 : 옛 코드가 보는 sessionToken/sessionIssuedAt/lastLoginAt 갱신.
+ */
+function buildIssuePipeline(app, token, issuedAt) {
+  const entry = { $literal: { app, token, issuedAt } };
+  // 같은 앱에서 «몇 개를 남길지». MAX_PER_APP=1 이면 옛 것은 전부 걷어낸다.
+  // ⚠️$slice 는 n=0 을 싫어한다 — 1 이하일 땐 아예 빈 배열 리터럴을 쓴다.
+  const keepSameApp = MAX_PER_APP > 1
+    ? { $slice: [{ $filter: { input: '$sessions', cond: { $eq: ['$$this.app', app] } } }, -(MAX_PER_APP - 1)] }
+    : { $literal: [] };
+
+  return [
+    // ① 백필
+    {
+      $set: {
+        sessions: {
+          $cond: [
+            {
+              $and: [
+                { $eq: [{ $type: '$sessionToken' }, 'string'] },
+                { $ne: ['$sessionToken', ''] },
+                { $not: [{ $in: ['$sessionToken', { $map: { input: { $ifNull: ['$sessions', []] }, in: '$$this.token' } }] }] },
+              ],
+            },
+            {
+              $concatArrays: [
+                { $ifNull: ['$sessions', []] },
+                [{
+                  app: DEFAULT_APP,
+                  token: '$sessionToken',
+                  // 언제 발급됐는지 모르면 지금으로 둔다 — «모르는 시각»보다 «늦게 잡힌 시각»이 안전하다.
+                  issuedAt: { $ifNull: ['$sessionIssuedAt', issuedAt] },
+                  backfilled: true,   // 운영용 표식 — 이 칸이 «옮겨 담긴» 것임을 남긴다
+                }],
+              ],
+            },
+            { $ifNull: ['$sessions', []] },
+          ],
+        },
+      },
+    },
+    // ② 이 앱 칸 교체 + 전체 상한
+    {
+      $set: {
+        sessions: {
+          $slice: [
+            {
+              $concatArrays: [
+                { $filter: { input: '$sessions', cond: { $ne: ['$$this.app', app] } } },
+                keepSameApp,
+                [entry],
+              ],
+            },
+            -MAX_TOTAL,
+          ],
+        },
+      },
+    },
+    // ③ 구버전 호환 칸
+    { $set: { sessionToken: token, sessionIssuedAt: issuedAt, lastLoginAt: issuedAt } },
+  ];
+}
+
 /** 로그인 성공 시 호출 — 새 토큰을 발급하고 그 앱의 칸에 넣는다. 다른 앱 칸은 건드리지 않는다.
  *  @returns {Promise<{ sessionToken: string, app: string, issuedAt: Date }>} */
 async function issueSession(db, email, appRaw) {
   const app = normalizeApp(appRaw);
   const token = randomToken(32);
   const issuedAt = new Date();
-  const users = db.collection('users');
-
-  // ★$pull 과 $push 를 한 번에 못 쓴다(같은 필드) — 두 번 나눠 친다.
-  //   ①먼저 이 앱의 옛 칸을 비우고 ②새 걸 넣는다. 사이에 끼어들어도 최악이 «재로그인»이라 안전하다.
-  await users.updateOne({ email }, { $pull: { sessions: { app } } });
-  await users.updateOne({ email }, {
-    $push: {
-      sessions: {
-        $each: [{ app, token, issuedAt }],
-        // 앱당 MAX_PER_APP 는 위 $pull 로 이미 지켜진다. 여기선 «전체» 상한만 본다(오래된 것부터 버림).
-        $slice: -MAX_TOTAL,
-      },
-    },
-    // 구버전 호환 — 옛 코드가 이 칸만 보더라도 «가장 최근 로그인»은 여기 있다.
-    // ⚠️이 칸이 덮어써져도 앞선 앱의 토큰은 sessions 배열에 살아 있어 findUserBySession 이 찾는다.
-    $set: { sessionToken: token, sessionIssuedAt: issuedAt, lastLoginAt: issuedAt },
-  });
-
+  // ★한 번의 updateOne = 원자적. 중간 상태가 «없다» — 동시 로그인 두 건이 겹쳐도 앱당 1개가 유지된다.
+  await db.collection('users').updateOne({ email }, buildIssuePipeline(app, token, issuedAt));
   return { sessionToken: token, app, issuedAt };
 }
 
@@ -82,4 +144,7 @@ function appOfToken(user, sessionToken) {
   return hit ? hit.app : null;
 }
 
-module.exports = { findUserBySession, issueSession, normalizeApp, appOfToken, MAX_PER_APP, MAX_TOTAL, DEFAULT_APP };
+module.exports = {
+  findUserBySession, issueSession, buildIssuePipeline, normalizeApp, appOfToken,
+  MAX_PER_APP, MAX_TOTAL, DEFAULT_APP,
+};

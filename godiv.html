@@ -229,13 +229,14 @@
             <li>Email address: used for account login and to verify your subscription.</li>
             <li>Password: sent to our server over an encrypted connection (HTTPS) at login for verification only; it is not stored in the extension.</li>
             <li>Session token: stored only in the browser's extension storage to keep you logged in.</li>
-            <li>Usage records (added 2026-08-25): each time you run a download, we record <b>which supported site it ran on (Naver / Coupang / Wadiz), how many images were found and saved, whether it succeeded, and the time</b>. Purpose: preventing account abuse, detecting when a supported site breaks the extension, and deciding what to improve.</li>
+            <li>Usage records (added 2026-08-25): each time you run a download, we record <b>which supported site it ran on (Naver / Coupang / Wadiz), how many images were found and saved, whether it succeeded, and the time</b>. These records are <b>stored against your account (email) together with your plan type</b>, because they are counted per account. Purpose: preventing account abuse, detecting when a supported site breaks the extension, and deciding what to improve.</li>
           </ul>
           <h3>2. Information we do not collect</h3>
           <ul>
             <li>We do not collect browsing history, page addresses (URLs), page titles, product names, page contents, search terms, location data, or financial information.</li>
             <li>The images themselves never leave your device — downloading happens entirely inside your browser. We record <b>that</b> a download happened and how many images it saved, never the images and never the address of the page.</li>
             <li>Nothing is recorded while you merely browse. A record is created only at the moment you press the download button.</li>
+            <li>One exception, and it is not automatic: if you use the "report an error to the developer" link, your mail app opens with the address of the page you were on included in the message body, so we can reproduce the problem. <b>You send that mail yourself and can read or delete that line before sending.</b> Nothing is transmitted unless you send it.</li>
           </ul>
           <h3>3. Retention and destruction</h3>
           <ul>
