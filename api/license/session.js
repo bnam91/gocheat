@@ -1,6 +1,6 @@
 const { getDb } = require('../_lib/mongo');
 const { findUserBySession, appOfToken, issuedAtOf } = require('../_lib/sessions');
-const { entitlementsForResponse } = require('../_lib/entitlements');
+const { entitlementsForResponse, effectiveFor } = require('../_lib/entitlements');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -55,7 +55,9 @@ module.exports = async (req, res) => {
     if (!user.verified) return json(res, 403, { ok: false, reason: 'email_not_verified' });
 
     // 만료 판정은 login.js 와 «같은 규칙»이다 — 두 곳이 다르게 굴면 앱이 오락가락한다.
-    const until = user.accessUntil ? new Date(user.accessUntil) : null;
+    // ★2026-08-25 ③-1: 이 토큰이 든 «앱» 기준 만료(effectiveFor). 구식 토큰(app 없음)은 전역 폴백. until:null=무기한.
+    const eff = effectiveFor(user, appOfToken(user, sessionToken));
+    const until = eff.until ? new Date(eff.until) : null;
     const expired = until ? until.getTime() < Date.now() : false;
 
     return json(res, 200, {

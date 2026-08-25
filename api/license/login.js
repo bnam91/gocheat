@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { getDb } = require('../_lib/mongo');
 const { issueSession } = require('../_lib/sessions');
-const { entitlementsForResponse } = require('../_lib/entitlements');
+const { entitlementsForResponse, effectiveFor } = require('../_lib/entitlements');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -36,7 +36,10 @@ module.exports = async (req, res) => {
     }
     if (!user.verified) return json(res, 403, { ok: false, reason: 'email_not_verified' });
 
-    const until = user.accessUntil ? new Date(user.accessUntil) : null;
+    // ★2026-08-25 ③-1: 만료를 «이 로그인의 앱» 기준으로 판정한다(effectiveFor). entitlements.<app>.until 우선,
+    //   없으면 전역 accessUntil 폴백. until:null = 무기한. 'web'·미지정 app 은 정규화에서 null→전역 폴백(안전).
+    const eff = effectiveFor(user, body.app);
+    const until = eff.until ? new Date(eff.until) : null;
     const expired = until ? until.getTime() < Date.now() : false;
     // ★앱이 비밀번호를 저장하면 안 된다 — 토큰만 주고 앱은 그것만 보관한다
     // ★2026-08-25: 토큰을 «제품별 칸»에 넣는다(_lib/sessions.js).

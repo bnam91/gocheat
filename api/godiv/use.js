@@ -1,5 +1,6 @@
 const { getDb } = require('../_lib/mongo');
 const { findUserBySession } = require('../_lib/sessions');
+const { effectiveFor } = require('../_lib/entitlements');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 /* 고디브(크롬 확장) «사용 기록» — 누가·언제·어디서·몇 장 받았고 «성공했는지»까지 남긴다.
@@ -83,7 +84,8 @@ module.exports = async (req, res) => {
     }
 
     const now = new Date();
-    const plan = user.plan || 'event_free';
+    // ★2026-08-25 ③-1: 통계 라벨을 «godiv 앱» 자격으로(전역 plan 아님). 「godiv 유·무료 사용」 분석 오염 방지.
+    const plan = effectiveFor(user, 'godiv').plan;
 
     // ── ① 계정 요약 ────────────────────────────────────────────────────────
     // 「고디브 쓰는 회원」 = { 'usage.godiv.count': { $gte: 1 } }

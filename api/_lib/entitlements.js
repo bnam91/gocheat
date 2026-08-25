@@ -13,7 +13,8 @@
  *   }
  *   · appId = 'goditor'|'goshot'|'godiv' 뿐. ⛔리뷰크롤러 제외(걔는 키 체계가 현역, 별도 컬렉션).
  *   · plan 값 = 'event_free'|'paid' 로 시작. 세분화는 나중에 additive 문자열 확장(지금 발명 금지).
- *   · until = ISO8601(또는 Date). 영구/기간 어느 쪽이든 담긴다.
+ *   · until = ISO8601(또는 Date). ★until:null = «무기한»(만료 없음). ⛔far-future 매직넘버(2099 등) 쓰지 마라 —
+ *     나중에 「왜 2099년이지」가 된다. 무기한은 null 로 «표현»한다(2026-08-25 지디 정책).
  *
  * ★읽기 우선순위 = entitlements.<app> 있으면 그것, 없으면 구필드(plan/accessUntil) 폴백.
  *   전환기엔 «양쪽 다» 채운다 — 옛 앱은 구필드를, 새 앱은 entitlements 를 본다. 어느 쪽도 안 깨진다.

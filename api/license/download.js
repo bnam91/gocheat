@@ -1,5 +1,6 @@
 const { getDb } = require('../_lib/mongo');
 const { findUserBySession } = require('../_lib/sessions');
+const { effectiveFor } = require('../_lib/entitlements');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -81,9 +82,11 @@ module.exports = async (req, res) => {
     }
 
     if (authed) {
-      const until = user.accessUntil ? new Date(user.accessUntil) : null;
+      // ★2026-08-25 ③-1: 이 다운로드의 «앱» 기준 자격(effectiveFor). 전역 폴백 유지. until:null=무기한.
+      const eff = effectiveFor(user, app);
+      const until = eff.until ? new Date(eff.until) : null;
       const expired = until ? until.getTime() < Date.now() : false;
-      const plan = user.plan || 'event_free';
+      const plan = eff.plan;
 
       if (REQUIRE_LOGIN && expired) {
         // 막기만 하고 어디로 가라고 안 하면 사용자는 또 헤맨다 — 갈 곳을 함께 준다
