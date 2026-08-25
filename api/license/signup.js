@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { getDb } = require('../_lib/mongo');
+const { eventEntitlements } = require('../_lib/entitlements');
 const {
   json, handlePreflight, readJsonBody,
   isValidEmail, normalizeEmail, isStrongEnough,
@@ -105,6 +106,9 @@ module.exports = async (req, res) => {
       createdAt: now,
       plan: 'event_free',
       accessUntil: EVENT_UNTIL,
+      // ★2026-08-25 additive: 앱별 자격도 «함께» 채운다(현행 이벤트=전 앱 무료 개방과 동형).
+      //   구필드(plan/accessUntil)는 그대로 둔다 — 옛 앱이 그것만 읽는다(entitlements.js 규약).
+      entitlements: eventEntitlements(EVENT_UNTIL),
       verified: EVENT_MODE ? true : false,
       verifiedAt: EVENT_MODE ? now : null,
       ...(profile ? { profile } : {}),
@@ -136,7 +140,7 @@ module.exports = async (req, res) => {
     //   fi*****@ 로 가린 것과 같은 이유다. 가리는 곳과 흘리는 곳이 따로 있으면 소용없다.
     if (EVENT_MODE) {
       // ★이벤트 기간: 보내지도 못할 인증메일을 큐에 쌓지 않는다. 가입 즉시 사용 가능.
-      return json(res, 200, { ok: true, email, ready: true, plan: 'event_free', accessUntil: EVENT_UNTIL });
+      return json(res, 200, { ok: true, email, ready: true, plan: 'event_free', accessUntil: EVENT_UNTIL, entitlements: eventEntitlements(EVENT_UNTIL) });
     }
 
     // 인증 링크가 필요한 계정에만 메일을 보낸다. 이미 인증된 계정이면 아무것도 안 보내되,

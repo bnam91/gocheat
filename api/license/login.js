@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const { getDb } = require('../_lib/mongo');
 const { issueSession } = require('../_lib/sessions');
+const { entitlementsForResponse } = require('../_lib/entitlements');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -52,6 +53,9 @@ module.exports = async (req, res) => {
       //   여기서 드러난다(오타로 legacy 칸에 들어가 놓고 자기 칸인 줄 아는 사고를 막는다).
       app,
       accessUntil: until,
+      // ★2026-08-25 additive: 앱별 자격을 «추가 필드»로 싣는다. 기존 plan/accessUntil 은 그대로 둔다
+      //   (옛 앱은 그걸 읽는다 — 빼거나 개명하면 깨진다). 새 앱은 entitlements.<app> 를 본다.
+      entitlements: entitlementsForResponse(user),
       // ★막기만 하고 어디로 가라고 안 하면 사용자는 또 헤맨다 — 갈 곳을 함께 준다
       ...(expired ? { reason: 'expired', purchaseUrl: PURCHASE_URL } : {}),
     });

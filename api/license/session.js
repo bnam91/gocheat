@@ -1,5 +1,6 @@
 const { getDb } = require('../_lib/mongo');
 const { findUserBySession, appOfToken, issuedAtOf } = require('../_lib/sessions');
+const { entitlementsForResponse } = require('../_lib/entitlements');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -69,6 +70,8 @@ module.exports = async (req, res) => {
       sessionIssuedAt: issuedAtOf(user, sessionToken) || user.sessionIssuedAt || null,
       // 이 토큰이 들어 있는 제품 칸(구식 토큰이면 null). 진단용 — 클라이언트 판정에 쓰지 않는다.
       app: appOfToken(user, sessionToken),
+      // ★2026-08-25 additive: 앱별 자격(기존 plan/accessUntil 유지 + 이 필드 추가). 옛 앱 보호.
+      entitlements: entitlementsForResponse(user),
       ...(expired ? { reason: 'expired', purchaseUrl: PURCHASE_URL } : {}),
     });
   } catch (err) {
