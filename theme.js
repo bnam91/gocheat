@@ -6,14 +6,10 @@
   var root = document.documentElement;
   var META_COLOR = { dark: '#0B0B0E', light: '#FFFFFF' };
 
-  function systemPrefersLight() {
-    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
-  }
-
   function resolvedTheme() {
     var explicit = root.getAttribute('data-theme');
     if (explicit === 'light' || explicit === 'dark') return explicit;
-    return systemPrefersLight() ? 'light' : 'dark';
+    return 'dark'; // ★기본은 항상 다크 — OS 설정 자동추종 없음(08-25 배포 조건)
   }
 
   function syncMetaColor(theme) {
@@ -44,15 +40,6 @@
       var next = resolvedTheme() === 'light' ? 'dark' : 'light';
       try { localStorage.setItem(KEY, next); } catch (e) { /* 저장 불가 환경 — 이 세션만 반영 */ }
       apply(next);
-    });
-  }
-
-  // 명시 선택이 없는 사용자만 — OS 설정이 바뀌면 실시간 반영
-  if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function () {
-      var stored = null;
-      try { stored = localStorage.getItem(KEY); } catch (e) {}
-      if (stored !== 'light' && stored !== 'dark') apply(resolvedTheme());
     });
   }
 })();
