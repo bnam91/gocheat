@@ -84,10 +84,15 @@ try {
   const before = (user.entitlements && user.entitlements[app]) || null;
   const beforeUntil = before && before.until ? new Date(before.until) : null;
 
-  // ⛔줄이는 방향(기간 단축·강등)은 --force 없이는 막는다 — 실수로 남의 것 깎지 않게. 무기한(null)은 항상 «늘리는» 것.
-  if (before && before.plan === PLAN_PAID && until && beforeUntil && until < beforeUntil && !arg('force')) {
-    console.error(`거부: 이용기간이 «줄어든다» (${beforeUntil.toISOString().slice(0,10)} → ${until.toISOString().slice(0,10)}). 정말이면 --force`);
-    process.exit(3);
+  // ⛔줄이는 방향(기간 단축·강등)은 --force 없이는 막는다 — 실수로 남의 것 깎지 않게.
+  if (!arg('force') && before && before.plan === PLAN_PAID) {
+    // ①기간→더짧은기간  ②★무기한(until=null)→유한기간 (둘 다 «축소»다. 후자를 빠뜨렸던 게 검수 LOW 지적)
+    const shrink = (until && beforeUntil && until < beforeUntil) || (before.until == null && until != null);
+    if (shrink) {
+      const b = before.until == null ? '무기한' : beforeUntil.toISOString().slice(0,10);
+      console.error(`거부: 이용기간이 «줄어든다» (${b} → ${until.toISOString().slice(0,10)}). 정말이면 --force`);
+      process.exit(3);
+    }
   }
 
   // 멱등 판정: 이미 paid + 같은 until 이면 아무것도 안 한다.

@@ -1,10 +1,8 @@
-/* 앱별 자격 승격 실DB 검증 (인메모리 몽고). 실행: npm i -D mongodb-memory-server 후
-   node scripts/test-entitlement.mjs. ⛔레포 URI 미사용(메모리 서버). */
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 const require = createRequire(import.meta.url);
-const HP = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+const HP = '/Users/a1/github/hompage_app';
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { MongoClient } = require('mongodb');
 const E = require(path.join(HP,'api/_lib/entitlements.js'));
@@ -62,6 +60,6 @@ try {
   r=run(['--email','a@b.c','--app','reviewcrawler','--apply']);
   ok(/모르는 앱|대상 아님/.test(r.stdout+r.stderr),'reviewcrawler 거부');
 
-  console.log(`\nPASS — ③ 실 DB 검증 ${n}항목`);
+  console.log('[8] 무기한→기간 축소는 --force 없이 거부');r=run(['--email','a@b.c','--app','goshot','--until','2027-06-01','--apply']);ok(/거부/.test(r.stdout+r.stderr) && (await get()).entitlements.goshot.until===null,'무기한→기간 축소 거부(goshot 무기한 유지)');console.log(`\nPASS — ③ 실 DB 검증 ${n}항목`);
 } catch(e){ console.error('\n'+e.message); process.exitCode=1; }
 finally { await cli.close(); await mem.stop(); }
