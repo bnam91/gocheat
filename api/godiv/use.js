@@ -37,6 +37,13 @@ const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = re
 const SITES = ['naver', 'coupang', 'wadiz'];
 // 장수 상한 — 오타·조작으로 합계가 튀지 않게.
 const MAX_IMAGES = 5000;
+/* ★계정당 최소 간격 (2026-08-25 2차 검수 M3).
+ *   전엔 호출 «횟수» 제한이 없어, 로그인만 한 사람이 이 문을 반복해 두드려
+ *   자기 usage.godiv.* 와 원장을 마음대로 부풀릴 수 있었다.
+ *   ⇒ 이 지표의 용도 중 하나가 «계정 부정사용 방지»인데 지표 자체가 자가조작 가능하면 쓸모가 없다.
+ *   실제 다운로드는 아무리 짧아도 수 초가 걸린다 — 3초는 정상 사용을 막지 않는다.
+ *   ★판정은 «DB 필터»로 한다(읽고 비교하면 그 사이에 또 들어온다). */
+const MIN_INTERVAL_MS = 3000;
 
 function clampCount(v) {
   const n = Number(v);
@@ -95,12 +102,23 @@ module.exports = async (req, res) => {
       set['usage.godiv.lastFailAt'] = now;
       set['usage.godiv.lastFailSite'] = site;
     }
-    await db.collection('users').updateOne({ email: user.email }, {
+    // ★스로틀 — «마지막 시도가 3초보다 오래됐을 때만» 갱신된다. 조건을 갱신 필터에 넣어 원자적으로 판정한다.
+    const cutoff = new Date(now.getTime() - MIN_INTERVAL_MS);
+    const r = await db.collection('users').updateOne({
+      email: user.email,
+      $or: [
+        { 'usage.godiv.lastAttemptAt': { $exists: false } },
+        { 'usage.godiv.lastAttemptAt': { $lte: cutoff } },
+      ],
+    }, {
       $set: set,
       $inc: inc,
       // firstAt 은 «처음 한 번만». $setOnInsert 는 upsert 전용이라 못 쓴다 — $min 이 같은 일을 원자적으로 한다.
       $min: { 'usage.godiv.firstAt': now },
     });
+    // ⛔너무 잦은 호출은 «조용히 무시»하되 사용자에게는 실패로 보이지 않게 한다(기록은 부가지 관문이 아니다).
+    //   ★원장에도 안 넣는다 — 요약만 막고 원장을 채우면 그쪽으로 부풀릴 수 있다.
+    if (!r.matchedCount) return json(res, 200, { ok: true, recorded: false, throttled: true, result });
 
     // ── ② 시계열 원장 ──────────────────────────────────────────────────────
     // ★요약 갱신이 끝난 «뒤에» 넣고, 실패해도 위 카운터를 되돌리지 않는다.

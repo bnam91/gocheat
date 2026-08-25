@@ -1,5 +1,5 @@
 const { getDb } = require('../_lib/mongo');
-const { findUserBySession, appOfToken } = require('../_lib/sessions');
+const { findUserBySession, appOfToken, issuedAtOf } = require('../_lib/sessions');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
@@ -63,7 +63,10 @@ module.exports = async (req, res) => {
       plan: user.plan || 'event_free',
       accessUntil: until,
       // ★앱이 «세션 자체의 나이»로 판단할 수 있게 같이 준다(서버는 세션 TTL 정책을 갖고 있지 않다).
-      sessionIssuedAt: user.sessionIssuedAt || null,
+      // ★2026-08-25 2차 검수 L5: 토큰은 «앱별»인데 sessionIssuedAt 은 «전역»(마지막 아무 제품 로그인)이었다.
+      //   ⇒ 이 토큰이 든 칸의 발급시각을 «우선» 준다. 없을 때만(구식 토큰) 전역값으로 떨어진다.
+      //   그래야 홈페이지 로그인이 데스크톱 세션의 «나이»를 되돌리는 일이 없다.
+      sessionIssuedAt: issuedAtOf(user, sessionToken) || user.sessionIssuedAt || null,
       // 이 토큰이 들어 있는 제품 칸(구식 토큰이면 null). 진단용 — 클라이언트 판정에 쓰지 않는다.
       app: appOfToken(user, sessionToken),
       ...(expired ? { reason: 'expired', purchaseUrl: PURCHASE_URL } : {}),

@@ -11,7 +11,9 @@
  * ★2026-08-25 2차 수정 (코덱스 검수 지적 반영) — 이 두 개가 1차에 빠져 있었다.
  *   ①**백필** : 이미 로그인해 둔 사람의 토큰은 «구식 한 칸»에만 있다. 그 사람이 홈페이지에 로그인하면
  *     새 토큰이 그 칸을 덮어써서 «확장이 한 번은 여전히 튕긴다». 고친 줄 알았던 증상이 1회 남는 것이다.
- *     ⇒ 발급 «전에» 구식 토큰을 legacy 칸으로 «옮겨 담는다». 그러면 튕김이 0회가 된다.
+ *     ⇒ 발급 «전에» 구식 토큰을 «예약 칸(_backfill)»으로 옮겨 담는다.
+ *     ★2026-08-25 2차 검수 정정: 처음엔 legacy 칸에 넣었는데, app 을 «안 보내는» 클라이언트로
+ *       로그인하면 ②가 그 칸을 그대로 걷어내 백필이 무효가 됐다(H1). 예약 칸으로 분리해 닫았다.
  *   ②**원자성** : 전엔 $pull → $push 두 번에 나눠 쳤다. 같은 앱에서 로그인이 «동시에» 두 건 들어오면
  *     둘 다 pull 하고 둘 다 push 해서 앱당 1개 약속이 깨진다(계정 공유 억제가 목적인 규칙이라 구멍이면 안 된다).
  *     ⇒ «집계 파이프라인 업데이트»로 한 번에 친다. 백필·교체·구버전 칸 갱신이 «한 문서 갱신» 안에서 끝난다.
@@ -39,11 +41,20 @@ const MAX_PER_APP = 1;
 const MAX_TOTAL = 12;
 
 const DEFAULT_APP = 'legacy';
+/* ★백필 전용 칸 (2026-08-25 2차 검수 H1) — 로그인이 «절대» 만들 수 없는 이름이어야 한다.
+ *   전엔 백필을 DEFAULT_APP('legacy') 칸에 넣었는데, app 을 «안 보내는» 클라이언트로 로그인하면
+ *   ②단계가 방금 넣은 그 칸을 그대로 걷어내 백필이 무효가 됐다.
+ *   ⇒ app 을 안 보내는 쪽 = 고디터 데스크톱 앱, 그리고 «아직 업데이트 안 한 구버전 확장».
+ *     즉 정작 지켜야 할 사람들에게 백필이 안 걸렸다.
+ *   ⇒ 예약 칸으로 분리한다. normalizeApp 이 «_ 로 시작하는 이름»을 만들지 못하게 막아
+ *     클라이언트가 이 칸을 사칭하거나 밀어낼 수 없다. */
+const BACKFILL_APP = '_backfill';
 
-/** 클라이언트가 보낸 app 문자열을 «칸 이름»으로 정규화한다. 모르는 값은 legacy 칸으로. */
+/** 클라이언트가 보낸 app 문자열을 «칸 이름»으로 정규화한다. 모르는 값은 legacy 칸으로.
+ *  ⛔첫 글자는 영숫자만 — 서버 예약 칸(_backfill)을 클라이언트가 못 만들게 하기 위해서다. */
 function normalizeApp(value) {
   const s = typeof value === 'string' ? value.trim().toLowerCase() : '';
-  return /^[a-z0-9_-]{1,20}$/.test(s) ? s : DEFAULT_APP;
+  return /^[a-z0-9][a-z0-9_-]{0,19}$/.test(s) ? s : DEFAULT_APP;
 }
 
 /** 토큰 → user. ★조회만 한다.
@@ -76,13 +87,12 @@ function buildIssuePipeline(app, token, issuedAt) {
 
   return [
     // ① 백필
-    // ⚠️★알아두고 «고치지 마라» (2026-08-25 실측): sessions[] 에 이미 legacy 칸이 있는데
-    //   구식 sessionToken 이 «그와 다른 값»이면, 백필 직후 legacy 칸이 «2개»가 된다.
-    //   · 지금 코드 경로로는 만들어지지 않는 상태다(issueSession 이 둘을 항상 같은 값으로 맞춘다).
-    //   · 그래도 그 상태가 되면 «둘 다 살린다» — 어느 쪽이 지금 쓰이는 열쇠인지 서버는 모르기 때문이다.
-    //     하나를 골라 버리면 그 사람은 이유 없이 로그아웃된다. ★튕기지 않는 쪽으로 기운다.
-    //   · 다음 legacy 로그인에서 ②가 «둘 다» 걷어내고 하나로 정리한다(실측 확인).
-    //   ⇒ 「앱당 1개」는 «발급»의 불변식이지 «백필 순간»의 불변식이 아니다. 여기서 dedup 하지 마라.
+    // ★백필은 «예약 칸»으로 간다(BACKFILL_APP) — 클라이언트가 만들 수 없는 이름이라
+    //   ②단계의 「이 앱 칸 걷어내기」에 절대 걸리지 않는다. 그래서 어떤 제품으로 로그인하든
+    //   구식 토큰이 살아남는다. ⛔이걸 다시 DEFAULT_APP 로 되돌리지 마라 — 그러면
+    //   app 을 «안 보내는» 클라이언트(고디터 데스크톱·구버전 확장)에서 백필이 그 자리에서 무효가 된다.
+    //   ⚠️sessions[] 에 legacy 칸이 있고 구식 토큰이 «다른 값»이어도 둘 다 살아남는다(실측).
+    //     어느 쪽이 지금 쓰이는 열쇠인지 서버는 모르므로 ★튕기지 않는 쪽으로 기운다.
     {
       $set: {
         sessions: {
@@ -98,7 +108,7 @@ function buildIssuePipeline(app, token, issuedAt) {
               $concatArrays: [
                 { $ifNull: ['$sessions', []] },
                 [{
-                  app: DEFAULT_APP,
+                  app: BACKFILL_APP,
                   token: '$sessionToken',
                   // 언제 발급됐는지 모르면 지금으로 둔다 — «모르는 시각»보다 «늦게 잡힌 시각»이 안전하다.
                   issuedAt: { $ifNull: ['$sessionIssuedAt', issuedAt] },
@@ -118,7 +128,12 @@ function buildIssuePipeline(app, token, issuedAt) {
           $slice: [
             {
               $concatArrays: [
-                { $filter: { input: '$sessions', cond: { $ne: ['$$this.app', app] } } },
+                // ★app 이 «문자열인» 엔트리만 남긴다 — null·app 없는 이물질이 섞이면 어떤 필터에도
+                //   안 걸려 영원히 남는다(2차 검수 L4). 여기서 조용히 걷어낸다.
+                { $filter: { input: '$sessions', cond: { $and: [
+                  { $eq: [{ $type: '$$this.app' }, 'string'] },
+                  { $ne: ['$$this.app', app] },
+                ] } } },
                 keepSameApp,
                 [entry],
               ],
@@ -129,7 +144,9 @@ function buildIssuePipeline(app, token, issuedAt) {
       },
     },
     // ③ 구버전 호환 칸
-    { $set: { sessionToken: token, sessionIssuedAt: issuedAt, lastLoginAt: issuedAt } },
+    // ⚠️$literal 필수 — 토큰이 «$»로 시작하면 필드 경로로 해석돼 이 필드가 통째로 «미설정»된다(2차 검수 L2).
+    //   지금 randomToken 은 hex 라 실피해가 없지만, 발급 방식이 바뀌면 조용히 터진다.
+    { $set: { sessionToken: { $literal: token }, sessionIssuedAt: issuedAt, lastLoginAt: issuedAt } },
   ];
 }
 
@@ -140,7 +157,10 @@ async function issueSession(db, email, appRaw) {
   const token = randomToken(32);
   const issuedAt = new Date();
   // ★한 번의 updateOne = 원자적. 중간 상태가 «없다» — 동시 로그인 두 건이 겹쳐도 앱당 1개가 유지된다.
-  await db.collection('users').updateOne({ email }, buildIssuePipeline(app, token, issuedAt));
+  const r = await db.collection('users').updateOne({ email }, buildIssuePipeline(app, token, issuedAt));
+  // ⛔«아무 문서도 안 맞았는데» 토큰을 성공처럼 돌려주지 않는다(2차 검수 L3).
+  //   그러면 사용자는 200 로그인 직후 곧바로 「만료」를 겪고, 우리는 원인을 못 찾는다.
+  if (!r.matchedCount) throw new Error('session_issue_no_user');
   return { sessionToken: token, app, issuedAt };
 }
 
@@ -151,7 +171,14 @@ function appOfToken(user, sessionToken) {
   return hit ? hit.app : null;
 }
 
+/** 이 토큰이 든 칸의 «발급시각» — 없으면 null. session.js 가 세션 나이를 앱별로 답하기 위해 쓴다. */
+function issuedAtOf(user, sessionToken) {
+  const list = (user && Array.isArray(user.sessions)) ? user.sessions : [];
+  const hit = list.find((s) => s && s.token === sessionToken);
+  return (hit && hit.issuedAt) || null;
+}
+
 module.exports = {
-  findUserBySession, issueSession, buildIssuePipeline, normalizeApp, appOfToken,
-  MAX_PER_APP, MAX_TOTAL, DEFAULT_APP,
+  findUserBySession, issueSession, buildIssuePipeline, normalizeApp, appOfToken, issuedAtOf,
+  MAX_PER_APP, MAX_TOTAL, DEFAULT_APP, BACKFILL_APP,
 };

@@ -26,12 +26,26 @@ catch { console.log('SKIP — mongodb-memory-server 없음. `npm i -D mongodb-me
 const { MongoClient } = require('mongodb');
 const S = require(path.join(ROOT, 'api/_lib/sessions.js'));
 
+/* ★use.js «핸들러 자체»를 실제 몽고에 물려 부른다 (2026-08-25 2차 검수 지적 반영).
+ *   전엔 테스트가 $set/$inc/$min 을 «손으로 다시 써서» 검사했다 — 그건 동어반복이라
+ *   use.js 의 키 오타·clampCount·result 판정·401 대조·스로틀이 하나도 안 걸렸다. */
+let db;   // 아래에서 연결 후 대입 — getDb 는 호출 시점에 읽으므로 순서 문제 없다
+const mongoPath = require.resolve(path.join(ROOT, 'api/_lib/mongo.js'));
+require.cache[mongoPath] = { id: mongoPath, filename: mongoPath, loaded: true, exports: { getDb: async () => db, DB_NAME: 't' } };
+const useHandler = require(path.join(ROOT, 'api/godiv/use.js'));
+const callUse = async (body) => {
+  const out = {};
+  const res = { statusCode: 0, setHeader() {}, end(b) { out.status = this.statusCode; out.body = JSON.parse(b); } };
+  await useHandler({ method: 'POST', body, on() {} }, res);
+  return out;
+};
+
 let pass = 0;
 const ok = (cond, what) => { if (!cond) throw new Error(`FAIL — ${what}`); pass++; console.log(`  ✓ ${what}`); };
 
 const mem = await MongoMemoryServer.create();
 const client = await MongoClient.connect(mem.getUri());
-const db = client.db('t');
+db = client.db('t');
 const users = db.collection('users');
 
 async function reset(doc) { await users.deleteMany({}); await users.insertOne(doc); }
@@ -44,9 +58,9 @@ try {
   await S.issueSession(db, 'a@b.c', 'web');
   let u = await get();
   ok(!!(await S.findUserBySession(db, 'T_OLD')), '옛 토큰 T_OLD 가 «여전히» 통과한다(백필됨)');
-  ok(apps(u).join(',') === 'legacy,web', `칸이 legacy+web 두 개다 (실제: ${apps(u).join(',')})`);
-  ok(u.sessions.find((s) => s.app === 'legacy').backfilled === true, '옮겨 담긴 칸에 backfilled 표식이 있다');
-  ok(u.sessions.find((s) => s.app === 'legacy').issuedAt.getTime() === new Date('2026-08-01').getTime(), '원래 발급시각을 보존한다');
+  ok(apps(u).join(',') === '_backfill,web', `칸이 _backfill+web 두 개다 (실제: ${apps(u).join(',')})`);
+  ok(u.sessions.find((s) => s.app === '_backfill').backfilled === true, '옮겨 담긴 칸에 backfilled 표식이 있다');
+  ok(u.sessions.find((s) => s.app === '_backfill').issuedAt.getTime() === new Date('2026-08-01').getTime(), '원래 발급시각을 보존한다');
 
   console.log('\n[2] 제품별 칸 — 확장 로그인 뒤 홈페이지 로그인해도 확장이 안 튕긴다');
   await reset({ email: 'a@b.c', verified: true });
@@ -77,7 +91,7 @@ try {
   await reset({ email: 'a@b.c', verified: true, sessionToken: 'T_OLD' });
   await S.issueSession(db, 'a@b.c', 'web');
   await S.issueSession(db, 'a@b.c', 'web');
-  ok((await get()).sessions.filter((s) => s.app === 'legacy').length === 1, 'legacy 칸 1개');
+  ok((await get()).sessions.filter((s) => s.app === '_backfill').length === 1, '백필 칸 1개');
 
   console.log('\n[7] 인덱스 — $or 조회가 실제로 인덱스를 타는가');
   await users.createIndex({ sessionToken: 1 }, { sparse: true });
@@ -149,17 +163,81 @@ try {
   ok((await get()).sessions[0].token === '$sessionToken', '토큰이 «문자 그대로» 저장된다(치환 안 됨)');
   ok(!!(await S.findUserBySession(db, '$sessionToken')), '그 토큰으로 조회도 된다');
 
-  console.log('\n[14] 엣지 — legacy 칸이 이미 있는데 구식 토큰이 «다른 값»일 때 (⛔의도된 동작)');
-  await reset({ email: 'a@b.c', verified: true, sessionToken: 'T_OLD',
+  console.log('\n[14] 엣지 — legacy 칸이 이미 있는데 구식 토큰이 «다른 값»일 때 (예약 칸 도입 후)');
+  await reset({ email: 'a@b.c', verified: true, sessionToken: 'T_ORPHAN',
     sessions: [{ app: 'legacy', token: 'T_LEGACY', issuedAt: new Date('2026-08-01') }] });
   await S.issueSession(db, 'a@b.c', 'web');
-  ok(!!(await S.findUserBySession(db, 'T_OLD')) && !!(await S.findUserBySession(db, 'T_LEGACY')),
-    '★둘 다 살린다 — 어느 쪽이 쓰이는 열쇠인지 모르므로 «튕기지 않는 쪽»으로 기운다');
-  ok((await get()).sessions.filter((s) => s.app === 'legacy').length === 2,
-    'legacy 칸이 일시적으로 2개다(앱당 1개는 «발급»의 불변식이지 백필 순간의 것이 아니다)');
-  await S.issueSession(db, 'a@b.c', 'legacy');
-  ok((await get()).sessions.filter((s) => s.app === 'legacy').length === 1, '다음 legacy 로그인에서 1개로 정리된다');
-  ok(!(await S.findUserBySession(db, 'T_OLD')) && !(await S.findUserBySession(db, 'T_LEGACY')), '옛 legacy 토큰들은 그때 무효화된다');
+  ok(!!(await S.findUserBySession(db, 'T_ORPHAN')) && !!(await S.findUserBySession(db, 'T_LEGACY')),
+    '둘 다 산다 — 어느 쪽이 쓰이는 열쇠인지 모르므로 «튕기지 않는 쪽»으로 기운다');
+  ok((await get()).sessions.filter((s) => s.app === 'legacy').length === 1,
+    '★legacy 칸은 1개다 — 백필이 예약 칸(_backfill)으로 가므로 앱당 1개가 안 깨진다');
+
+  console.log('\n[15] ★H1 회귀 — app 을 «안 보내는» 클라이언트(고디터 데스크톱·구버전 확장)로 로그인해도 옛 토큰이 사나');
+  await reset({ email: 'a@b.c', verified: true, sessionToken: 'T_OLD', sessionIssuedAt: new Date('2026-08-01') });
+  await S.issueSession(db, 'a@b.c', undefined);          // app 미전송 → 'legacy'
+  ok(!!(await S.findUserBySession(db, 'T_OLD')), 'T_OLD 가 살아있다 (예약 칸으로 분리한 덕)');
+  ok(apps(await get()).join(',') === '_backfill,legacy', `칸이 _backfill+legacy (실제: ${apps(await get()).join(',')})`);
+
+  console.log('\n[16] 예약 칸 사칭 차단 — 클라이언트가 app:"_backfill" 을 보내도 그 칸을 못 건드린다');
+  const before = (await get()).sessions.find((s) => s.app === '_backfill').token;
+  await S.issueSession(db, 'a@b.c', '_backfill');
+  const after = (await get()).sessions.find((s) => s.app === '_backfill');
+  ok(after && after.token === before, '예약 칸이 그대로다(요청은 legacy 칸으로 눌림)');
+  ok(!!(await S.findUserBySession(db, 'T_OLD')), '옛 토큰도 여전히 산다');
+
+  console.log('\n[17] 이물질 — null·app 없는 엔트리가 섞여 있으면 걷어내는가');
+  await reset({ email: 'a@b.c', verified: true, sessions: [null, { token: 'NOAPP' }, { app: 'web', token: 'W1', issuedAt: new Date() }] });
+  await S.issueSession(db, 'a@b.c', 'godiv');
+  ok((await get()).sessions.every((s) => s && typeof s.app === 'string'), '이물질이 사라졌다');
+  ok(!!(await S.findUserBySession(db, 'W1')), '멀쩡한 칸은 그대로 산다');
+
+  console.log('\n[18] 없는 계정에 발급하면 «성공처럼» 돌려주지 않는가');
+  let threw = false;
+  try { await S.issueSession(db, 'ghost@b.c', 'godiv'); } catch (e) { threw = /no_user/.test(e.message); }
+  ok(threw, '문서가 없으면 예외를 던진다');
+
+  console.log('\n[19] ★use.js 핸들러 «직접» 호출 — 판정·방어·스로틀이 실제로 도는가');
+  await reset({ email: 'a@b.c', verified: true, plan: 'event_free' });
+  const tok = (await S.issueSession(db, 'a@b.c', 'godiv')).sessionToken;
+  const agedOut = () => users.updateOne({ email: 'a@b.c' }, { $set: { 'usage.godiv.lastAttemptAt': new Date(Date.now() - 60000) } });
+
+  let r = await callUse({ sessionToken: tok, site: 'naver', expected: 12, ok: 12 });
+  ok(r.body.result === 'ok' && r.body.recorded, '완전 성공 → result=ok');
+  await agedOut();
+  r = await callUse({ sessionToken: tok, site: 'coupang', expected: 10, ok: 4 });
+  ok(r.body.result === 'partial', '부분 성공 → result=partial');
+  await agedOut();
+  r = await callUse({ sessionToken: tok, site: 'evil.com', expected: 3, ok: 0, url: 'https://smartstore.naver.com/x/products/1' });
+  ok(r.body.result === 'none', '0장 → result=none');
+  const lastEv = await db.collection('godiv_events').find({}).sort({ at: -1 }).limit(1).next();
+  ok(lastEv.site === 'other', '화이트리스트 밖 site 는 other 로 눌린다');
+  ok(!JSON.stringify(lastEv).includes('smartstore'), '★URL 을 섞어 보내도 원장에 안 들어간다');
+  const g2 = (await get()).usage.godiv;
+  ok(g2.count === 2 && g2.failed === 1 && g2.attempts === 3, `카운터 실집계 (count ${g2.count}·failed ${g2.failed}·attempts ${g2.attempts})`);
+
+  console.log('\n[20] ★스로틀 — 연달아 두드리면 두 번째부터 무시되는가(지표 자가조작 방지)');
+  await agedOut();
+  const c0 = (await get()).usage.godiv.count;
+  const first = await callUse({ sessionToken: tok, site: 'naver', expected: 1, ok: 1 });
+  const second = await callUse({ sessionToken: tok, site: 'naver', expected: 1, ok: 1 });
+  ok(first.body.recorded === true, '첫 호출은 기록된다');
+  ok(second.body.throttled === true && second.body.recorded === false, '3초 안의 두 번째 호출은 무시된다');
+  ok((await get()).usage.godiv.count === c0 + 1, `count 가 1만 올랐다 (${c0}→${(await get()).usage.godiv.count})`);
+  const evs = await db.collection('godiv_events').countDocuments({ site: 'naver', ok: 1 });
+  ok(evs === 1, '스로틀된 호출은 원장에도 안 들어간다');
+
+  console.log('\n[21] 이메일 짝이 안 맞으면 401 — 핸들러가 실제로 거절하는가');
+  r = await callUse({ sessionToken: tok, email: 'other@b.c', site: 'naver', ok: 1 });
+  ok(r.status === 401 && r.body.reason === 'invalid_session', '401 invalid_session');
+
+  console.log('\n[22] 세션 나이 — 토큰이 든 «칸»의 발급시각을 준다(전역값 아님)');
+  await reset({ email: 'a@b.c', verified: true });
+  const gd = await S.issueSession(db, 'a@b.c', 'godiv');
+  await new Promise((r2) => setTimeout(r2, 5));
+  await S.issueSession(db, 'a@b.c', 'web');              // 전역 sessionIssuedAt 이 web 것으로 바뀐다
+  const u2 = await get();
+  ok(S.issuedAtOf(u2, gd.sessionToken).getTime() === gd.issuedAt.getTime(), 'godiv 칸의 발급시각이 그대로다');
+  ok(u2.sessionIssuedAt.getTime() !== gd.issuedAt.getTime(), '전역값은 web 로그인으로 바뀌었다(그래서 칸별 값이 필요하다)');
 
   console.log(`\nPASS — 실 DB 왕복 ${pass}항목 통과`);
 } catch (e) {

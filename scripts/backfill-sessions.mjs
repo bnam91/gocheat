@@ -15,7 +15,7 @@
  *
  * 무엇을 하나:
  *   sessionToken 이 있는데 sessions[] 에 그 토큰이 «없는» 사용자에게
- *   sessions += { app:'legacy', token: <구식 토큰>, issuedAt: <sessionIssuedAt 또는 지금>, backfilled: true }
+ *   sessions += { app:'_backfill', token: <구식 토큰>, issuedAt: <sessionIssuedAt 또는 지금>, backfilled: true }
  *   ★이미 옮겨진 사람은 건너뛴다(멱등) — 여러 번 돌려도 칸이 늘지 않는다.
  *   ⛔토큰을 «새로 발급하지 않는다». 발급하면 그 순간 모두가 로그아웃된다 — 정확히 피하려던 그 사고다.
  */
@@ -26,7 +26,10 @@ const { MongoClient } = require('mongodb');
 const APPLY = process.argv.includes('--apply');
 const URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 const DBN = process.env.MONGO_DB || 'goditor_license';
-const LEGACY_APP = 'legacy';
+/* ★예약 칸 — api/_lib/sessions.js 의 BACKFILL_APP 과 «같은 값»이어야 한다.
+ *   'legacy' 로 넣으면 app 을 안 보내는 클라이언트가 로그인하는 순간 그 칸이 걷혀 백필이 무효가 된다
+ *   (2026-08-25 2차 검수 H1). 클라이언트는 '_' 로 시작하는 이름을 만들 수 없어 이 칸을 못 건드린다. */
+const BACKFILL_APP = '_backfill';
 
 if (!URI) {
   console.error('⛔ MONGO_URI 가 없다. 예: MONGO_URI="mongodb+srv://…" node scripts/backfill-sessions.mjs');
@@ -53,7 +56,7 @@ try {
     const r = await users.updateOne(
       // ★조건을 «갱신 시점에» 다시 건다 — 읽고 쓰는 사이에 그 사람이 로그인해 이미 백필됐을 수 있다.
       { email: u.email, sessionToken: u.sessionToken, 'sessions.token': { $ne: u.sessionToken } },
-      { $push: { sessions: { app: LEGACY_APP, token: u.sessionToken, issuedAt: u.sessionIssuedAt || now, backfilled: true } } },
+      { $push: { sessions: { app: BACKFILL_APP, token: u.sessionToken, issuedAt: u.sessionIssuedAt || now, backfilled: true } } },
     );
     if (r.modifiedCount) done++;
   }
