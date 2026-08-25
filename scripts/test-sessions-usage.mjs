@@ -143,6 +143,24 @@ try {
   out = run(['--apply']).stdout;
   ok(/옮길 대상 0명/.test(out), '두 번 돌려도 대상 0명(멱등)');
 
+  console.log('\n[13] 엣지 — «$»로 시작하는 토큰이 필드 경로로 오인되지 않는가($literal 방어)');
+  await reset({ email: 'a@b.c', verified: true });
+  await users.updateOne({ email: 'a@b.c' }, S.buildIssuePipeline('godiv', '$sessionToken', new Date()));
+  ok((await get()).sessions[0].token === '$sessionToken', '토큰이 «문자 그대로» 저장된다(치환 안 됨)');
+  ok(!!(await S.findUserBySession(db, '$sessionToken')), '그 토큰으로 조회도 된다');
+
+  console.log('\n[14] 엣지 — legacy 칸이 이미 있는데 구식 토큰이 «다른 값»일 때 (⛔의도된 동작)');
+  await reset({ email: 'a@b.c', verified: true, sessionToken: 'T_OLD',
+    sessions: [{ app: 'legacy', token: 'T_LEGACY', issuedAt: new Date('2026-08-01') }] });
+  await S.issueSession(db, 'a@b.c', 'web');
+  ok(!!(await S.findUserBySession(db, 'T_OLD')) && !!(await S.findUserBySession(db, 'T_LEGACY')),
+    '★둘 다 살린다 — 어느 쪽이 쓰이는 열쇠인지 모르므로 «튕기지 않는 쪽»으로 기운다');
+  ok((await get()).sessions.filter((s) => s.app === 'legacy').length === 2,
+    'legacy 칸이 일시적으로 2개다(앱당 1개는 «발급»의 불변식이지 백필 순간의 것이 아니다)');
+  await S.issueSession(db, 'a@b.c', 'legacy');
+  ok((await get()).sessions.filter((s) => s.app === 'legacy').length === 1, '다음 legacy 로그인에서 1개로 정리된다');
+  ok(!(await S.findUserBySession(db, 'T_OLD')) && !(await S.findUserBySession(db, 'T_LEGACY')), '옛 legacy 토큰들은 그때 무효화된다');
+
   console.log(`\nPASS — 실 DB 왕복 ${pass}항목 통과`);
 } catch (e) {
   console.error(`\n${e.message}`);
