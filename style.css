@@ -168,7 +168,13 @@ main { padding-bottom: 0; margin-top: 0; }
    프로덕트·최근영상 절을 숨기면서 본문이 짧아져 푸터가 화면 중간에 떴다.
    body 를 세로 flex 로 두고 푸터에 margin-top:auto — 내용이 길면 원래대로 아래로 밀린다.
    ⚠️height:100vh 가 아니라 min-height 다. 내용이 길 때 잘리면 안 된다. */
+/* 푸터를 화면 맨 아래로 (현빈 2026-09-01).
+   ★함정(2026-09-02 실측): body 를 flex 로 바꾸면 «margin: 0 auto» 를 쓰는 구역들이
+     stretch 를 못 받는다 — 자동 여백이 stretch 를 이겨서 «내용 크기»로 쪼그라든다.
+     실제로 .showcase 1040→350px, .detail 720→447px, footer 1040→698px 로 줄었다
+     (영상이 작아진 신고의 원인). box-sizing 이 border-box 라 width:100% 가 안전하다. */
 body { min-height: 100vh; display: flex; flex-direction: column; }
+body > *:not(script):not(template) { width: 100%; }
 body > footer { margin-top: auto; }
 footer { padding-top: 0; padding-bottom: 56px; margin-top: 48px; }
 hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
@@ -903,18 +909,13 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 
 .detail-lead { font-size: var(--fs-lead); color: var(--muted); line-height: 1.6; max-width: 40ch; }
 .detail-alt { font-size: var(--fs-sm); color: var(--subtle); }
-/* 버전과 칩 안내가 «둘 다» 있을 때만 가운뎃점을 넣는다.
-   한쪽만 보이는 경우(윈도우 = 버전만 / json 실패 = 칩 안내만)에 점이 뜨면 안 된다. */
-#dl-ver:not([hidden]) ~ #dl-mac:not([hidden])::before {
-  content: '·'; margin: 0 7px; color: var(--border-strong);
-}
-/* ★2줄 배치 (현빈 2026-09-01): 「버전 · 기종」 / 「로그인 안내」.
-   한 줄에 셋을 가운뎃점으로 이으면 길어서 읽기 어렵다.
-   ⇒ 로그인 안내는 «줄바꿈»으로 내린다 — 점은 붙이지 않는다. */
-#dl-login-hint { display: block; margin-top: 6px; }
+/* 다운로드 버튼 안의 버전 배지 (현빈 2026-09-02).
+   버튼 색을 그대로 물려받고 크기·불투명도만 낮춘다 — 새 색을 만들지 않는다. */
+.dl-btn-ver { font-family: var(--mono); font-size: 11px; opacity: 0.72; letter-spacing: 0; }
 .detail-alt a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .detail-alt a:hover { color: var(--accent); }
-.cta-download { min-width: 220px; padding: 12px 26px; font-size: var(--fs-body); font-weight: 700; }
+.cta-download { min-width: 220px; padding: 12px 26px; font-size: var(--fs-body); font-weight: 700;
+                display: inline-flex; align-items: baseline; justify-content: center; gap: 8px; }
 
 /* ② 이벤트 띠 — 요금제 절에 있던 배너를 여기로 옮겼다(첫 화면 근처) */
 .event-strip {

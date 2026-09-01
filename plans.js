@@ -68,7 +68,7 @@
               // ★유료 등급은 «주문서»로 보낸다. 전에는 넷 다 가입 페이지로 가서
               //   「돈을 내겠다」는 의사를 받을 곳이 아예 없었다.
               : '<a href="order.html?plan=' + encodeURIComponent(p.id) + '" class="plan-cta">'
-                  + (payLive ? '이 등급으로 →' : '주문 화면 미리보기 →') + '</a>')
+                  + esc(p.name) + '로 업그레이드 →</a>')
           + '</div>';
       }).join('');
 

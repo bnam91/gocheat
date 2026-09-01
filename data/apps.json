@@ -19,36 +19,6 @@
     ],
     "plans": [
       {
-        "id": "free",
-        "name": "FREE",
-        "price": "₩0",
-        "per": "월",
-        "ribbon": "",
-        "now": true,
-        "features": [
-          {
-            "t": "프로젝트 1개 · 섹션 10개",
-            "ok": true
-          },
-          {
-            "t": "AI 이미지 월 5장",
-            "ok": true
-          },
-          {
-            "t": "내보내기 1× (워터마크 있음)",
-            "ok": true
-          },
-          {
-            "t": "피그마 연동",
-            "ok": false
-          },
-          {
-            "t": "마켓 동기화",
-            "ok": false
-          }
-        ]
-      },
-      {
         "id": "starter",
         "name": "STARTER",
         "price": "₩50,000",

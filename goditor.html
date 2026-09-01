@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260902b" />
+  <link rel="stylesheet" href="style.css?v=20260902d" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 </head>
@@ -88,7 +88,6 @@
            맥은 ARM64/Intel 로 갈린다. 칩을 «단정»하지 않고 기본을 제시하되
            반대 경로를 항상 나란히 둔다. 이 링크는 마크업에 있어 JS 가 죽어도 산다. -->
       <p class="detail-alt" id="dl-alt">
-        <span id="dl-ver" hidden></span>
         <span id="dl-mac" hidden>Apple Silicon 용입니다.
           <a id="dl-intel"
              href="https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu"
@@ -205,7 +204,7 @@
     <div class="pricing-inner" id="pricing">
       <p class="section-label">GODITOR 요금제</p>
 
-      <h2 class="pricing-title">네 가지 등급의 구독제입니다.</h2>
+      <h2 class="pricing-title">세 가지 등급의 구독제입니다.</h2>
       <!-- ★«지금 전부 무료»를 여기서 «한 번» 말한다.
            전에는 카드 네 장이 각자 「무료」를 제일 큰 글자로 외쳤다. 그러면 네 카드가
            똑같아 보여서 «비교표가 비교를 못 한다». 비교해야 할 건 등급 차이지 이벤트가 아니다. -->
@@ -285,7 +284,7 @@
 
   <footer>
     <div class="footer-inner">
-      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />coq3820@gmail.com</span>
+      <span>coq3820@gmail.com</span>
       <div class="footer-links">
         <a href="terms.html">이용약관</a>
         <a href="privacy.html">개인정보 처리방침</a>
@@ -501,7 +500,6 @@
       var alt   = document.getElementById('dl-alt');
       var intel = document.getElementById('dl-intel');
       var mac   = document.getElementById('dl-mac');
-      var ver   = document.getElementById('dl-ver');
       if (!btn) return;
 
       var ua = navigator.userAgent || '';
@@ -510,7 +508,12 @@
 
       var LABEL = { 'mac-arm64': 'macOS 버전 다운로드', 'win': 'Windows 버전 다운로드', '': '다운로드' };
       var platform = isMac ? 'mac-arm64' : (isWin ? 'win' : '');
-      btn.textContent = LABEL[platform];
+      // ★textContent 로 덮으면 안에 넣은 버전 조각까지 지워진다 — 라벨만 담는 span 을 둔다.
+      btn.innerHTML = '';
+      var lbl = document.createElement('span');
+      lbl.className = 'dl-btn-label';
+      lbl.textContent = LABEL[platform];
+      btn.appendChild(lbl);
 
       // 맥이면 칩 안내를 «먼저» 보여준다. 주소는 이미 마크업에 있으니
       // downloads.json 을 못 읽어도 링크는 산다.
@@ -529,10 +532,13 @@
           // ★버전은 «여기서만» 온다. 마크업에 기본값을 안 박았으므로
           //   못 읽으면 이 조각이 아예 안 그려진다 — 낡은 값이 보이는 일이 구조적으로 없다.
           //   (현빈: «현재 홈페이지에 실제로 올라가 있는 파일»의 버전이어야 한다)
-          if (ver && typeof u.version === 'string' && u.version) {
-            ver.textContent = '버전 ' + u.version;
-            ver.hidden = false;
-            alt.hidden = false;
+          if (typeof u.version === 'string' && u.version) {
+            // 버튼 «안»에 붙인다(현빈 2026-09-02). 못 읽으면 이 조각이 아예 안 생기므로
+            // 낡은 버전이 보이는 일은 여전히 구조적으로 없다.
+            var vb = document.createElement('span');
+            vb.className = 'dl-btn-ver';
+            vb.textContent = 'v' + u.version;
+            btn.appendChild(vb);
           }
         })
         .catch(function () { /* 기본 주소로 간다. 버전은 안 그린다 */ });
@@ -567,8 +573,8 @@
       /* scroll-spy -> appnav-spy.js */
   </script>
 
-  <script src="appnav-spy.js"></script>
-  <script src="plans.js"></script>
-  <script src="footer.js"></script>
+  <script src="appnav-spy.js?v=20260902d"></script>
+  <script src="plans.js?v=20260902d"></script>
+  <script src="footer.js?v=20260902d"></script>
 </body>
 </html>
