@@ -34,10 +34,6 @@
              그래서 «채울 말이 있을 때만» 나타나게 한다(아래 스크립트가 hidden 을 푼다). -->
       <p class="section-label" id="su-label" hidden></p>
       <h1 class="auth-title">회원가입</h1>
-      <p class="auth-sub">
-        <span id="su-lead">베타테스트 기간에는 가입 즉시 소문의섬 앱을 전부 쓰실 수 있어요.</span>
-        가입 정보는 계정 관리와 고객 지원에만 씁니다.
-      </p>
 
       <div class="auth-card">
       <form id="signup-form" class="signup-form" novalidate>
@@ -103,7 +99,6 @@
       </form>
       </div>
 
-      <p class="auth-sub" style="margin-top:16px">베타테스트 기간에는 이메일 인증 없이 가입 즉시 이용할 수 있어요.</p>
       <p class="auth-links">
         <a href="login.html">이미 계정이 있어요</a>
         <span class="sep">|</span>
@@ -279,8 +274,6 @@
           // 채울 말이 생겼을 때만 눈꺼풀을 꺼낸다(기본은 비어 있고 숨어 있다)
           if (label) { label.textContent = a.name + ' 시작하기'; label.hidden = false; }
           if (mark && a.icon) { mark.src = a.icon; mark.alt = a.name; mark.hidden = false; }
-          var lead = document.getElementById('su-lead');
-          if (lead) lead.textContent = '베타테스트 기간에는 가입 즉시 ' + a.name + ' 전체 기능을 쓰실 수 있어요.';
         }).catch(function () {});
     })();
   </script>

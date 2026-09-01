@@ -892,10 +892,10 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 #dl-ver:not([hidden]) ~ #dl-mac:not([hidden])::before {
   content: '·'; margin: 0 7px; color: var(--border-strong);
 }
-/* 로그인 안내는 항상 보이므로, 앞에 «보이는 형제가 있을 때만» 점을 받는다. */
-#dl-alt > span:not([hidden]) ~ #dl-login-hint::before {
-  content: '·'; margin: 0 7px; color: var(--border-strong);
-}
+/* ★2줄 배치 (현빈 2026-09-01): 「버전 · 기종」 / 「로그인 안내」.
+   한 줄에 셋을 가운뎃점으로 이으면 길어서 읽기 어렵다.
+   ⇒ 로그인 안내는 «줄바꿈»으로 내린다 — 점은 붙이지 않는다. */
+#dl-login-hint { display: block; margin-top: 6px; }
 .detail-alt a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .detail-alt a:hover { color: var(--accent); }
 .cta-download { min-width: 220px; padding: 12px 26px; font-size: var(--fs-body); font-weight: 700; }
