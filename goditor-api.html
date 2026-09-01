@@ -43,8 +43,30 @@
        이 사이트에서 「왼쪽 정렬 긴 글」은 이미 그 한 벌로 정해져 있다 —
        개발자문서라고 새 룩을 만들면 같은 사이트에 서체·여백이 두 벌 생긴다.
        새로 추가한 건 코드블록·노트박스·도구칩 셋뿐이다(style.css 「개발자문서」 구간). -->
-  <section class="legal">
-    <div class="legal-inner">
+  <section class="legal doc-layout">
+    <!-- ★왼쪽 목차 (현빈 2026-09-01, 토스 개발자문서 방식).
+         문서 «내용»은 손대지 않았다 — 제목에 id 만 붙이고 길을 냈다.
+         스크롤에 따라 현재 절이 표시된다. ★JS 가 없어도 링크는 그대로 동작한다. -->
+    <aside class="doc-toc" aria-label="문서 목차">
+      <nav>
+        <p class="doc-toc-grp">시작하기</p>
+        <a href="#connect">연결하기</a>
+        <a href="#token">접속 토큰</a>
+        <a href="#userbusy">USER_BUSY</a>
+        <p class="doc-toc-grp">도구 71개</p>
+        <a href="#t-read">읽기 · 검색 · 상태 <span>8</span></a>
+        <a href="#t-section">섹션 제어 <span>6</span></a>
+        <a href="#t-add">블록 추가 <span>27</span></a>
+        <a href="#t-update">블록 수정 <span>26</span></a>
+        <a href="#t-delete">삭제 · 구조 <span>2</span></a>
+        <a href="#t-project">프로젝트 <span>1</span></a>
+        <a href="#t-diag">연결 진단 <span>1</span></a>
+        <p class="doc-toc-grp">참고</p>
+        <a href="#example">짧은 예시</a>
+        <a href="#notes">알아둘 것</a>
+      </nav>
+    </aside>
+    <div class="legal-inner doc-main">
       <a href="goditor.html" class="detail-back">← GODITOR</a>
       <h1 class="legal-title">개발자문서</h1>
       <p class="legal-meta">MCP 도구 71개 · 로컬 HTTP(127.0.0.1) · Claude 데스크톱 / Claude Code</p>
@@ -71,7 +93,7 @@
       </div>
 
       <section class="legal-sec">
-        <h2 class="legal-h">1. 연결하기</h2>
+        <h2 class="legal-h" id="connect">1. 연결하기</h2>
         <p class="legal-p">
           앱의 <b>환경설정 → 개발자</b> 탭을 열면 「연결 명령」이 그대로 준비되어 있습니다.
           아래는 그 명령이 무엇인지에 대한 설명입니다.
@@ -115,7 +137,7 @@
 
       <!-- ⑵ 토큰 발급/확인 절차 -->
       <section class="legal-sec">
-        <h2 class="legal-h">2. 접속 토큰</h2>
+        <h2 class="legal-h" id="token">2. 접속 토큰</h2>
         <p class="legal-p">
           도구 호출은 <b>전부 토큰을 요구합니다.</b> 토큰이 없거나 틀리면 <code class="doc-c">401</code> 입니다.
           내 컴퓨터 안에서만 열리는 서버지만, 같은 컴퓨터의 다른 프로그램이 마음대로 캔버스를
@@ -146,7 +168,7 @@
 
       <!-- ⑶ USER_BUSY 규약 -->
       <section class="legal-sec">
-        <h2 class="legal-h">3. <code class="doc-c">USER_BUSY</code> — 사람이 우선입니다</h2>
+        <h2 class="legal-h" id="userbusy">3. <code class="doc-c">USER_BUSY</code> — 사람이 우선입니다</h2>
         <p class="legal-p">
           사용자가 캔버스에서 <b>무언가를 입력하고 있는 동안</b>에는, 화면을 바꾸는 도구가
           거부됩니다. 응답은 이렇게 옵니다:
@@ -177,26 +199,26 @@
 
       <!-- ⑷ 도구 목록 -->
       <section class="legal-sec">
-        <h2 class="legal-h">4. 도구 71개</h2>
+        <h2 class="legal-h" id="tools">4. 도구 71개</h2>
         <p class="legal-p">
           각 도구의 파라미터는 MCP <code class="doc-c">tools/list</code> 로 언제든 받아볼 수 있습니다
           (스키마가 «정본»입니다 — 아래 목록은 무엇이 있는지 훑어보기 위한 것입니다).
         </p>
 
-        <h3 class="doc-h3">읽기 · 검색 · 상태 <span class="doc-count">8</span></h3>
+        <h3 class="doc-h3" id="t-read">읽기 · 검색 · 상태 <span class="doc-count">8</span></h3>
         <p class="doc-tools">
           <code>get_canvas_state</code> <code>get_section_memo</code> <code>list_memories</code>
           <code>list_scratch_items</code> <code>read_project</code> <code>read_scratch_item</code>
           <code>read_section</code> <code>search_iconify</code>
         </p>
 
-        <h3 class="doc-h3">섹션 제어 <span class="doc-count">6</span></h3>
+        <h3 class="doc-h3" id="t-section">섹션 제어 <span class="doc-count">6</span></h3>
         <p class="doc-tools">
           <code>add_section</code> <code>build_basic_section</code> <code>delete_section</code>
           <code>move_section</code> <code>set_section_memo</code> <code>update_section</code>
         </p>
 
-        <h3 class="doc-h3">블록 추가 <span class="doc-count">27</span></h3>
+        <h3 class="doc-h3" id="t-add">블록 추가 <span class="doc-count">27</span></h3>
         <p class="doc-tools">
           <code>add_text_block</code> <code>add_asset_block</code> <code>add_canvas_block</code>
           <code>add_frame_block</code> <code>add_gap_block</code> <code>add_table_block</code>
@@ -209,7 +231,7 @@
           <code>add_banner02_block</code> <code>add_card_block</code> <code>add_checklist_item</code>
         </p>
 
-        <h3 class="doc-h3">블록 수정 <span class="doc-count">26</span></h3>
+        <h3 class="doc-h3" id="t-update">블록 수정 <span class="doc-count">26</span></h3>
         <p class="doc-tools">
           <code>update_block</code> <code>update_asset_block</code> <code>update_canvas_block</code>
           <code>update_frame_block</code> <code>update_gap_block</code> <code>update_table_block</code>
@@ -222,17 +244,17 @@
           <code>update_card_block</code> <code>update_checklist_item</code>
         </p>
 
-        <h3 class="doc-h3">삭제 · 구조 <span class="doc-count">2</span></h3>
+        <h3 class="doc-h3" id="t-delete">삭제 · 구조 <span class="doc-count">2</span></h3>
         <p class="doc-tools">
           <code>delete_block</code> <code>insert_gap_after_block</code>
         </p>
 
-        <h3 class="doc-h3">프로젝트 <span class="doc-count">1</span></h3>
+        <h3 class="doc-h3" id="t-project">프로젝트 <span class="doc-count">1</span></h3>
         <p class="doc-tools">
           <code>duplicate_project</code>
         </p>
 
-        <h3 class="doc-h3">연결 진단 <span class="doc-count">1</span></h3>
+        <h3 class="doc-h3" id="t-diag">연결 진단 <span class="doc-count">1</span></h3>
         <p class="doc-tools">
           <code>goditor_which_instance</code>
         </p>
@@ -242,7 +264,7 @@
       </section>
 
       <section class="legal-sec">
-        <h2 class="legal-h">5. 짧은 예시</h2>
+        <h2 class="legal-h" id="example">5. 짧은 예시</h2>
         <p class="legal-p">
           연결이 끝났으면, Claude에게 평소 말로 시키면 됩니다. 도구 이름을 외울 필요는 없습니다:
         </p>
@@ -259,7 +281,7 @@
       </section>
 
       <section class="legal-sec">
-        <h2 class="legal-h">6. 알아둘 것</h2>
+        <h2 class="legal-h" id="notes">6. 알아둘 것</h2>
         <ul class="doc-list">
           <li>도구 목록과 스키마는 <b>앱 버전을 따라갑니다.</b> 이 페이지는 훑어보기용이고,
             정확한 값은 언제나 접속한 앱의 <code class="doc-c">tools/list</code> 응답입니다.</li>
@@ -285,5 +307,25 @@
     </div>
   </footer>
   <script src="footer.js"></script>
+  <script>
+  /* 목차 현재위치 표시 — JS 없어도 링크는 동작한다(점진적 향상). */
+  (function () {
+    var links = [].slice.call(document.querySelectorAll('.doc-toc a'));
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var map = {};
+    links.forEach(function (a) {
+      var el = document.getElementById(a.getAttribute('href').slice(1));
+      if (el) map[el.id] = a;
+    });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        links.forEach(function (a) { a.classList.remove('on'); });
+        if (map[e.target.id]) map[e.target.id].classList.add('on');
+      });
+    }, { rootMargin: '0px 0px -70% 0px', threshold: 0 });
+    Object.keys(map).forEach(function (id) { io.observe(document.getElementById(id)); });
+  })();
+  </script>
 </body>
 </html>

@@ -1011,3 +1011,83 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 .doc-note--warn { border-color: rgba(255,209,102,.35); }
 .doc-note-title { font-size: var(--fs-body); font-weight: 700; color: var(--warn); margin-bottom: 6px; }
 .doc-note-body { font-size: var(--fs-sm); color: var(--muted); line-height: 1.8; }
+
+/* ── 개발자문서 · 왼쪽 목차 (현빈 2026-09-01, 토스 방식) ──────────────
+   ★기존 토큰만 쓴다 — 새 색·서체를 만들지 않는다(사이트에 룩이 두 벌 생기면 안 된다).
+   ⚠️좁은 화면에서는 목차를 숨긴다. 문서 자체는 원래대로 읽힌다(점진적 향상). */
+.doc-layout { display: block; }
+.doc-toc { display: none; }
+
+@media (min-width: 1080px) {
+  .doc-layout {
+    display: grid;
+    grid-template-columns: 216px minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+  .doc-layout .doc-main { max-width: none; margin: 0; }
+  .doc-toc {
+    display: block;
+    position: sticky;
+    top: 88px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  .doc-toc nav { border-left: 1px solid var(--border); }
+  .doc-toc-grp {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    margin: 18px 0 6px;
+    padding-left: 14px;
+  }
+  .doc-toc-grp:first-child { margin-top: 0; }
+  .doc-toc a {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 5px 12px 5px 14px;
+    margin-left: -1px;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    line-height: 1.5;
+  }
+  .doc-toc a:hover { color: var(--fg); }
+  .doc-toc a span { font-family: var(--mono); font-size: 11px; color: var(--subtle); }
+  /* 현재 보고 있는 절 */
+  .doc-toc a.on {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    font-weight: 600;
+  }
+  .doc-toc a.on span { color: var(--accent); }
+  /* 앵커로 점프했을 때 제목이 헤더에 가리지 않게 */
+  .doc-main [id] { scroll-margin-top: 92px; }
+}
+
+/* ── 준비 중 앱 · 토스트 (현빈 2026-09-01) ─────────────────────
+   ★기존 토큰만 쓴다. 새 색을 만들지 않는다. */
+.app-card.is-soon, .hero-app-pill.is-soon { cursor: default; opacity: .55; }
+.app-card.is-soon:hover, .hero-app-pill.is-soon:hover { transform: none; border-color: var(--border); }
+.app-ver {
+  font-family: var(--mono); font-size: 11px; color: var(--subtle);
+  margin-left: 8px; letter-spacing: .02em;
+}
+.soon-toast {
+  position: fixed; left: 50%; bottom: 32px; transform: translate(-50%, 12px);
+  background: var(--bg-elev-hi); color: var(--fg);
+  border: 1px solid var(--border-strong); border-radius: 10px;
+  padding: 11px 18px; font-size: 14px; z-index: 9999;
+  opacity: 0; transition: opacity .22s ease, transform .22s ease;
+  box-shadow: 0 8px 28px rgba(0,0,0,.45); pointer-events: none;
+  max-width: calc(100vw - 32px);
+}
+.soon-toast.on { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { .soon-toast { transition: none; } }

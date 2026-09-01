@@ -136,7 +136,8 @@
         ]
       }
     ],
-    "plansNote": "등급별 기능·금액은 예시입니다. 실제 적용 내용과 다를 수 있어요."
+    "plansNote": "등급별 기능·금액은 예시입니다. 실제 적용 내용과 다를 수 있어요.",
+    "version": "0.8.5"
   },
   {
     "id": "godiv",
@@ -171,7 +172,8 @@
     "tags": [
       "Windows",
       "utility"
-    ]
+    ],
+    "comingSoon": true
   },
   {
     "id": "reviewcrawler",
@@ -190,7 +192,8 @@
       "macOS",
       "Windows",
       "utility"
-    ]
+    ],
+    "comingSoon": true
   },
   {
     "id": "focusflow",

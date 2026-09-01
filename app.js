@@ -13,10 +13,13 @@ async function loadApps() {
   // Hero pills — 개별 stagger: 0.78s 기준, 0.08s 간격
   const bobDurations = [3.5, 4.0, 3.7, 4.1, 3.6, 3.9];
   document.getElementById('hero-apps').innerHTML = apps.map((app, i) => {
-    const href = app.detailUrl || app.buyUrl || app.downloadUrl || '#apps';
+    // ★comingSoon 앱은 «주소 자체를 안 준다» — href 를 지우면 새 탭·주소복사·크롤러까지 막힌다.
+    //   (2026-09-01 현빈: 「버튼뿐 아니라 해당 페이지로 이동도 안 되게」)
+    const soon = !!app.comingSoon;
+    const href = soon ? '' : (app.detailUrl || app.buyUrl || app.downloadUrl || '#apps');
     const delay = (0.78 + i * 0.08).toFixed(2);
     return `
-    <a class="hero-app-pill" href="${href}" style="animation-delay:${delay}s;">
+    <a class="hero-app-pill${soon ? ' is-soon' : ''}"${soon ? ` role="link" aria-disabled="true" data-soon="${app.name}"` : ` href="${href}"`} style="animation-delay:${delay}s;">
       <div class="hero-app-pill-icon">
         <img src="${app.icon}" alt="${app.name}"
              onerror="this.parentElement.textContent='${EMOJI_FALLBACK[app.id]||'📦'}'" />
@@ -35,12 +38,12 @@ async function loadApps() {
   }, 1850);
 
   document.getElementById('app-grid').innerHTML = apps.map(app=>`
-    <a class="app-card card-hidden" href="${app.detailUrl||app.buyUrl||app.downloadUrl||'#'}">
+    <a class="app-card card-hidden${app.comingSoon ? ' is-soon' : ''}"${app.comingSoon ? ` role="link" aria-disabled="true" data-soon="${app.name}"` : ` href="${app.detailUrl||app.buyUrl||app.downloadUrl||'#'}"`}>
       <div class="app-icon"><img src="${app.icon}" alt="${app.name}" onerror="this.parentElement.textContent='${EMOJI_FALLBACK[app.id]||'📦'}'" /></div>
       <div class="app-info">
         <div class="app-name">${app.name}</div>
         <div class="app-tagline">${app.tagline}</div>
-        <div class="app-footer"><span class="app-badge">${app.badge||(app.price==='free'?'free':'paid')}</span><span class="app-arrow">→</span></div>
+        <div class="app-footer"><span class="app-badge">${app.comingSoon ? '준비 중' : (app.badge||(app.price==='free'?'free':'paid'))}</span>${app.version ? `<span class="app-ver">v${app.version}</span>` : ''}<span class="app-arrow">${app.comingSoon ? '' : '→'}</span></div>
       </div>
     </a>`).join('');
   initEntrance('.card-hidden', 'card-visible', 0.1, 70);
@@ -95,3 +98,39 @@ setTimeout(scheduleWave, 2500);
 
 loadApps();
 loadVideos();
+
+/* ── 준비 중 앱 클릭 안내 (현빈 2026-09-01) ─────────────────────────
+   ★두 겹으로 막는다:
+     ⑴ 카드/필에 href 를 «안 준다» — 새 탭·주소복사·크롤러까지 막힌다(app.js 렌더부)
+     ⑵ 그래도 주소를 직접 치고 들어오면 그 페이지에서 되돌린다(각 페이지 head 의 가드)
+   토스트를 쓴 이유: 모달은 «닫기»를 요구해 한 번 더 일을 시킨다. 안내만 하면 되는 자리다. */
+function showSoonToast(name) {
+  var prev = document.querySelector('.soon-toast');
+  if (prev) prev.remove();
+  var t = document.createElement('div');
+  t.className = 'soon-toast';
+  t.setAttribute('role', 'status');
+  t.textContent = (name ? name + ' 은(는) ' : '') + '아직 준비 중입니다.';
+  document.body.appendChild(t);
+  requestAnimationFrame(function () { t.classList.add('on'); });
+  setTimeout(function () {
+    t.classList.remove('on');
+    setTimeout(function () { t.remove(); }, 260);
+  }, 2400);
+}
+/* 위임 — 나중에 그려지는 카드에도 걸린다 */
+document.addEventListener('click', function (e) {
+  var el = e.target.closest && e.target.closest('[data-soon]');
+  if (!el) return;
+  e.preventDefault();
+  showSoonToast(el.getAttribute('data-soon'));
+});
+
+/* 준비 중 페이지에서 되돌아온 경우 — 왜 튕겼는지 알려준다 */
+(function () {
+  try {
+    var n = sessionStorage.getItem('soon');
+    if (n) { sessionStorage.removeItem('soon');
+      window.addEventListener('DOMContentLoaded', function () { showSoonToast(n); }); }
+  } catch (e) {}
+})();
