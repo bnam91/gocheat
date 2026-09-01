@@ -26,9 +26,14 @@
 
   <section class="auth">
     <img src="/assets/icons/goditor.png" alt="" class="auth-mark" id="lg-mark" width="52" height="52" hidden />
-    <p class="section-label" id="lg-label">소문의섬 로그인</p>
+    <!-- ★기본 문구 제거(현빈 2026-09-01). 요소는 «남긴다» — 주문/다운로드에서 넘어오면
+         JS 가 「GODITOR 로그인」처럼 채운다. hidden 이라 채울 말이 없으면 «안 보인다». -->
+    <p class="section-label" id="lg-label" hidden></p>
     <h1 class="auth-title" id="login-title">로그인</h1>
-    <p class="auth-sub" id="login-sub">가입할 때 쓴 이메일과 비밀번호를 입력하세요.</p>
+    <!-- ★기본 문구 제거(현빈 2026-09-01). ⛔요소는 «지우지 않는다» —
+         로그인 후 안내(주문 복귀·다운로드 이동·요금제)에서 sub.textContent 를 4곳이 쓴다.
+         지우면 null 참조로 그 흐름이 통째로 끊긴다(이 파일 UL-005 주석의 사고와 같은 형태). -->
+    <p class="auth-sub" id="login-sub"></p>
 
     <div class="auth-card">
       <form id="login-form" class="signup-form" novalidate>
