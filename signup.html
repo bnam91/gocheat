@@ -55,16 +55,13 @@
 
              ★왜 잠갔나: 개인정보 수집·이용 동의는 «고지사항»이 있어야 성립하는데
                data/legal.json 의 약관 본문이 아직 비어 있다(사업자정보 대기).
-               빈 고지로 성함·전화번호·생년월일을 받으면 안 된다.
+               빈 고지로 성함·전화번호를 받으면 안 된다.
              ★기본값이 «안전한 쪽»이다 — flags 를 못 읽어도(fetch 실패·구버전 캐시)
                구간은 지워진 채로 남는다. 열려면 명시적으로 true 여야 한다. -->
         <div id="ext-block" class="ext-block" hidden>
           <label class="signup-label" for="name">이름</label>
           <input id="name" name="name" type="text" class="signup-input" placeholder="홍길동"
                  autocomplete="name" maxlength="40" required />
-
-          <label class="signup-label" for="birth">생년월일</label>
-          <input id="birth" name="birth" type="date" class="signup-input" required />
 
           <label class="signup-label" for="phone">휴대전화</label>
           <div class="field-row">
@@ -182,7 +179,6 @@
         var v = function (id) { var el = document.getElementById(id); return el ? el.value : ''; };
         var c = function (id) { var el = document.getElementById(id); return !!(el && el.checked); };
         var name     = (v('name') || '').trim();
-        var birth    = v('birth') || '';
         var phone    = (v('phone') || '').trim();
         var marketing= c('agree-marketing');
 
@@ -193,7 +189,6 @@
         if (password !== pw2)                return bad('비밀번호가 서로 달라요.', document.getElementById('password2'));
         if (extOpen) {
           if (!name)                         return bad('이름을 입력해 주세요.', document.getElementById('name'));
-          if (!birth)                        return bad('생년월일을 선택해 주세요.', document.getElementById('birth'));
           if (phone.length < 10)             return bad('휴대전화 번호를 정확히 입력해 주세요.', document.getElementById('phone'));
           if (!c('agree-terms'))             return bad('이용약관과 개인정보 처리방침에 동의해 주세요.', document.getElementById('agree-terms'));
         }
@@ -212,7 +207,7 @@
               { email: email, password: password },
               extOpen ? {
                 // ★개인정보는 profile 하나로 묶어 보낸다 — 나중에 지울 때 한 덩어리로 지운다
-                profile: { name: name, birth: birth, phone: phone },
+                profile: { name: name, phone: phone },
                 consents: { terms: true, marketing: marketing },
               } : {}
             )),
