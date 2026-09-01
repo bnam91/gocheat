@@ -3,8 +3,8 @@
   "_note": "서버는 여전히 env(DOWNLOAD_URL_GODITOR_*)로 덮어쓸 수 있다. env 가 있으면 env 가 이긴다.",
   "_platforms": "'' 는 «모르는 OS» — 세 폴더가 다 보이는 상위 폴더로 보낸다. 화면의 <a href> 기본값도 이 값이다.",
   "goditor": {
-    "version": "0.8.2",
-    "_version": "★드라이브에 «실제로 올라가 있는» 파일의 버전이다. 레포 package.json 도, 로컬 빌드도 아니다 — 배포본 실물에서 확인했다. 0.8.2 확인: 드라이브 3폴더 실물 대조 — GODITOR-0.8.2-arm64.dmg(190,636,375B) · GODITOR-0.8.2.dmg(198,952,407B) · GODITOR-Setup-0.8.2.exe(176,216,372B), GitHub Releases v0.8.2 자산과 동일 바이트. 구버전 0.7.2 는 「이전 버전」 하위 폴더로 내려가 있다. ★드라이브 파일을 갈면 여기도 «같이» 고친다 — 주소와 버전은 같이 바뀌는 값이라 한 자리에 둔다. release-gate.sh drive 가 대조한다. ★순서: 드라이브 교체가 «먼저», 표기가 «나중». 뒤집으면 «0.8.2라고 써놓고 0.7.2가 받아지는» 상태가 생긴다.",
+    "version": "0.8.5",
+    "_version": "★드라이브에 «실제로 올라가 있는» 파일의 버전이다. 레포 package.json 도, 로컬 빌드도 아니다 — 배포본 실물에서 확인했다. 0.8.5 확인: 드라이브 3폴더 실물 대조 — GODITOR-0.8.5-arm64.dmg(191,062,690B) · GODITOR-0.8.5.dmg(199,378,738B) · GODITOR-Setup-0.8.5.exe(176,527,544B), GitHub Releases v0.8.5 자산과 동일 바이트(release-gate.sh drive 0.8.5 실측, 2026-09-01). 구버전 0.8.4 는 「v0.8.4」 하위 폴더로 내려가 있다. ★드라이브 파일을 갈면 여기도 «같이» 고친다 — 주소와 버전은 같이 바뀌는 값이라 한 자리에 둔다. release-gate.sh drive 가 대조한다. ★순서: 드라이브 교체가 «먼저», 표기가 «나중». 뒤집으면 «0.8.5라고 써놓고 0.8.4가 받아지는» 상태가 생긴다. ★이 값은 «두 곳»에 나간다 — Vercel(hompageapp.vercel.app, main push 자동배포)과 EC2 docroot(/opt/goditor-api/data/downloads.json, blacksheepwall.kr). EC2 는 자동배포가 «아니다» — 손으로 같이 갈아야 라이브 사용자가 새 버전을 본다.",
     "mac-arm64": "https://drive.google.com/drive/folders/1HqfwZGX18Yjqx_paqmLdMNKeSMMSGMc_",
     "mac-intel": "https://drive.google.com/drive/folders/1lQ5_nEoNFTw0rEIYHSey5UJN-a9KkKBu",
     "win": "https://drive.google.com/drive/folders/1FmBX7zcWuBg5bYXFDCd006mZs0I5lNKH",
