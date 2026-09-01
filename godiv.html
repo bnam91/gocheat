@@ -77,7 +77,11 @@
          ★내비 탭에서는 뺐지만(현빈) 본문은 남긴다 — 법적 고지다.
          ★섹션의 id="privacy" 는 그대로 둔다(웹스토어 심사 URL /godiv.html#privacy). ── */
     .privacy-details {
-      max-width: var(--read); margin: 22px auto 0; text-align: left;
+      /* ★width:100% 가 «있어야» 한다. 부모 .pricing-inner 가 align-items:center 인 flex 라
+         폭을 안 주면 내용 폭(265px)으로 쪼그라든다 — 법적 고지 상자가 알약만 해진다.
+         공용 css 도 goditor 의 같은 자리(.pricing-inner > .future-pay)에 똑같이
+         max-width + width:100% 를 준다(style.css:694). 같은 패턴을 그대로 따른다. */
+      max-width: var(--read); width: 100%; margin: 22px auto 0; text-align: left;
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
     }
     .privacy-details > summary {
