@@ -482,6 +482,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 @media (min-width: 561px) and (max-width: 859px) {
   .plan-card:last-child:nth-child(odd) { grid-column: span 2; }
 }
+/* ★body 가 flex 라 «남는 공간을 먹는» 자식이 없으면 합계가 뷰포트를 넘긴다.
+   columns.html 은 <main> 이 없어 푸터를 붙이자 932>900 이 되며 스크롤바가 생겼다.
+   글 한 줄 없는 「준비 중」 페이지라 더 눈에 띈다. */
+.col-empty.is-fill { flex: 1; }
 .plan-card {
   background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
