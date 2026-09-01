@@ -12,7 +12,9 @@ async function loadApps() {
 
   // Hero pills — 개별 stagger: 0.78s 기준, 0.08s 간격
   const bobDurations = [3.5, 4.0, 3.7, 4.1, 3.6, 3.9];
-  document.getElementById('hero-apps').innerHTML = apps.map((app, i) => {
+  // ★요소가 없으면 조용히 지나간다 — 히어로 앱버튼 절을 주석 처리해도 안 죽는다.
+  const heroEl = document.getElementById('hero-apps');
+  if (heroEl) heroEl.innerHTML = apps.map((app, i) => {
     // ★comingSoon 앱은 «주소 자체를 안 준다» — href 를 지우면 새 탭·주소복사·크롤러까지 막힌다.
     //   (2026-09-01 현빈: 「버튼뿐 아니라 해당 페이지로 이동도 안 되게」)
     const soon = !!app.comingSoon;
@@ -37,7 +39,9 @@ async function loadApps() {
     });
   }, 1850);
 
-  document.getElementById('app-grid').innerHTML = apps.map(app=>`
+  // ★프로덕트 섹션을 주석 처리해도 안 죽는다.
+  const gridEl = document.getElementById('app-grid');
+  if (gridEl) gridEl.innerHTML = apps.map(app=>`
     <a class="app-card card-hidden${app.comingSoon ? ' is-soon' : ''}"${app.comingSoon ? ` role="link" aria-disabled="true" data-soon="${app.name}"` : ` href="${app.detailUrl||app.buyUrl||app.downloadUrl||'#'}"`}>
       <div class="app-icon"><img src="${app.icon}" alt="${app.name}" onerror="this.parentElement.textContent='${EMOJI_FALLBACK[app.id]||'📦'}'" /></div>
       <div class="app-info">
@@ -50,7 +54,11 @@ async function loadApps() {
 }
 
 function loadVideos() {
-  document.getElementById('yt-list').innerHTML = RECENT_VIDEOS.map(v=>`
+  // ★요소가 없으면 «조용히» 지나간다 — 절을 주석 처리해도 TypeError 로 뒤 코드가 안 죽는다.
+  //   (「없는 id 참조」로 결제 퍼널이 통째로 끊겼던 전례가 있다 — login.html UL-005 주석)
+  const list = document.getElementById('yt-list');
+  if (!list) return;
+  list.innerHTML = RECENT_VIDEOS.map(v=>`
     <li class="yt-item yt-hidden"><span class="yt-title">${v.title}</span><span class="yt-date">${v.date}</span></li>`).join('');
   initEntrance('.yt-hidden', 'yt-visible', 0.2, 50);
 }
