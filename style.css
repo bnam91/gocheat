@@ -71,7 +71,10 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 .nav-links a:focus-visible { outline: none; color: var(--accent); }
 
 /* ===== HERO ===== */
-.hero { max-width: var(--width); margin: 0 auto; padding: 80px 24px 100px; text-align: center; }
+/* padding-top 126px = 원래 80px + 아이브로(.hero-badge)가 차지하던 46px.
+   라벨을 걷어내니(2026-09-01 미사여구 정리) 카피가 위로 붙어 보였다 — 실측해서 그만큼 되돌린다.
+   ★라벨을 다시 넣으면 이 값을 80px 로 되돌릴 것. */
+.hero { max-width: var(--width); margin: 0 auto; padding: 126px 24px 100px; text-align: center; }
 .hero-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px; }
 .hero-title {
   font-size: var(--fs-hero);
