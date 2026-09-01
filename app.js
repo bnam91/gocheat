@@ -118,7 +118,9 @@ function showSoonToast(name) {
   var t = document.createElement('div');
   t.className = 'soon-toast';
   t.setAttribute('role', 'status');
-  t.textContent = (name ? name + ' 은(는) ' : '') + '아직 준비 중입니다.';
+  // ★「은(는)」 를 그대로 내보내면 자리표시자가 화면에 보인다.
+  //   이름은 GOSHOT·REVIEW CRAWLER 처럼 영문이라 «는» 으로 읽힌다.
+  t.textContent = (name ? name + '는 ' : '') + '아직 준비 중입니다.';
   document.body.appendChild(t);
   requestAnimationFrame(function () { t.classList.add('on'); });
   setTimeout(function () {

@@ -58,6 +58,9 @@
  *   production 이면 아무것도 그리지 않는다.
  */
 (function () {
+  // ★개발 배포 배너용이다. 프로덕션엔 이 엔드포인트가 없어 «전 페이지 콘솔에 404»가 찍혔고,
+  //   진짜 에러를 덮었다. 라이브 도메인에서는 부르지 않는다(배너가 필요한 곳은 vercel·로컬뿐).
+  if (/(^|\.)blacksheepwall\.kr$/.test(location.hostname)) return;
   fetch('/api/env', { cache: 'no-store' })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (e) {

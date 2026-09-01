@@ -518,7 +518,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .order-result-val { color: var(--fg); font-weight: 600; text-align: right; word-break: break-all; }
 .order-warn { font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; text-align: center; margin-top: 4px; }
 
-@media (max-width: 900px) { .plan-grid { grid-template-columns: repeat(2, 1fr); } }
+/* ★2열 분기 삭제 (2026-09-02): 3등급이 되니 900px 이하에서 2+1 로 깨져
+   셋째 카드만 아랫줄 왼쪽에 혼자 남았다. auto-fit(minmax 220px) 에 맡긴다. */
 @media (max-width: 560px) { .plan-grid { grid-template-columns: 1fr; } .pricing { padding-left: 20px; padding-right: 20px; } }
 
 /* ===== ACCOUNT STATUS (login.html 로그인 후) ===== */
