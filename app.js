@@ -118,9 +118,11 @@ function showSoonToast(name) {
   var t = document.createElement('div');
   t.className = 'soon-toast';
   t.setAttribute('role', 'status');
-  // ★「은(는)」 를 그대로 내보내면 자리표시자가 화면에 보인다.
-  //   이름은 GOSHOT·REVIEW CRAWLER 처럼 영문이라 «는» 으로 읽힌다.
-  t.textContent = (name ? name + '는 ' : '') + '아직 준비 중입니다.';
+  // ★조사를 «쓰지 않는» 문구로 둔다.
+  //   「은(는)」 은 자리표시자가 그대로 보였고, 「는」 으로 박으면 GOSHOT(고샷)처럼
+  //   받침 있는 이름에서 틀린다. 영문 이름은 «글자 읽기»(티)와 «브랜드 읽기»(샷)가
+  //   달라 규칙으로 맞출 수 없다 — 앱이 늘 때마다 틀리느니 조사를 없앤다.
+  t.textContent = (name ? name + ' — ' : '') + '아직 준비 중입니다.';
   document.body.appendChild(t);
   requestAnimationFrame(function () { t.classList.add('on'); });
   setTimeout(function () {
