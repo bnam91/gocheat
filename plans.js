@@ -60,7 +60,8 @@
           + '<p class="plan-price">' + priceHtml + '</p>'
           // 무료 등급만 «항상» 이라는 정보가 따로 있다. 유료 등급은 위에서 이미 말했으니 비운다
           // (빈 줄을 남겨 카드 넷의 세로 축은 맞춘다).
-          + '<p class="plan-price-note">' + (p.id === 'free' ? '언제나 무료' : '') + '</p>'
+          // ★빈 <p> 를 그리지 않는다 — FREE 가 사라진 뒤로는 늘 비어 있어 «빈 줄»만 남았다.
+          + (p.priceNote ? '<p class="plan-price-note">' + esc(p.priceNote) + '</p>' : '')
           + '<div class="plan-divider"></div>'
           + '<ul class="plan-features">' + feats + '</ul>'
           + (p.id === 'free'

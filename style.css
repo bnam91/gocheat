@@ -469,7 +469,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .event-banner-tag { font-family: var(--mono); font-size: var(--fs-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
 .event-banner-text { font-size: var(--fs-sm); font-weight: 600; color: var(--fg); }
 
-.plan-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: 100%; margin-top: 30px; align-items: stretch; }
+/* ★등급 «개수»를 CSS 에 적지 않는다(현빈 2026-09-02: FREE 삭제로 4→3).
+   repeat(4,1fr) 로 박아 두니 3장일 때 한 칸이 비어 카드가 좁아지고 버튼 글자가 두 줄로 접혔다.
+   auto-fit 이면 등급이 늘거나 줄어도 CSS 를 다시 안 고쳐도 된다. */
+.plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; width: 100%; margin-top: 30px; align-items: stretch; }
 .plan-card {
   background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
@@ -486,7 +489,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-card:has(.plan-ribbon)::before { display: none; }
 .plan-name { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .plan-price { font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
-.plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 21px; }
+.plan-price-note { font-size: var(--fs-xs); color: var(--subtle); }
 .plan-divider { width: 100%; border-top: 1px solid var(--border); margin: 6px 0; }
 .plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; width: 100%; flex: 1; }
 .plan-features li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; display: flex; gap: 7px; align-items: baseline; justify-content: flex-start; text-align: left; }
