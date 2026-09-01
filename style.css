@@ -485,7 +485,13 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 /* ★body 가 flex 라 «남는 공간을 먹는» 자식이 없으면 합계가 뷰포트를 넘긴다.
    columns.html 은 <main> 이 없어 푸터를 붙이자 932>900 이 되며 스크롤바가 생겼다.
    글 한 줄 없는 「준비 중」 페이지라 더 눈에 띈다. */
-.col-empty.is-fill { flex: 1; }
+.col-empty.is-fill {
+  flex: 1; min-height: 0;
+  /* 남는 공간을 먹는 요소가 되면 하단 여백(최대 160px)은 필요 없다 —
+     그 여백 때문에 내용 최소높이가 464px 이 되어 900 안에 못 들어갔다.
+     대신 가운데 정렬로 두면 빈 상태가 화면 중앙에 앉는다. */
+  padding-bottom: 24px; justify-content: center;
+}
 .plan-card {
   background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
