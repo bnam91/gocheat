@@ -1031,11 +1031,13 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 
 /* ── 개발자문서 · 왼쪽 목차 (현빈 2026-09-01, 토스 방식) ──────────────
    ★기존 토큰만 쓴다 — 새 색·서체를 만들지 않는다(사이트에 룩이 두 벌 생기면 안 된다).
-   ⚠️좁은 화면에서는 목차를 숨긴다. 문서 자체는 원래대로 읽힌다(점진적 향상). */
+   ★기준폭 1080→900 (현빈 2026-09-02): 노트북 창을 조금만 좁혀도 목차가 사라져
+       「목차를 안 만들었다」로 보였다 — 실측상 1024px 에서 이미 안 보였다.
+     ⚠️900 미만에서만 숨긴다. 문서 자체는 원래대로 읽힌다(점진적 향상). */
 .doc-layout { display: block; }
 .doc-toc { display: none; }
 
-@media (min-width: 1080px) {
+@media (min-width: 900px) {
   .doc-layout {
     display: grid;
     grid-template-columns: 216px minmax(0, 1fr);
