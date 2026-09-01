@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark" />
   <meta name="theme-color" content="#0B0B0E" />
-  <title>GODIV — Product image downloader · 소문의섬</title>
+  <title>GODIV · 소문의섬</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
@@ -13,13 +13,13 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 
-  <!-- ★Scope styles for godiv.html only — the shared style.css is «left untouched»
-       (it affects other pages such as goditor). Uses «the same tokens» as goditor.html:
-       no new colors, no new typefaces are introduced.
-       Five things fixed here: ① identity band ② no empty screenshot slot → single column
-       ③ mobile horizontal clipping ④ left-align how/privacy ⑤ privacy policy collapse. -->
+  <!-- ★이 <style> 은 godiv.html «에만» 걸린다 — 공용 style.css 는 손대지 않는다
+       (다른 페이지, 특히 goditor 에 같이 먹는다). 쓰는 토큰은 goditor.html 과 «같은 것»뿐이다:
+       새 색·새 서체를 만들지 않았다.
+       여기서 처리하는 다섯 가지: ① 정체성 띠 ② 스크린샷 자리가 비어서 → 한 단
+       ③ 모바일 가로 잘림 ④ 사용법·개인정보 왼쪽 정렬 ⑤ 개인정보 처리방침 접기. -->
   <style>
-    /* ── ① Identity band — right below the hero. States «why this is special» in one block ── */
+    /* ── ① 정체성 띠 — 히어로 바로 아래. «이게 왜 다른지»를 한 덩이로 말한다 ── */
     .godiv-identity { max-width: var(--read); margin: 0 auto; padding: 0 24px var(--sp-section); }
     .godiv-identity-card {
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
@@ -32,11 +32,11 @@
     .godiv-identity-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.75; text-align: left; padding-top: 4px; border-top: 1px solid var(--border); }
     .godiv-identity-note b { color: var(--muted); font-weight: 600; }
 
-    /* ── ② Features — this page has «no app screenshots yet» (we don't invent them).
-         So instead of a two-column grid we stack cleanly in a single column.
-         goditor has screenshots and alternates left/right, but on a page with no
-         screenshots, spreading empty slots left and right reads as «unfinished» —
-         that was exactly what made this page look less polished. ── */
+    /* ── ② 기능 — 이 페이지엔 «앱 화면이 아직 없다»(없는 걸 지어내지 않는다).
+         그래서 goditor 처럼 좌우로 교차시키지 않고 한 단으로 쌓는다.
+         goditor 는 스크린샷이 있어서 좌우 교차가 성립하지만, 스크린샷이 없는 페이지에서
+         빈 자리를 좌우로 벌리면 «덜 만든 것»으로 읽힌다 — 이 페이지가 덜 다듬어져
+         보였던 이유가 정확히 그것이었다. ── */
     .godiv-feature-list { display: flex; flex-direction: column; gap: 14px; margin-top: var(--sp-section); }
     .godiv-feature-item {
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
@@ -50,15 +50,15 @@
       white-space: nowrap;
     }
 
-    /* ── ③ How to use — left-aligned numbered steps.
-         The shared css has «no» .how-steps style, so the default marker fell to the
-         left of centered body text and looked misaligned. We pin it explicitly here. ── */
+    /* ── ③ 사용법 — 왼쪽 정렬 번호 단계.
+         공용 css 에 .how-steps 규칙이 «없어서» 기본 마커가 가운데 정렬된 본문 왼쪽으로
+         떨어져 어긋나 보였다. 여기서 명시적으로 고정한다. ── */
     .how-steps {
       list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 12px;
       max-width: var(--read); margin: 24px auto 0; text-align: left;
     }
-    /* ★Keep as block — with flex, <b>your GODITOR account</b> becomes a separate flex item
-       and the text flow breaks apart. The number circle is placed absolutely. */
+    /* ★block 으로 둔다 — flex 로 두면 <b>GODITOR 계정</b> 이 별도 flex 아이템이 되어
+       문장 흐름이 끊긴다. 번호 동그라미는 absolute 로 앉힌다. */
     .how-steps li {
       counter-increment: step; position: relative; padding-left: 46px;
       font-size: var(--fs-body); color: var(--muted); line-height: 1.6;
@@ -73,8 +73,9 @@
     }
     .how-steps b { color: var(--fg); font-weight: 600; }
 
-    /* ── ④ Privacy policy — «collapsible». Only the summary shows; expand for the full text.
-         ★The section's id="privacy" stays as is (Web Store review URL /godiv.html#privacy). ── */
+    /* ── ④ 개인정보 처리방침 — «접는다». 요약만 보이고, 펼치면 전문이 나온다.
+         ★내비 탭에서는 뺐지만(현빈) 본문은 남긴다 — 법적 고지다.
+         ★섹션의 id="privacy" 는 그대로 둔다(웹스토어 심사 URL /godiv.html#privacy). ── */
     .privacy-details {
       max-width: var(--read); margin: 22px auto 0; text-align: left;
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
@@ -86,9 +87,9 @@
     }
     .privacy-details > summary::-webkit-details-marker { display: none; }
     .privacy-details > summary::after {
-      content: 'Expand +'; font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0;
+      content: '펼치기 +'; font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0;
     }
-    .privacy-details[open] > summary::after { content: 'Collapse −'; }
+    .privacy-details[open] > summary::after { content: '접기 −'; }
     .privacy-details[open] > summary { border-bottom: 1px solid var(--border); }
     .privacy-details > summary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); border-radius: var(--radius); }
     .privacy-body { padding: 10px 22px 22px; text-align: left; display: flex; flex-direction: column; gap: 4px; }
@@ -97,152 +98,171 @@
     .privacy-body li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.7; padding-left: 14px; position: relative; text-align: left; }
     .privacy-body li::before { content: '·'; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
 
-    /* ── ⑤ Mobile — prevent horizontal clipping (wrap the long title + container padding) ── */
+    /* ── ⑤ 모바일 — 가로로 잘리지 않게 한다(긴 제목 줄바꿈 + 컨테이너 여백) ── */
     @media (max-width: 600px) {
       .godiv-identity, .godiv-feature-list { padding-left: 20px; padding-right: 20px; }
       .godiv-identity-card { padding: 22px 18px; }
       .godiv-feature-item { padding: 20px 18px; }
       .privacy-details > summary { padding: 16px 18px; }
       .privacy-body { padding: 10px 18px 18px; }
-      /* The title used to overflow one line and get clipped on the right.
-         ★The key was «bounding the width», not the font size — the flex item
-         (.detail-meta) didn't take full width, so the title grew to its content
-         width (one line) and spilled outside the container.
-         Bounding it with width:100% lets it wrap on word boundaries. Size drops one step. */
+      /* 제목이 한 줄을 넘겨 오른쪽이 잘렸던 자리다.
+         ★핵심은 글자 크기가 아니라 «폭을 묶는 것»이었다 — flex 아이템(.detail-meta)이
+         전체 폭을 안 먹어서 제목이 자기 내용 폭(한 줄)까지 자라 컨테이너 밖으로 나갔다.
+         width:100% 로 묶어두면 단어 경계에서 줄이 바뀐다.
+         ★제목은 goditor 기준으로 「GODIV」 한 단어로 줄었지만(2026-09-02) 이 가드는 남긴다 —
+           제목이 다시 길어져도 잘리지 않는다. */
       .detail-header, .detail-meta { width: 100%; }
       .detail-title { font-size: clamp(30px, 8.5vw, 40px); max-width: 100%; }
     }
   </style>
 </head>
 <body>
+  <!-- ★내비 골격은 goditor.html 과 «같다». 탭은 개요·요금제 둘.
+       개발자문서는 GODIV 에 없어서 넣지 않았고, 개인정보는 탭에서 뺐다(현빈) —
+       본문은 아래 #privacy 에 그대로 있다. -->
   <header>
-    <nav class="nav--app" aria-label="소문의섬 · GODIV navigation">
+    <nav class="nav--app" aria-label="소문의섬 · GODIV 내비게이션">
       <div class="nav-left">
         <a href="/" class="logo">소문의섬</a>
         <span class="nav-crumb-sep" aria-hidden="true">›</span>
         <span class="nav-crumb-current">GODIV</span>
         <div class="nav-sections">
-          <a href="#overview" class="appnav-link" data-spy="overview">Overview</a>
-          <a href="#how" class="appnav-link" data-spy="how">How to use</a>
-          <a href="#privacy" class="appnav-link" data-spy="privacy">Privacy</a>
+          <a href="#overview" class="appnav-link" data-spy="overview">개요</a>
+          <a href="#pricing" class="appnav-link" data-spy="pricing">요금제</a>
         </div>
       </div>
       <div class="nav-links">
-        <a href="login.html">Log in</a>
-        <a href="signup.html">Sign up</a>
+        <a href="login.html">로그인</a>
+        <a href="signup.html">회원가입</a>
       </div>
     </nav>
   </header>
 
-  <!-- ① Hero — what this is, in one line -->
+  <!-- ① 히어로 — 말하는 한 가지: «이게 뭔지» -->
   <section class="detail" id="overview">
     <div class="detail-inner">
       <div class="detail-header">
         <div class="detail-icon">
-          <img src="/assets/icons/godiv.png" alt="GODIV app icon" width="72" height="72" />
+          <img src="/assets/icons/godiv.png" alt="GODIV 앱 아이콘" width="72" height="72" />
         </div>
         <div class="detail-meta">
-          <h1 class="detail-title">GODIV Product Image Downloader</h1>
-          <p class="detail-lead">Save every image on a product detail page — in order — with a single click.</p>
+          <h1 class="detail-title">GODIV</h1>
+          <p class="detail-lead">상품 상세페이지의 이미지를 순서 그대로 한 번에 내려받습니다.</p>
         </div>
       </div>
       <div class="detail-cta">
-        <a class="cta-primary" href="#how">See how it works</a>
+        <a class="cta-primary" href="#how">사용법 보기</a>
       </div>
       <p class="detail-alt">
-        <span>Chrome extension · coming soon to the Web Store.</span>
+        <span>크롬 확장 프로그램 · 웹스토어 등록 준비 중입니다.</span>
       </p>
     </div>
   </section>
 
-  <!-- ⑤ Identity — original images, not a screen capture. The difference from GoFullPage. Who it's for. A hint about goditor integration -->
-  <section class="godiv-identity" aria-label="About GODIV">
+  <!-- ② 정체성 — 화면 캡처가 아니라 원본. GoFullPage 와의 차이. 누구를 위한 건지. goditor 연동 예고 -->
+  <section class="godiv-identity" aria-label="GODIV 소개">
     <div class="godiv-identity-card">
-      <p class="godiv-identity-eyebrow">It doesn't photograph the screen — it fetches the originals</p>
-      <h2>Not a screenshot — the original image files exactly as they were uploaded to the detail page.</h2>
-      <p>GODIV does not <span class="hl">capture the detail page as a screen image.</span> It downloads the
-        <span class="hl">original image files</span> that are actually on the page. So the quality never degrades,
-        and it keeps the same sharpness the images had when they were first uploaded.</p>
-      <p>Screen-capture tools like GoFullPage photograph <span class="hl">what's visible on screen</span>, so text and
-        fine detail get smeared — but GODIV pulls the originals, so you get
-        <span class="hl">the same quality you can reuse in your own product listings.</span></p>
-      <p class="godiv-identity-note">Made for <b>online store operators</b> who list products and the <b>designers</b> who work on detail pages.
-        It will integrate with the detail-page editing tool <b>goditor (GODITOR)</b> in the future.</p>
+      <p class="godiv-identity-eyebrow">화면을 찍지 않고 원본을 받아옵니다</p>
+      <h2>스크린샷이 아니라, 상세페이지에 올라간 그대로의 원본 이미지 파일입니다.</h2>
+      <p>GODIV 는 상세페이지를 <span class="hl">화면 이미지로 캡처하지 않습니다.</span> 페이지에 실제로 올라와 있는
+        <span class="hl">원본 이미지 파일</span>을 내려받습니다. 그래서 화질이 떨어지지 않고, 처음 올렸을 때의
+        선명도를 그대로 유지합니다.</p>
+      <p>GoFullPage 같은 화면 캡처 도구는 <span class="hl">화면에 보이는 것</span>을 찍기 때문에 글자와 세부가 뭉갭니다.
+        GODIV 는 원본을 가져오므로 <span class="hl">내 상세페이지에 다시 쓸 수 있는 화질</span>로 남습니다.</p>
+      <p class="godiv-identity-note">상품을 등록하는 <b>온라인 스토어 운영자</b>와 상세페이지를 만드는 <b>디자이너</b>를 위해 만들었습니다.
+        앞으로 상세페이지 편집 도구 <b>GODITOR</b> 와 연동됩니다.</p>
     </div>
   </section>
 
-  <!-- ② Intro + 3 features (no screenshots yet, so a single column instead of a left/right grid) -->
+  <!-- ③ 주요 기능 — 앱 화면이 아직 없어서 좌우 교차 대신 한 단으로 쌓는다 -->
   <section class="features">
     <div class="features-inner">
+      <h2 class="section-h">주요 기능</h2>
       <p class="features-lead">
-        It saves the body images on the product detail page you're currently viewing in your browser to your
-        downloads folder, top to bottom, in the same order. Supports Naver Smart Store / Brand Store, Coupang, and Wadiz.
+        지금 브라우저에서 보고 있는 상품 상세페이지의 본문 이미지를, 위에서 아래 순서 그대로
+        다운로드 폴더에 저장합니다. 네이버 스마트스토어·브랜드스토어, 쿠팡, 와디즈를 지원합니다.
       </p>
     </div>
 
     <div class="godiv-feature-list">
       <div class="godiv-feature-item">
-        <h3>Gets everything, to the end</h3>
-        <p>It automatically expands collapsed detail sections and waits for late-loading images before collecting them.
-          It always shows how many it found and how many it saved (e.g. "Done: 33/33 images"). If some fail, it doesn't
-          pretend everything worked — it shows you exactly why.</p>
+        <h3>끝까지 다 가져옵니다</h3>
+        <p>접혀 있는 상세 영역을 자동으로 펼치고, 늦게 뜨는 이미지를 기다렸다가 모읍니다.
+          몇 장을 찾았고 몇 장을 저장했는지 항상 보여줍니다(예: 「완료: 33/33장」).
+          실패한 게 있으면 다 된 척하지 않고 이유를 그대로 보여줍니다.</p>
       </div>
       <div class="godiv-feature-item">
-        <h3>In order, neatly foldered</h3>
-        <p>It numbers images 01, 02, 03… in the order they appear on the detail page and saves them to the
-          <code>Downloads › godiv › product name</code> folder.</p>
+        <h3>순서대로, 폴더로 정리합니다</h3>
+        <p>상세페이지에 나온 순서대로 01, 02, 03… 번호를 붙여
+          <code>다운로드 › godiv › 상품명</code> 폴더에 저장합니다.</p>
       </div>
       <div class="godiv-feature-item">
-        <h3>Stays inside your browser</h3>
-        <p>It only reads pages you've already opened yourself. It doesn't re-scrape pages through a separate server,
-          and it doesn't send which page you downloaded what from to any server.</p>
+        <h3>브라우저 안에서만 동작합니다</h3>
+        <p>사용자가 직접 연 페이지만 읽습니다. 별도 서버로 페이지를 다시 긁지 않고,
+          어떤 페이지에서 무엇을 받았는지 서버로 보내지 않습니다.</p>
       </div>
     </div>
   </section>
 
-  <!-- ③ How to use — 3 steps -->
+  <!-- ④ 사용법 — 3단계. ★내비 탭은 없다(탭은 개요·요금제 둘). 히어로 CTA 가 여기로 내려온다 -->
   <section class="features" id="how">
     <div class="features-inner">
-      <p class="section-label">How to use</p>
-      <h2 class="pricing-title">Three clicks and you're done.</h2>
+      <p class="section-label">사용법</p>
+      <h2 class="pricing-title">세 번 누르면 끝입니다.</h2>
       <ol class="how-steps">
-        <li>Open a product detail page on a supported site.</li>
-        <li>Log in to the GODIV panel at the top right with your <b>GODITOR account</b>.</li>
-        <li>Click "Download images on this page" — done.</li>
+        <li>지원하는 사이트에서 상품 상세페이지를 엽니다.</li>
+        <li>오른쪽 위 GODIV 패널에서 <b>GODITOR 계정</b>으로 로그인합니다.</li>
+        <li>「이 페이지의 이미지 받기」를 누릅니다.</li>
       </ol>
-      <p class="pricing-sub">You use it by logging in with a goditor (GODITOR) account. If you don't have one,
-        <a href="signup.html">sign up first</a>.</p>
+      <p class="pricing-sub">GODITOR 계정으로 로그인해서 씁니다. 계정이 없다면
+        <a href="signup.html">먼저 가입</a>해 주세요.</p>
     </div>
   </section>
 
-  <!-- ④ Privacy policy — collapsible. ★Public review URL: /godiv.html#privacy (section id preserved) -->
+  <!-- ⑤ 요금제 — ★없는 금액을 지어내지 않는다.
+       data/apps.json 의 godiv 에는 plans 가 «없고» badge 는 「베타」다. downloadUrl·buyUrl 도 비어 있다.
+       그래서 여기서 말할 수 있는 사실은 «GODITOR 계정으로 쓴다»와 «아직 요금이 정해지지 않았다» 둘뿐이다.
+       금액표(.plan-grid)는 값이 생기기 전엔 넣지 않는다 — 빈 표는 거짓말이 된다. -->
+  <section class="pricing">
+    <div class="pricing-inner" id="pricing">
+      <p class="section-label">GODIV 요금제</p>
+      <h2 class="pricing-title">GODITOR 계정으로 함께 씁니다.</h2>
+      <p class="pricing-sub">
+        GODIV 는 따로 가입하지 않습니다. GODITOR 계정으로 로그인해 사용합니다.
+        지금은 <b>베타</b>라 요금이 정해져 있지 않아요 — 확정 금액과 구독 주기는 베타테스트 종료 전에 안내드립니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- ⑥ 개인정보 처리방침 — 접어 둔다. ★탭에서는 뺐지만 본문은 남긴다(법적 고지).
+       ★공개 심사 URL: /godiv.html#privacy (섹션 id 유지) -->
   <section class="pricing" id="privacy">
     <div class="pricing-inner">
-      <p class="section-label">Privacy Policy</p>
-      <h2 class="pricing-title">We process the minimum information only.</h2>
-      <p class="pricing-sub">Effective date: 2026-08-15 · You can read the full text by expanding below.</p>
+      <p class="section-label">개인정보 처리방침</p>
+      <h2 class="pricing-title">필요한 최소한만 처리합니다.</h2>
+      <p class="pricing-sub">시행일 2026-08-15 · 아래를 펼치면 전문을 볼 수 있습니다.</p>
       <details class="privacy-details">
-        <summary>Full privacy policy</summary>
+        <summary>개인정보 처리방침 전문</summary>
         <div class="privacy-body">
-          <h3>1. Information we collect and use</h3>
+          <h3>1. 수집·이용하는 정보</h3>
           <ul>
-            <li>Email address: used for account login and to verify your subscription.</li>
-            <li>Password: sent to our server over an encrypted connection (HTTPS) at login for verification only; it is not stored in the extension.</li>
-            <li>Session token: stored only in the browser's extension storage to keep you logged in.</li>
+            <li>이메일 주소: 계정 로그인과 구독 확인에 사용합니다.</li>
+            <li>비밀번호: 로그인할 때 암호화된 연결(HTTPS)로 서버에 전달해 확인만 하며, 확장 프로그램에 저장하지 않습니다.</li>
+            <li>세션 토큰: 로그인 상태를 유지하기 위해 브라우저의 확장 프로그램 저장소에만 보관합니다.</li>
           </ul>
-          <h3>2. Information we do not collect</h3>
+          <h3>2. 수집하지 않는 정보</h3>
           <ul>
-            <li>We do not collect browsing history, page contents, search terms, location data, financial information, or any information beyond item 1 above.</li>
-            <li>Image downloads happen entirely on your own device; we do not send which page you downloaded what from to our server.</li>
+            <li>방문 기록, 페이지 내용, 검색어, 위치 정보, 금융 정보 등 위 1항 외의 정보는 수집하지 않습니다.</li>
+            <li>이미지 다운로드는 전부 사용자의 기기에서 이뤄집니다. 어떤 페이지에서 무엇을 받았는지 서버로 보내지 않습니다.</li>
           </ul>
-          <h3>3. Retention and destruction</h3>
+          <h3>3. 보관과 파기</h3>
           <ul>
-            <li>The session token is deleted immediately when you log out.</li>
-            <li>Retention and destruction of account information follow the goditor (GODITOR) service terms and privacy policy.</li>
+            <li>세션 토큰은 로그아웃하면 즉시 삭제됩니다.</li>
+            <li>계정 정보의 보관과 파기는 GODITOR 서비스 이용약관 및 개인정보 처리방침을 따릅니다.</li>
           </ul>
-          <h3>4. Provision to third parties</h3>
-          <ul><li>We do not sell or provide collected information to any third party.</li></ul>
-          <h3>5. Contact</h3>
+          <h3>4. 제3자 제공</h3>
+          <ul><li>수집한 정보를 제3자에게 판매하거나 제공하지 않습니다.</li></ul>
+          <h3>5. 문의</h3>
           <ul><li>coq3820@gmail.com</li></ul>
         </div>
       </details>
@@ -251,10 +271,10 @@
 
   <footer>
     <div class="footer-inner">
-      <span>Built out of frustration. Shared so we could use it together. © 소문의섬<br />coq3820@gmail.com</span>
+      <span>답답해서 만들었습니다. 같이 쓰자고 공개했습니다. © 소문의섬<br />coq3820@gmail.com</span>
       <div class="footer-links">
         <a href="/">소문의섬</a>
-        <a href="#privacy">Privacy Policy</a>
+        <a href="#privacy">개인정보 처리방침</a>
       </div>
     </div>
   </footer>
