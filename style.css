@@ -105,6 +105,10 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 }
 .cta-primary:hover { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
 .cta-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); }
+/* 두 번째 CTA — .cta-primary 의 «형태»를 그대로 쓰고 색만 중립 토큰으로 낮춘다.
+   새 버튼 모양을 만들지 않는다(강조는 하나만 남긴다). */
+.cta-primary.is-quiet { color: var(--fg); border-color: var(--border-strong); }
+.cta-primary.is-quiet:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
 .cta-sep { color: var(--border-strong); font-size: var(--fs-sm); margin: 0 4px; }
 .cta-secondary { font-size: var(--fs-sm); color: var(--subtle); transition: color 0.15s; }
 .cta-secondary:hover { color: var(--fg); }
