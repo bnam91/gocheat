@@ -157,6 +157,12 @@ main { padding-bottom: 0; margin-top: 0; }
 .yt-date { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0; }
 
 /* ===== FOOTER ===== */
+/* ★푸터를 «화면 맨 아래»에 붙인다 (현빈 2026-09-01).
+   프로덕트·최근영상 절을 숨기면서 본문이 짧아져 푸터가 화면 중간에 떴다.
+   body 를 세로 flex 로 두고 푸터에 margin-top:auto — 내용이 길면 원래대로 아래로 밀린다.
+   ⚠️height:100vh 가 아니라 min-height 다. 내용이 길 때 잘리면 안 된다. */
+body { min-height: 100vh; display: flex; flex-direction: column; }
+body > footer { margin-top: auto; }
 footer { padding-top: 0; padding-bottom: 56px; margin-top: 48px; }
 hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 /* 한 줄 배치(현빈): 저작권/이메일은 왼쪽, 링크는 오른쪽. 좁으면 자연히 감싼다. */
