@@ -88,7 +88,10 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
   background-clip: text;
 }
 .hero-sub { font-size: var(--fs-lead); color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
-.hero-cta { display: flex; align-items: center; justify-content: center; gap: 12px; }
+/* ★히어로 제목 ↔ 버튼 간격(현빈 2026-09-01).
+   원래는 .hero-sub 의 margin-bottom:40px 이 이 간격을 만들고 있었는데,
+   부제를 걷어내면서 «그 여백까지» 같이 사라졌다. ⇒ 버튼이 스스로 갖게 한다. */
+.hero-cta { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 44px; }
 .cta-primary {
   display: inline-block;
   font-size: var(--fs-sm);
