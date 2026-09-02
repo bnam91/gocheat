@@ -1,15 +1,6 @@
-/* ⛔★이 파일은 «라이브보다 뒤처져 있다» (2026-09-02 실측)
- *   라이브(EC2)의 login.js/session.js 는 2026-08-25 에 두 가지가 더 들어갔다:
- *     ① 제품별 세션 칸 (_lib/sessions.js — issueSession / findUserBySession)
- *     ② 앱별 자격     (_lib/entitlements.js — effectiveFor / entitlementsForResponse)
- *   그 두 파일은 «라이브에만» 있고 이 레포엔 없다. 그래서 이 파일을 라이브에 올리면
- *   ①②가 통째로 회귀한다 — 홈페이지 로그인이 크롬 확장을 튕기던 그 증상이 되돌아온다.
- *
- *   ⇒ ⛔배포하려면 이 파일이 아니라 «라이브본에 role 만 더한 패치»를 써라:
- *      지디 스킬 handoff/unitA-server-0.8.6/patches/{login,session}.js
- *   아래 role 줄은 «레포와 라이브의 계약을 같게» 두려고 넣은 것이다(문서·grep 일치용).
- */
 const { getDb } = require('../_lib/mongo');
+const { findUserBySession, appOfToken, issuedAtOf } = require('../_lib/sessions');
+const { entitlementsForResponse, effectiveFor } = require('../_lib/entitlements');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 const { roleForResponse } = require('../_lib/roles');
 
@@ -48,7 +39,9 @@ module.exports = async (req, res) => {
   try {
     const db = await getDb();
     // ★토큰만으로 찾는다 — 앱이 이메일을 잃어도 재검증은 돌아야 한다(토큰은 32바이트 난수다).
-    const user = await db.collection('users').findOne({ sessionToken });
+    // ★2026-08-25: 제품별 칸(sessions[])과 구식 한 칸(sessionToken)을 «둘 다» 본다.
+    //   이미 로그인해 둔 사람들은 배열이 없다 — 그들을 여기서 튕기면 «업데이트가 곧 전원 로그아웃»이 된다.
+    const user = await findUserBySession(db, sessionToken);
     // ★「없음」과 「불일치」를 같은 응답으로 돌려준다 — 토큰을 넣어보고 존재를 알아내지 못하게.
     if (!user) return json(res, 401, { ok: false, reason: 'invalid_session' });
 
@@ -63,7 +56,9 @@ module.exports = async (req, res) => {
     if (!user.verified) return json(res, 403, { ok: false, reason: 'email_not_verified' });
 
     // 만료 판정은 login.js 와 «같은 규칙»이다 — 두 곳이 다르게 굴면 앱이 오락가락한다.
-    const until = user.accessUntil ? new Date(user.accessUntil) : null;
+    // ★2026-08-25 ③-1: 이 토큰이 든 «앱» 기준 만료(effectiveFor). 구식 토큰(app 없음)은 전역 폴백. until:null=무기한.
+    const eff = effectiveFor(user, appOfToken(user, sessionToken));
+    const until = eff.until ? new Date(eff.until) : null;
     const expired = until ? until.getTime() < Date.now() : false;
 
     return json(res, 200, {
@@ -72,11 +67,18 @@ module.exports = async (req, res) => {
       plan: user.plan || 'event_free',
       accessUntil: until,
       // ★앱이 «세션 자체의 나이»로 판단할 수 있게 같이 준다(서버는 세션 TTL 정책을 갖고 있지 않다).
-      sessionIssuedAt: user.sessionIssuedAt || null,
+      // ★2026-08-25 2차 검수 L5: 토큰은 «앱별»인데 sessionIssuedAt 은 «전역»(마지막 아무 제품 로그인)이었다.
+      //   ⇒ 이 토큰이 든 칸의 발급시각을 «우선» 준다. 없을 때만(구식 토큰) 전역값으로 떨어진다.
+      //   그래야 홈페이지 로그인이 데스크톱 세션의 «나이»를 되돌리는 일이 없다.
+      sessionIssuedAt: issuedAtOf(user, sessionToken) || user.sessionIssuedAt || null,
+      // 이 토큰이 들어 있는 제품 칸(구식 토큰이면 null). 진단용 — 클라이언트 판정에 쓰지 않는다.
+      app: appOfToken(user, sessionToken),
       // ★2026-09-02 additive: 계정 역할. 재검증마다 «지금» 값이 내려간다 —
       //   운영자가 role 을 회수하면 앱은 다음 세션 확인에서 탭을 잃는다(다시 로그인할 필요 없음).
       //   ⛔권한의 근거가 아니다. 발송 권한은 서버가 POST /api/notice 에서 다시 본다.
       role: roleForResponse(user),
+      // ★2026-08-25 additive: 앱별 자격(기존 plan/accessUntil 유지 + 이 필드 추가). 옛 앱 보호.
+      entitlements: entitlementsForResponse(user),
       ...(expired ? { reason: 'expired', purchaseUrl: PURCHASE_URL } : {}),
     });
   } catch (err) {

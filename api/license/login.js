@@ -1,13 +1,15 @@
-/* ⛔★이 파일은 «라이브보다 뒤처져 있다» (2026-09-02 실측)
- *   라이브(EC2)의 login.js/session.js 는 2026-08-25 에 두 가지가 더 들어갔다:
- *     ① 제품별 세션 칸 (_lib/sessions.js — issueSession / findUserBySession)
- *     ② 앱별 자격     (_lib/entitlements.js — effectiveFor / entitlementsForResponse)
- *   그 두 파일은 «라이브에만» 있고 이 레포엔 없다. 그래서 이 파일을 라이브에 올리면
- *   ①②가 통째로 회귀한다 — 홈페이지 로그인이 크롬 확장을 튕기던 그 증상이 되돌아온다.
+/* ⚠️★2026-09-03 정정 — 이 파일의 «이전 경고문은 무효»다(내가 쓴 것이라 내가 지운다).
+ *   전엔 「이 파일은 라이브보다 뒤처져 있으니 배포하지 말고 handoff 패치를 써라」고 적혀 있었다.
+ *   지금은 «반대»다 — 이 파일이 곧 라이브다(2026-09-03 바이트 대조: 완전 동일).
+ *   그 경고를 그대로 따르면 앱별 번들(tiers) 작업이 통째로 날아간다. ⇒ 지웠다.
  *
- *   ⇒ ⛔배포하려면 이 파일이 아니라 «라이브본에 role 만 더한 패치»를 써라:
- *      지디 스킬 handoff/unitA-server-0.8.6/patches/{login,session}.js
- *   아래 role 줄은 «레포와 라이브의 계약을 같게» 두려고 넣은 것이다(문서·grep 일치용).
+ * ⛔★다만 «남아 있는 결손»이 하나 있다 — 이건 아직 안 고쳐졌다:
+ *   2026-08-25 에 들어갔던 «제품별 세션 칸»(_lib/sessions.js 의 issueSession)이
+ *   이 파일에서 빠져 있다. 지금은 sessionToken «한 칸»만 쓴다.
+ *   ⇒ 증상: 홈페이지에 로그인하면 크롬 확장/데스크톱 앱이 «이유 없이» 로그아웃된다.
+ *     (session.js 는 아직 sessions[] 를 «읽으므로» 기존 토큰은 살아 있다. 새 로그인부터 충돌한다)
+ *   ⇒ 복구 패치: 지디 스킬 handoff/unitA-server-0.8.6/patches/login.js.restore-sessions.patch
+ *     ★적용 판단은 대성·현빈 몫이다(앱별 번들은 현빈 지시라 내가 임의로 되돌리지 않는다).
  */
 const bcrypt = require('bcryptjs');
 const { randomToken } = require('../_lib/crypto');
