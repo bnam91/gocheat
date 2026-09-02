@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <title>마이페이지 · 소문의섬</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903j" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903j" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903k" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903k" />
   <!--
     ★로그인한 사람이 «갈 곳». 지금까지 홈페이지엔 이 페이지가 없어서
       로그인해도 갈 데가 없었다(login.html 안에서만 계정을 보여줬다).
@@ -17,13 +17,13 @@
       주문 내역은 order.html 이 남긴 «화면 확인용» 기록이다. 서버 연동 아님.
   -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260903j" />
-  <link rel="stylesheet" href="mypage.css?v=20260903j" />
+  <link rel="stylesheet" href="style.css?v=20260903k" />
+  <link rel="stylesheet" href="mypage.css?v=20260903k" />
 </head>
 <body>
   <header>
     <nav>
-      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903j" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903k" alt="" width="22" height="22" /><span>소문의섬</span></a>
       <div class="nav-links">
         <a href="pricing.html">요금제</a>
         <a href="login.html" id="nav-login">로그인</a>
@@ -41,14 +41,14 @@
 
       <!-- 비로그인이면 여기만 보인다 -->
       <div id="mp-guest" style="display:none">
-        <p class="dim">로그인하시면 이용 등급과 주문 내역을 보실 수 있어요.</p>
+        <p class="dim">로그인하시면 이용 등급과 사용 내역을 보실 수 있어요.</p>
         <a href="login.html?next=mypage" class="plan-cta" style="display:block;max-width:240px;text-decoration:none">로그인하러 가기 →</a>
       </div>
 
       <div id="mp-body" style="display:none">
         <div class="mp-tabs">
           <button type="button" class="on" data-pane="info">내 정보</button>
-          <button type="button" data-pane="orders">주문 내역</button>
+          <button type="button" data-pane="orders">사용 내역</button>
           <button type="button" data-pane="dl">다운로드</button>
         </div>
 
@@ -56,12 +56,16 @@
         <section class="mp-pane on" id="pane-info">
           <div class="mp-tier">
             <div>
+              <!-- ★«무엇의» 등급인지 먼저 말한다(현빈 2026-09-02: 「어떤 앱인 줄 알고 이용등급이 뜨나」).
+                   홈페이지 계정 하나로 앱을 쓰는 구조라, 등급은 «계정»이 아니라 «앱 이용»에 대한 것이다.
+                   그 대상을 안 적으면 「홈페이지에 가입했을 뿐인데 왜 등급이 있지」가 된다. -->
+              <p class="mp-tier-label">GODITOR 이용 등급</p>
               <p class="big" id="mp-plan">—</p>
               <p class="sm" id="mp-until"></p>
             </div>
             <a href="pricing.html" class="plan-cta" style="text-decoration:none;text-align:center">등급 올리기 →</a>
           </div>
-          <div class="account-panel" style="display:block">
+          <div class="account-panel">
             <div class="account-rows">
               <div class="account-row"><span class="account-key">이메일</span><span class="account-val" id="mp-email">—</span></div>
               <div class="account-row"><span class="account-key">비밀번호</span><span class="account-val"><button type="button" id="mp-pw-toggle" class="btn-as-link" aria-expanded="false" aria-controls="mp-pw-form">변경하기 →</button></span></div>
@@ -87,14 +91,17 @@
               </p>
             </form>
 
-            <button type="button" class="plan-cta plan-cta-quiet" id="mp-logout" style="max-width:200px">로그아웃</button>
+            <button type="button" class="plan-cta plan-cta-quiet" id="mp-logout">로그아웃</button>
           </div>
           <p class="order-warn">같은 이메일·비밀번호로 앱에서도 로그인하실 수 있어요.</p>
         </section>
 
-        <!-- ── 주문 내역 ── -->
+        <!-- ── 사용 내역(현빈 2026-09-02 워딩 변경) ──
+             ⚠️표의 «내용»은 여전히 주문(주문번호·금액·입금자·상태)이다. 이름만 바꿨다.
+               앱 실행 횟수 같은 «진짜 사용 기록»을 보이려면 별도 작업이 필요하다 —
+               지금 서버에 남는 이용 기록은 GODIV 내려받기 로그뿐이고 이 화면과 연결돼 있지 않다. -->
         <section class="mp-pane" id="pane-orders">
-          <div id="mp-ord-empty" class="dim" style="display:none">아직 주문 내역이 없어요.</div>
+          <div id="mp-ord-empty" class="dim" style="display:none">아직 사용 내역이 없어요.</div>
           <div class="mp-ord-wrap"><table class="mp-ord" id="mp-ord-table" style="display:none">
             <thead><tr><th>주문번호</th><th>등급</th><th>금액</th><th>입금자</th><th>주문일</th><th>상태</th></tr></thead>
             <tbody id="mp-ord-body"></tbody>
@@ -110,7 +117,7 @@
           </p>
           <!-- ★UL-009: 세션 저장이라 탭을 닫으면 사라진다. 「처음부터 없었다」고 읽히면 안 된다. -->
           <p class="order-warn" style="margin-top:10px">
-            주문 내역은 <b>이 탭에서만</b> 유지됩니다. 탭을 닫으면 목록이 비어 보일 수 있어요 —
+            사용 내역은 <b>이 탭에서만</b> 유지됩니다. 탭을 닫으면 목록이 비어 보일 수 있어요 —
             주문번호는 따로 적어 두세요.
           </p>
         </section>
@@ -135,8 +142,8 @@
         <p class="footer-meta"><span id="footer-copy"></span><span class="footer-email">coq3820@gmail.com</span></p>
       </div>
     </footer>
-  <script src="footer.js?v=20260903j"></script>
-  <script src="mypage.js?v=20260903j"></script>
-  <script src="theme.js?v=20260903j"></script>
+  <script src="footer.js?v=20260903k"></script>
+  <script src="mypage.js?v=20260903k"></script>
+  <script src="theme.js?v=20260903k"></script>
 </body>
 </html>
