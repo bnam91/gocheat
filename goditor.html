@@ -10,9 +10,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260903d" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903d" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903d" />
+  <link rel="stylesheet" href="style.css?v=20260903e" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903e" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903e" />
 </head>
 <body>
   <!-- ★내비는 «한 줄»이다. 전에는 전역(53) + 앱전용(47) 두 줄로 100px 을 먹었다.
@@ -30,7 +30,7 @@
   <header>
     <nav class="nav--app" aria-label="소문의섬 · GODITOR 내비게이션">
       <div class="nav-left">
-        <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903d" alt="" width="22" height="22" /><span>소문의섬</span></a>
+        <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903e" alt="" width="22" height="22" /><span>소문의섬</span></a>
         <span class="nav-crumb-sep" aria-hidden="true">›</span>
         <span class="nav-crumb-current">GODITOR</span>
 
@@ -208,7 +208,11 @@
     <div class="pricing-inner" id="pricing">
       <p class="section-label">GODITOR 요금제</p>
 
-      <h2 class="pricing-title">네 가지 등급의 구독제입니다.</h2>
+      <!-- ★★등급 «개수»는 손으로 적지 않는다. 이 문장은 이미 두 번 늙었다:
+           3등급→4등급 때 「세」가 남았고, 4→3 때 「네」가 남았다(2026-09-02 둘 다).
+           ⇒ plans.js 가 apps.json 의 «보이는 등급 수»를 세어 채운다. 숫자가 못 어긋난다.
+           ★JS 가 죽어도 문장이 성립하도록 «수 없는» 문장을 기본값으로 둔다. -->
+      <h2 class="pricing-title" id="plan-count-title">등급별 구독제입니다.</h2>
       <!-- ★«지금 전부 무료»를 여기서 «한 번» 말한다.
            전에는 카드 네 장이 각자 「무료」를 제일 큰 글자로 외쳤다. 그러면 네 카드가
            똑같아 보여서 «비교표가 비교를 못 한다». 비교해야 할 건 등급 차이지 이벤트가 아니다. -->
@@ -440,11 +444,11 @@
 
 
 
-  <script src="appnav-spy.js?v=20260903d"></script>
-  <script src="plans.js?v=20260903d"></script>
-  <script src="footer.js?v=20260903d"></script>
-  <script src="goditor-download.js?v=20260903d"></script>
-  <script src="goditor-page.js?v=20260903d"></script>
-  <script src="theme.js?v=20260903d"></script>
+  <script src="appnav-spy.js?v=20260903e"></script>
+  <script src="plans.js?v=20260903e"></script>
+  <script src="footer.js?v=20260903e"></script>
+  <script src="goditor-download.js?v=20260903e"></script>
+  <script src="goditor-page.js?v=20260903e"></script>
+  <script src="theme.js?v=20260903e"></script>
 </body>
 </html>

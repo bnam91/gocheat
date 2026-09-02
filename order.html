@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <title>주문 · 소문의섬</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903d" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903d" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903e" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903e" />
   <!--
     ★결제 «경로» 화면. 지금까지 요금표에 금액만 있고 「사겠다」는 의사를 받을 곳이 없었다.
 
@@ -20,7 +20,7 @@
       ⇒ 계좌·사업자정보가 들어오면 이 파일에서 그 한 곳(submit)만 서버 호출로 바꾸면 된다.
   -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260903d" />
+  <link rel="stylesheet" href="style.css?v=20260903e" />
   <style>
     .od-note {
       background:rgba(255,122,138,.07); border:1px solid rgba(255,122,138,.28);
@@ -58,7 +58,7 @@
 <body>
   <header>
     <nav>
-      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903d" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903e" alt="" width="22" height="22" /><span>소문의섬</span></a>
       <div class="nav-links">
         <a href="pricing.html">요금제</a>
         <a href="mypage.html">마이페이지</a>
@@ -152,7 +152,7 @@
     try { planId = new URLSearchParams(location.search).get('plan') || ''; } catch (e) {}
 
     // ★등급 정보는 apps.json 한 곳에서만 온다 — 요금표와 주문서가 갈리면 안 된다
-    fetch('data/apps.json?v=20260903d').then(function (r) { return r.ok ? r.json() : null; }).then(function (apps) {
+    fetch('data/apps.json?v=20260903e').then(function (r) { return r.ok ? r.json() : null; }).then(function (apps) {
       var app = (apps || []).filter(function (a) { return a.id === 'goditor'; })[0];
       var plan = app && (app.plans || []).filter(function (p) { return p.id === planId; })[0];
       if (!plan || planId === 'free') { location.replace('pricing.html'); return; }
@@ -230,7 +230,7 @@
         //   bankIsDummy 가 true 면 «실제 입금 금지» 를 크게 띄운다 — 라이브라 아무나 볼 수 있고,
         //   진짜처럼 보이는 계좌번호로 돈이 움직이면 되돌릴 수 없다.
         //   실계좌가 오면 business.json 세 값 + bankIsDummy=false 만 바꾸면 경고가 사라진다.
-        fetch('data/business.json?v=20260903d').then(function (r) { return r.ok ? r.json() : null; }).then(paintBank)
+        fetch('data/business.json?v=20260903e').then(function (r) { return r.ok ? r.json() : null; }).then(paintBank)
           .catch(function () { paintBank(null); });
 
         function paintBank(b) {
@@ -259,7 +259,7 @@
         <p class="footer-meta"><span id="footer-copy"></span><span class="footer-email">coq3820@gmail.com</span></p>
       </div>
     </footer>
-  <script src="footer.js?v=20260903d"></script>
-  <script src="theme.js?v=20260903d"></script>
+  <script src="footer.js?v=20260903e"></script>
+  <script src="theme.js?v=20260903e"></script>
 </body>
 </html>

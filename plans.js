@@ -21,7 +21,7 @@
 
   // ★business.json 은 이제 이 화면에서 안 읽는다 — 「결제 연동 전」 안내문을 뺐기 때문이다(2026-09-02).
   //   결제 가능 여부 판단(bankIsDummy)은 order.html·mypage.js 가 «각자» 한다. 여기서 읽으면 쓰이지 않는 값이 된다.
-  fetch('data/apps.json?v=20260903d').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260903e').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) throw new Error('apps.json');
       var app = apps.filter(function (a) { return a.id === appId; })[0];
@@ -35,6 +35,14 @@
       //   ⇒ 「파는 것」만 멈추고 「있는 것」은 살려 둔다. 되살릴 땐 apps.json 의 hidden 한 줄만 지우면 된다.
       var shown = app.plans.filter(function (p) { return p.hidden !== true; });
       if (!shown.length) { grid.innerHTML = '<p class="plan-empty">요금제 정보를 준비 중입니다.</p>'; return; }
+      // ★제목의 «등급 수»를 여기서 채운다 — 손으로 적으면 등급이 바뀔 때마다 늙는다(실제로 두 번 늙었다).
+      var t = document.getElementById('plan-count-title');
+      if (t) {
+        var KO = ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉'];
+        var word = KO[shown.length] || String(shown.length);
+        t.textContent = word + ' 가지 등급의 구독제입니다.';
+      }
+
       grid.innerHTML = shown.map(function (p) {
         var feats = p.features.map(function (f) {
           return f.ok
