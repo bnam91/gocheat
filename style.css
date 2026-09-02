@@ -1558,11 +1558,11 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   display: inline-flex; align-items: center; gap: 8px;
   padding: 12px 18px; border-radius: 999px;
-  /* ★★글자는 «카카오 노랑»이다(현빈 2026-09-03). 그래서 바탕은 두 테마 «모두 먹색»으로 고정한다.
-     ⛔--accent-fill 을 그대로 쓰면 다크에서 바탕이 라임(#C9F23A)이 되는데, 그 위 노란 글자는
-       대비 1.01:1 로 «완전히 안 읽힌다»(실측). 노란 글자가 성립하려면 바탕이 어두워야 한다.
-     ★다크에서는 페이지 배경(#0B0B0E)과 같은 먹색이면 버튼이 «묻힌다»(1.0:1) —
-       한 단 올린 판(#15151A)에 테두리를 줘서 떠 보이게 한다. 노랑 대비는 14.23:1 로 여전히 넉넉하다. */
+  /* ★★테마마다 «뒤집는다»(현빈 2026-09-03): 라이트 = 검정 배경 + 노란 글자 / 다크 = 그 반대.
+     각 테마의 «페이지 배경과 반대되는» 쪽을 버튼 바탕으로 써서 어디서든 눈에 든다.
+     실측: 두 조합 다 글자 대비 15.37:1 · 버튼이 판에서 떠 보이는 정도도 15.37~19.65:1.
+     ⛔--accent-fill 을 쓰면 다크에서 바탕이 라임(#C9F23A)이 되는데, 그 위 노란 글자는
+       1.01:1 로 «완전히 안 읽힌다». 그래서 이 버튼만 토큰이 아니라 «고정 색»을 쓴다. */
   background: #0B0B0E; color: #FEE500;
   border: 1px solid #26262C;
   font-size: var(--fs-sm); font-weight: 700; letter-spacing: -0.01em;
@@ -1571,11 +1571,14 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   transition: transform .18s cubic-bezier(0.22,1,0.36,1), opacity .18s, background .18s;
 }
 .kko-float:hover{ background: #1C1C22; border-color: #3A3A44; color: #FEE500; transform: translateY(-2px); }
-/* 다크에서는 페이지 배경과 같은 먹이라 묻힌다 — 한 단 올려 띄운다(노랑 대비 14.23:1) */
-:root:not([data-theme="light"]) .kko-float{ background:#15151A; border-color:#34343E; }
-:root[data-theme="dark"] .kko-float{ background:#15151A; border-color:#34343E; }
+
+/* ★다크 — 뒤집는다: 노란 바탕 + 검정 글자(대비 15.37:1).
+   ⚠️«둘 다» 써야 한다 — :not([data-theme="light"]) 는 «OS 가 다크인데 아무 선택도 안 한» 사람용이고,
+     [data-theme="dark"] 는 «직접 다크를 고른» 사람용이다. 하나만 쓰면 한쪽이 라이트 색을 뒤집어쓴다. */
+:root:not([data-theme="light"]) .kko-float,
+:root[data-theme="dark"] .kko-float{ background:#FEE500; color:#0B0B0E; border-color:#FEE500; }
 :root:not([data-theme="light"]) .kko-float:hover,
-:root[data-theme="dark"] .kko-float:hover{ background:#1C1C22; border-color:#43434E; }
+:root[data-theme="dark"] .kko-float:hover{ background:#F2DA00; border-color:#F2DA00; color:#0B0B0E; }
 .kko-float:focus-visible{ outline: none; box-shadow: var(--focus-ring), 0 6px 20px rgba(0,0,0,.28); }
 
 /* ★★푸터에 닿으면 «비켜준다». 고정 요소는 가만두면 저작권·약관 링크를 덮는다 —

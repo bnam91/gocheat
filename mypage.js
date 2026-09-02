@@ -144,7 +144,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260903t').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260903u').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -174,7 +174,7 @@ if (!orders.length) {
 }
 
 // 다운로드
-fetch('data/downloads.json?v=20260903t').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+fetch('data/downloads.json?v=20260903u').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
   var g = (d && d.goditor) || {};
   document.getElementById('mp-dl-ver').textContent = g.version ? ('GODITOR ' + g.version) : '';
   var NAME = { 'mac-arm64': '맥 (Apple Silicon)', 'mac-intel': '맥 (Intel)', 'win': '윈도우' };
