@@ -237,19 +237,21 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
   display: inline-block;
   font-size: var(--fs-sm);
   font-weight: 600;
-  color: var(--accent-fill);
-  background: transparent;
+  /* ★테두리가 아니라 «채움»이다(현빈 2026-09-02: 「배경으로 칠해줘 … 검정으로 흰글씨로」).
+     라이트: 배경 #0B0B0E + 흰 글자 / 다크: 배경 라임 + 먹색 글자 — 토큰이 알아서 갈린다. */
+  color: var(--accent-fg);
+  background: var(--accent-fill);
   border: 1.5px solid var(--accent-fill);
   padding: 9px 20px;
   border-radius: 20px;
   letter-spacing: -0.01em;
 }
-.cta-primary:hover { background: var(--accent-fill); color: var(--accent-fg); border-color: var(--accent-fill); }
+.cta-primary:hover { background: var(--accent-fill-hover); color: var(--accent-fg); border-color: var(--accent-fill-hover); }
 .cta-primary:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-/* 두 번째 CTA — .cta-primary 의 «형태»를 그대로 쓰고 색만 중립 토큰으로 낮춘다.
-   새 버튼 모양을 만들지 않는다(강조는 하나만 남긴다). */
-.cta-primary.is-quiet { color: var(--fg); border-color: var(--border-strong); }
-.cta-primary.is-quiet:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+/* ★두 번째 CTA 도 «같은 검정 채움»이다(현빈 지시: 「각각 검정으로 흰글씨로」).
+   ⚠️그래서 지금은 1·2 CTA 의 «시각적 우열이 없다» — 둘을 구분하고 싶어지면 여기만 손대면 된다. */
+.cta-primary.is-quiet { color: var(--accent-fg); background: var(--accent-fill); border-color: var(--accent-fill); }
+.cta-primary.is-quiet:hover { background: var(--accent-fill-hover); color: var(--accent-fg); border-color: var(--accent-fill-hover); }
 .cta-sep { color: var(--border-strong); font-size: var(--fs-sm); margin: 0 4px; }
 .cta-secondary { font-size: var(--fs-sm); color: var(--subtle); transition: color 0.15s; }
 .cta-secondary:hover { color: var(--fg); }
@@ -487,9 +489,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
               box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
 }
 .cta-primary:hover {
-  background: var(--accent-fill);
+  background: var(--accent-fill-hover);
   color: var(--accent-fg);
-  border-color: var(--accent-fill);
+  border-color: var(--accent-fill-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(var(--accent-line-rgb),0.22);
 }

@@ -10,11 +10,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260902w" />
+  <link rel="stylesheet" href="style.css?v=20260902x" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 
-  <link rel="stylesheet" href="godiv.css?v=20260902w" />
+  <link rel="stylesheet" href="godiv.css?v=20260902x" />
 </head>
 <body>
   <!-- ★내비 골격은 goditor.html 과 «같다». 탭은 개요·요금제 둘.
@@ -54,7 +54,7 @@
         </div>
       </div>
       <p class="detail-alt">
-        <span>크롬 확장 프로그램 · 웹스토어 등록 준비 중입니다.</span>
+        <span>크롬 확장 프로그램 · <a href="https://chromewebstore.google.com/detail/godiv-image-downloader/okagagkpakaddjjhhninnnbelefbadfd" target="_blank" rel="noopener">크롬 웹스토어에서 설치</a></span>
       </p>
     </div>
   </section>
@@ -62,15 +62,14 @@
   <!-- ② 정체성 — 화면 캡처가 아니라 원본. GoFullPage 와의 차이. 누구를 위한 건지. goditor 연동 예고 -->
   <section class="godiv-identity" aria-label="GODIV 소개">
     <div class="godiv-identity-card">
-      <p class="godiv-identity-eyebrow">화면을 찍지 않고 원본을 받아옵니다</p>
-      <h2>스크린샷이 아니라, 상세페이지에 올라간 그대로의 원본 이미지 파일입니다.</h2>
-      <p>GODIV 는 상세페이지를 <span class="hl">화면 이미지로 캡처하지 않습니다.</span> 페이지에 실제로 올라와 있는
-        <span class="hl">원본 이미지 파일</span>을 내려받습니다. 그래서 화질이 떨어지지 않고, 처음 올렸을 때의
-        선명도를 그대로 유지합니다.</p>
-      <p>GoFullPage 같은 화면 캡처 도구는 <span class="hl">화면에 보이는 것</span>을 찍기 때문에 글자와 세부가 뭉갭니다.
-        GODIV 는 원본을 가져오므로 <span class="hl">내 상세페이지에 다시 쓸 수 있는 화질</span>로 남습니다.</p>
-      <p class="godiv-identity-note">상품을 등록하는 <b>온라인 스토어 운영자</b>와 상세페이지를 만드는 <b>디자이너</b>를 위해 만들었습니다.
-        앞으로 상세페이지 편집 도구 <b>GODITOR</b> 와 연동됩니다.</p>
+      <p class="godiv-identity-eyebrow">화면을 찍는 게 아니라 원본을 가져옵니다</p>
+      <h2>상세페이지에 올라가 있는 원본 이미지를 그대로 받습니다.</h2>
+      <p>GODIV 는 <span class="hl">화면을 캡처하지 않습니다.</span> 페이지에 실제로 올라가 있는
+        <span class="hl">원본 이미지 파일</span>을 그대로 내려받습니다. 그래서 올릴 때의 화질이 그대로 남습니다.</p>
+      <p>화면을 찍는 도구는 <span class="hl">보이는 만큼만</span> 담기 때문에 글자와 세부가 뭉개집니다.
+        GODIV 로 받은 이미지는 <span class="hl">내 상세페이지에 다시 써도 될 만큼</span> 선명합니다.</p>
+      <p class="godiv-identity-note">스토어를 운영하는 분과 상세페이지를 만드는 <b>디자이너</b>를 위해 만들었습니다.
+        상세페이지 편집 도구 <b>GODITOR</b> 와도 곧 이어집니다.</p>
     </div>
   </section>
 
@@ -79,27 +78,27 @@
     <div class="features-inner">
       <h2 class="section-h">주요 기능</h2>
       <p class="features-lead">
-        지금 브라우저에서 보고 있는 상품 상세페이지의 본문 이미지를, 위에서 아래 순서 그대로
-        다운로드 폴더에 저장합니다. 네이버 스마트스토어·브랜드스토어, 쿠팡, 와디즈를 지원합니다.
+        지금 보고 있는 상품 상세페이지의 본문 이미지를 위에서부터 순서대로 내려받습니다.
+        네이버 스마트스토어·브랜드스토어, 쿠팡, 와디즈에서 씁니다.
       </p>
     </div>
 
     <div class="godiv-feature-list">
       <div class="godiv-feature-item">
         <h3>끝까지 다 가져옵니다</h3>
-        <p>접혀 있는 상세 영역을 자동으로 펼치고, 늦게 뜨는 이미지를 기다렸다가 모읍니다.
-          몇 장을 찾았고 몇 장을 저장했는지 항상 보여줍니다(예: 「완료: 33/33장」).
-          실패한 게 있으면 다 된 척하지 않고 이유를 그대로 보여줍니다.</p>
+        <p>접힌 상세 영역을 펼치고, 늦게 뜨는 이미지도 기다렸다가 담습니다.
+          몇 장을 찾아서 몇 장을 받았는지 그때그때 보여 주고(「완료: 33/33장」),
+          빠진 게 있으면 다 됐다고 하지 않고 이유를 알려 줍니다.</p>
       </div>
       <div class="godiv-feature-item">
         <h3>순서대로, 폴더로 정리합니다</h3>
-        <p>상세페이지에 나온 순서대로 01, 02, 03… 번호를 붙여
-          <code>다운로드 › godiv › 상품명</code> 폴더에 저장합니다.</p>
+        <p>페이지에 나온 순서대로 01, 02, 03… 번호를 붙여
+          <code>다운로드 › godiv › 상품명</code> 폴더에 넣어 둡니다.</p>
       </div>
       <div class="godiv-feature-item">
         <h3>브라우저 안에서만 동작합니다</h3>
-        <p>사용자가 직접 연 페이지만 읽습니다. 별도 서버로 페이지를 다시 긁지 않고,
-          어떤 페이지에서 무엇을 받았는지 서버로 보내지 않습니다.</p>
+        <p>직접 연 페이지만 읽습니다. 우리 서버가 그 페이지를 따로 긁어 오지 않고,
+          어떤 상품의 어떤 페이지였는지도 보내지 않습니다.</p>
       </div>
     </div>
   </section>
@@ -117,8 +116,7 @@
         <li>오른쪽 위 GODIV 패널에서 <b>GODITOR 계정</b>으로 로그인합니다.</li>
         <li>「이 페이지의 이미지 받기」를 누릅니다.</li>
       </ol>
-      <p class="pricing-sub">GODITOR 계정으로 로그인해서 씁니다. 계정이 없다면
-        <a href="signup.html">먼저 가입</a>해 주세요.</p>
+      <p class="pricing-sub">계정이 없으면 <a href="signup.html">먼저 가입</a>해 주세요.</p>
     </div>
   </section>
 
@@ -129,10 +127,11 @@
   <section class="pricing">
     <div class="pricing-inner" id="pricing">
       <p class="section-label">GODIV 요금제</p>
-      <h2 class="pricing-title">GODITOR 계정으로 함께 씁니다.</h2>
+      <h2 class="pricing-title">GODITOR 계정 하나로 씁니다.</h2>
       <p class="pricing-sub">
-        GODIV 는 따로 가입하지 않습니다. GODITOR 계정으로 로그인해 사용합니다.
-        지금은 <b>베타</b>라 요금이 정해져 있지 않아요 — 확정 금액과 구독 주기는 베타테스트 종료 전에 안내드립니다.
+        GODIV 는 따로 가입하지 않습니다. <b>GODITOR 프로 등급부터 함께 제공</b>되고,
+        지금은 <b>베타</b>라 계정만 있으면 그대로 쓸 수 있습니다.
+        베타가 끝나기 전에 이용 조건을 다시 알려 드리겠습니다.
       </p>
     </div>
   </section>
@@ -188,8 +187,8 @@
       <p class="footer-meta"><span id="footer-copy"></span><span class="footer-email">coq3820@gmail.com</span></p>
     </div>
   </footer>
-  <script src="appnav-spy.js?v=20260902w"></script>
-  <script src="footer.js?v=20260902w"></script>
-  <script src="theme.js?v=20260902w"></script>
+  <script src="appnav-spy.js?v=20260902x"></script>
+  <script src="footer.js?v=20260902x"></script>
+  <script src="theme.js?v=20260902x"></script>
 </body>
 </html>
