@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <title>요금제 · 소문의섬</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260904b" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260904b" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260904c" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260904c" />
   <!--
     ★이 페이지는 «상품 고르는» 페이지다.
 
@@ -25,12 +25,12 @@
       살려두면 Vercel 환경변수를 건드릴 필요가 없다.
   -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260904b" />
+  <link rel="stylesheet" href="style.css?v=20260904c" />
 </head>
 <body>
   <header>
     <nav>
-      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260904b" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260904c" alt="" width="22" height="22" /><span>소문의섬</span></a>
       <div class="nav-links">
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
@@ -76,7 +76,7 @@
       function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
         return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
-      fetch('data/apps.json?v=20260904b')
+      fetch('data/apps.json?v=20260904c')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (apps) {
           if (!apps) throw new Error('apps.json');
@@ -107,8 +107,8 @@
         });
     })();
   </script>
-  <script src="footer.js?v=20260904b"></script>
-  <script src="nav-auth.js?v=20260904b"></script>
-  <script src="theme.js?v=20260904b"></script>
+  <script src="footer.js?v=20260904c"></script>
+  <script src="nav-auth.js?v=20260904c"></script>
+  <script src="theme.js?v=20260904c"></script>
 </body>
 </html>

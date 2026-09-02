@@ -37,7 +37,9 @@ document.getElementById('mp-email').textContent = email;
   var box = document.getElementById('mp-apps');
   var token = null;
   try { token = sessionStorage.getItem('sms_token') || ''; } catch (e) {}
-  if (!token) { box.innerHTML = '<p class="mp-apps-note">이용 현황을 불러오려면 다시 로그인해 주세요.</p>'; return; }
+  if (!token) { box.innerHTML = '<div class="mp-empty mp-empty-err">'
+      + '<p class="mp-empty-title">이용 현황을 불러오려면 다시 로그인해 주세요</p>'
+      + '<a class="mp-empty-cta" href="login.html?next=mypage">로그인하러 가기 →</a></div>'; return; }
 
   var esc = function (t) { return String(t == null ? '' : t)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
@@ -55,7 +57,9 @@ document.getElementById('mp-email').textContent = email;
   }).then(function (r) { return r.json().catch(function () { return {}; }); })
     .then(function (d) {
       if (!d || !d.ok) {
-        box.innerHTML = '<p class="mp-apps-note">이용 현황을 불러오지 못했어요. 새로고침해 주세요.</p>';
+        box.innerHTML = '<div class="mp-empty mp-empty-err">'
+          + '<p class="mp-empty-title">이용 현황을 불러오지 못했어요</p>'
+          + '<p class="mp-empty-desc">새로고침해 주세요.</p></div>';
         return;
       }
       // 이름·연락처 — 확장 가입 «전»에 만들어진 계정은 값이 없다. 빈칸이 아니라 «없다»고 말한다.
@@ -92,11 +96,17 @@ document.getElementById('mp-email').textContent = email;
           + '<p class="mp-app-used">' + used + since + '</p>'
           + up
           + '</div>';
-      }).join('') || '<p class="mp-apps-note">아직 이용 중인 서비스가 없어요. '
-          + '앱이나 확장 프로그램에서 이 계정으로 로그인하면 여기에 나타납니다.</p>';
+        // ★빈 상태도 «카드»다(현빈 2026-09-03). 맨 문장은 「덜 만들었다」로 읽힌다.
+      }).join('') || '<div class="mp-empty">'
+          + '<p class="mp-empty-title">아직 이용 중인 서비스가 없어요</p>'
+          + '<p class="mp-empty-desc">앱에서 이 계정으로 로그인하면 여기에 나타납니다.</p>'
+          + '<a class="mp-empty-cta" href="/#hero-apps">앱 둘러보기 →</a>'
+          + '</div>';
     })
     .catch(function () {
-      box.innerHTML = '<p class="mp-apps-note">이용 현황을 불러오지 못했어요. 새로고침해 주세요.</p>';
+      box.innerHTML = '<div class="mp-empty mp-empty-err">'
+          + '<p class="mp-empty-title">이용 현황을 불러오지 못했어요</p>'
+          + '<p class="mp-empty-desc">새로고침해 주세요.</p></div>';
     });
 })();
 
@@ -167,7 +177,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904b').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904c').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -176,6 +186,8 @@ if (!orders.length) {
   document.getElementById('mp-ord-empty').style.display = 'block';
 } else {
   document.getElementById('mp-ord-table').style.display = 'table';
+  var keep = document.getElementById('mp-ord-keep');
+  if (keep) keep.style.display = 'block';       // ★주문이 있을 때만 「탭 닫으면 사라진다」를 띄운다
   // ★UL-002: 연동 여부는 business.json 한 곳에서만 판단한다(주문 화면과 같은 근거).
   document.getElementById('mp-dummy').style.display    = window.__smsDummy ? 'block' : 'none';
   document.getElementById('mp-ord-note').style.display = window.__smsDummy ? 'none'  : 'block';

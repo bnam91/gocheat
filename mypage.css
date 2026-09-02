@@ -210,3 +210,29 @@ main.detail { padding-top: clamp(40px, 4vw, 56px); }
 #pane-orders .order-warn,
 #pane-orders .mp-dummy { text-align: left; }
 #pane-orders #mp-ord-empty { margin: 0 0 4px; }
+
+/* ── 빈 상태 카드 ──────────────────────────────────────────────────────
+   ★현빈 2026-09-03: 「글만 써놓으면 어떻게? 빈카드가 있던지」.
+     맨 문장은 «비어 있다»가 아니라 «덜 만들었다»로 읽힌다. 채워질 자리의 «모양»을 준다.
+   ★실제 카드(.mp-app)와 «같은 라운드·같은 폭»을 쓰고 선만 점선으로 바꾼다.
+     새 색·새 크기를 만들지 않는다 — 빈 상태가 다른 디자인 언어를 쓰면 그게 더 어색하다.
+   ★배경을 깔지 않는다(투명). 채워진 카드는 «올라와» 있고 빈 카드는 «파여» 있어야
+     둘이 한눈에 갈린다. */
+#mp-body .mp-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  border: 1px dashed var(--border-strong); border-radius: var(--radius); background: transparent;
+  padding: 30px 24px; text-align: center;
+}
+/* ★가운데 정렬을 쓰는 «유일한» 자리다 — 줄이 짧아 계단이 안 생기고,
+     빈 상태는 가운데가 관례다. 여러 줄로 늘어질 문장을 여기 넣지 마라. */
+.mp-empty-title { font-size: var(--fs-sm); font-weight: 700; color: var(--muted); margin: 0; letter-spacing: -.01em; }
+.mp-empty-desc  { font-size: var(--fs-xs); color: var(--subtle); margin: 0; line-height: 1.7; max-width: 34ch; }
+.mp-empty-cta {
+  margin-top: 8px; font-size: var(--fs-xs); font-weight: 700; color: var(--accent-fill);
+  text-decoration: none; border-bottom: 1px solid transparent; letter-spacing: -.01em;
+}
+.mp-empty-cta:hover { border-bottom-color: var(--accent-fill); }
+/* 오류는 «비어 있음»과 다른 사실이다 — 테두리를 실선으로 바꿔 구분한다(색은 그대로). */
+#mp-body .mp-empty-err { border-style: solid; }
+
+@media (max-width: 560px) { #mp-body .mp-empty { padding: 24px 18px; } }
