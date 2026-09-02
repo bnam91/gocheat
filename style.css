@@ -182,6 +182,13 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .footer-inner { display: flex; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; text-align: left; }
 /* 사업자정보(footer.js가 있을 때만 채움)는 한 줄 아래로 내리고, 비어 있으면 숨긴다 */
 .footer-inner > #biz-info { flex-basis: 100%; }
+/* 좁은 화면에서는 두 덩이가 «줄바꿈»으로 세로로 쌓이는데,
+   space-between 은 그때 왼쪽 정렬처럼 보인다 — 가운데로 모은다. (현빈 2026-09-02) */
+@media (max-width: 640px) {
+  .footer-inner { flex-direction: column; justify-content: center; text-align: center; gap: 14px; }
+  .footer-links { justify-content: center; flex-wrap: wrap; }
+  .footer-inner > #biz-info { text-align: center; }
+}
 #biz-info:empty { display: none; }
 .footer-inner span { font-size: var(--fs-sm); color: var(--subtle); }
 .footer-links { display: flex; justify-content: center; gap: 16px; }
