@@ -1558,15 +1558,24 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   display: inline-flex; align-items: center; gap: 8px;
   padding: 12px 18px; border-radius: 999px;
-  background: var(--accent-fill); color: var(--accent-fg);
-  border: 1px solid var(--accent-fill);
+  /* ★★글자는 «카카오 노랑»이다(현빈 2026-09-03). 그래서 바탕은 두 테마 «모두 먹색»으로 고정한다.
+     ⛔--accent-fill 을 그대로 쓰면 다크에서 바탕이 라임(#C9F23A)이 되는데, 그 위 노란 글자는
+       대비 1.01:1 로 «완전히 안 읽힌다»(실측). 노란 글자가 성립하려면 바탕이 어두워야 한다.
+     ★다크에서는 페이지 배경(#0B0B0E)과 같은 먹색이면 버튼이 «묻힌다»(1.0:1) —
+       한 단 올린 판(#15151A)에 테두리를 줘서 떠 보이게 한다. 노랑 대비는 14.23:1 로 여전히 넉넉하다. */
+  background: #0B0B0E; color: #FEE500;
+  border: 1px solid #26262C;
   font-size: var(--fs-sm); font-weight: 700; letter-spacing: -0.01em;
   text-decoration: none; white-space: nowrap;
   box-shadow: 0 6px 20px rgba(0,0,0,.28);
   transition: transform .18s cubic-bezier(0.22,1,0.36,1), opacity .18s, background .18s;
 }
-.kko-float:hover{ background: var(--accent-fill-hover); border-color: var(--accent-fill-hover);
-                  color: var(--accent-fg); transform: translateY(-2px); }
+.kko-float:hover{ background: #1C1C22; border-color: #3A3A44; color: #FEE500; transform: translateY(-2px); }
+/* 다크에서는 페이지 배경과 같은 먹이라 묻힌다 — 한 단 올려 띄운다(노랑 대비 14.23:1) */
+:root:not([data-theme="light"]) .kko-float{ background:#15151A; border-color:#34343E; }
+:root[data-theme="dark"] .kko-float{ background:#15151A; border-color:#34343E; }
+:root:not([data-theme="light"]) .kko-float:hover,
+:root[data-theme="dark"] .kko-float:hover{ background:#1C1C22; border-color:#43434E; }
 .kko-float:focus-visible{ outline: none; box-shadow: var(--focus-ring), 0 6px 20px rgba(0,0,0,.28); }
 
 /* ★★푸터에 닿으면 «비켜준다». 고정 요소는 가만두면 저작권·약관 링크를 덮는다 —
