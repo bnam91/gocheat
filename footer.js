@@ -21,7 +21,7 @@
     ['email',           '이메일'],
   ];
 
-  fetch('data/business.json?v=20260902v')
+  fetch('data/business.json?v=20260902w')
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (biz) {
       if (!biz) return;
@@ -61,12 +61,22 @@
  *   1년이 어긋나 보이면 안 된다(이 프로젝트의 날짜 규범과 같다).
  */
 (function () {
+  var kstYear = new Date(Date.now() + 9 * 3600 * 1000).getUTCFullYear();
+  var text = '\u00A9 ' + kstYear + ' 소문의섬. All rights reserved.';
+
+  // ★저작권과 연락처 메일을 «한 줄»에 둔다(현빈 2026-09-02).
+  //   메일 주소는 «마크업»에 그대로 둔다 — Cloudflare 가 HTML 안의 메일 주소만
+  //   난독화(__cf_email__)해 준다. 여기서 JS 로 그려 넣으면 그 보호가 사라져
+  //   수집 봇에게 평문으로 노출된다. 그래서 «저작권만» 여기서 채운다.
+  var span = document.getElementById('footer-copy');
+  if (span) { span.textContent = text; return; }
+
+  // 예전 마크업(#footer-copy 없음) 대비 — 없으면 전처럼 한 줄 덧붙인다.
   var slot = document.getElementById('biz-info');
   if (!slot || !slot.parentNode) return;
-  var kstYear = new Date(Date.now() + 9 * 3600 * 1000).getUTCFullYear();
   var p = document.createElement('p');
-  p.className = 'footer-copy';
-  p.textContent = '\u00A9 ' + kstYear + ' 소문의섬. All rights reserved.';
+  p.className = 'footer-meta';
+  p.textContent = text;
   slot.parentNode.appendChild(p);
 })();
 

@@ -20,6 +20,11 @@
   --fg:           #F2F2F5;
   --muted:        #B5B5BC;
   --subtle:       #8E8E96;
+  /* ★--faint = «읽히되 뒤로 물러나는» 가장 흐린 글자(해제된 요금제 기능 등).
+     --placeholder 와 «우연히» 같은 값이지만 «같은 토큰이 아니다» — 플레이스홀더를
+     나중에 조정할 때 요금제표가 같이 흐려지면 안 된다. 용도가 다르면 토큰도 나눈다.
+     ⚠️3:1 아래로 내리지 말 것 — 다크 카드(#15151A) 위 실측 3.6:1. */
+  --faint:        #6E6E77;
   --border:       rgba(255,255,255,0.08);
   --border-strong:rgba(255,255,255,0.16);
   --accent:            #C9F23A;
@@ -37,7 +42,16 @@
      라이트 실측: 입력값 17.89:1 vs 플레이스홀더 3.11:1 = 5.8배 차이(전엔 3.7배). */
   --placeholder:       #6E6E77;
   --accent-rgb:        201,242,58;
+  /* ★★선·테두리·워시·글로우 «전용» 라임. 여태 이 자리엔 rgba(201,242,58,…) 리터럴이
+     12곳에 «직접» 박혀 있어서, 라이트 전환 때 토큰만 바꾼 수정이 그 12곳을 못 건드렸다
+     — 라이트에서도 초록 선이 그대로 남았다(현빈 2026-09-02 「메인 홈에서도 초록색 라인 보이는거」).
+     ⛔새 리터럴을 박지 말고 이 토큰을 써라. */
+  --accent-line-rgb:   201,242,58;
   --warn-rgb:          255,209,102;
+  /* 할인 칩 «채움»용 짝 — --accent-fill/--accent-fg 와 같은 구조.
+     ⚠️--warn 을 그대로 배경에 쓰면 라이트에서 흰 글자 대비가 4.48:1 로 AA(4.5) 에 «아슬하게» 미달한다. */
+  --warn-fill:         #FFD166;
+  --warn-fg:           #0B0B0E;
   /* ★현재 미사용 — 백로그 #9(warn/danger/success 테두리 11건 토큰화)에서 쓴다.
      지금 같이 정의해 두는 건 «라이트 값을 다시 유도하지 않게» 하기 위해서다. */
   --danger-rgb:        255,122,138;
@@ -95,7 +109,10 @@
    ★danger·success·warn 은 다크용 원색 그대로 쓰면 흰 배경에서 대비가 무너진다
      (예: 라임 #C9F23A 는 흰 배경 텍스트 대비 1.2:1 — 사실상 안 보임). 그래서 세 토큰은
      «흰 배경에서 읽히는 진한 톤»으로 다시 잡는다.
-     (rgba(201,242,58,…) 같은 «틴트 리터럴»은 안 건드린다 — 옅은 배경 워시는 두 테마 다 무난하다)
+     ★2026-09-02 정정: 여기엔 「rgba(201,242,58,…) 같은 틴트 리터럴은 안 건드린다 — 옅은 배경
+       워시는 두 테마 다 무난하다」고 적혀 있었다. 워시(0.06~0.08)는 그 말이 맞았지만
+       «테두리»(0.18~0.42)는 라이트에서 «또렷한 초록 선»으로 보였다 — 같은 리터럴을 한 덩이로
+       묶어 판단한 게 틀렸다. 지금은 전부 --accent-line-rgb 토큰을 거친다.
 
    ★accent 는 «둘로 갈랐다»(2026-08-24 현빈 피드백 2회). --accent = 텍스트/테두리용,
      --accent-fill = 버튼 «채움» 배경용(흰 글자와 짝).
@@ -124,12 +141,16 @@
      그래서 라이트는 링을 «진한 accent 색»으로 그린다(옅은 틴트가 아니라 선). */
   --placeholder:   #8A8A93;    /* 라이트: #F4F4F6 위 3.11:1 (전 #6B6B74 = 4.8:1 로 진했다) */
   --accent-rgb:    83,126,22;
+  --accent-line-rgb: 11,11,14;   /* 라이트에선 선도 «먹색» — 채움 버튼(--accent-fill)과 같은 축 */
   --warn-rgb:      166,106,0;
+  --warn-fill:     #8A5600;   /* 라이트: 흰 글자 대비 6.16:1 (--warn #A66A00 은 4.48:1 로 미달) */
+  --warn-fg:       #FFFFFF;
   /* ★다크에만 정의하면 백로그 #9 에서 라이트가 «다크 원색»을 그대로 물려받는다 — 짝을 맞춰 둔다. */
   --danger-rgb:    199,41,61;
   --success-rgb:   30,142,90;
   --focus-ring:    0 0 0 3px rgba(var(--accent-rgb), 0.90);
   --subtle:        #6B6B74;
+  --faint:         #8A8A93;   /* 라이트: 카드 #F4F4F6 위 3.11:1 (전 --subtle = 4.8:1 로 진했다) */
   --danger:        #C7293D;
   --success:       #1E8E5A;
   --warn:          #A66A00;
@@ -207,13 +228,18 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
    원래는 .hero-sub 의 margin-bottom:40px 이 이 간격을 만들고 있었는데,
    부제를 걷어내면서 «그 여백까지» 같이 사라졌다. ⇒ 버튼이 스스로 갖게 한다. */
 .hero-cta { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 72px; }
+/* ★테두리 버튼의 선·글자는 --accent 가 아니라 --accent-fill 을 쓴다(현빈 2026-09-02).
+   --accent 는 라이트에서 올리브 초록(#537E16)이라, 「라이트는 검정 버튼」 지시와 어긋났다.
+   --accent-fill 은 다크 #C9F23A(--accent 와 «같은 값») · 라이트 #0B0B0E 라
+   다크는 한 픽셀도 안 바뀌고 라이트만 먹색이 된다. hover 채움색과도 «같은 축»이라
+   테두리→채움 전환이 색이 튀지 않는다. */
 .cta-primary {
   display: inline-block;
   font-size: var(--fs-sm);
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-fill);
   background: transparent;
-  border: 1.5px solid var(--accent);
+  border: 1.5px solid var(--accent-fill);
   padding: 9px 20px;
   border-radius: 20px;
   letter-spacing: -0.01em;
@@ -261,7 +287,7 @@ main { padding-bottom: 0; margin-top: 0; }
 .app-name { font-size: var(--fs-body); font-weight: 600; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .app-tagline { font-size: var(--fs-sm); color: var(--muted); line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-align: center; }
 .app-footer { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--border); width: 100%; position: relative; }
-.app-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--accent); border: 1px solid rgba(201,242,58,0.32); border-radius: 4px; padding: 2px 5px; text-transform: lowercase; background: rgba(201,242,58,0.06); }
+.app-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--accent); border: 1px solid rgba(var(--accent-line-rgb),0.32); border-radius: 4px; padding: 2px 5px; text-transform: lowercase; background: rgba(var(--accent-line-rgb),0.06); }
 /* 화살표를 절대배치로 빼 배지가 «단독으로» 중앙에 오게 한다(현빈: 배지 중앙 배치).
    전에는 배지+화살표가 flex 로 함께 가운데 정렬돼 배지가 화살표 폭만큼 왼쪽으로 밀렸다. */
 .app-arrow { position: absolute; right: 0; top: 50%; font-size: var(--fs-body); color: var(--accent); opacity: 0; transform: translateY(-50%) translateX(-4px); transition: opacity 0.18s, transform 0.18s; }
@@ -293,19 +319,23 @@ body > footer { margin-top: auto; }
      선이 «본문에 붙어» 그려진다(선은 padding 안쪽 경계에 그려지기 때문). */
 footer { padding-top: 28px; padding-bottom: 56px; margin-top: 48px; border-top: 1px solid var(--border); }
 hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
-/* 한 줄 배치(현빈): 저작권/이메일은 왼쪽, 링크는 오른쪽. 좁으면 자연히 감싼다. */
-.footer-inner { display: flex; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; text-align: left; }
-/* 사업자정보(footer.js가 있을 때만 채움)는 한 줄 아래로 내리고, 비어 있으면 숨긴다 */
-.footer-inner > #biz-info { flex-basis: 100%; }
-/* 좁은 화면에서는 두 덩이가 «줄바꿈»으로 세로로 쌓이는데,
-   space-between 은 그때 왼쪽 정렬처럼 보인다 — 가운데로 모은다. (현빈 2026-09-02) */
-@media (max-width: 640px) {
-  .footer-inner { flex-direction: column; justify-content: center; text-align: center; gap: 14px; }
-  .footer-links { justify-content: center; flex-wrap: wrap; }
-  .footer-inner > #biz-info { text-align: center; }
-}
+/* ★푸터 배치(현빈 2026-09-02) — «항상» 세로 중앙 정렬.
+   전에는 넓은 화면에서 space-between(이메일 왼쪽 / 링크 오른쪽)이었고 640px 아래에서만
+   가운데로 모였다. 그래서 «같은 푸터가 폭에 따라 다른 물건»으로 보였다.
+   지금은 항목이 링크·저작권 두 덩이뿐이라 양끝으로 벌릴 이유가 없다 — 한 축으로 고정한다. */
+.footer-inner { display: flex; flex-direction: column; align-items: center; justify-content: center;
+                text-align: center; gap: 14px; }
+.footer-inner > #biz-info { width: 100%; }
 #biz-info:empty { display: none; }
 .footer-inner span { font-size: var(--fs-sm); color: var(--subtle); }
+/* 저작권 + 이메일을 «한 줄»로(현빈 2026-09-02). 좁으면 구분점에서 자연히 감싼다.
+   ★inline 으로 두는 이유: flex 로 묶으면 줄바꿈될 때 구분점이 줄 끝에 매달린다. */
+.footer-meta { margin: 0; font-size: var(--fs-xs); color: var(--subtle); line-height: 1.8; }
+.footer-meta .footer-email { font-size: inherit; }
+/* ★구분점을 «저작권 쪽»에 붙인다 — footer.js 가 채우기 «전»에는 #footer-copy 가 비어 있어
+   :not(:empty) 가 거짓이라 점이 안 그려진다. 마크업에 점을 두면 JS 실패 시
+   「· coq3820@…」처럼 점이 홀로 남는다. */
+#footer-copy:not(:empty)::after { content: "\00A0·\00A0"; color: var(--faint); }
 .footer-links { display: flex; justify-content: center; gap: 16px; }
 .footer-links a { font-size: var(--fs-sm); color: var(--subtle); transition: color 0.15s; }
 .footer-links a:hover { color: var(--fg); }
@@ -461,7 +491,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   color: var(--accent-fg);
   border-color: var(--accent-fill);
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(201,242,58,0.22);
+  box-shadow: 0 8px 22px rgba(var(--accent-line-rgb),0.22);
 }
 .cta-primary:active { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); color: var(--accent-fg); transform: translateY(0); }
 
@@ -524,9 +554,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   font-family: var(--font);
   font-size: var(--fs-body);
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-fill);
   background: transparent;
-  border: 1.5px solid var(--accent);
+  border: 1.5px solid var(--accent-fill);
   padding: 9px 20px;
   border-radius: 20px;
   cursor: pointer;
@@ -541,7 +571,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   color: var(--accent-fg);
   border-color: var(--accent-fill);
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(201,242,58,0.22);
+  box-shadow: 0 8px 22px rgba(var(--accent-line-rgb),0.22);
 }
 .signup-submit:active { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); transform: translateY(0); }
 .signup-submit:focus-visible { outline: none; box-shadow: var(--focus-ring); }
@@ -588,8 +618,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 .event-banner {
   display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(201,242,58,0.08);
-  border: 1px solid rgba(201,242,58,0.32);
+  background: rgba(var(--accent-line-rgb),0.08);
+  border: 1px solid rgba(var(--accent-line-rgb),0.32);
   border-radius: 20px; padding: 8px 16px; margin-bottom: 4px;
 }
 .event-banner-tag { font-family: var(--mono); font-size: var(--fs-xs); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
@@ -631,13 +661,26 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   transition: border-color 0.2s, background 0.2s, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
 }
 .plan-card:hover { border-color: var(--border-strong); background: var(--bg-elev-hi); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.40); }
-.plan-card-featured { border-color: rgba(201,242,58,0.42); }
-.plan-ribbon { font-size: var(--fs-xs); color: var(--accent); }
+.plan-card-featured { border-color: rgba(var(--accent-line-rgb),0.42); }
+/* ★리본을 «칩»으로 올린다(현빈 2026-09-02: 「15%할인 이런 부분은 좀 잘보이게」).
+   전에는 라임색 «맨 글자»라 카드 안의 다른 작은 글자와 구분이 거의 없었다.
+   ⚠️두 변종의 «상자 높이가 같아야» 한다 — 다르면 카드마다 등급 이름 baseline 이 어긋난다.
+     그래서 padding·line-height·border 폭을 공유하고 색만 바꾼다. */
+.plan-ribbon {
+  display: inline-block; font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.01em;
+  line-height: 1.2; padding: 4px 11px; border-radius: 999px; border: 1px solid transparent;
+  background: var(--accent-fill); color: var(--accent-fg); white-space: nowrap;
+}
+/* 할인은 «돈이 깎이는» 신호라 추천과 «다른 색축»으로 둔다 — 나란히 놓여도 서로 안 잡아먹는다.
+   데이터가 kind 를 말한다(data/apps.json ribbonKind) — 문구를 정규식으로 넘겨짚지 않는다. */
+.plan-ribbon-save { background: var(--warn-fill); color: var(--warn-fg); }
 /* ★리본이 한 카드에만 있으면 그 카드만 아래로 밀려 이름줄이 어긋난다.
    자리를 «항상» 비워둬서 네 장의 기준선을 맞춘다. */
 /* 리본 없는 카드의 자리맞춤. ★고정 14px 이 아니라 «리본 한 줄의 실제 높이»여야
    등급 이름 baseline 이 네 장 모두 맞는다(--fs-xs × line-height 1.6). */
-.plan-card::before { content: ''; display: block; font-size: var(--fs-xs); height: 1.6em; }
+.plan-card::before { content: ''; display: block; font-size: var(--fs-xs);
+  /* = 칩 높이(line-height 1.2em + padding 4px×2 + border 1px×2). 칩 규칙을 바꾸면 여기도 바꿔라. */
+  height: calc(1.2em + 10px); }
 .plan-card:has(.plan-ribbon)::before { display: none; }
 .plan-name { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .plan-price { font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
@@ -648,15 +691,17 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-divider { width: 100%; border-top: 1px solid var(--border); margin: 6px 0; }
 .plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; width: 100%; flex: 1; }
 .plan-features li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; display: flex; gap: 7px; align-items: baseline; justify-content: flex-start; text-align: left; }
-.plan-features .feature-dot { color: var(--accent); font-family: var(--mono); flex-shrink: 0; }
+/* 기능 «표식» 점도 선과 같은 축(라이트=먹색).
+   ⚠️해제된 행의 점은 아래 `.plan-feat-off .feature-dot`(같은 0-2-0 이지만 «뒤»에 있다)이 이긴다. */
+.plan-features .feature-dot { color: var(--accent-fill); font-family: var(--mono); flex-shrink: 0; }
 .plan-features .plan-feature-tbd { color: var(--subtle); font-style: normal; opacity: 0.75; }
 .plan-cta {
-  font-family: var(--font); font-size: var(--fs-sm); font-weight: 600; color: var(--accent);
-  background: transparent; border: 1.5px solid var(--accent); padding: 9px 18px; border-radius: 20px;
+  font-family: var(--font); font-size: var(--fs-sm); font-weight: 600; color: var(--accent-fill);
+  background: transparent; border: 1.5px solid var(--accent-fill); padding: 9px 18px; border-radius: 20px;
   cursor: pointer; letter-spacing: -0.01em; width: 100%; margin-top: 6px;
   transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
 }
-.plan-cta:hover { background: var(--accent-fill); color: var(--accent-fg); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(201,242,58,0.22); }
+.plan-cta:hover { background: var(--accent-fill); color: var(--accent-fg); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(var(--accent-line-rgb),0.22); }
 .plan-cta:active { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); transform: translateY(0); }
 .plan-cta:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .plan-cta-quiet { color: var(--muted); border-color: var(--border-strong); }
@@ -730,8 +775,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 /* 푸터 사업자정보 — data/business.json 값이 있을 때만 렌더된다 */
 .footer-biz { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.8; margin-top: 4px; max-width: 560px; }
 .footer-biz-sep { margin: 0 8px; opacity: 0.4; }
-/* 저작권 — 푸터 맨 아래. 사업자정보와 «같은 계층»이라 같은 크기·색을 쓴다. */
-.footer-copy { font-size: var(--fs-xs); color: var(--subtle); margin-top: 10px; }
 .footer-biz-item { display: inline-block; white-space: nowrap; }
 /* ★nowrap 은 「값 중간에서 줄이 끊기지 않게」 하려던 것인데(footer.js:44), 좁은 화면에서는
    «항목 하나가 화면보다 넓어» 페이지 전체를 밀어낸다 — 390px 에서 387px 짜리
@@ -762,15 +805,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 }
 .dummy-tag-sm{font-size:var(--fs-xs); padding:0 4px; margin-right:4px}
 .plan-per{font-size:var(--fs-sm); font-weight:500; color:var(--subtle); letter-spacing:0}
-.plan-card-now{border-color:rgba(201,242,58,.42)}
+.plan-card-now{border-color:rgba(var(--accent-line-rgb),.42)}
 /* ★opacity 는 두 테마에서 «다르게» 나빠진다 — 색으로 낮춘다(실측 2.58:1 → --subtle) */
-.plan-feat-off{color:var(--subtle); text-decoration:line-through}
+.plan-feat-off{color:var(--faint); text-decoration:line-through}
 /* ★위 한 줄은 «안 먹는다» — `.plan-features li`(0-0-1-1)가 `.plan-feat-off`(0-0-1-0)보다
    구체적이라 color:var(--muted) 가 이긴다. opacity 를 걷어내기만 하면 해제된 기능이
    오히려 «더 밝아져» 활성 기능과 구분이 안 된다(2026-09-02 실측: 다크 rgb(88,88,94) → rgb(181,181,188)).
    ⇒ 같은 구체성 층에서 이겨야 «흐려짐»이 실제로 그려진다. */
-.plan-features li.plan-feat-off{ color:var(--subtle); }
-.plan-feat-off .feature-dot{color:var(--subtle); text-decoration:none}
+.plan-features li.plan-feat-off{ color:var(--faint); }
+.plan-feat-off .feature-dot{color:var(--faint); text-decoration:none}
 
 /* 앱 페이지 안의 요금제 블록 — 상세는 680px 폭이라 4단이 안 들어간다.
    이 블록만 폭을 풀어준다(가운데 정렬 유지). */
@@ -830,7 +873,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .ext-block:not([hidden]) { display: contents; }
 
 /* ── 확장 가입 폼 (ttj 기준, 뉴스레터 제외) ── */
-.signup-form-wide{ max-width:400px; }
 .lbl-hint{ color:var(--subtle); font-weight:400; }
 .field-row{ display:flex; gap:8px; width:100%; align-items:stretch; }
 .field-row .signup-input{ flex:1; }
@@ -991,6 +1033,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    기존 .signup-input 을 «대체»하지 않고 .auth 안에서만 모양을 바꾼다
    (다른 곳의 입력창은 그대로 — 룩어라이크 클래스를 새로 만들지 않는다). */
 .auth { max-width: 400px; margin: 0 auto; padding: 64px 24px 72px; }
+/* ★회원가입만 넓다(현빈 2026-09-02: 「너무 가로 폭이 좁아 보이지 않니」).
+   로그인·찾기 화면은 입력이 1~2칸뿐이라 400px 이 맞다. 회원가입만 확장 수집 5칸 +
+   동의 4줄(각 두 줄짜리 고지 포함)이 들어가서, 같은 폭에서는 본문 폭이 308px 까지 눌린다.
+   ⛔.auth 를 통째로 넓히지 않는다 — 그러면 입력 한 칸짜리 화면이 텅 비어 보인다. */
+.auth-wide { max-width: 560px; }
 .auth-mark { width: 52px; height: 52px; display: block; margin: 0 auto 14px; }
 /* ★display:block 이 UA 의 [hidden]{display:none} 을 이긴다(작성자 스타일이 세다).
    그래서 hidden 을 걸어놔도 «앱에서 안 왔는데» GODITOR 아이콘이 떠 있었다.
@@ -1081,7 +1128,9 @@ header nav, footer { max-width: var(--wide); }
 a.appnav-link:hover { color: var(--fg); }
 a.appnav-link:focus-visible { outline: none; color: var(--accent); }
 /* 지금 보고 있는 구간 표시 — 아래 scrollspy 가 붙인다 */
-.appnav-link.is-current { color: var(--fg); border-bottom-color: var(--accent); }
+/* ★현재 탭 밑줄은 «선»이라 --accent-fill 을 쓴다 — 라이트에서 --accent 는 올리브 초록이다.
+   (2026-09-02 라이트 초록 전수 실측에서 goditor·godiv·pricing 세 페이지에 남아 있었다) */
+.appnav-link.is-current { color: var(--fg); border-bottom-color: var(--accent-fill); }
 /* ★아직 없는 문서. 누를 수 없고, 그렇게 «보이게» 한다 */
 .appnav-link.is-soon { color: var(--subtle); opacity: .6; cursor: default; }
 /* 한글에 mono·letter-spacing 을 걸지 않는다 — «준비  중»처럼 자간만 벌어진다 */
@@ -1180,8 +1229,8 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 .event-strip {
   display: flex; align-items: center; justify-content: center; gap: 10px;
   padding: 13px 24px; margin-bottom: var(--sp-section);
-  background: rgba(201,242,58,.06); border-top: 1px solid rgba(201,242,58,.22);
-  border-bottom: 1px solid rgba(201,242,58,.22);
+  background: rgba(var(--accent-line-rgb),.06); border-top: 1px solid rgba(var(--accent-line-rgb),.22);
+  border-bottom: 1px solid rgba(var(--accent-line-rgb),.22);
 }
 .event-strip .event-banner-text { font-size: var(--fs-sm); font-weight: 600; color: var(--fg); }
 
@@ -1273,7 +1322,7 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 /* 인라인 코드 — 본문 흐름을 끊지 않게 배경은 아주 옅게만 */
 .doc-c, .doc-tools code {
   font-family: var(--mono); font-size: 0.92em; color: var(--accent);
-  background: rgba(201,242,58,0.06); border: 1px solid rgba(201,242,58,0.18);
+  background: rgba(var(--accent-line-rgb),0.06); border: 1px solid rgba(var(--accent-line-rgb),0.18);
   border-radius: 4px; padding: 1px 5px; white-space: nowrap;
 }
 /* 도구 이름 묶음 — 줄바꿈으로 흐르는 칩 목록 */

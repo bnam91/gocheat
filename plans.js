@@ -21,7 +21,7 @@
 
   // ★business.json 은 이제 이 화면에서 안 읽는다 — 「결제 연동 전」 안내문을 뺐기 때문이다(2026-09-02).
   //   결제 가능 여부 판단(bankIsDummy)은 order.html·mypage.js 가 «각자» 한다. 여기서 읽으면 쓰이지 않는 값이 된다.
-  fetch('data/apps.json?v=20260902v').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260902w').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) throw new Error('apps.json');
       var app = apps.filter(function (a) { return a.id === appId; })[0];
@@ -50,7 +50,12 @@
               + '<span class="plan-per"> / ' + esc(p.per) + '</span>';
 
         return '<div class="plan-card' + (p.now ? ' plan-card-now' : '') + '">'
-          + (p.ribbon ? '<p class="plan-ribbon">' + esc(p.ribbon) + '</p>' : '')
+          + (p.ribbon
+              // ★kind 는 «데이터»에서 온다 — 문구를 /할인/ 로 넘겨짚으면 「반값」처럼
+              //   할인인데 안 잡히거나, 등급 이름에 그 글자가 들어가면 잘못 잡힌다.
+              ? '<p class="plan-ribbon' + (p.ribbonKind === 'save' ? ' plan-ribbon-save' : '') + '">'
+                + esc(p.ribbon) + '</p>'
+              : '')
           + '<h3 class="plan-name">' + esc(p.name) + '</h3>'
           + '<p class="plan-price">' + priceHtml + '</p>'
           // 무료 등급만 «항상» 이라는 정보가 따로 있다. 유료 등급은 위에서 이미 말했으니 비운다

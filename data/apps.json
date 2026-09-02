@@ -21,7 +21,7 @@
       {
         "id": "intern",
         "name": "인턴",
-        "price": "₩72,000",
+        "price": "₩68,000",
         "per": "1개월",
         "cta": "인턴 시작하기",
         "features": [
@@ -39,26 +39,6 @@
           },
           {
             "t": "MCP 연동",
-            "ok": false
-          },
-          {
-            "t": "원격 작업",
-            "ok": false
-          },
-          {
-            "t": "GODIV · GOSHOT 포함",
-            "ok": false
-          },
-          {
-            "t": "실전 템플릿 200섹션",
-            "ok": false
-          },
-          {
-            "t": "LAB 기능",
-            "ok": false
-          },
-          {
-            "t": "수익화 강의",
             "ok": false
           }
         ],
@@ -95,18 +75,6 @@
           {
             "t": "GODIV · GOSHOT 포함",
             "ok": true
-          },
-          {
-            "t": "실전 템플릿 200섹션",
-            "ok": false
-          },
-          {
-            "t": "LAB 기능",
-            "ok": false
-          },
-          {
-            "t": "수익화 강의",
-            "ok": false
           }
         ],
         "priceNote": "매월 결제 · 언제든 해지"
@@ -117,6 +85,7 @@
         "price": "₩1,836,000",
         "per": "12개월",
         "ribbon": "15% 할인",
+        "ribbonKind": "save",
         "priceNote": "월 ₩153,000 상당 · 정가 ₩2,160,000",
         "cta": "프로 12개월 구매",
         "features": [
@@ -143,18 +112,6 @@
           {
             "t": "GODIV · GOSHOT 포함",
             "ok": true
-          },
-          {
-            "t": "실전 템플릿 200섹션",
-            "ok": false
-          },
-          {
-            "t": "LAB 기능",
-            "ok": false
-          },
-          {
-            "t": "수익화 강의",
-            "ok": false
           }
         ]
       },
@@ -164,6 +121,7 @@
         "price": "₩2,880,000",
         "per": "12개월",
         "ribbon": "25% 할인",
+        "ribbonKind": "save",
         "priceNote": "월 ₩240,000 상당 · 정가 ₩3,840,000",
         "cta": "프로 트레이닝 구매",
         "features": [
