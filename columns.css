@@ -1,0 +1,21 @@
+/**
+ * 칼럼 페이지 전용 스타일
+ *
+ * ★이 페이지 «전용» 규칙이다. 공용 style.css 는 손대지 않는다
+ *   (다른 페이지에 같이 먹으면 안 되는 것들이다).
+ * 2026-09-02: HTML 안에 있던 것을 파일로 뺐다 — HTML 은 no-cache 라
+ *   인라인이면 페이지를 볼 때마다 다시 내려받는다.
+ */
+.col-empty {
+max-width: var(--read); margin: 0 auto; padding: 0 24px clamp(96px, 12vw, 160px);
+display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+    }
+    .col-empty-card {
+width: 100%; border: 1px dashed var(--border-strong); border-radius: var(--radius);
+background: var(--bg-elev); padding: 44px 28px;
+display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .col-empty-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.04em; }
+    .col-empty-title { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+    .col-empty-desc { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; text-wrap: balance; max-width: 46ch; }
+    .col-empty-cta { margin-top: 6px; }

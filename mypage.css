@@ -1,0 +1,56 @@
+/**
+ * 마이페이지 전용 스타일.
+ *
+ * ★이 페이지 «전용» 규칙이다 — 공용 style.css 는 손대지 않는다.
+ * 2026-09-02: HTML 안에 있던 것을 파일로 뺐다(HTML 은 no-cache 라 매번 다시 내려받는다).
+ */
+/* 탭 — style.css 의 토큰만 쓴다. 새 색을 만들지 않는다 */
+    .mp-tabs { display:flex; gap:2px; border-bottom:1px solid var(--border); margin:0 0 26px; }
+    .mp-tabs button {
+background:none; border:0; border-bottom:2px solid transparent;
+padding:10px 16px; font-size:var(--fs-sm); color:var(--subtle); cursor:pointer;
+    }
+    .mp-tabs button.on { color:var(--fg); border-bottom-color:var(--accent); font-weight:600; }
+    .mp-pane { display:none; }
+    .mp-pane.on { display:block; }
+    .mp-tier {
+display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+background:var(--bg-elev-hi); border:1px solid var(--border-strong);
+border-radius:var(--radius); padding:20px 22px; margin:0 0 20px;
+    }
+    .mp-tier .big { font-size:var(--fs-h3); font-weight:800; letter-spacing:-.02em; margin:0; }
+    .mp-tier .sm  { font-size:var(--fs-xs); color:var(--subtle); margin:4px 0 0; }
+    .mp-tier .plan-cta { margin:0; max-width:180px; }
+    /* ★★NEW-02 (2차): overflow-x:auto 만으로는 «아무 일도 안 일어났다».
+ 뿌리는 감싼 박스가 아니라 «flex 조상»이다 — .detail-inner 가 flex 컨테이너라
+ 그 자손들이 min-width:auto(기본값) 때문에 min-content(=표 최소폭)까지 부풀어 오른다.
+ 부모가 안 잡아주니 .mp-ord-wrap 도 같이 커져서 «넘칠 게 없어» 스크롤이 안 생겼다.
+ 게다가 align-items:center 라 좌우로 균등하게 흘러 «왼쪽은 스크롤로도 도달 불가»였다.
+ ⇒ flex 자손 사슬에 min-width:0 을 건다. 그래야 wrap 이 화면 폭에 갇히고 그 «안에서» 스크롤한다.
+ (1차 때 min-width:520px 를 더해 오히려 43px→72px 로 악화시켰다 — 증상만 보고 손댄 결과다) */
+    #mp-body, .mp-pane { min-width:0; max-width:100%; }
+    .mp-ord-wrap { min-width:0; max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    table.mp-ord { width:100%; min-width:520px; border-collapse:collapse; font-size:var(--fs-xs); }
+    table.mp-ord th {
+text-align:left; color:var(--subtle); font-weight:500;
+padding:0 10px 9px 0; border-bottom:1px solid var(--border);
+    }
+    table.mp-ord td { padding:13px 10px 13px 0; border-bottom:1px solid var(--border); color:var(--muted); }
+    table.mp-ord td.mono { font-family:var(--mono); color:var(--fg); white-space:nowrap; }
+    .mp-pill { display:inline-block; white-space:nowrap; font-size:var(--fs-xs); padding:3px 10px; border-radius:20px; }
+    .mp-pill.wait { background:rgba(255,122,138,.12); color:var(--danger); border:1px solid rgba(255,122,138,.3); }
+    .mp-pill.done { background:rgba(111,227,162,.12); color:var(--success); border:1px solid rgba(111,227,162,.3); }
+    .mp-dl { display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+    .mp-dl a {
+display:flex; justify-content:space-between; align-items:center;
+background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
+padding:15px 17px; text-decoration:none; color:var(--fg); font-size:var(--fs-sm);
+    }
+    .mp-dl a:hover { border-color:var(--border-strong); }
+    .mp-dl .arw { color:var(--subtle); }
+    .mp-dummy {
+background:rgba(255,122,138,.07); border:1px solid rgba(255,122,138,.28);
+border-radius:var(--radius); padding:14px 16px; margin:18px 0 0;
+font-size:var(--fs-xs); color:var(--muted); line-height:1.7;
+    }
+    .mp-dummy b { color:var(--danger); }

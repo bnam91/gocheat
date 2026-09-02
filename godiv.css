@@ -1,0 +1,113 @@
+/**
+ * GODIV 소개 페이지 전용 스타일
+ *
+ * ★이 페이지 «전용» 규칙이다. 공용 style.css 는 손대지 않는다
+ *   (다른 페이지에 같이 먹으면 안 되는 것들이다).
+ * 2026-09-02: HTML 안에 있던 것을 파일로 뺐다 — HTML 은 no-cache 라
+ *   인라인이면 페이지를 볼 때마다 다시 내려받는다.
+ */
+은 godiv.html «에만» 걸린다 — 공용 style.css 는 손대지 않는다
+ (다른 페이지, 특히 goditor 에 같이 먹는다). 쓰는 토큰은 goditor.html 과 «같은 것»뿐이다:
+ 새 색·새 서체를 만들지 않았다.
+ 여기서 처리하는 다섯 가지: ① 정체성 띠 ② 스크린샷 자리가 비어서 → 한 단
+ ③ 모바일 가로 잘림 ④ 사용법·개인정보 왼쪽 정렬 ⑤ 개인정보 처리방침 접기. -->
+  <style>
+    /* ── ① 정체성 띠 — 히어로 바로 아래. «이게 왜 다른지»를 한 덩이로 말한다 ── */
+    .godiv-identity { max-width: var(--read); margin: 0 auto; padding: 0 24px var(--sp-section); }
+    .godiv-identity-card {
+border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+padding: 30px 30px; display: flex; flex-direction: column; gap: 16px; text-align: left;
+    }
+    .godiv-identity-eyebrow { font-size: var(--fs-xs); color: var(--accent); font-weight: 600; letter-spacing: -0.01em; text-align: left; }
+    .godiv-identity-card h2 { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; color: var(--fg); text-align: left; text-wrap: balance; }
+    .godiv-identity-card p { font-size: var(--fs-body); color: var(--muted); line-height: 1.8; text-align: left; }
+    .godiv-identity-card p .hl { color: var(--fg); font-weight: 600; }
+    .godiv-identity-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.75; text-align: left; padding-top: 4px; border-top: 1px solid var(--border); }
+    .godiv-identity-note b { color: var(--muted); font-weight: 600; }
+
+    /* ── ② 기능 — 이 페이지엔 «앱 화면이 아직 없다»(없는 걸 지어내지 않는다).
+   그래서 goditor 처럼 좌우로 교차시키지 않고 한 단으로 쌓는다.
+   goditor 는 스크린샷이 있어서 좌우 교차가 성립하지만, 스크린샷이 없는 페이지에서
+   빈 자리를 좌우로 벌리면 «덜 만든 것»으로 읽힌다 — 이 페이지가 덜 다듬어져
+   보였던 이유가 정확히 그것이었다. ── */
+    .godiv-feature-list { display: flex; flex-direction: column; gap: 14px; margin-top: var(--sp-section); }
+    .godiv-feature-item {
+border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+padding: 24px 26px; display: flex; flex-direction: column; gap: 9px; text-align: left;
+    }
+    .godiv-feature-item h3 { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; color: var(--fg); text-align: left; }
+    .godiv-feature-item p { font-size: var(--fs-body); color: var(--muted); line-height: 1.7; text-align: left; max-width: none; }
+    .godiv-feature-item code {
+font-family: var(--mono); font-size: var(--fs-sm); background: var(--bg-elev-hi);
+border: 1px solid var(--border); border-radius: 5px; padding: 1px 6px; color: var(--fg);
+white-space: nowrap;
+    }
+
+    /* ── ③ 사용법 — 왼쪽 정렬 번호 단계.
+   공용 css 에 .how-steps 규칙이 «없어서» 기본 마커가 가운데 정렬된 본문 왼쪽으로
+   떨어져 어긋나 보였다. 여기서 명시적으로 고정한다. ── */
+    .how-steps {
+list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 12px;
+max-width: var(--read); margin: 24px auto 0; text-align: left;
+    }
+    /* ★block 으로 둔다 — flex 로 두면 <b>GODITOR 계정</b> 이 별도 flex 아이템이 되어
+ 문장 흐름이 끊긴다. 번호 동그라미는 absolute 로 앉힌다. */
+    .how-steps li {
+counter-increment: step; position: relative; padding-left: 46px;
+font-size: var(--fs-body); color: var(--muted); line-height: 1.6;
+min-height: 32px; padding-top: 3px;
+    }
+    .how-steps li::before {
+content: counter(step); position: absolute; left: 0; top: 0;
+width: 32px; height: 32px; border-radius: 50%;
+background: rgba(201,242,58,0.10); border: 1px solid rgba(201,242,58,0.32);
+color: var(--accent); font-family: var(--mono); font-size: var(--fs-sm);
+display: flex; align-items: center; justify-content: center;
+    }
+    .how-steps b { color: var(--fg); font-weight: 600; }
+
+    /* ── ④ 개인정보 처리방침 — «접는다». 요약만 보이고, 펼치면 전문이 나온다.
+   ★내비 탭에서는 뺐지만(현빈) 본문은 남긴다 — 법적 고지다.
+   ★섹션의 id="privacy" 는 그대로 둔다(웹스토어 심사 URL /godiv.html#privacy). ── */
+    .privacy-details {
+/* ★width:100% 가 «있어야» 한다. 부모 .pricing-inner 가 align-items:center 인 flex 라
+   폭을 안 주면 내용 폭(265px)으로 쪼그라든다 — 법적 고지 상자가 알약만 해진다.
+   공용 css 도 goditor 의 같은 자리(.pricing-inner > .future-pay)에 똑같이
+   max-width + width:100% 를 준다(style.css:694). 같은 패턴을 그대로 따른다. */
+max-width: var(--read); width: 100%; margin: 22px auto 0; text-align: left;
+border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+    }
+    .privacy-details > summary {
+list-style: none; cursor: pointer; padding: 18px 22px;
+display: flex; align-items: center; justify-content: space-between; gap: 12px;
+font-size: var(--fs-body); font-weight: 600; color: var(--fg);
+    }
+    .privacy-details > summary::-webkit-details-marker { display: none; }
+    .privacy-details > summary::after {
+content: '펼치기 +'; font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); flex-shrink: 0;
+    }
+    .privacy-details[open] > summary::after { content: '접기 −'; }
+    .privacy-details[open] > summary { border-bottom: 1px solid var(--border); }
+    .privacy-details > summary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); border-radius: var(--radius); }
+    .privacy-body { padding: 10px 22px 22px; text-align: left; display: flex; flex-direction: column; gap: 4px; }
+    .privacy-body h3 { font-size: var(--fs-sm); font-weight: 700; color: var(--fg); margin-top: 16px; text-align: left; }
+    .privacy-body ul { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+    .privacy-body li { font-size: var(--fs-sm); color: var(--muted); line-height: 1.7; padding-left: 14px; position: relative; text-align: left; }
+    .privacy-body li::before { content: '·'; position: absolute; left: 0; color: var(--accent); font-family: var(--mono); }
+
+    /* ── ⑤ 모바일 — 가로로 잘리지 않게 한다(긴 제목 줄바꿈 + 컨테이너 여백) ── */
+    @media (max-width: 600px) {
+.godiv-identity, .godiv-feature-list { padding-left: 20px; padding-right: 20px; }
+.godiv-identity-card { padding: 22px 18px; }
+.godiv-feature-item { padding: 20px 18px; }
+.privacy-details > summary { padding: 16px 18px; }
+.privacy-body { padding: 10px 18px 18px; }
+/* 제목이 한 줄을 넘겨 오른쪽이 잘렸던 자리다.
+   ★핵심은 글자 크기가 아니라 «폭을 묶는 것»이었다 — flex 아이템(.detail-meta)이
+   전체 폭을 안 먹어서 제목이 자기 내용 폭(한 줄)까지 자라 컨테이너 밖으로 나갔다.
+   width:100% 로 묶어두면 단어 경계에서 줄이 바뀐다.
+   ★제목은 goditor 기준으로 「GODIV」 한 단어로 줄었지만(2026-09-02) 이 가드는 남긴다 —
+     제목이 다시 길어져도 잘리지 않는다. */
+.detail-header, .detail-meta { width: 100%; }
+.detail-title { font-size: clamp(30px, 8.5vw, 40px); max-width: 100%; }
+    }
