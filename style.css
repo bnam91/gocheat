@@ -913,6 +913,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 }
 .field-btn:hover:not(:disabled){ color:var(--fg); border-color:var(--accent); }
 .field-btn:disabled{ opacity:.42; cursor:not-allowed; }
+
+/* ★칸별 경고(현빈 2026-09-02) — 「전화번호를 잘못 쓰면 그 밑에 경고가 떠야지, 버튼 밑에 있으면
+   바로 확인이 안 된다」. 그래서 «틀린 칸 바로 아래»에 뜬다.
+   ★빈 상태에서는 «자리를 차지하지 않는다» — min-height 로 자리를 잡아두면 칸 사이가
+     항상 벌어져 폼이 성기게 보인다. 대신 나타날 때 아래 여백만 준다.
+   ★색 하나에만 기대지 않는다 — aria-live 로 읽어주고, 문장 자체가 무엇을 고쳐야 하는지 말한다. */
+.field-err{ margin:5px 0 0; font-size:var(--fs-xs); line-height:1.5; color:var(--danger); }
+.field-err:empty{ display:none; }
+.field-err.is-ok{ color:var(--success); }
 .field-note{ font-size:var(--fs-sm); color:var(--subtle); line-height:1.6; text-align:center; margin-top:-4px; }
 .field-note b{ color:var(--muted); }
 

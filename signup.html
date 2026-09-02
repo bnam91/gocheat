@@ -10,14 +10,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260903a" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903a" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903a" />
+  <link rel="stylesheet" href="style.css?v=20260903b" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903b" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903b" />
 </head>
 <body>
   <header>
     <nav>
-      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903a" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903b" alt="" width="22" height="22" /><span>소문의섬</span></a>
       <div class="nav-links">
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
@@ -43,16 +43,27 @@
       <div class="auth-card">
       <form id="signup-form" class="signup-form" novalidate>
         <label class="signup-label" for="email">이메일</label>
-        <input id="email" name="email" type="email" class="signup-input" placeholder="you@example.com"
-               autocomplete="email" required />
+        <!-- ★중복확인(현빈 2026-09-02). 왜 넣었나:
+             이미 가입된 주소로 다시 가입하면 화면은 「가입 완료」라고 하는데 «새로 친 비밀번호는 버려진다»
+             (signup.js 의 $setOnInsert — 계정 탈취를 막는 «옳은» 장치다). 그래서 사용자는
+             «있지도 않은 비밀번호»로 로그인을 시도하다 갇힌다. 현빈이 직접 겪었다.
+             ⇒ 가입 «전»에 알려준다. ★새 버튼 모양을 만들지 않는다 — 이미 있는 .field-row/.field-btn 을 쓴다. -->
+        <div class="field-row">
+          <input id="email" name="email" type="email" class="signup-input" placeholder="you@example.com"
+                 autocomplete="email" required />
+          <button type="button" class="field-btn" id="email-check">중복확인</button>
+        </div>
+        <p class="field-err" id="err-email" role="status" aria-live="polite"></p>
 
         <label class="signup-label" for="password">비밀번호 <span class="lbl-hint">(8자 이상)</span></label>
         <input id="password" name="password" type="password" class="signup-input" placeholder="••••••••"
                autocomplete="new-password" minlength="8" required />
+        <p class="field-err" id="err-password" role="status" aria-live="polite"></p>
 
         <label class="signup-label" for="password2">비밀번호 확인</label>
         <input id="password2" name="password2" type="password" class="signup-input" placeholder="••••••••"
                autocomplete="new-password" minlength="8" required />
+        <p class="field-err" id="err-password2" role="status" aria-live="polite"></p>
 
         <!-- ★★확장 수집 구간 — data/flags.json 의 extendedSignup 이 true 일 때만 «존재»한다.
              기본은 hidden 이고, 아래 스크립트가 잠겨 있으면 DOM 에서 «지운다».
@@ -67,6 +78,7 @@
           <label class="signup-label" for="name">이름 <span class="req-mark">[필수]</span></label>
           <input id="name" name="name" type="text" class="signup-input" placeholder="홍길동"
                  autocomplete="name" maxlength="40" required />
+          <p class="field-err" id="err-name" role="status" aria-live="polite"></p>
 
           <label class="signup-label" for="phone">휴대전화 <span class="req-mark">[필수]</span></label>
           <!-- ★문자 발송이 아직 없다. 「받기」 버튼을 두면 눌러도 아무 일이 없어
@@ -74,6 +86,7 @@
                (2026-09-02 독립검수 지적 / 안내문구는 현빈 지시로 삭제) -->
           <input id="phone" name="phone" type="tel" class="signup-input" placeholder="01012345678"
           autocomplete="tel" inputmode="numeric" maxlength="13" required />
+          <p class="field-err" id="err-phone" role="status" aria-live="polite"></p>
 
           <div class="agree-box">
             <!-- ★checked 를 «마크업»에도 박는다(2026-09-02 라이브 실측).
@@ -121,6 +134,7 @@
                 </small></span>
             </label>
           </div>
+          <p class="field-err" id="err-agree" role="status" aria-live="polite"></p>
         </div>
 
         <button type="submit" class="signup-submit" id="signup-submit">가입하기 →</button>
@@ -164,6 +178,23 @@
         msg.className = 'signup-msg ' + (ok ? 'signup-msg-ok' : 'signup-msg-error');
       }
 
+      // ★★경고는 «틀린 칸 바로 아래»에 띄운다(현빈 2026-09-02).
+      //   전에는 전부 폼 맨 아래 한 줄(#signup-msg)로 갔다 — 제출 버튼 «아래»라,
+      //   화면이 길면 경고가 보이지도 않고, 보여도 «어느 칸이» 틀렸는지 알 수 없었다.
+      //   #signup-msg 는 이제 «서버 응답·전체 상태»만 맡는다.
+      function fieldErr(id, text) {
+        var el = document.getElementById('err-' + id);
+        if (el) { el.textContent = text || ''; el.classList.toggle('is-on', !!text); }
+      }
+      function clearErrs() {
+        ['email','password','password2','name','phone','agree'].forEach(function (k) { fieldErr(k, ''); });
+      }
+      // 칸을 고치면 그 칸 경고는 «즉시» 지운다 — 고쳤는데 빨간 글씨가 남아 있으면 거짓말이 된다.
+      ['email','password','password2','name','phone'].forEach(function (k) {
+        var el = document.getElementById(k);
+        if (el) el.addEventListener('input', function () { fieldErr(k, ''); });
+      });
+
       // ── 확장 수집 구간 열고 닫기 ────────────────────────────────
       // flags 를 읽기 전까지는 «잠긴 것으로» 취급한다. 못 읽으면 잠긴 채로 남는다.
       // 제출 버튼은 판정이 끝날 때까지 눌리지 않게 막는다 —
@@ -201,11 +232,61 @@
 
       // ★flags.json 은 응답에 Cache-Control 이 «없다» → 브라우저 휴리스틱 캐시가 걸린다.
       //   플래그를 뒤집어도 옛 값을 든 브라우저는 동의 구간이 «통째로 없는» 화면을 본다.
-      fetch('data/flags.json?v=20260903a')
+      fetch('data/flags.json?v=20260903b')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (f) { (f && f.extendedSignup === true) ? openExtended() : lockExtended(); })
         .catch(lockExtended)
         .then(function () { submit.disabled = false; });
+
+      // ── 중복확인 ────────────────────────────────────────────────
+      // ★«확인한 주소»를 기억한다. 확인 뒤 주소를 고치면 확인은 무효가 된다.
+      var checkedEmail = null;   // 마지막으로 확인이 «끝난» 주소
+      var emailTaken = false;
+      var chkBtn = document.getElementById('email-check');
+      emailInput.addEventListener('input', function () { checkedEmail = null; emailTaken = false; });
+
+      chkBtn.addEventListener('click', async function () {
+        var email = (emailInput.value || '').trim();
+        if (!email || !emailRe.test(email)) {
+          checkedEmail = null;
+          return bad2('이메일 형식이 올바르지 않아요.', emailInput);
+        }
+        chkBtn.disabled = true;
+        var label = chkBtn.textContent;
+        chkBtn.textContent = '확인 중…';
+        try {
+          var r = await fetch('/api/license/check-email', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email }),
+          });
+          var d = await r.json().catch(function () { return {}; });
+          if (r.status === 429) { checkedEmail = null; return bad2('확인 요청이 너무 잦아요. 잠시 후 다시 시도해 주세요.', null); }
+          if (!r.ok || !d.ok)   { checkedEmail = null; return bad2('지금은 확인할 수 없어요. 잠시 후 다시 시도해 주세요.', null); }
+          checkedEmail = email;
+          emailTaken = !!d.taken;
+          if (emailTaken) {
+            // ★★이 문장이 오늘 사고의 «해결»이다. 전에는 이미 가입된 주소로도 「가입 완료」가 떴다.
+            fieldErr('email', '이미 가입된 이메일이에요. 로그인하거나 비밀번호 찾기를 이용해 주세요.');
+            document.getElementById('err-email').classList.remove('is-ok');
+          } else {
+            fieldErr('email', '사용할 수 있는 이메일이에요.');
+            document.getElementById('err-email').classList.add('is-ok');
+          }
+        } catch (e) {
+          checkedEmail = null;
+          bad2('네트워크가 불안정해요. 잠시 후 다시 시도해 주세요.', null);
+        } finally {
+          chkBtn.disabled = false;
+          chkBtn.textContent = label;
+        }
+      });
+      // 중복확인 «전용» 경고 — 제출 흐름의 bad() 와 달리 다른 칸 경고를 지우지 않는다.
+      function bad2(text, el) {
+        fieldErr('email', text);
+        document.getElementById('err-email').classList.remove('is-ok');
+        if (el) el.focus();
+        return false;
+      }
 
       var askedMarketing = false;   // ★한 번 물으면 다시 묻지 않는다
       form.addEventListener('submit', async function (e) {
@@ -220,9 +301,21 @@
         var phone    = (v('phone') || '').trim();
         var marketing= c('agree-marketing');
 
-        function bad(msg, el) { show(msg, false); if (el) el.focus(); }
+        // ★el 의 id 로 «그 칸의» 경고 자리를 찾는다. 맨 아래 한 줄은 비워 둔다.
+        function bad(text, el, key) {
+          clearErrs();
+          fieldErr(key || (el && el.id) || 'agree', text);
+          show('', true);
+          if (el) { el.focus(); if (el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+          return false;
+        }
 
+        clearErrs();
         if (!email || !emailRe.test(email))  return bad('이메일 형식이 올바르지 않아요.', emailInput);
+        // ★중복확인을 «안 했거나», 확인 뒤 주소를 «고쳤으면» 다시 시킨다.
+        //   안 그러면 확인한 주소와 가입하는 주소가 달라져 확인이 무의미해진다.
+        if (checkedEmail !== email)          return bad('중복확인을 눌러 주세요.', emailInput);
+        if (emailTaken)                      return bad('이미 가입된 이메일이에요. 로그인하거나 비밀번호 찾기를 이용해 주세요.', emailInput);
         if (password.length < 8)             return bad('비밀번호는 8자 이상이어야 해요.', passwordInput);
         if (password !== pw2)                return bad('비밀번호가 서로 달라요.', document.getElementById('password2'));
         // ★★마케팅 미동의로 «그냥 지나치는» 사람에게 한 번 더 묻는다(현빈 2026-09-02).
@@ -259,9 +352,9 @@
         if (extOpen) {
           if (!name)                         return bad('이름을 입력해 주세요.', document.getElementById('name'));
           if (phone.length < 10)             return bad('휴대전화 번호를 정확히 입력해 주세요.', document.getElementById('phone'));
-          if (!c('agree-terms'))             return bad('이용약관에 동의해 주세요.', document.getElementById('agree-terms'));
+          if (!c('agree-terms'))             return bad('이용약관에 동의해 주세요.', document.getElementById('agree-terms'), 'agree');
           // ★개인정보 수집·이용 동의는 «별도»다 — 약관 동의로 대신할 수 없다(개인정보 보호법 제22조①).
-          if (!c('agree-privacy'))           return bad('개인정보 수집·이용에 동의해 주세요.', document.getElementById('agree-privacy'));
+          if (!c('agree-privacy'))           return bad('개인정보 수집·이용에 동의해 주세요.', document.getElementById('agree-privacy'), 'agree');
         }
 
         submit.disabled = true;
@@ -339,7 +432,7 @@
       var app;
       try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
       if (!app) return;
-      fetch('data/apps.json?v=20260903a').then(function (r) { return r.ok ? r.json() : null; })
+      fetch('data/apps.json?v=20260903b').then(function (r) { return r.ok ? r.json() : null; })
         .then(function (apps) {
           if (!apps) return;
           var a = apps.filter(function (x) { return x.id === app; })[0];
@@ -353,7 +446,7 @@
         }).catch(function () {});
     })();
   </script>
-  <script src="footer.js?v=20260903a"></script>
-  <script src="theme.js?v=20260903a"></script>
+  <script src="footer.js?v=20260903b"></script>
+  <script src="theme.js?v=20260903b"></script>
 </body>
 </html>

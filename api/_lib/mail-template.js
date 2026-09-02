@@ -96,6 +96,7 @@ function renderMail({ label = '소문의섬', title, paragraphs = [], cta = null
     .fg    { color:${C.dark.fg} !important; }
     .muted { color:${C.dark.muted} !important; }
     .subtle, .subtle a, .rawurl, .label { color:${C.dark.subtle} !important; }
+    .pill  { background:#1C1C22 !important; border-color:${C.dark.border} !important; color:${C.dark.muted} !important; }
     .btn   { background:${C.dark.accent} !important; }
     .btn a { color:${C.dark.btnInk} !important; }
     .hr, .rule { border-color:${C.dark.border} !important; }
@@ -109,29 +110,36 @@ function renderMail({ label = '소문의섬', title, paragraphs = [], cta = null
     <tr><td align="center" style="padding:32px 16px 40px;">
       <table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;font-family:${FONT};">
 
-        <!-- ── 브랜드 밴드 — 사이트 헤더(로고 + 얇은 하단선)를 그대로 옮겼다.
-             ★로고는 «이미지가 아니라 텍스트»다: 이미지는 기본 차단되는 클라이언트가 많고,
-               차단된 상태에서도 「누가 보냈는지」가 보여야 한다. ── -->
-        <tr><td style="padding:0 2px 12px;">
-          <span class="fg" style="font-size:17px;font-weight:700;letter-spacing:-0.02em;color:${L.fg};">소문의섬</span>
+        <!-- ── 헤더 띠 — 로고 + 워드마크 + «어느 종류 메일인지» 배지 (시안 B, 현빈 2026-09-02 채택).
+             ★배지를 카드 «밖»에 둔 이유: 우리 메일은 한 종류가 아니다(가입 인증 · 비밀번호 재설정 ·
+               라이센스 키). 카드를 읽기 전에, 첫 화면에서 무엇인지 갈려야 한다.
+             ★★로고는 이미지지만 «이미지에 기대지 않는다» — 메일 클라이언트는 원격 이미지를 기본 차단한다.
+               ⑴옆에 글자 워드마크를 «항상» 두고 ⑵alt 를 넣고 ⑶타일 칸에 bgcolor 로 브랜드 초록을 미리 깔아,
+               그림이 막혀도 「초록 타일 + 소문의섬」이 남는다. (⑶은 시안 C 의 장치를 가져온 것)
+             ⚠️자간확장·대문자·모노는 배지에 쓰지 않는다 — 한글은 낱자가 벌어져 오히려 읽기 나빠진다. -->
+        <tr><td style="padding:0 4px 14px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td width="44" valign="middle" bgcolor="#3EFF00" style="width:44px;background:#3EFF00;border-radius:10px;">
+              <img src="https://blacksheepwall.kr/assets/logo-mark.png" width="44" height="44" alt="소문의섬"
+                   style="display:block;width:44px;height:44px;border-radius:10px;border:0;outline:none;" />
+            </td>
+            <td valign="middle" style="padding-left:10px;">
+              <span class="fg" style="font-size:16px;font-weight:700;letter-spacing:-0.01em;color:${L.fg};">소문의섬</span>
+            </td>
+            <td align="right" valign="middle">
+              <span class="pill" style="display:inline-block;white-space:nowrap;background:${L.card};border:1px solid ${L.border};color:${L.muted};font-size:12px;font-weight:600;line-height:1;padding:7px 12px;border-radius:999px;">${esc(label)}</span>
+            </td>
+          </tr></table>
         </td></tr>
-        <tr><td class="rule" style="border-top:1px solid ${L.border};font-size:0;line-height:0;">&nbsp;</td></tr>
-        <!-- ★라임 액센트 바 — 사이트의 시그니처 색을 «구조»로 쓴다. 글자색으로만 쓰면
-             브랜드가 안 남는다(현빈 지적: 「우리 디자인·브랜딩 느낌이 있으면 좋겠다」). -->
+        <!-- ★액센트 바 — 헤더와 카드 «사이»를 눈으로 가른다. 라이트는 먹색, 다크는 라임
+             (사이트 --accent-fill 과 같은 값). ⚠️로고 타일의 형광 초록(#3EFF00)과는 «다른 색»이고,
+             일부러 그렇게 뒀다 — 두 초록을 나란히 칠하면 색이 둘로 갈라져 보인다. -->
         <tr><td><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
           <td class="accentbar" bgcolor="${L.accent}" width="56" height="3" style="background:${L.accent};width:56px;height:3px;font-size:0;line-height:0;">&nbsp;</td>
         </tr></table></td></tr>
 
-        <tr><td class="card pad" style="background:${L.card};border:1px solid ${L.border};border-top:0;border-radius:0 0 12px 12px;padding:28px 28px 26px;">
+        <tr><td class="card pad" bgcolor="${L.card}" style="background:${L.card};border:1px solid ${L.border};border-radius:16px;padding:32px 28px 28px;">
 
-          <!-- ★모노 라벨 — 사이트 .hero-badge 관습(JetBrains Mono)을 따르되 «자간은 줄였다».
-               사이트 값(letter-spacing .06em + uppercase)은 «영문 대문자» 전제라, 한글에 그대로 쓰면
-               「비밀번호  재설정」처럼 낱자가 벌어져 어색해진다. uppercase 도 한글엔 효과가 없다.
-               ★그리고 «모노 서체»도 뺐다 — JetBrains Mono 는 메일에서 로드되지 않아 시스템 고정폭으로
-               폴백되는데, 한글을 고정폭으로 그리면 낱자 사이가 더 벌어져 오히려 나빠진다.
-               ⇒ 브랜드는 «라임 바 + 로고»가 지고, 라벨은 «읽기»를 택했다.
-               (모노는 라이센스 키처럼 «사람이 눈으로 옮겨 적는 값»에만 남겼다 — 거기선 0/O 구분이 필요하다) -->
-          <p class="label" style="margin:0 0 10px;font-size:13px;font-weight:600;letter-spacing:0.01em;color:${L.subtle};">${esc(label)}</p>
 
           <h1 class="fg" style="margin:0 0 16px;font-size:21px;line-height:1.4;font-weight:700;letter-spacing:-0.01em;color:${L.fg};">${esc(title)}</h1>
           <div class="muted">${paragraphs.map(p).join('')}</div>
@@ -143,7 +151,6 @@ function renderMail({ label = '소문의섬', title, paragraphs = [], cta = null
 
         <tr><td class="subtle" style="padding:20px 4px 0;font-size:12px;line-height:1.7;color:${L.subtle};">
           이 메일은 발신 전용입니다. 문의는 <a href="mailto:coq3820@gmail.com" style="color:${L.subtle};">coq3820@gmail.com</a> 으로 보내주세요.<br />
-          상호: 소문의섬 · 개인정보보호책임자: 소문의섬 운영자<br />
           <a href="https://blacksheepwall.kr" style="color:${L.subtle};">blacksheepwall.kr</a> ·
           <a href="https://blacksheepwall.kr/terms.html" style="color:${L.subtle};">이용약관</a> ·
           <a href="https://blacksheepwall.kr/privacy.html" style="color:${L.subtle};">개인정보 처리방침</a>
