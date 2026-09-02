@@ -5,6 +5,7 @@ const {
   isValidEmail, normalizeEmail, isStrongEnough,
 } = require('../_lib/util');
 const { randomToken } = require('../_lib/crypto');
+const { emailDomainAcceptsMail } = require('../_lib/mx');
 const { enqueueMail, buildVerifyMail } = require('../_lib/mail');
 
 
@@ -70,6 +71,16 @@ module.exports = async (req, res) => {
 
   if (!isValidEmail(email)) return json(res, 400, { error: 'invalid_email' });
   if (!isStrongEnough(password)) return json(res, 400, { error: 'weak_password', detail: 'min 8 chars' });
+
+  // ★★메일이 «도달할 수 있는 도메인»인지 확인한다(현빈 2026-09-02).
+  //   화면(중복확인)에서도 막지만 여기서 한 번 더 본다 — 화면을 우회해 직접 요청을 보내면
+  //   그대로 계정이 만들어진다. 실제로 2026-09-02 에 'gmail.comㄴㅇ' 로 계정이 생겼다.
+  //   ★DNS 가 답을 못 주면 통과시킨다(mx.js) — 우리 사정으로 가입을 막지 않는다.
+  const mxOk = await emailDomainAcceptsMail(email);
+  if (!mxOk.ok) {
+    return json(res, 400, { error: 'undeliverable_domain',
+      detail: '메일을 받을 수 없는 주소예요. 도메인을 다시 확인해 주세요.' });
+  }
 
   // ★★확장 가입이 잠겨 있으면 개인정보를 «아예 받지 않는다».
   //   폼을 지우는 것만으로는 못 막는다 — 구버전 폼·캐시된 페이지·직접 호출이

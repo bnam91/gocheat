@@ -1,5 +1,6 @@
 const { getDb } = require('../_lib/mongo');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
+const { emailDomainAcceptsMail } = require('../_lib/mx');
 
 // 이메일 «중복 확인» — 회원가입 폼의 [중복확인] 버튼이 부른다.
 //
@@ -58,7 +59,19 @@ module.exports = async (req, res) => {
     await tries.insertOne({ key: `chk:${ip}`, at: now });
 
     const user = await db.collection('users').findOne({ email }, { projection: { _id: 1 } });
-    return json(res, 200, { ok: true, taken: !!user });
+    if (user) return json(res, 200, { ok: true, taken: true });
+
+    // ★★도메인이 «메일을 받을 수 있는지»까지 본다(현빈 2026-09-02).
+    //   양식 검사는 «모양»만 본다 — gmail.comm 은 양식이 완벽하지만 존재하지 않는 도메인이라
+    //   인증메일·재설정 링크가 영영 도달하지 않는다. 그런 주소로 가입하면 사용자는
+    //   «자기가 뭘 잘못했는지» 모른 채 갇힌다(2026-09-02 현빈이 실제로 겪었다).
+    //   ⚠️이미 가입된 주소면 «묻지 않는다» — 그 사람은 이미 쓰고 있는 주소다.
+    //   ★DNS 가 답을 못 주면 통과시킨다(mx.js 의 fail open) — 우리 네트워크 사정으로
+    //     멀쩡한 사람의 가입을 막지 않는다.
+    const mx = await emailDomainAcceptsMail(email);
+    if (!mx.ok) return json(res, 200, { ok: true, taken: false, deliverable: false });
+
+    return json(res, 200, { ok: true, taken: false, deliverable: true });
   } catch (err) {
     console.error('[check-email] error', err && err.message);
     return json(res, 500, { error: 'internal_error' });

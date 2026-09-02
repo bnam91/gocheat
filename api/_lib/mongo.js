@@ -132,6 +132,40 @@ async function ensureIndexes(db) {
     //   매 호출이 전수주사였다. 같은 성격의 컬렉션이라 여기서 같이 세운다.
     db.collection('find_attempts').createIndex({ phone: 1, at: 1 }),
     db.collection('find_attempts').createIndex({ at: 1 }, { expireAfterSeconds: 7200 }),
+
+    // ── 신고·공지 (api/report/* · api/notice/*) — 2026-09-02 ────────────────
+    // ★이 블록은 «추가»다. 위의 어떤 줄도 지우거나 바꾸지 않았다.
+    //   (같은 날 이 파일을 통째로 덮어써 라이브 인덱스를 날릴 뻔한 사고가 있었다 — 추가만 한다.)
+    //
+    // 어드민 목록의 기본 정렬축. 최신순 페이지네이션(createdAt < before)이 이 인덱스 안에서 끝난다.
+    db.collection('reports').createIndex({ createdAt: -1 }),
+    // 「버그만」·「아직 안 본 것만」으로 좁혀 보는 축. 정렬키를 뒤에 붙여야 정렬까지 인덱스로 끝난다.
+    db.collection('reports').createIndex({ status: 1, createdAt: -1 }),
+    db.collection('reports').createIndex({ type: 1, createdAt: -1 }),
+    // 같은 오류의 반복 신고를 «묶어 세기» 위한 축(PLAN §7⑶ — 세되 거부하지는 않는다).
+    db.collection('reports').createIndex({ fingerprint: 1, createdAt: -1 }),
+    // 익명 공개 쓰기라 남용 방지가 필요하다. 조회 형태 { key, at:{$gte} } 그대로.
+    // ★reset_attempts 와 «같은 꼴»로 맞췄다 — 성격이 같은 컬렉션은 같게 둔다.
+    db.collection('report_attempts').createIndex({ key: 1, at: 1 }),
+    db.collection('report_attempts').createIndex({ at: 1 }, { expireAfterSeconds: 7200 }),
+
+    // 공지 조회는 «지금 살아있는 것»을 찾는다: { revoked, startAt:{$lte:now}, endAt:{$gte:now} }.
+    // ★endAt 을 앞에 둔다 — 끝난 공지가 시간이 갈수록 늘어나므로 그쪽이 더 잘 걸러낸다.
+    db.collection('notices').createIndex({ endAt: 1, startAt: 1 }),
+    // 어드민 목록(작성 이력·회수 대상 고르기).
+    db.collection('notices').createIndex({ createdAt: -1 }),
+
+    /* ⛔★reports 의 TTL(자동 파기)은 «일부러» 여기 넣지 않았다.
+     *   신고 본문엔 오류 로그가 들어간다 — 보관기간은 «처리방침에 적는 약속»이라 코드가 혼자 정할 일이 아니다.
+     *   그리고 한 번 만든 TTL 은 createIndex 로 못 바꾼다(IndexOptionsConflict → collMod 필요).
+     *   ⇒ 현빈·처리방침 문안이 «먼저» 정해진 뒤에 아래 두 줄을 그대로 넣어라(godiv_events 와 같은 꼴).
+     *
+     *   db.collection('reports').createIndex(
+     *     { createdAt: 1 },
+     *     { expireAfterSeconds: 365 * 24 * 60 * 60 },   // ← 이 숫자가 처리방침의 숫자와 «같아야» 한다
+     *   ),
+     *   ※이미지 파일은 TTL 로 안 사라진다(디스크에 있다). 같은 기간의 청소 작업이 별도로 필요하다.
+     */
   ]).catch((err) => {
     indexesEnsured = false;
     throw err;
