@@ -711,12 +711,14 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    ★★세로 크기(line-height·상하 padding·border 폭)는 «건드리지 않는다». 추천 칩과 높이가 달라지면
      리본 있는 카드끼리 등급 이름 baseline 이 어긋난다(전에 54px 어긋났던 그 결함이 되살아난다).
      좌우 padding 만 뺀다 — 배경이 없으면 좌우 여백은 하는 일이 없다.
-   ★색은 --warn 이 아니라 --warn-fill 이다: 배경 없이 «글자»로 쓰면 라이트에서 --warn(#A66A00)은
-     카드(#F4F4F6) 대비 4.08:1 로 본문 기준(4.5:1) 미달이다. --warn-fill 은 5.6:1 · 다크 12.6:1.
+   ★★색은 «본문과 같은» --fg 다(현빈 2026-09-02: 「15% 할인 글자 혼자만 다른 색인데 수정해줘」).
+     필박스를 걷어내니 금색 글자만 카드 안에서 홀로 떠 보였다 — 배경이 있을 땐 «칩»이라 색이
+     정당했지만, 글자만 남으니 이유 없는 색이 된다. ⇒ 색이 아니라 «굵기»로 존재를 만든다.
+     대비: 라이트 17.89:1 · 다크 15.15:1(카드 배경 기준) — 둘 다 넉넉하다.
    ★채움이 사라진 만큼 굵기로 버틴다(700→800). */
 .plan-ribbon-save {
   background: transparent; border-color: transparent;
-  color: var(--warn-fill); font-weight: 800;
+  color: var(--fg); font-weight: 800;
   padding-left: 0; padding-right: 0;
 }
 /* ★리본이 한 카드에만 있으면 그 카드만 아래로 밀려 이름줄이 어긋난다.
