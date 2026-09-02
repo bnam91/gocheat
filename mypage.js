@@ -126,6 +126,88 @@ document.getElementById('mp-logout').addEventListener('click', function () {
   location.href = 'login.html';
 });
 
+// ── 비밀번호 «변경» (현빈 2026-09-02) ──────────────────────────────────────
+// ★로그인한 사람은 즉시 바꿀 수 있어야 한다. 전에는 find-password.html 로 보내서
+//   «본인임이 이미 증명된» 사람이 「잊었다」 흐름을 다시 타야 했다.
+(function () {
+  var toggle = document.getElementById('mp-pw-toggle');
+  var form   = document.getElementById('mp-pw-form');
+  if (!toggle || !form) return;                 // 마크업이 없으면 조용히 아무것도 안 한다
+
+  var msgEl  = document.getElementById('mp-pw-msg');
+  var submit = document.getElementById('mp-pw-submit');
+  var cur = document.getElementById('mp-pw-cur');
+  var nw  = document.getElementById('mp-pw-new');
+  var nw2 = document.getElementById('mp-pw-new2');
+
+  function say(text, ok) {
+    msgEl.textContent = text;
+    msgEl.className = 'signup-msg ' + (ok ? 'signup-msg-ok' : 'signup-msg-error');
+  }
+  function bad(text, el) { say(text, false); if (el) el.focus(); return false; }
+
+  toggle.addEventListener('click', function () {
+    var open = form.hidden;
+    form.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.textContent = open ? '닫기' : '변경하기 →';
+    if (open) cur.focus();
+  });
+
+  // ★서버 코드를 그대로 화면에 내보내지 않는다 — 아는 건 번역하고 모르는 건 사람 말로 폴백한다.
+  //   (signup.html·login-page.js 와 «같은 규칙»)
+  var REASON = {
+    wrong_current_password: '현재 비밀번호가 맞지 않아요.',
+    weak_password:          '새 비밀번호는 8자 이상이어야 해요.',
+    same_password:          '지금 쓰는 비밀번호와 같아요. 다른 걸로 정해 주세요.',
+    current_required:       '현재 비밀번호를 입력해 주세요.',
+    invalid_session:        '로그인이 풀렸어요. 다시 로그인한 뒤 시도해 주세요.',
+    too_many_attempts:      '시도가 너무 많아요. 잠시 후 다시 시도해 주세요.',
+    invalid_body:           '요청을 읽지 못했어요. 새로고침한 뒤 다시 시도해 주세요.',
+    internal_error:         '서버 오류예요. 잠시 후 다시 시도해 주세요.'
+  };
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var token = '';
+    try { token = sessionStorage.getItem('sms_token') || ''; } catch (e2) {}
+    if (!token) return bad('로그인이 풀렸어요. 다시 로그인해 주세요.');
+    if (!cur.value)                 return bad('현재 비밀번호를 입력해 주세요.', cur);
+    if ((nw.value || '').length < 8) return bad('새 비밀번호는 8자 이상이어야 해요.', nw);
+    if (nw.value !== nw2.value)      return bad('새 비밀번호가 서로 달라요.', nw2);
+    if (nw.value === cur.value)      return bad('지금 쓰는 비밀번호와 같아요. 다른 걸로 정해 주세요.', nw);
+
+    submit.disabled = true;
+    var original = submit.textContent;
+    submit.textContent = '바꾸는 중…';
+    say('', true);
+
+    fetch('/api/license/change-password', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionToken: token, currentPassword: cur.value, newPassword: nw.value })
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { return { r: r, d: d }; }); })
+      .then(function (o) {
+        if (!o.r.ok || !o.d.ok) {
+          say(REASON[o.d.reason] || '비밀번호를 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.', false);
+          return;
+        }
+        // ★서버가 «모든 세션»을 끊었다. 화면도 그 사실과 맞아야 한다 —
+        //   여기서 저장소를 안 비우면 「로그인된 것처럼 보이는데 아무것도 안 되는」 상태가 된다.
+        try {
+          Object.keys(sessionStorage).filter(function (k) { return k.indexOf('sms_') === 0; })
+                .forEach(function (k) { sessionStorage.removeItem(k); });
+          sessionStorage.removeItem('goditor_after_login');
+        } catch (e3) {}
+        cur.value = nw.value = nw2.value = '';
+        say('비밀번호를 바꿨어요. 보안을 위해 모든 기기에서 로그아웃했어요 — 다시 로그인해 주세요.', true);
+        setTimeout(function () { location.href = 'login.html?next=mypage'; }, 2200);
+      })
+      .catch(function () { say('네트워크 오류로 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.', false); })
+      .then(function () { submit.disabled = false; submit.textContent = original; });
+  });
+})();
+
 // 한국시간 기준 YYYY-MM-DD. 보는 사람 시간대에 따라 날짜가 달라지면 안 된다.
 function kstDate(d) {
   return new Date(d.getTime() + 9 * 3600 * 1000).toISOString().slice(0, 10);

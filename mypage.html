@@ -17,8 +17,8 @@
       주문 내역은 order.html 이 남긴 «화면 확인용» 기록이다. 서버 연동 아님.
   -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260902o" />
-  <link rel="stylesheet" href="mypage.css?v=20260902o" />
+  <link rel="stylesheet" href="style.css?v=20260902p" />
+  <link rel="stylesheet" href="mypage.css?v=20260902p" />
 </head>
 <body>
   <header>
@@ -64,8 +64,29 @@
           <div class="account-panel" style="display:block">
             <div class="account-rows">
               <div class="account-row"><span class="account-key">이메일</span><span class="account-val" id="mp-email">—</span></div>
-              <div class="account-row"><span class="account-key">비밀번호</span><span class="account-val"><a href="find-password.html" style="color:var(--accent)">재설정 요청 →</a></span></div>
+              <div class="account-row"><span class="account-key">비밀번호</span><span class="account-val"><button type="button" id="mp-pw-toggle" class="btn-as-link" aria-expanded="false" aria-controls="mp-pw-form">변경하기 →</button></span></div>
             </div>
+
+            <!-- ★비밀번호 «변경» — 로그인한 사람은 즉시 바꿀 수 있어야 한다(현빈 2026-09-02).
+                 전에는 여기서 find-password.html 로 보냈다. 그러면 «본인임이 이미 증명된» 사람이
+                 「잊었다」 흐름을 다시 타고, 메일 발송기가 없어 담당자가 링크를 손으로 보낼 때까지
+                 기다려야 했다. 그건 기본기가 빠진 것이다.
+                 ★새 색·새 크기를 만들지 않는다 — 가입 폼과 «같은 클래스»를 쓴다. -->
+            <form id="mp-pw-form" class="account-rows" hidden autocomplete="off">
+              <label class="signup-label" for="mp-pw-cur">현재 비밀번호</label>
+              <input id="mp-pw-cur" type="password" class="signup-input" autocomplete="current-password" placeholder="••••••••" required />
+              <label class="signup-label" for="mp-pw-new">새 비밀번호 (8자 이상)</label>
+              <input id="mp-pw-new" type="password" class="signup-input" autocomplete="new-password" placeholder="••••••••" minlength="8" required />
+              <label class="signup-label" for="mp-pw-new2">새 비밀번호 확인</label>
+              <input id="mp-pw-new2" type="password" class="signup-input" autocomplete="new-password" placeholder="••••••••" minlength="8" required />
+              <p class="signup-msg" id="mp-pw-msg" role="status" aria-live="polite"></p>
+              <button type="submit" class="signup-submit" id="mp-pw-submit">비밀번호 변경</button>
+              <p class="signup-hint">
+                바꾸면 <b>앱·확장 프로그램을 포함한 모든 기기에서 로그인이 풀립니다</b> — 보안을 위한 것이니 다시 로그인해 주세요.<br />
+                현재 비밀번호가 기억나지 않으면 <a href="find-password.html">비밀번호 찾기</a>를 이용해 주세요.
+              </p>
+            </form>
+
             <button type="button" class="plan-cta plan-cta-quiet" id="mp-logout" style="max-width:200px">로그아웃</button>
           </div>
           <p class="order-warn">같은 이메일·비밀번호로 앱에서도 로그인하실 수 있어요.</p>
@@ -114,8 +135,8 @@
         <div id="biz-info"></div>
       </div>
     </footer>
-  <script src="footer.js?v=20260902o"></script>
-  <script src="mypage.js?v=20260902o"></script>
-  <script src="theme.js?v=20260902o"></script>
+  <script src="footer.js?v=20260902p"></script>
+  <script src="mypage.js?v=20260902p"></script>
+  <script src="theme.js?v=20260902p"></script>
 </body>
 </html>

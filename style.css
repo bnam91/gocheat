@@ -642,6 +642,13 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .account-key { color: var(--subtle); }
 .account-val { color: var(--fg); font-weight: 600; text-align: right; word-break: break-all; }
 .account-val-accent { color: var(--accent); }
+/* ★«링크처럼 보이는 버튼» — 마크업은 button 이어야 하는 자리(페이지 이동이 아니라 «동작»)인데
+   시각적으로는 옆의 링크들과 같아야 하는 경우. a 태그로 쓰면 href 없는 링크가 되어
+   키보드 포커스도 안 잡히고 스크린리더가 «링크»라고 잘못 읽는다. (2026-09-02) */
+.btn-as-link { background:none; border:0; padding:0; font:inherit; font-weight:600;
+  color:var(--accent); cursor:pointer; text-align:right; }
+.btn-as-link:hover { text-decoration:underline; text-underline-offset:2px; }
+.btn-as-link:focus-visible { outline:none; border-radius:4px; box-shadow:var(--focus-ring); }
 .login-alt { font-size: var(--fs-sm); color: var(--subtle); margin-top: 14px; }
 .login-alt a { color: var(--accent); font-weight: 600; }
 .login-alt a:hover { text-decoration: underline; }
