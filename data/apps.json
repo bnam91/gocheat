@@ -19,88 +19,188 @@
     ],
     "plans": [
       {
-        "id": "starter",
-        "name": "STARTER",
-        "price": "₩50,000",
-        "per": "월",
-        "ribbon": "",
-        "features": [
-          {
-            "t": "프로젝트 3개 · 섹션 30개",
-            "ok": true
-          },
-          {
-            "t": "AI 이미지 월 20장",
-            "ok": true
-          },
-          {
-            "t": "내보내기 1× (워터마크 없음)",
-            "ok": true
-          },
-          {
-            "t": "피그마 연동",
-            "ok": false
-          },
-          {
-            "t": "마켓 동기화",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "id": "pro",
-        "name": "PRO",
-        "price": "₩120,000",
-        "per": "월",
-        "ribbon": "추천",
-        "features": [
-          {
-            "t": "프로젝트 20개 · 섹션 무제한",
-            "ok": true
-          },
-          {
-            "t": "AI 이미지 월 200장",
-            "ok": true
-          },
-          {
-            "t": "내보내기 2× (워터마크 없음)",
-            "ok": true
-          },
-          {
-            "t": "피그마 연동",
-            "ok": true
-          },
-          {
-            "t": "마켓 동기화",
-            "ok": false
-          }
-        ]
-      },
-      {
-        "id": "promax",
-        "name": "PRO MAX",
-        "price": "₩300,000",
-        "per": "월",
-        "ribbon": "",
+        "id": "intern",
+        "name": "인턴",
+        "price": "₩72,000",
+        "per": "1개월",
+        "cta": "인턴 시작하기",
         "features": [
           {
             "t": "프로젝트 무제한",
             "ok": true
           },
           {
-            "t": "AI 이미지 월 1,000장",
+            "t": "템플릿 저장",
+            "ok": false
+          },
+          {
+            "t": "GIF · 이스터에그",
+            "ok": false
+          },
+          {
+            "t": "MCP 연동",
+            "ok": false
+          },
+          {
+            "t": "원격 작업",
+            "ok": false
+          },
+          {
+            "t": "GODIV · GOSHOT 포함",
+            "ok": false
+          },
+          {
+            "t": "실전 템플릿 200섹션",
+            "ok": false
+          },
+          {
+            "t": "LAB 기능",
+            "ok": false
+          },
+          {
+            "t": "수익화 강의",
+            "ok": false
+          }
+        ],
+        "priceNote": "매월 결제 · 언제든 해지"
+      },
+      {
+        "id": "pro",
+        "name": "프로",
+        "price": "₩180,000",
+        "per": "1개월",
+        "ribbon": "추천",
+        "cta": "프로 1개월 구매",
+        "features": [
+          {
+            "t": "프로젝트 무제한",
             "ok": true
           },
           {
-            "t": "내보내기 3× (워터마크 없음)",
+            "t": "템플릿 저장",
             "ok": true
           },
           {
-            "t": "피그마 연동",
+            "t": "GIF · 이스터에그",
             "ok": true
           },
           {
-            "t": "마켓 동기화",
+            "t": "MCP 연동",
+            "ok": true
+          },
+          {
+            "t": "원격 작업",
+            "ok": true
+          },
+          {
+            "t": "GODIV · GOSHOT 포함",
+            "ok": true
+          },
+          {
+            "t": "실전 템플릿 200섹션",
+            "ok": false
+          },
+          {
+            "t": "LAB 기능",
+            "ok": false
+          },
+          {
+            "t": "수익화 강의",
+            "ok": false
+          }
+        ],
+        "priceNote": "매월 결제 · 언제든 해지"
+      },
+      {
+        "id": "pro12",
+        "name": "프로",
+        "price": "₩1,836,000",
+        "per": "12개월",
+        "ribbon": "15% 할인",
+        "priceNote": "월 ₩153,000 상당 · 정가 ₩2,160,000",
+        "cta": "프로 12개월 구매",
+        "features": [
+          {
+            "t": "프로젝트 무제한",
+            "ok": true
+          },
+          {
+            "t": "템플릿 저장",
+            "ok": true
+          },
+          {
+            "t": "GIF · 이스터에그",
+            "ok": true
+          },
+          {
+            "t": "MCP 연동",
+            "ok": true
+          },
+          {
+            "t": "원격 작업",
+            "ok": true
+          },
+          {
+            "t": "GODIV · GOSHOT 포함",
+            "ok": true
+          },
+          {
+            "t": "실전 템플릿 200섹션",
+            "ok": false
+          },
+          {
+            "t": "LAB 기능",
+            "ok": false
+          },
+          {
+            "t": "수익화 강의",
+            "ok": false
+          }
+        ]
+      },
+      {
+        "id": "pro_training",
+        "name": "프로 트레이닝",
+        "price": "₩2,880,000",
+        "per": "12개월",
+        "ribbon": "25% 할인",
+        "priceNote": "월 ₩240,000 상당 · 정가 ₩3,840,000",
+        "cta": "프로 트레이닝 구매",
+        "features": [
+          {
+            "t": "프로젝트 무제한",
+            "ok": true
+          },
+          {
+            "t": "템플릿 저장",
+            "ok": true
+          },
+          {
+            "t": "GIF · 이스터에그",
+            "ok": true
+          },
+          {
+            "t": "MCP 연동",
+            "ok": true
+          },
+          {
+            "t": "원격 작업",
+            "ok": true
+          },
+          {
+            "t": "GODIV · GOSHOT 포함",
+            "ok": true
+          },
+          {
+            "t": "실전 템플릿 200섹션",
+            "ok": true
+          },
+          {
+            "t": "LAB 기능",
+            "ok": true
+          },
+          {
+            "t": "수익화 강의",
             "ok": true
           }
         ]

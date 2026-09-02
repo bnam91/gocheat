@@ -21,7 +21,7 @@
 
   // ★business.json 은 이제 이 화면에서 안 읽는다 — 「결제 연동 전」 안내문을 뺐기 때문이다(2026-09-02).
   //   결제 가능 여부 판단(bankIsDummy)은 order.html·mypage.js 가 «각자» 한다. 여기서 읽으면 쓰이지 않는 값이 된다.
-  fetch('data/apps.json').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260902v').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) throw new Error('apps.json');
       var app = apps.filter(function (a) { return a.id === appId; })[0];
@@ -63,8 +63,11 @@
               ? '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
               // ★유료 등급은 «주문서»로 보낸다. 전에는 넷 다 가입 페이지로 가서
               //   「돈을 내겠다」는 의사를 받을 곳이 아예 없었다.
+              // ★버튼 문구는 «등급마다 달라야» 한다. 이름만 쓰면 프로 1개월과 프로 12개월이
+              //   둘 다 「프로로 업그레이드 →」가 되어 «어느 걸 누른 건지» 알 수 없다.
+              //   apps.json 에 cta 를 적어 두면 그걸 쓰고, 없으면 종전대로 이름을 쓴다.
               : '<a href="order.html?plan=' + encodeURIComponent(p.id) + '" class="plan-cta">'
-                  + esc(p.name) + '로 업그레이드 →</a>')
+                  + esc(p.cta || (p.name + '로 업그레이드')) + ' →</a>')
           + '</div>';
       }).join('');
 

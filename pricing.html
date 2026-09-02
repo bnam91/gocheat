@@ -25,7 +25,7 @@
       살려두면 Vercel 환경변수를 건드릴 필요가 없다.
   -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260902s" />
+  <link rel="stylesheet" href="style.css?v=20260902v" />
 </head>
 <body>
   <header>
@@ -76,7 +76,7 @@
       function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
         return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
-      fetch('data/apps.json')
+      fetch('data/apps.json?v=20260902v')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (apps) {
           if (!apps) throw new Error('apps.json');
@@ -107,7 +107,7 @@
         });
     })();
   </script>
-  <script src="footer.js?v=20260902s"></script>
-  <script src="theme.js?v=20260902s"></script>
+  <script src="footer.js?v=20260902v"></script>
+  <script src="theme.js?v=20260902v"></script>
 </body>
 </html>

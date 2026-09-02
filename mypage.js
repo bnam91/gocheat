@@ -21,7 +21,10 @@ if (navLogin) { navLogin.textContent = '마이페이지'; navLogin.href = 'mypag
 
 // ★표시명과 코드값을 가른다 — 서버는 코드값을 주고 화면은 표시명을 쓴다.
 //   beta 는 등급이 아니라 «기간»이다. event_free 는 옛 서버 값으로 뜻이 같다.
-var PLAN_LABEL = { beta:'BETA', event_free:'BETA', free:'FREE', starter:'STARTER', pro:'PRO', promax:'PRO MAX' };
+// ★옛 id(starter·promax)도 남긴다 — 이미 그 값을 들고 있는 계정의 등급이 «빈칸»이 되지 않게.
+var PLAN_LABEL = { beta:'BETA', event_free:'BETA', free:'FREE',
+  intern:'인턴', pro:'프로', pro12:'프로 12개월', pro_training:'프로 트레이닝',
+  starter:'STARTER', promax:'PRO MAX' };
 var code = String(plan || '').toLowerCase();
 document.getElementById('mp-plan').textContent = PLAN_LABEL[code] || (code ? code.toUpperCase() : 'FREE');
 document.getElementById('mp-email').textContent = email;
@@ -72,7 +75,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260902v').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -102,7 +105,7 @@ if (!orders.length) {
 }
 
 // 다운로드
-fetch('data/downloads.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+fetch('data/downloads.json?v=20260902v').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
   var g = (d && d.goditor) || {};
   document.getElementById('mp-dl-ver').textContent = g.version ? ('GODITOR ' + g.version) : '';
   var NAME = { 'mac-arm64': '맥 (Apple Silicon)', 'mac-intel': '맥 (Intel)', 'win': '윈도우' };
