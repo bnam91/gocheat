@@ -21,7 +21,7 @@
 
   // ★business.json 은 이제 이 화면에서 안 읽는다 — 「결제 연동 전」 안내문을 뺐기 때문이다(2026-09-02).
   //   결제 가능 여부 판단(bankIsDummy)은 order.html·mypage.js 가 «각자» 한다. 여기서 읽으면 쓰이지 않는 값이 된다.
-  fetch('data/apps.json?v=20260903q').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260903r').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) throw new Error('apps.json');
       var app = apps.filter(function (a) { return a.id === appId; })[0];

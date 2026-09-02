@@ -8,7 +8,7 @@ const RECENT_VIDEOS = [
 
 async function loadApps() {
   // hidden:true 앱은 메인페이지에서 숨긴다(지우지 않음 — apps.json에서 hidden 제거하면 되살아난다).
-  const apps = (await fetch('data/apps.json?v=20260903q').then(r=>r.json())).filter(a => !a.hidden);
+  const apps = (await fetch('data/apps.json?v=20260903r').then(r=>r.json())).filter(a => !a.hidden);
 
   // Hero pills — 개별 stagger: 0.78s 기준, 0.08s 간격
   const bobDurations = [3.5, 4.0, 3.7, 4.1, 3.6, 3.9];
@@ -145,4 +145,51 @@ document.addEventListener('click', function (e) {
     if (n) { sessionStorage.removeItem('soon');
       window.addEventListener('DOMContentLoaded', function () { showSoonToast(n); }); }
   } catch (e) {}
+})();
+
+
+/* ★오픈카톡 플로팅 — 푸터가 보이면 «비켜준다»(현빈 2026-09-03).
+   고정 요소는 가만두면 저작권·약관 링크를 덮는다. 페이지 끝까지 내린 사람에게
+   마지막으로 보이는 것이 «가려진 글자»면 안 된다.
+   ★관찰이 실패하거나 이 코드가 안 돌면 버튼은 «그냥 계속 보인다» — 안전한 쪽으로 기운다. */
+(function () {
+  var btn = document.getElementById('kko-float');
+  // ★★«푸터 띠»가 아니라 «푸터 안의 글자»를 피한다.
+  //   1차: 푸터가 보이면 숨김 → 홈은 문서 높이가 화면 높이와 같아 푸터가 «처음부터» 보여
+  //        버튼이 아예 안 떴다.
+  //   2차: 푸터와 겹치면 숨김 → 푸터는 화면 폭을 다 쓰므로 «우측 하단 버튼은 언제나 겹친다».
+  //        역시 안 떴다.
+  //   ⇒ 우리 푸터는 «가운데 정렬»이라 좌우가 비어 있다. 실제로 가릴 수 있는 건 .footer-inner
+  //     안의 글자뿐이다. 그것과 겹칠 때만 비켜난다.
+  //   3차: .footer-inner 로 좁혔는데도 안 떴다 — 그건 «내용 칸»이라 화면 폭을 거의 다 쓴다.
+  //        실측 결과 버튼과 «3×2px» 스친 것으로 숨었다. 실제 글자는 한참 멀리 있었다.
+  //   ⇒ «글자 상자»(저작권 줄·링크 줄)로 판정한다. 그것들은 가운데 정렬이라 우측 하단과 안 겹친다.
+  var texts = [].slice.call(document.querySelectorAll(
+    'body > footer .footer-links, body > footer .footer-meta, body > footer #biz-info'));
+  if (!btn || !texts.length) return;
+
+  // ★★«푸터가 보이면 숨긴다»로 했더니 버튼이 아예 안 떴다 —
+  //   홈은 문서 높이가 화면 높이와 같아서(제품 섹션이 숨겨져 있다) 푸터가 «처음부터» 보인다.
+  //   ⇒ 「보이나」가 아니라 «실제로 겹치나»로 판정한다. 겹치지 않으면 숨길 이유가 없다.
+  //   ★그래서 짧은 페이지에서도 버튼이 정상적으로 뜨고, 푸터를 덮을 때만 비켜난다.
+  var raf = 0;
+  function check() {
+    raf = 0;
+    var b = btn.getBoundingClientRect();
+    // is-away 상태여도 자리는 그대로라 겹침 판정이 흔들리지 않는다(opacity 만 0).
+    // ★8px 의 «숨 쉴 틈»을 둔다 — 딱 붙어 스치는 것도 가린 것처럼 보인다.
+    var pad = 8;
+    var hit = texts.some(function (el) {
+      if (!el.offsetParent && el.id === 'biz-info') return false;   // 비어서 숨은 요소는 센다고 볼 수 없다
+      var f = el.getBoundingClientRect();
+      if (f.width === 0 || f.height === 0) return false;
+      return !(b.right < f.left - pad || b.left > f.right + pad
+            || b.bottom < f.top - pad || b.top > f.bottom + pad);
+    });
+    btn.classList.toggle('is-away', hit);
+  }
+  function schedule() { if (!raf) raf = requestAnimationFrame(check); }
+  addEventListener('scroll', schedule, { passive: true });
+  addEventListener('resize', schedule);
+  check();
 })();

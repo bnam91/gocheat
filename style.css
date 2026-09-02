@@ -1539,3 +1539,52 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 }
 .soon-toast.on { opacity: 1; transform: translate(-50%, 0); }
 @media (prefers-reduced-motion: reduce) { .soon-toast { transition: none; } }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   ★오픈카톡 플로팅 (현빈 2026-09-03) — 메인 전용.
+   히어로 CTA 를 걷어내면서 «사이트 통틀어 하나뿐인» 오픈카톡 링크를 여기로 옮겼다.
+   첫 화면에만 있던 것이 어느 위치에서도 닿게 되어 오히려 나아진다.
+   ══════════════════════════════════════════════════════════════════ */
+.kko-float{
+  /* ★★width:auto 를 «명시»한다. body > *:not(script):not(template){width:100%} (348행) 이
+     이 버튼까지 잡아 화면 폭(1280px)으로 늘려 놨다 — 그래서 left 가 -20px 로 밀렸다.
+     그 규칙은 «흐름 안의 블록»을 위한 것인데 position:fixed 자식까지 걸린다. 여기서 끊는다. */
+  width: auto; max-width: calc(100vw - 40px);
+  position: fixed; z-index: 60;
+  right: 20px; left: auto;
+  /* ★iOS 사파리는 «하단 주소창»이 이 자리를 먹는다. safe-area 를 더해 그 위로 띄운다 —
+     안 그러면 폰에서 버튼이 반쯤 가리거나 아예 안 눌린다. */
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border-radius: 999px;
+  background: var(--accent-fill); color: var(--accent-fg);
+  border: 1px solid var(--accent-fill);
+  font-size: var(--fs-sm); font-weight: 700; letter-spacing: -0.01em;
+  text-decoration: none; white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0,0,0,.28);
+  transition: transform .18s cubic-bezier(0.22,1,0.36,1), opacity .18s, background .18s;
+}
+.kko-float:hover{ background: var(--accent-fill-hover); border-color: var(--accent-fill-hover);
+                  color: var(--accent-fg); transform: translateY(-2px); }
+.kko-float:focus-visible{ outline: none; box-shadow: var(--focus-ring), 0 6px 20px rgba(0,0,0,.28); }
+
+/* ★★푸터에 닿으면 «비켜준다». 고정 요소는 가만두면 저작권·약관 링크를 덮는다 —
+   페이지 끝까지 내린 사람에게 마지막으로 보이는 것이 가려진 글자면 안 된다.
+   (JS 가 IntersectionObserver 로 이 클래스를 붙인다. JS 가 죽으면 «그냥 계속 보인다» — 안전한 쪽) */
+.kko-float.is-away{ opacity: 0; transform: translateY(12px); pointer-events: none; }
+
+/* 좁은 화면에서는 글자를 빼고 아이콘만 — 폰에서 본문을 덜 가린다 */
+@media (max-width: 560px){
+  .kko-float{ right: 14px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); padding: 12px; gap: 0; }
+  .kko-float span{ display: none; }
+  /* ★★폰에서는 푸터 글자가 «화면 폭을 다 써서» 우측 하단 버튼과 진짜로 겹친다.
+     그러면 회피 규칙이 늘 걸려 버튼이 «영영 안 뜬다».
+     ⇒ 푸터 아래에 «버튼 자리»를 만들어 준다(아이콘 43px + 여백). 겹칠 일이 없어지고
+       버튼도 정상적으로 뜬다. ⛔데스크톱에는 넣지 않는다 — 거기선 좌우가 비어 안 겹친다. */
+  body:has(.kko-float) > footer{ padding-bottom: calc(56px + 62px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: reduce){
+  .kko-float{ transition: none; }
+  .kko-float.is-away{ transform: none; }
+}
