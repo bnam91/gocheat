@@ -1201,12 +1201,30 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .auth-card .agree-box { margin-top: 18px; }
 .auth-card .field-row { margin-top: 2px; }
 .auth-card .field-btn { border-radius: 0; border: 0; border-bottom: 1px solid var(--border-strong); padding: 0 10px; }
-.find-result { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.find-result { display: flex; flex-direction: column; align-items: stretch; text-align: center; }
 .find-result[hidden] { display: none; }
-.find-result-label { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); text-transform: uppercase; letter-spacing: .06em; }
-.find-result-value { font-size: var(--fs-h3); font-weight: 700; color: var(--fg); margin: 8px 0 10px; letter-spacing: -.01em; word-break: break-all; }
-.find-result-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.7; }
+/* ★한글에 mono·uppercase·자간확장을 쓰지 않는다 — 낱자가 벌어져 「접 수  완 료」처럼 읽힌다.
+     (2026-09-03 실측: 「접수 완료」의 글자 사이가 벌어져 정렬이 어긋나 보였다) */
+.find-result-label { font-size: var(--fs-xs); color: var(--subtle); letter-spacing: -.01em; }
+.find-result-value { font-size: var(--fs-h3); font-weight: 700; color: var(--fg); margin: 8px 0 14px; letter-spacing: -.01em; word-break: break-all; }
+/* ★★안내문은 «왼쪽 정렬»이다. 가운데 정렬은 한 줄짜리에서만 성립한다 —
+     여러 줄이 되는 순간 줄마다 시작점이 달라져 «정렬이 안 맞는» 것처럼 보인다.
+     (2026-09-03 현빈 지적의 실제 원인이 이것이었다: 4줄이 계단처럼 어긋나 있었다) */
+.find-result-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.8; text-align: left; }
 .find-result-note a { color: var(--accent-fill); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ── 「메일이 안 오면」 안내 ─────────────────────────────────────────────────
+   ★왜 필요한가(2026-09-03): 이 화면은 «막혔을 때도 접수됐다고 말한다». 계정이 있는지
+     캐지 못하게 하려고 일부러 그렇게 만들었는데, 그 탓에 «진짜 주인»도 왜 안 오는지
+     알 길이 없다. 실제로 계정 주인이 이름·휴대전화 불일치로 막혔고, 화면은 「접수 완료」만
+     보여줬다. ⇒ 계정 존재는 계속 감추되, «막히는 이유»는 일반 규칙으로 알려준다.
+     이건 누구에게나 같은 문장이라 아무것도 흘리지 않는다. */
+.find-help { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); text-align: left; }
+.find-help-title { font-size: var(--fs-sm); font-weight: 700; color: var(--muted); letter-spacing: -.01em; }
+.find-help ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.find-help li { position: relative; padding-left: 13px; font-size: var(--fs-xs); color: var(--subtle); line-height: 1.75; text-align: left; }
+.find-help li::before { content: '·'; position: absolute; left: 2px; color: var(--accent); }
+.find-help b { color: var(--muted); font-weight: 600; }
 .find-manual { font-size: var(--fs-body); color: var(--muted); line-height: 1.85; margin-bottom: 18px; }
 .find-manual b { color: var(--fg); }
 
@@ -1606,9 +1624,16 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
      두 덩이가 «다른 페이지»처럼 보인다.
    ★읽는 글이라 한 줄 길이를 62ch 로 묶는다(그 이상이면 눈이 다음 줄을 못 찾는다). */
 .goditor-why{
-  max-width: 62ch; margin: 26px auto 0; text-align: left;
-  display: flex; flex-direction: column; gap: 12px;
+  /* ★폭을 «영상과 같게» 둔다 — .showcase 가 이미 992px 로 묶고 있으므로 max-width 를 따로 주지 않는다.
+     앞서 62ch(665px)로 좁혔더니 992px 영상 밑에 좁은 글덩이가 놓여 «다른 페이지»처럼 보였다.
+     카드 좌우 끝이 영상 좌우 끝과 정확히 맞는 게 이 자리의 정렬 기준이다.
+   ★godiv.css 의 .godiv-identity-card 와 «같은 생김새»로 맞춘다(테두리·라운드·올린 배경).
+     두 페이지가 같은 역할의 블록을 다르게 그리면 사이트가 조각나 보인다. */
+  margin: 26px auto 0; text-align: left;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+  padding: 30px 34px;
+  display: flex; flex-direction: column; gap: 16px;
 }
-.goditor-why p{ margin: 0; font-size: var(--fs-body); line-height: 1.75; color: var(--muted); }
+.goditor-why p{ margin: 0; font-size: var(--fs-body); line-height: 1.8; color: var(--muted); }
 .goditor-why b{ color: var(--fg); font-weight: 600; }
-@media (max-width: 560px){ .goditor-why{ margin-top: 20px; } }
+@media (max-width: 600px){ .goditor-why{ margin-top: 20px; padding: 22px 18px; gap: 12px; } }

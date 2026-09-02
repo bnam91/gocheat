@@ -12,10 +12,13 @@
  *     이 주석처럼 «설명하려고 적은 글자»까지 잡아 오탐이 난다(실제로 한 번 났다).
  */
     /* ── ① 정체성 띠 — 히어로 바로 아래. «이게 왜 다른지»를 한 덩이로 말한다 ── */
-    .godiv-identity { max-width: var(--read); margin: 0 auto; padding: 0 24px var(--sp-section); }
+    /* ★폭은 «바로 아래 .features 와 같은 축»이다(--wide). 앞서 --read(720px)였는데
+         그 아래 기능 카드는 --wide(1040px)라, 같은 페이지에서 카드 좌우 끝이 어긋나
+         「정렬이 안 맞는」 것처럼 보였다(2026-09-03 현빈 지적). 한 축으로 맞춘다. */
+    .godiv-identity { max-width: var(--wide); margin: 0 auto; padding: 0 24px var(--sp-section); }
     .godiv-identity-card {
 border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
-padding: 30px 30px; display: flex; flex-direction: column; gap: 16px; text-align: left;
+padding: 30px 34px; display: flex; flex-direction: column; gap: 16px; text-align: left;
     }
     .godiv-identity-eyebrow { font-size: var(--fs-xs); color: var(--accent); font-weight: 600; letter-spacing: -0.01em; text-align: left; }
     .godiv-identity-card h2 { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; line-height: 1.3; color: var(--fg); text-align: left; text-wrap: balance; }
