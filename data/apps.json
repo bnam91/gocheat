@@ -54,7 +54,7 @@
         "price": "₩180,000",
         "per": "1개월",
         "ribbon": "추천",
-        "cta": "PRO 1개월 구매",
+        "cta": "PRO 업그레이드",
         "features": [
           {
             "t": "프로젝트 무제한",
@@ -95,7 +95,7 @@
         "ribbon": "15% 할인",
         "ribbonKind": "save",
         "priceNote": "월 ₩153,000 상당 · 정가 ₩2,160,000",
-        "cta": "PROx12 구매",
+        "cta": "PROx12 업그레이드",
         "features": [
           {
             "t": "프로젝트 무제한",

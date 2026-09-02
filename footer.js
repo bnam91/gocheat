@@ -21,7 +21,7 @@
     ['email',           '이메일'],
   ];
 
-  fetch('data/business.json?v=20260903h')
+  fetch('data/business.json?v=20260903i')
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (biz) {
       if (!biz) return;
