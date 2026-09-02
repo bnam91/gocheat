@@ -67,6 +67,13 @@ module.exports = async (req, res) => {
   // ★형식 오류는 «가입 여부와 무관»하게 판정되므로 즉답해도 아무것도 새지 않는다.
   if (!isValidEmail(email)) return json(res, 400, { error: 'invalid_email' });
 
+  // ★★본인 확인 추가(현빈 2026-09-02). 목적은 «계정 탈취 방지»가 아니다 —
+  //   재설정 링크는 어차피 그 메일함으로만 가므로, 이름·전화가 있다고 탈취가 더 막히지는 않는다.
+  //   진짜 목적은 «오타로 남의 주소를 넣었을 때» 애먼 사람에게 메일이 가고,
+  //   그 사람이 받아 둔 재설정 링크가 덮어써져 죽는 것을 막는 것이다(아래 updateOne).
+  const name  = typeof body.name === 'string' ? body.name.trim().slice(0, 40) : '';
+  const phone = String(body.phone || '').replace(/\D/g, '').slice(0, 15);
+
   try {
     const db = await getDb();
     const now = new Date();
@@ -91,13 +98,34 @@ module.exports = async (req, res) => {
     ]);
 
     const users = db.collection('users');
-    const user = await users.findOne({ email }, { projection: { email: 1, verified: 1 } });
+    const user = await users.findOne({ email }, {
+      projection: { email: 1, verified: 1, 'profile.name': 1, 'profile.phone': 1 },
+    });
+
+    // ★★«정보가 저장된 계정에만» 대조한다. 왜 전면 적용이 아닌가:
+    //   확장 가입(이름·휴대전화 수집)은 2026-09-02 에 열렸다. 그 전에 가입한 계정에는
+    //   이름·전화가 «아예 없다» — 전면 적용하면 그 사람들은 비밀번호를 «영영» 못 찾는다.
+    //   (2026-09-02 실측: 전체 14명 중 12명이 둘 중 하나 이상 없음)
+    //   비밀번호 찾기는 마지막 통로라 여기서 막히면 대안이 없다.
+    //   ⇒ 저장된 값이 «둘 다 있는» 계정만 대조하고, 없는 계정은 이메일만으로 통과시킨다.
+    //   ★남은 12명의 값이 채워지면 이 분기는 자연히 전면 적용이 된다.
+    let identityOk = true;
+    if (user) {
+      const savedName  = String((user.profile && user.profile.name)  || '').trim();
+      const savedPhone = String((user.profile && user.profile.phone) || '').replace(/\D/g, '');
+      if (savedName && savedPhone) {
+        identityOk = (savedName === name) && (savedPhone === phone);
+      }
+    }
 
     // ★계정이 있고 «인증된» 경우에만 토큰을 만든다.
     //   EVENT_MODE 가 켜진 지금은 전원 verified:true 라 이 분기가 비어 있지만,
     //   이벤트가 끝나 off 가 되는 순간 «미인증 계정»이 생긴다. 그때 미인증 계정에
     //   재설정을 허용하면 「메일 인증 없이 계정을 여는 뒷문」이 된다.
-    if (user && user.verified) {
+    // ⛔여기서 실패해도 «응답을 바꾸지 않는다». 「정보가 일치하지 않습니다」를 띄우는 순간
+    //   이 화면은 «이 메일의 주인이 이 이름·이 번호인지»를 맞혀 보는 도구가 된다.
+    //   아래 return 은 성공·실패·미가입이 전부 똑같다.
+    if (user && user.verified && identityOk) {
       const token = randomToken(32);                  // 32바이트 CSPRNG → 64 hex
       // ★★평문 토큰을 DB 에 넣지 않는다. DB 가 새면 평문 토큰은 그 자체로 계정탈취 도구다.
       //   고엔트로피(256비트) 난수라 사전공격이 성립하지 않아 salt/bcrypt 없이 sha256 이면 족하다.

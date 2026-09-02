@@ -751,7 +751,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .btn-as-link:hover { text-decoration:underline; text-underline-offset:2px; }
 .btn-as-link:focus-visible { outline:none; border-radius:4px; box-shadow:var(--focus-ring); }
 .login-alt { font-size: var(--fs-sm); color: var(--subtle); margin-top: 14px; }
-.login-alt a { color: var(--accent); font-weight: 600; }
+/* ★본문 링크도 라이트에선 «먹색»이다(현빈 2026-09-02). --accent 는 라이트에서 올리브 초록.
+   ⚠️색만 바꾸면 링크인 줄 모른다 — 밑줄을 «같이» 준다. 색이 하던 일을 밑줄이 대신한다. */
+.login-alt a { color: var(--accent-fill); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 .login-alt a:hover { text-decoration: underline; }
 
 /* 브랜드 마크 — 앱에서 넘어온 사용자가 같은 제품임을 알아보게 */
@@ -856,7 +858,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .modal-close{ background:none; border:0; color:var(--subtle); font-size:var(--fs-sm); cursor:pointer; margin-top:2px; font-family:var(--font) }
 .modal-close:hover{ color:var(--fg) }
 .dl-resume{ color:var(--success) }
-.dl-resume a{ color:var(--accent); font-weight:600 }
+.dl-resume a{ color:var(--accent-fill); font-weight:600; text-decoration:underline; text-underline-offset:2px }
 .cta-pulse{ box-shadow: var(--focus-ring) }
 
 /* 가격 표기 — 예시 정가와 «지금 무료»를 함께 보여준다 */
@@ -932,7 +934,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    ★교훈: «다른 값을 전제로 한 보정»은 그 값이 바뀌면 «반대로» 작동한다. 토큰을 바꿀 땐
      그 토큰을 전제로 깔린 예외 규칙부터 찾아야 한다. */
 .agree-item input[type="checkbox"]:focus-visible{ outline:none; box-shadow: var(--focus-ring); }
-.agree-item a{ color:var(--accent); text-decoration:underline; text-underline-offset:2px; }
+.agree-item a{ color:var(--accent-fill); text-decoration:underline; text-underline-offset:2px; }
 .agree-all span b{ color:var(--fg); font-size:var(--fs-body); }
 /* 전체동의는 «묶음의 머리»다 — 나머지 두 줄과 크기가 같으면 위계가 안 선다 */
 .agree-all{ padding-bottom:2px; }
@@ -1088,7 +1090,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .find-result-label { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); text-transform: uppercase; letter-spacing: .06em; }
 .find-result-value { font-size: var(--fs-h3); font-weight: 700; color: var(--fg); margin: 8px 0 10px; letter-spacing: -.01em; word-break: break-all; }
 .find-result-note { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.7; }
-.find-result-note a { color: var(--accent); }
+.find-result-note a { color: var(--accent-fill); text-decoration: underline; text-underline-offset: 2px; }
 .find-manual { font-size: var(--fs-body); color: var(--muted); line-height: 1.85; margin-bottom: 18px; }
 .find-manual b { color: var(--fg); }
 

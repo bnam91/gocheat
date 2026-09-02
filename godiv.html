@@ -10,11 +10,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260902x" />
+  <link rel="stylesheet" href="style.css?v=20260902y" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 
-  <link rel="stylesheet" href="godiv.css?v=20260902x" />
+  <link rel="stylesheet" href="godiv.css?v=20260902y" />
 </head>
 <body>
   <!-- ★내비 골격은 goditor.html 과 «같다». 탭은 개요·요금제 둘.
@@ -53,8 +53,14 @@
           <h1 class="detail-title">GODIV</h1>
         </div>
       </div>
+      <!-- ★설치는 «버튼»이다(현빈 2026-09-02). goditor.html 의 다운로드 버튼과 «같은 클래스»를 쓴다 —
+           앱마다 다른 버튼을 만들지 않는다. -->
+      <div class="detail-cta">
+        <a class="cta-primary cta-download" href="https://chromewebstore.google.com/detail/godiv-image-downloader/okagagkpakaddjjhhninnnbelefbadfd"
+           target="_blank" rel="noopener">크롬 웹스토어에서 설치</a>
+      </div>
       <p class="detail-alt">
-        <span>크롬 확장 프로그램 · <a href="https://chromewebstore.google.com/detail/godiv-image-downloader/okagagkpakaddjjhhninnnbelefbadfd" target="_blank" rel="noopener">크롬 웹스토어에서 설치</a></span>
+        <span>크롬 확장 프로그램 · 무료 설치 · <a href="godiv-privacy.html">개인정보 처리방침</a></span>
       </p>
     </div>
   </section>
@@ -136,45 +142,6 @@
     </div>
   </section>
 
-  <!-- ⑥ 개인정보 처리방침 — 접어 둔다. ★탭에서는 뺐지만 본문은 남긴다(법적 고지).
-       ★공개 심사 URL: /godiv.html#privacy (섹션 id 유지) -->
-  <section class="pricing" id="privacy">
-    <div class="pricing-inner">
-      <p class="section-label">개인정보 처리방침</p>
-      <h2 class="pricing-title">필요한 최소한만 처리합니다.</h2>
-      <p class="pricing-sub">시행일 2026-09-02 · 아래를 펼치면 전문을 볼 수 있습니다.</p>
-      <details class="privacy-details">
-        <summary>개인정보 처리방침 전문</summary>
-        <div class="privacy-body">
-          <h3>1. 수집·이용하는 정보</h3>
-          <ul>
-            <li>이메일 주소: 계정 로그인과 구독 확인에 사용합니다.</li>
-            <li>비밀번호: 로그인할 때 암호화된 연결(HTTPS)로 서버에 전달해 확인만 하며, 확장 프로그램에 저장하지 않습니다.</li>
-            <li>세션 토큰: 로그인 상태를 유지하기 위해 브라우저의 확장 프로그램 저장소에만 보관합니다.</li>
-            <li>이용 기록: 내려받기를 실행할 때마다 <b>계정 이메일 · 실행 시각 · 사이트 유형(네이버 / 쿠팡 / 와디즈 / 기타 중 하나) · 내려받은 이미지 장수 · 성공 여부</b>를
-              서버에 기록합니다. 오류를 찾아 고치고 기능을 개선하는 데에만 씁니다.</li>
-          </ul>
-          <h3>2. 수집하지 않는 정보</h3>
-          <ul>
-            <li>방문 기록, 검색어, 위치 정보, 금융 정보 등 위 1항 외의 정보는 수집하지 않습니다.</li>
-            <li>이미지 다운로드는 전부 사용자의 기기에서 이뤄집니다.
-              <b>페이지 주소(URL) 전문 · 페이지 내용 · 이미지 파일 자체는 서버로 보내지 않습니다.</b>
-              1항의 이용 기록에 남는 것은 위에 적은 <b>사이트 유형</b>까지이며, 어느 상품·어느 페이지인지는 남지 않습니다.</li>
-          </ul>
-          <h3>3. 보관과 파기</h3>
-          <ul>
-            <li>세션 토큰은 로그아웃하면 즉시 삭제됩니다.</li>
-            <li>1항의 이용 기록은 <b>최대 180일 보관 후 자동으로 파기</b>됩니다.</li>
-            <li>계정 정보의 보관과 파기는 GODITOR 서비스 이용약관 및 개인정보 처리방침을 따릅니다.</li>
-          </ul>
-          <h3>4. 제3자 제공</h3>
-          <ul><li>수집한 정보를 제3자에게 판매하거나 제공하지 않습니다.</li></ul>
-          <h3>5. 문의</h3>
-          <ul><li>coq3820@gmail.com</li></ul>
-        </div>
-      </details>
-    </div>
-  </section>
 
   <footer>
     <div class="footer-inner">
@@ -187,8 +154,16 @@
       <p class="footer-meta"><span id="footer-copy"></span><span class="footer-email">coq3820@gmail.com</span></p>
     </div>
   </footer>
-  <script src="appnav-spy.js?v=20260902x"></script>
-  <script src="footer.js?v=20260902x"></script>
-  <script src="theme.js?v=20260902x"></script>
+  <script src="appnav-spy.js?v=20260902y"></script>
+  <!-- ★★크롬 웹스토어 심사에 제출한 주소가 /godiv.html#privacy 다.
+       본문 섹션은 현빈 지시로 godiv-privacy.html 로 옮겼지만, 그 주소로 들어오는 심사·이용자를
+       «빈손으로» 돌려보내면 안 된다(개인정보 처리방침이 없는 것으로 보여 확장이 내려갈 수 있다).
+       ⇒ 해시가 #privacy 면 새 페이지로 보낸다. replace 를 쓰는 이유: 뒤로가기가 무한루프에 빠지지 않게.
+       ⛔godiv-privacy.html 을 지우거나 이름을 바꾸면 이 줄도 같이 고쳐라. -->
+  <script>
+    if (location.hash === '#privacy') location.replace('godiv-privacy.html');
+  </script>
+  <script src="footer.js?v=20260902y"></script>
+  <script src="theme.js?v=20260902y"></script>
 </body>
 </html>
