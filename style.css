@@ -410,8 +410,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 /* Hero stagger */
 .hero-badge    { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
 .hero-title    { opacity: 1; } /* 줄별로 처리 */
-.title-line-1  { display: block; animation: revealCopy 1.0s cubic-bezier(0.16,1,0.3,1) 0.10s both; }
-.title-line-2  { display: block; animation: revealCopyGradient 1.0s cubic-bezier(0.16,1,0.3,1) 0.28s both; }
+/* ★2026-09-02: 그라디언트가 «첫 줄»로 옮겨갔다(카피 교체). 애니메이션도 같이 옮긴다 —
+   revealCopyGradient 는 Safari 의 -webkit-text-fill 충돌을 피하려고 «그라디언트 전용»으로
+   만든 것이라, 그라디언트가 걸린 줄이 반드시 이걸 써야 한다. 한쪽만 바꾸면 사파리에서 글자가 사라진다. */
+.title-line-1  { display: block; animation: revealCopyGradient 1.0s cubic-bezier(0.16,1,0.3,1) 0.10s both; }
+.title-line-2  { display: block; animation: revealCopy 1.0s cubic-bezier(0.16,1,0.3,1) 0.28s both; }
 .hero-sub      { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.62s both; }
 .hero-cta      { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.72s both; }
 
@@ -922,6 +925,42 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .field-err{ margin:5px 0 0; font-size:var(--fs-xs); line-height:1.5; color:var(--danger); }
 .field-err:empty{ display:none; }
 .field-err.is-ok{ color:var(--success); }
+
+/* ★가입 축하 모달(현빈 2026-09-02) — 전에는 「가입 완료!」 한 줄이 1.4초 뜨고 자동 이동했다.
+   읽을 새도 없었고, 무엇이 끝났는지 화면에 남지 않았다. ⇒ 사람이 확인하고 넘어간다.
+   ★position:fixed + inset:0 — 스크롤 위치와 무관하게 «화면 한가운데»에 선다.
+   ⚠️밖을 눌러 닫히게 하지 않는다(마크업 주석 참조) — 나갈 길은 버튼 하나다. */
+.modal-veil{
+  position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:rgba(11,11,14,.62); backdrop-filter:blur(3px);
+  animation:modalVeilIn .18s ease-out both;
+}
+.modal-card{
+  width:100%; max-width:400px; background:var(--bg-elev); color:var(--fg);
+  border:1px solid var(--border); border-radius:16px; padding:32px 28px 26px;
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
+  box-shadow:0 18px 48px rgba(0,0,0,.42);
+  animation:modalCardIn .26s cubic-bezier(0.22,1,0.36,1) both;
+}
+.modal-mark{ width:56px; height:56px; border-radius:13px; display:block; margin-bottom:6px; }
+.modal-title{ font-size:var(--fs-h3); font-weight:800; letter-spacing:-.02em; margin:0; color:var(--fg); }
+.modal-sub{ font-size:var(--fs-sm); color:var(--muted); line-height:1.7; margin:2px 0 0; }
+/* 가입한 주소를 보여 준다 — 오타로 «다른 주소»를 넣었을 때 여기서 알아챌 수 있다. */
+.modal-email{ font-family:var(--mono); font-size:var(--fs-xs); color:var(--subtle);
+              margin:8px 0 0; word-break:break-all; }
+/* ★모달 버튼은 «채움»이다. .signup-submit 기본형은 테두리형이고, 카드 안에서만
+   .auth-card 규칙이 채움으로 덮는다 — 모달은 그 밖이라 테두리형이 그대로 나왔다.
+   모달의 유일한 동작이므로 카드 안 「가입하기」와 «같은 모양»이어야 한다. */
+.modal-go{
+  margin-top:20px; width:100%; text-align:center; text-decoration:none; display:block;
+  background:var(--accent-fill); color:var(--accent-fg); border-color:var(--accent-fill);
+}
+.modal-go:hover{ background:var(--accent-fill-hover); border-color:var(--accent-fill-hover); color:var(--accent-fg); }
+@keyframes modalVeilIn{ from{opacity:0} to{opacity:1} }
+@keyframes modalCardIn{ from{opacity:0; transform:translateY(10px) scale(.98)} to{opacity:1; transform:none} }
+@media (prefers-reduced-motion: reduce){
+  .modal-veil, .modal-card{ animation:none; }
+}
 .field-note{ font-size:var(--fs-sm); color:var(--subtle); line-height:1.6; text-align:center; margin-top:-4px; }
 .field-note b{ color:var(--muted); }
 

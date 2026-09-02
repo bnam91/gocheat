@@ -10,14 +10,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260903b" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903b" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903b" />
+  <link rel="stylesheet" href="style.css?v=20260903c" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260903c" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260903c" />
 </head>
 <body>
   <header>
     <nav>
-      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903b" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260903c" alt="" width="22" height="22" /><span>소문의섬</span></a>
       <div class="nav-links">
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
@@ -142,6 +142,21 @@
       </form>
       </div>
 
+      <!-- ★가입 축하 모달(현빈 2026-09-02). 전에는 「가입 완료!」 한 줄이 1.4초 뜨고
+           «자동으로» 로그인 화면으로 넘어갔다 — 읽을 새도 없고, 무엇이 끝났는지 남지 않았다.
+           ⇒ 사람이 «확인하고» 넘어간다.
+           ★hidden 으로 감춘다 — 전역 [hidden]{display:none!important} 이 있어 확실히 숨는다.
+             (이 프로젝트에서 el.hidden 이 flex 에 먹혀 안 숨은 사고가 있었다) -->
+      <div class="modal-veil" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+        <div class="modal-card">
+          <img src="/assets/logo-mark.png?v=20260903c" alt="" class="modal-mark" width="56" height="56" />
+          <h2 class="modal-title" id="welcome-title">가입이 끝났어요</h2>
+          <p class="modal-sub" id="welcome-sub"></p>
+          <p class="modal-email" id="welcome-email"></p>
+          <a href="login.html" class="signup-submit modal-go" id="welcome-go">로그인하러 가기 →</a>
+        </div>
+      </div>
+
       <p class="auth-links">
         <a href="login.html">이미 계정이 있어요</a>
         <span class="sep">|</span>
@@ -232,7 +247,7 @@
 
       // ★flags.json 은 응답에 Cache-Control 이 «없다» → 브라우저 휴리스틱 캐시가 걸린다.
       //   플래그를 뒤집어도 옛 값을 든 브라우저는 동의 구간이 «통째로 없는» 화면을 본다.
-      fetch('data/flags.json?v=20260903b')
+      fetch('data/flags.json?v=20260903c')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (f) { (f && f.extendedSignup === true) ? openExtended() : lockExtended(); })
         .catch(lockExtended)
@@ -286,6 +301,24 @@
         document.getElementById('err-email').classList.remove('is-ok');
         if (el) el.focus();
         return false;
+      }
+
+      // ── 가입 축하 모달 ──────────────────────────────────────────
+      function openWelcome(email, ready, dest) {
+        var veil = document.getElementById('welcome');
+        document.getElementById('welcome-sub').textContent = ready
+          ? '이제 바로 쓰실 수 있어요. 로그인해서 시작해 주세요.'
+          : '가입하신 주소로 인증 메일을 보냈어요. 메일의 링크를 눌러 인증을 마쳐 주세요.';
+        document.getElementById('welcome-email').textContent = email;
+        var go = document.getElementById('welcome-go');
+        go.setAttribute('href', dest);
+        go.textContent = ready ? '로그인하러 가기 →' : '로그인 화면으로 →';
+        veil.hidden = false;
+        // ★뒤 화면이 «스크롤되지 않게» 막는다 — 모달 위에서 굴리면 뒤가 움직여 어지럽다.
+        document.body.style.overflow = 'hidden';
+        go.focus();
+        // ⛔밖을 눌러 닫히게 하지 않는다. 여기서 닫으면 «가입이 취소된 걸로» 오해할 수 있고,
+        //   폼은 이미 reset 된 뒤라 돌아갈 곳이 없다. 나갈 길은 버튼 하나다.
       }
 
       var askedMarketing = false;   // ★한 번 물으면 다시 묻지 않는다
@@ -397,23 +430,18 @@
           //   그래서 화면 문구도 계정 유무와 «무관하게» 같아야 한다.
           //   이미 계정이 있던 사람은 로그인 화면에서 자기 비밀번호로 들어가면 되고,
           //   기억이 안 나면 그 화면의 «비밀번호 찾기»로 간다.
-          if (data.ready) {
-            show('가입 완료! 바로 사용할 수 있어요. 로그인 화면으로 이동할게요…', true);
-          } else {
-            show('가입 완료! 인증 메일을 확인해주세요.', true);
-          }
+          show('', true);
           // ★`all` 은 확장 구간 안에 있다 — 잠겨 있으면 없다. form.reset() 이
           //   체크박스도 되돌리므로 별도 처리는 없어도 된다.
           form.reset();
-          if (data.ready) {
-            var nx = new URLSearchParams(location.search).get('next');
-            var ap = new URLSearchParams(location.search).get('app');
-            var q  = [];
-            if (nx) q.push('next=' + encodeURIComponent(nx));
-            if (ap) q.push('app=' + encodeURIComponent(ap));
-            var dest = 'login.html' + (q.length ? '?' + q.join('&') : '');
-            setTimeout(function () { window.location.href = dest; }, 1400);
-          }
+          // ★어디로 보낼지는 그대로 계산한다 — 다만 «자동 이동»은 안 한다.
+          var nx = new URLSearchParams(location.search).get('next');
+          var ap = new URLSearchParams(location.search).get('app');
+          var q  = [];
+          if (nx) q.push('next=' + encodeURIComponent(nx));
+          if (ap) q.push('app=' + encodeURIComponent(ap));
+          var dest = 'login.html' + (q.length ? '?' + q.join('&') : '');
+          openWelcome(email, !!data.ready, dest);
         } catch (err) {
           show('네트워크 오류로 가입에 실패했어요. 잠시 후 다시 시도해주세요.', false);
         } finally {
@@ -432,7 +460,7 @@
       var app;
       try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
       if (!app) return;
-      fetch('data/apps.json?v=20260903b').then(function (r) { return r.ok ? r.json() : null; })
+      fetch('data/apps.json?v=20260903c').then(function (r) { return r.ok ? r.json() : null; })
         .then(function (apps) {
           if (!apps) return;
           var a = apps.filter(function (x) { return x.id === app; })[0];
@@ -446,7 +474,7 @@
         }).catch(function () {});
     })();
   </script>
-  <script src="footer.js?v=20260903b"></script>
-  <script src="theme.js?v=20260903b"></script>
+  <script src="footer.js?v=20260903c"></script>
+  <script src="theme.js?v=20260903c"></script>
 </body>
 </html>
