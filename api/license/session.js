@@ -1,5 +1,17 @@
+/* ⛔★이 파일은 «라이브보다 뒤처져 있다» (2026-09-02 실측)
+ *   라이브(EC2)의 login.js/session.js 는 2026-08-25 에 두 가지가 더 들어갔다:
+ *     ① 제품별 세션 칸 (_lib/sessions.js — issueSession / findUserBySession)
+ *     ② 앱별 자격     (_lib/entitlements.js — effectiveFor / entitlementsForResponse)
+ *   그 두 파일은 «라이브에만» 있고 이 레포엔 없다. 그래서 이 파일을 라이브에 올리면
+ *   ①②가 통째로 회귀한다 — 홈페이지 로그인이 크롬 확장을 튕기던 그 증상이 되돌아온다.
+ *
+ *   ⇒ ⛔배포하려면 이 파일이 아니라 «라이브본에 role 만 더한 패치»를 써라:
+ *      지디 스킬 handoff/unitA-server-0.8.6/patches/{login,session}.js
+ *   아래 role 줄은 «레포와 라이브의 계약을 같게» 두려고 넣은 것이다(문서·grep 일치용).
+ */
 const { getDb } = require('../_lib/mongo');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
+const { roleForResponse } = require('../_lib/roles');
 
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
 //   ⇒ env PURCHASE_URL 이 없을 때 사용자를 «개발용 사이트»로 보내지 않도록 기본값을 옮긴다.
@@ -61,6 +73,10 @@ module.exports = async (req, res) => {
       accessUntil: until,
       // ★앱이 «세션 자체의 나이»로 판단할 수 있게 같이 준다(서버는 세션 TTL 정책을 갖고 있지 않다).
       sessionIssuedAt: user.sessionIssuedAt || null,
+      // ★2026-09-02 additive: 계정 역할. 재검증마다 «지금» 값이 내려간다 —
+      //   운영자가 role 을 회수하면 앱은 다음 세션 확인에서 탭을 잃는다(다시 로그인할 필요 없음).
+      //   ⛔권한의 근거가 아니다. 발송 권한은 서버가 POST /api/notice 에서 다시 본다.
+      role: roleForResponse(user),
       ...(expired ? { reason: 'expired', purchaseUrl: PURCHASE_URL } : {}),
     });
   } catch (err) {
