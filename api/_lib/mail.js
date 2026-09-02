@@ -92,6 +92,7 @@ function buildVerifyMail({ to, verifyUrl }) {
       '본인이 가입한 적이 없다면 이 메일은 무시해도 됩니다.',
     ].join('\n'),
     html: renderMail({
+      label: '이메일 인증',
       title,
       paragraphs: ['안녕하세요, 소문의섬입니다.', '아래 버튼을 눌러 이메일 인증을 완료해주세요.'],
       cta: { label: '이메일 인증하기', url: verifyUrl },
@@ -112,6 +113,7 @@ function buildResetMail({ to, resetUrl }) {
     to,
     subject: '[소문의섬] 비밀번호 재설정 안내',
     html: renderMail({
+      label: '비밀번호 재설정',
       title: '새 비밀번호를 정해주세요',
       paragraphs: ['안녕하세요, 소문의섬입니다.',
                    '아래 버튼을 눌러 새 비밀번호를 직접 정해주세요. 임시 비밀번호를 보내드리지는 않습니다.'],
@@ -152,6 +154,7 @@ function buildLicenseMail({ to, licenseKey }) {
       '문의: coq3820@gmail.com',
     ].join('\n'),
     html: renderMail({
+      label: '라이센스 키',
       title,
       paragraphs: ['안녕하세요, 소문의섬입니다.', '아래 라이센스 키를 앱에 입력해주세요.'],
       notes: ['키는 본인 계정에서만 사용할 수 있습니다.'],
