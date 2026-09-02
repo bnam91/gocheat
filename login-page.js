@@ -29,9 +29,9 @@
       beta: 'BETA',
       event_free: 'BETA',
       free: 'FREE',
-      intern: '인턴',
-      pro: '프로',
-      pro12: '프로 12개월',
+      intern: 'INTERNSHIP',
+      pro: 'PRO',
+      pro12: 'PROx12',
       pro_training: '프로 트레이닝',
       // ★옛 id 도 남긴다 — 이미 그 값을 들고 있는 계정이 있으면 지우는 순간
       //   화면의 등급이 «빈칸»으로 뜬다. 표기만 유지하는 비용은 0이다.
@@ -244,7 +244,7 @@
   var app;
   try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
   if (!app) return;
-  fetch('data/apps.json?v=20260903c').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260903d').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) return;
       var a = apps.filter(function (x) { return x.id === app; })[0];

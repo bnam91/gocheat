@@ -670,10 +670,14 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      2×2 로 접으면 카드는 커지지만 위아래로 갈려 비교가 어려워진다.
    좁은 화면에서는 auto-fit 이 알아서 2열·1열로 접는다(실측 700px=2×2, 560px 이하=1열). */
 .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; width: 100%; margin-top: 30px; align-items: stretch; }
-/* 2열로 접히는 구간(약 561~859px)에서 마지막 카드가 «홀로 왼쪽»에 남는다.
+/* 2열로 접히는 구간에서 마지막 카드가 «홀로 왼쪽»에 남는다.
    오른쪽 절반이 비어 덜 만든 것처럼 보이므로 두 칸을 차지하게 한다.
-   ★홀수 개일 때만 걸린다 — 등급이 짝수가 되면 저절로 해제된다. */
-@media (min-width: 561px) and (max-width: 859px) {
+   ★홀수 개일 때만 걸린다 — 등급이 짝수가 되면 저절로 해제된다.
+   ★★2026-09-02 실측으로 «구멍»을 찾아 범위를 고쳤다: 이 규칙은 859px 까지였는데
+     2열로 접는 규칙(.plan-grid repeat(2,1fr))은 1000px 까지였다. 그래서 860~1000px 에서만
+     외톨이가 그대로 남았다. 등급이 4개(짝수)일 땐 안 걸려서 안 드러났고, 3개로 줄자 나타났다.
+     ⇒ 두 규칙의 «범위를 같게» 맞춘다. 한쪽만 고치면 다시 어긋난다. */
+@media (min-width: 561px) and (max-width: 1000px) {
   .plan-card:last-child:nth-child(odd) { grid-column: span 2; }
 }
 /* ★body 가 flex 라 «남는 공간을 먹는» 자식이 없으면 합계가 뷰포트를 넘긴다.
@@ -702,9 +706,19 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   line-height: 1.2; padding: 4px 11px; border-radius: 999px; border: 1px solid transparent;
   background: var(--accent-fill); color: var(--accent-fg); white-space: nowrap;
 }
-/* 할인은 «돈이 깎이는» 신호라 추천과 «다른 색축»으로 둔다 — 나란히 놓여도 서로 안 잡아먹는다.
-   데이터가 kind 를 말한다(data/apps.json ribbonKind) — 문구를 정규식으로 넘겨짚지 않는다. */
-.plan-ribbon-save { background: var(--warn-fill); color: var(--warn-fg); }
+/* 할인은 «필박스 없이 글자만»(현빈 2026-09-02). 추천은 채움 칩으로 남아 둘이 구분된다.
+   데이터가 kind 를 말한다(data/apps.json ribbonKind) — 문구를 정규식으로 넘겨짚지 않는다.
+   ★★세로 크기(line-height·상하 padding·border 폭)는 «건드리지 않는다». 추천 칩과 높이가 달라지면
+     리본 있는 카드끼리 등급 이름 baseline 이 어긋난다(전에 54px 어긋났던 그 결함이 되살아난다).
+     좌우 padding 만 뺀다 — 배경이 없으면 좌우 여백은 하는 일이 없다.
+   ★색은 --warn 이 아니라 --warn-fill 이다: 배경 없이 «글자»로 쓰면 라이트에서 --warn(#A66A00)은
+     카드(#F4F4F6) 대비 4.08:1 로 본문 기준(4.5:1) 미달이다. --warn-fill 은 5.6:1 · 다크 12.6:1.
+   ★채움이 사라진 만큼 굵기로 버틴다(700→800). */
+.plan-ribbon-save {
+  background: transparent; border-color: transparent;
+  color: var(--warn-fill); font-weight: 800;
+  padding-left: 0; padding-right: 0;
+}
 /* ★리본이 한 카드에만 있으면 그 카드만 아래로 밀려 이름줄이 어긋난다.
    자리를 «항상» 비워둬서 네 장의 기준선을 맞춘다. */
 /* 리본 없는 카드의 자리맞춤. ★고정 14px 이 아니라 «리본 한 줄의 실제 높이»여야
@@ -715,7 +729,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-card:has(.plan-ribbon)::before { display: none; }
 .plan-name { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .plan-price { font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
-.plan-price-note { font-size: var(--fs-xs); color: var(--subtle);; min-height: 2.9em; }
+.plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 2.9em; }
+/* ★절은 «통째로» 줄바꿈된다 — 금액이 「정가 / ₩2,160,000」처럼 쪼개지지 않게.
+   구분점은 별도 span 이라, 줄이 나뉠 때 점이 줄 끝에 홀로 매달리지 않는다. */
+.plan-price-note .note-seg { white-space: nowrap; }
+.plan-price-note .note-sep { white-space: nowrap; }
 /* ★min-height 로 «자리»를 고정한다. 12개월 카드만 주석이 두 줄이라, 없으면 기능 목록이
    54px 밀려 «같은 행이 가로로 안 맞는다»(실측). 비교표는 가로로 읽는 것이라 그게 곧 결함이다.
    ⚠️문구가 세 줄이 되면 이 값도 같이 올려야 한다 — 값을 바꾸면 여길 다시 재라. */

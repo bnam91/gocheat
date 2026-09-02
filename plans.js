@@ -21,7 +21,7 @@
 
   // ★business.json 은 이제 이 화면에서 안 읽는다 — 「결제 연동 전」 안내문을 뺐기 때문이다(2026-09-02).
   //   결제 가능 여부 판단(bankIsDummy)은 order.html·mypage.js 가 «각자» 한다. 여기서 읽으면 쓰이지 않는 값이 된다.
-  fetch('data/apps.json?v=20260903c').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260903d').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) throw new Error('apps.json');
       var app = apps.filter(function (a) { return a.id === appId; })[0];
@@ -30,7 +30,12 @@
         return;
       }
 
-      grid.innerHTML = app.plans.map(function (p) {
+      // ★hidden:true 인 등급은 «그리지 않는다»(현빈 2026-09-02: 프로 트레이닝 숨김).
+      //   데이터에서 지우지 않는 이유: 주문 화이트리스트·기존 계정의 등급 표시가 그 값을 쓴다.
+      //   ⇒ 「파는 것」만 멈추고 「있는 것」은 살려 둔다. 되살릴 땐 apps.json 의 hidden 한 줄만 지우면 된다.
+      var shown = app.plans.filter(function (p) { return p.hidden !== true; });
+      if (!shown.length) { grid.innerHTML = '<p class="plan-empty">요금제 정보를 준비 중입니다.</p>'; return; }
+      grid.innerHTML = shown.map(function (p) {
         var feats = p.features.map(function (f) {
           return f.ok
             ? '<li><span class="feature-dot">·</span> ' + esc(f.t) + '</li>'
@@ -61,7 +66,18 @@
           // 무료 등급만 «항상» 이라는 정보가 따로 있다. 유료 등급은 위에서 이미 말했으니 비운다
           // (빈 줄을 남겨 카드 넷의 세로 축은 맞춘다).
           // ★빈 <p> 를 그리지 않는다 — FREE 가 사라진 뒤로는 늘 비어 있어 «빈 줄»만 남았다.
-          + (p.priceNote ? '<p class="plan-price-note">' + esc(p.priceNote) + '</p>' : '')
+          // ★주석은 «절 단위»로 줄이 나뉘게 한다(현빈 2026-09-02: 「줄바꿈이 이상하다」).
+          //   전에는 한 덩이라 「월 ₩153,000 상당 · 정가 / ₩2,160,000」처럼 «금액 앞»에서 끊겼다.
+          //   ⇒ ' · ' 로 나눠 각 절을 nowrap 으로 묶는다. 줄이 나뉘어도 금액이 안 쪼개진다.
+          //   ★구분점은 절 «안»에 두지 않는다 — 줄 끝에 점만 매달리는 꼴이 된다(푸터에서 겪은 것과 같다).
+          + (p.priceNote
+              ? '<p class="plan-price-note">'
+                + String(p.priceNote).split(' · ').map(function (seg, i) {
+                    return (i ? '<span class="note-sep"> · </span>' : '')
+                      + '<span class="note-seg">' + esc(seg) + '</span>';
+                  }).join('')
+                + '</p>'
+              : '')
           + '<div class="plan-divider"></div>'
           + '<ul class="plan-features">' + feats + '</ul>'
           + (p.id === 'free'
@@ -84,7 +100,7 @@
       // 이벤트 종료 후 결제용 신청 버튼도 같은 데이터에서 만든다(무료 등급 제외)
       var launch = document.getElementById('order-launch');
       if (launch) {
-        launch.innerHTML = app.plans.filter(function (p) { return p.id !== 'free'; })
+        launch.innerHTML = shown.filter(function (p) { return p.id !== 'free'; })
           .map(function (p) {
             return '<button type="button" class="plan-cta plan-cta-quiet" data-plan="'
               + esc(p.id) + '" data-plan-label="' + esc(p.name) + '">' + esc(p.name) + ' 신청</button>';

@@ -20,10 +20,10 @@
     "plans": [
       {
         "id": "intern",
-        "name": "인턴",
+        "name": "INTERNSHIP",
         "price": "₩68,000",
         "per": "1개월",
-        "cta": "인턴 시작하기",
+        "cta": "INTERNSHIP 시작하기",
         "features": [
           {
             "t": "프로젝트 무제한",
@@ -46,11 +46,11 @@
       },
       {
         "id": "pro",
-        "name": "프로",
+        "name": "PRO",
         "price": "₩180,000",
         "per": "1개월",
         "ribbon": "추천",
-        "cta": "프로 1개월 구매",
+        "cta": "PRO 1개월 구매",
         "features": [
           {
             "t": "프로젝트 무제한",
@@ -81,13 +81,13 @@
       },
       {
         "id": "pro12",
-        "name": "프로",
+        "name": "PROx12",
         "price": "₩1,836,000",
         "per": "12개월",
         "ribbon": "15% 할인",
         "ribbonKind": "save",
         "priceNote": "월 ₩153,000 상당 · 정가 ₩2,160,000",
-        "cta": "프로 12개월 구매",
+        "cta": "PROx12 구매",
         "features": [
           {
             "t": "프로젝트 무제한",
@@ -161,7 +161,8 @@
             "t": "수익화 강의",
             "ok": true
           }
-        ]
+        ],
+        "hidden": true
       }
     ],
     "version": "0.8.5"
