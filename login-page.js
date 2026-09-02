@@ -84,7 +84,7 @@
 
 
     // ★"받으려다 로그인한" 사람은 다운로드로 돌려보낸다. 로그인 자체가 목적이 아니었다.
-    var goMypage = false;
+    var goHome = false;
     try {
       // ★UL-010: next 가 order/mypage 면 «사려던 그 자리»로 돌려보낸다.
       //   전에는 next=download 만 처리해서, 주문하려고 로그인한 사람이 앱 목록으로 떨어졌다.
@@ -101,11 +101,14 @@
         //   이 영수증 화면은 원래 «받으려다/사려다 로그인한 사람»을 되돌려보내려고 만든 자리다.
         //   그런 사람에겐 next 가 붙어 있다. next 가 «없는» 사람에게는 돌아갈 자리가 없어서
         //   목적 없는 「앱 목록으로」 버튼만 남았고 화면은 login.html 에 그대로 머물렀다.
-        //   ⇒ 로그인은 «목적지»가 아니라 «수단»이다. 계정·등급·기한은 마이페이지가 다 보여준다.
+        //   ⇒ 로그인은 «목적지»가 아니라 «수단»이다.
+        // ★가는 곳은 «메인홈»이다(현빈 2026-09-03). 마이페이지로 보냈더니 «계정 관리 화면»에
+        //   떨어져서, 둘러보러 온 사람이 «할 일이 끝난 화면»에 도착했다. 홈이 맞다 —
+        //   로그인은 «이제부터 둘러보겠다»는 뜻이고, 계정 확인은 상단바 마이페이지로 언제든 간다.
         // ⛔여기서 «바로 이동하면 안 된다» — 이 자리는 sessionStorage 저장보다 «앞»이라,
         //   지금 떠나면 마이페이지가 토큰을 못 보고 로그인 화면으로 되튕긴다.
         //   ⇒ 깃발만 세우고, 저장이 끝난 «맨 아래»에서 떠난다.
-        goMypage = true;
+        goHome = true;
       } else if (dlLink && nx === 'mypage') {
         dlLink.textContent = '마이페이지로 →';
         dlLink.href = 'mypage.html';
@@ -160,8 +163,8 @@
 
     // ★replace 를 쓴다 — push 로 남기면 «뒤로가기»가 로그인 화면으로 되돌아와
     //   이미 로그인한 사람에게 로그인 폼을 다시 보여준다.
-    if (goMypage) {
-      try { location.replace('mypage.html'); } catch (eGo) { location.href = 'mypage.html'; }
+    if (goHome) {
+      try { location.replace('/'); } catch (eGo) { location.href = '/'; }
     }
   }
 
@@ -280,7 +283,7 @@
   var app;
   try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
   if (!app) return;
-  fetch('data/apps.json?v=20260903y').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260903z').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) return;
       var a = apps.filter(function (x) { return x.id === app; })[0];

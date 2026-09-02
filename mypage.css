@@ -154,3 +154,49 @@ main.detail .detail-inner > .detail-title { align-self:center; }
 /* ★운영 등급(88·99)은 «구매로 도달할 수 없는» 자리다 — 일반 등급과 같은 색이면
    화면만 보고 「살 수 있는 등급」으로 오해한다. */
 .mp-app-plan-staff{ color:var(--warn-fill) !important; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   2026-09-03 개편 (현빈 지시)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ★제목을 위로 올린다 — style.css:1302 의 `.detail { padding-top: clamp(96px,9vw,128px) }` 는
+     «앱 소개 히어로»용 여백이다. 마이페이지는 히어로가 아니라 «작업 화면»이라
+     그 여백이 들어가면 제목이 화면 한참 아래에서 시작한다(현빈 2026-09-03).
+   ⚠️style.css 를 고치지 않는다 — 그건 goditor·godiv 등 소개 페이지가 쓰는 값이다.
+     이 페이지에서만 덮는다. */
+main.detail { padding-top: clamp(40px, 4vw, 56px); }
+
+/* ★제목과 탭 사이 «갭»(현빈 2026-09-03: 「헤더랑 탭이랑 갭이나 마진이 없어서」).
+     .mp-tabs 에는 margin-top 이 아예 없어서 제목 바로 밑에 탭 밑줄이 붙어 있었다. */
+.detail-inner > .detail-title { margin-bottom: 0; }
+#mp-body .mp-tabs { margin-top: 26px; }
+
+/* ── 계정 등급 카드 ────────────────────────────────────────────────────
+   ★새 색·새 반경을 만들지 않는다 — 앱 카드(.mp-app)와 «같은» 테두리·라운드·올린 배경을 쓴다.
+     같은 화면에서 카드 두 종류가 서로 다르게 생기면 «다른 시스템»으로 읽힌다. */
+#mp-body .mp-tier {
+  display: flex; flex-direction: column; gap: 8px; align-items: stretch; text-align: left;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
+  padding: 20px 22px; margin: 0 0 22px;
+}
+.mp-tier-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.mp-tier-name {
+  font-size: var(--fs-h3); font-weight: 800; letter-spacing: -.02em; color: var(--fg); line-height: 1.1;
+}
+/* ★「이 계정 전체에 적용」 — 등급이 «어디에 붙는 값인지»를 이름 옆에서 바로 말한다.
+     이 한 칸이 없어서 등급이 «앱 것»으로 읽혔다. */
+.mp-tier-scope {
+  font-size: var(--fs-xs); color: var(--muted); font-weight: 600;
+  border: 1px solid var(--border-strong); border-radius: 999px; padding: 3px 9px; line-height: 1.2;
+}
+#mp-body .mp-tier-until { font-size: var(--fs-sm); color: var(--muted); margin: 0; }
+.mp-tier-note { font-size: var(--fs-xs); color: var(--subtle); line-height: 1.75; margin: 2px 0 0; }
+.mp-tier-note:empty { display: none; }
+
+/* ★두 번째 섹션 제목 앞 숨돌림 — 앱 목록과 주문표가 붙어 «한 덩이»로 보이던 자리다. */
+.mp-sec-label-gap { margin-top: 30px; }
+
+@media (max-width: 560px) {
+  #mp-body .mp-tier { padding: 18px 16px; }
+  .mp-tier-head { gap: 8px; }
+}

@@ -1577,31 +1577,35 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   display: inline-flex; align-items: center; gap: 8px;
   padding: 12px 18px; border-radius: 999px;
   /* ★★두 테마 «모두» 카카오 노랑 바탕 + 검정 글자다(현빈 2026-09-03).
-     브랜드 색이라 테마에 따라 뒤집지 않는다 — 배경·글자는 여기서 «한 번만» 정하고,
-     아래에서 «테두리만» 테마별로 바꾼다(분기가 적을수록 한쪽만 틀어지는 사고가 준다).
-     실측: 검정 글자 대비 15.37:1(AAA 통과).
-     ★★테두리가 «장식이 아니라 필수»인 이유 — 흰 판 위 노랑은 1.28:1 이라
-       테두리를 빼면 버튼 경계가 «흰 배경에 녹아 사라진다». 그래서 라이트는 검정 테두리(19.65:1).
+     브랜드 색이라 테마에 따라 뒤집지 않는다. 실측: 검정 글자 대비 15.37:1(AAA 통과).
      ⛔--accent-fill 을 쓰면 다크에서 바탕이 라임(#C9F23A)이 된다. 이 버튼만 토큰이 아니라
-       «고정 색»을 쓰는 이유다 — 카카오 노랑은 우리 팔레트가 아니라 «남의 브랜드 색»이다. */
+       «고정 색»을 쓰는 이유다 — 카카오 노랑은 우리 팔레트가 아니라 «남의 브랜드 색»이다.
+     ★★테두리를 뺐다(현빈 2026-09-03). 다만 «경계 자체»를 버린 건 아니다 —
+       흰 판 위 노랑은 1.28:1 이라 아무 처리도 안 하면 버튼 모서리가 배경에 녹는다.
+       ⇒ 선(테두리) 대신 «그림자»로 경계를 준다. 눈에는 테두리가 안 보이고, 버튼은 떠 보인다.
+       라이트에서 그림자가 더 진해야 한다 — 흰 바탕은 어두운 번짐을 잘 삼킨다. */
   background: #FEE500; color: #0B0B0E;
-  border: 1px solid #0B0B0E;
+  border: none;
   font-size: var(--fs-sm); font-weight: 700; letter-spacing: -0.01em;
   text-decoration: none; white-space: nowrap;
-  box-shadow: 0 6px 20px rgba(0,0,0,.28);
-  transition: transform .18s cubic-bezier(0.22,1,0.36,1), opacity .18s, background .18s;
+  /* 라이트 기본 — 두 겹이다. 촘촘한 것이 «모서리»를 긋고, 넓은 것이 «떠 있음»을 만든다.
+     한 겹만 쓰면 흰 배경에서 경계가 흐려진다. */
+  box-shadow: 0 1px 2px rgba(0,0,0,.24), 0 4px 10px rgba(0,0,0,.18), 0 12px 28px rgba(0,0,0,.16);
+  transition: transform .18s cubic-bezier(0.22,1,0.36,1), opacity .18s, background .18s, box-shadow .18s;
 }
-.kko-float:hover{ background: #F2DA00; border-color: #0B0B0E; color: #0B0B0E; transform: translateY(-2px); }
+.kko-float:hover{ background: #F2DA00; color: #0B0B0E; transform: translateY(-2px);
+  box-shadow: 0 1px 2px rgba(0,0,0,.26), 0 6px 14px rgba(0,0,0,.22), 0 16px 34px rgba(0,0,0,.18); }
 
-/* ★다크 — 바탕·글자는 위 그대로 두고 «테두리만» 바꾼다.
-   먹색 판 위에서는 검정 테두리가 배경에 묻혀 버튼이 «한 변 잘린» 것처럼 보인다.
-   노랑 바탕 자체가 이미 15.37:1 로 떠 있으니 테두리는 바탕과 같은 색이면 된다.
+/* ★다크 — 바탕·글자는 위 그대로. «그림자만» 줄인다.
+   먹색 판 위에서는 검은 그림자가 아예 안 보이고(배경과 같은 색이다), 노랑 바탕 자체가
+   이미 15.37:1 로 떠 있어 경계를 따로 그을 필요가 없다. 라이트용 진한 그림자를 그대로 두면
+   버튼 아래가 «지저분한 얼룩»으로 남는다.
    ⚠️«둘 다» 써야 한다 — :not([data-theme="light"]) 는 «OS 가 다크인데 아무 선택도 안 한» 사람용이고,
-     [data-theme="dark"] 는 «직접 다크를 고른» 사람용이다. 하나만 쓰면 한쪽이 검정 테두리를 쓴다. */
+     [data-theme="dark"] 는 «직접 다크를 고른» 사람용이다. 하나만 쓰면 한쪽이 라이트 그림자를 쓴다. */
 :root:not([data-theme="light"]) .kko-float,
-:root[data-theme="dark"] .kko-float{ border-color:#FEE500; }
+:root[data-theme="dark"] .kko-float{ box-shadow: 0 6px 20px rgba(0,0,0,.45); }
 :root:not([data-theme="light"]) .kko-float:hover,
-:root[data-theme="dark"] .kko-float:hover{ border-color:#F2DA00; }
+:root[data-theme="dark"] .kko-float:hover{ box-shadow: 0 10px 26px rgba(0,0,0,.5); }
 .kko-float:focus-visible{ outline: none; box-shadow: var(--focus-ring), 0 6px 20px rgba(0,0,0,.28); }
 
 /* ★★푸터에 닿으면 «비켜준다». 고정 요소는 가만두면 저작권·약관 링크를 덮는다 —

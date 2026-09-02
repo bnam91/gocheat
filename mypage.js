@@ -100,6 +100,12 @@ document.getElementById('mp-email').textContent = email;
     });
 })();
 
+// ── 계정 등급 ────────────────────────────────────────────────────────
+// ★★등급 «이름»을 이제 실제로 그린다. 전에는 PLAN_LABEL 을 만들어 놓고 «쓰는 곳이 없어서»
+//   화면엔 기한 꼬리말만 떴다 — 「뭐에 대한 베타테스트냐」의 절반이 이것이었다(현빈 2026-09-03).
+var tierEl = document.getElementById('mp-tier');
+if (tierEl) tierEl.textContent = PLAN_LABEL[code] || (plan ? String(plan).toUpperCase() : '—');
+
 var untilTxt = '';
 if (until) {
   var d = new Date(until);
@@ -107,14 +113,27 @@ if (until) {
     var left = Math.ceil((d - Date.now()) / 86400000);
     // ★toISOString() 은 UTC 다 — 2026-12-31T23:59:59Z 를 그렇게 찍으면 한국 사용자에게
     //   「2026-12-31 까지」로 «하루 이르게» 보인다(실제 만료는 KST 2027-01-01).
-    //   바로 아래 kstDate() 가 이미 있었는데 주문일(77행)만 쓰고 여기만 빠져 있었다.
-    untilTxt = kstDate(d) + ' 까지' + (left >= 0 && left <= 30 ? ' · ' + left + '일 남음' : '');
+    untilTxt = kstDate(d) + ' 까지 이용할 수 있어요'
+             + (left >= 0 && left <= 30 ? ' · ' + left + '일 남음' : '');
   }
 }
-if (code === 'beta' || code === 'event_free') {
-  untilTxt = (untilTxt || '') + (untilTxt ? ' · ' : '') + '베타테스트가 끝나면 FREE로 전환돼요';
-}
 document.getElementById('mp-until').textContent = untilTxt;
+
+// ★★「베타테스트가 끝나면 FREE로 전환돼요」 한 줄로는 «무슨 베타인지»를 알 수 없었다.
+//   ⇒ 무엇이 열려 있고, 언제 무엇으로 바뀌는지를 문장으로 적는다.
+//     이 값은 «계정»에 붙고 «앱과 무관»하다는 것도 같이 말한다 — 그게 오해의 뿌리였다.
+var noteEl = document.getElementById('mp-tier-note');
+if (noteEl) {
+  if (code === 'beta' || code === 'event_free') {
+    noteEl.textContent = '지금은 베타테스트 기간이라 가입만 하면 GODITOR·GODIV·GOSHOT 을 '
+      + '전부 무료로 쓰실 수 있어요. 베타가 끝나면 이 계정은 FREE 등급으로 바뀌고, '
+      + '그때 요금제를 고르시면 됩니다. 앱을 아직 안 쓰셨어도 등급은 계정에 그대로 붙어 있어요.';
+  } else if (code === 'free') {
+    noteEl.textContent = '무료 등급이에요. 유료 기능이 필요하시면 요금제에서 등급을 올리실 수 있어요.';
+  } else {
+    noteEl.textContent = '이 등급은 계정 하나에 붙습니다 — 앱마다 따로 결제하지 않으셔도 돼요.';
+  }
+}
 
 // 탭
 var tabs = document.querySelectorAll('.mp-tabs button');
@@ -146,7 +165,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260903y').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260903z').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -176,17 +195,8 @@ if (!orders.length) {
 }
 
 // 다운로드
-fetch('data/downloads.json?v=20260903y').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-  var g = (d && d.goditor) || {};
-  document.getElementById('mp-dl-ver').textContent = g.version ? ('GODITOR ' + g.version) : '';
-  var NAME = { 'mac-arm64': '맥 (Apple Silicon)', 'mac-intel': '맥 (Intel)', 'win': '윈도우' };
-  var html = '';
-  Object.keys(NAME).forEach(function (k) {
-    if (g[k]) html += '<a href="' + esc(g[k]) + '" target="_blank" rel="noopener">'
-                    + '<span>' + NAME[k] + '</span><span class="arw">→</span></a>';
-  });
-  document.getElementById('mp-dl-links').innerHTML = html || '<p class="dim">다운로드 정보를 불러오지 못했어요.</p>';
-}).catch(function () {});
+// ★다운로드 탭을 없앴다(현빈 2026-09-03) — 여기서 downloads.json 을 읽던 코드도 같이 걷었다.
+//   ⛔화면을 지우고 데이터 코드를 남기면 «아무도 안 보는 fetch»가 매 방문마다 돈다.
 
 document.getElementById('mp-logout').addEventListener('click', function () {
   // ★NEW-01: 여기가 R1 에서 유출을 재현한 «바로 그 경로»인데 login.html 만 고쳤었다.
