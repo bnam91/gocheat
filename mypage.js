@@ -7,12 +7,11 @@
  */
 (function () {
 // 로그인 상태 — login.html 이 넣어 둔 키를 그대로 쓴다
-var email = null, plan = null, until = null;
-try {
-  email = sessionStorage.getItem('sms_email');
-  plan  = sessionStorage.getItem('sms_plan');
-  until = sessionStorage.getItem('sms_until');
-} catch (e) {}
+// ★등급·기한은 «읽지 않는다» — 화면에서 걷었기 때문이다(현빈 2026-09-03).
+//   등급은 앱별(users.apps.<앱>.tier)이고 제자리는 앱 카드다. 여기서 계정 등급을 다시 읽으면
+//   언젠가 또 그리게 된다. 쓰지 않는 값은 «가져오지도 않는다».
+var email = null;
+try { email = sessionStorage.getItem('sms_email'); } catch (e) {}
 
 if (!email) { document.getElementById('mp-guest').style.display = 'block'; return; }
 document.getElementById('mp-body').style.display = 'block';
@@ -21,13 +20,6 @@ document.getElementById('mp-body').style.display = 'block';
 //   «자기 자신을 가리키는 링크»가 남고, 정작 «로그아웃할 문»이 없었다.
 //   ⇒ nav-auth.js 가 로그인 상태를 보고 이 칸을 「로그아웃」으로 만든다.
 
-// ★표시명과 코드값을 가른다 — 서버는 코드값을 주고 화면은 표시명을 쓴다.
-//   beta 는 등급이 아니라 «기간»이다. event_free 는 옛 서버 값으로 뜻이 같다.
-// ★옛 id(starter·promax)도 남긴다 — 이미 그 값을 들고 있는 계정의 등급이 «빈칸»이 되지 않게.
-var PLAN_LABEL = { beta:'BETA', event_free:'BETA', free:'FREE',
-  intern:'INTERNSHIP', pro:'PRO', pro12:'PROx12', pro_training:'프로 트레이닝',
-  starter:'STARTER', promax:'PRO MAX' };
-var code = String(plan || '').toLowerCase();
 document.getElementById('mp-email').textContent = email;
 
 // ── 앱별 이용 현황 · 이름·연락처 ─────────────────────────────────
@@ -71,13 +63,17 @@ document.getElementById('mp-email').textContent = email;
         : '등록 안 됨';
 
       box.innerHTML = (d.apps || []).map(function (a) {
-        // ★«기록을 안 남기는 앱»과 «아직 안 쓴 앱»을 다르게 말한다 — 둘은 다른 사실이다.
-        var used = !a.tracksUsage
-          ? '<span class="mp-app-dim">사용 기록을 남기지 않아요</span>'
-          : (a.lastUsedAt
-              ? '마지막 사용 <b>' + esc(fmt(a.lastUsedAt)) + '</b>'
-                + (a.uses ? ' · ' + a.uses + '회' : '')
-              : '<span class="mp-app-dim">아직 사용 기록이 없어요</span>');
+        // ★★「사용 기록을 남기지 않아요」를 걷었다(현빈 2026-09-03) — 그건 «우리 사정»이지
+        //   사용자가 알 일이 아니다. 화면에 우리 구현 사정을 적지 않는다.
+        // ★대신 «있는 사실»을 쓴다. 실행 로그(lastUsedAt)가 있으면 그걸,
+        //   없으면 «마지막 로그인»을 쓴다 — 앱은 켤 때 라이선스를 검증하므로 사실상 마지막 사용 시각이고,
+        //   서버는 그 값을 이미 로그인 때 쓰고 있다(추가 부담 0).
+        //   ⛔둘을 같은 이름으로 부르지 않는다 — 「사용」과 「로그인」은 다른 사실이다.
+        var used = a.lastUsedAt
+          ? '마지막 사용 <b>' + esc(fmt(a.lastUsedAt)) + '</b>' + (a.uses ? ' · ' + a.uses + '회' : '')
+          : (a.lastLoginAt
+              ? '마지막 로그인 <b>' + esc(fmt(a.lastLoginAt)) + '</b>'
+              : '<span class="mp-app-dim">기록 없음</span>');
         // ★번들이 있으면 «언제부터 쓰는지»가 있다. 그게 「이용 중」이라는 말의 근거다.
         var since = a.firstSeenAt ? '<span class="mp-app-dim"> · ' + esc(fmt(a.firstSeenAt)) + '부터</span>' : '';
         // 결제방식은 «있을 때만» 적는다. 없는데 「무료」라고 쓰면 유료 전환 뒤 거짓이 된다.
@@ -89,7 +85,7 @@ document.getElementById('mp-email').textContent = email;
         return '<div class="mp-app">'
           + '<div class="mp-app-top">'
           +   '<span class="mp-app-name">' + esc(a.name) + '</span>'
-          +   '<span class="mp-app-kind">' + (a.kind === 'service' ? '서비스' : '앱') + '</span>'
+          +   '<span class="mp-app-kind">' + (a.kind === 'service' ? 'SERVICE' : 'PRODUCT') + '</span>'
           + '</div>'
           + '<span class="mp-app-plan' + badge + '">' + esc(a.label) + '</span>'
           + pay
@@ -110,42 +106,8 @@ document.getElementById('mp-email').textContent = email;
     });
 })();
 
-// ── 계정 등급 ────────────────────────────────────────────────────────
-// ★★등급 «이름»을 이제 실제로 그린다. 전에는 PLAN_LABEL 을 만들어 놓고 «쓰는 곳이 없어서»
-//   화면엔 기한 꼬리말만 떴다 — 「뭐에 대한 베타테스트냐」의 절반이 이것이었다(현빈 2026-09-03).
-var tierEl = document.getElementById('mp-tier');
-if (tierEl) tierEl.textContent = PLAN_LABEL[code] || (plan ? String(plan).toUpperCase() : '—');
-
-var untilTxt = '';
-if (until) {
-  var d = new Date(until);
-  if (!isNaN(d)) {
-    var left = Math.ceil((d - Date.now()) / 86400000);
-    // ★toISOString() 은 UTC 다 — 2026-12-31T23:59:59Z 를 그렇게 찍으면 한국 사용자에게
-    //   「2026-12-31 까지」로 «하루 이르게» 보인다(실제 만료는 KST 2027-01-01).
-    untilTxt = kstDate(d) + ' 까지 이용할 수 있어요'
-             + (left >= 0 && left <= 30 ? ' · ' + left + '일 남음' : '');
-  }
-}
-document.getElementById('mp-until').textContent = untilTxt;
-
-// ★★평소엔 «아무 말도 안 한다»(현빈 2026-09-03: 「이런말은 왜 필요해?? 회원가입만
-//   했을때는 이런내용이 필요없는데?」).
-//   ⇒ 맞다. 「무슨 베타냐」의 원인은 «등급 이름이 안 그려진 것»이었지 설명이 부족한 게
-//     아니었다. 이름 + 「이 계정 전체에 적용」 배지로 이미 답이 됐는데 해설을 세 문장
-//     더 붙인 건 군더더기였다. 화면은 설명서가 아니다.
-//   ★남기는 건 «지금 행동이 필요한 때» 한 줄뿐이다 — 기한이 임박했을 때.
-//     그때는 「곧 바뀐다」가 정보가 되고, 그 전엔 소음이다.
-var noteEl = document.getElementById('mp-tier-note');
-if (noteEl) {
-  var days = null;
-  if (until) { var du = new Date(until); if (!isNaN(du)) days = Math.ceil((du - Date.now()) / 86400000); }
-  if ((code === 'beta' || code === 'event_free') && days !== null && days >= 0 && days <= 30) {
-    noteEl.textContent = '기간이 끝나면 FREE 등급으로 바뀌어요. 요금제에서 등급을 올리실 수 있습니다.';
-  } else {
-    noteEl.textContent = '';   // ★CSS 의 :empty 가 이 칸을 통째로 감춘다
-  }
-}
+// ★계정 등급·기한 표시를 «걷었다»(현빈 2026-09-03). 등급은 «앱별»이고 제자리는 앱 카드다.
+//   ⛔여기서 다시 그리지 마라 — 같은 값을 두 곳에서 그리면 앱별 등급이 갈리는 날 한쪽이 거짓이 된다.
 
 // 탭
 var tabs = document.querySelectorAll('.mp-tabs button');
@@ -177,7 +139,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904c').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904d').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 

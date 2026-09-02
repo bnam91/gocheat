@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <title>마이페이지 · 소문의섬</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260904c" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260904c" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260904d" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260904d" />
   <!--
     ★로그인한 사람이 «갈 곳». 지금까지 홈페이지엔 이 페이지가 없어서
       로그인해도 갈 데가 없었다(login.html 안에서만 계정을 보여줬다).
@@ -17,13 +17,13 @@
       주문 내역은 order.html 이 남긴 «화면 확인용» 기록이다. 서버 연동 아님.
   -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260904c" />
-  <link rel="stylesheet" href="mypage.css?v=20260904c" />
+  <link rel="stylesheet" href="style.css?v=20260904d" />
+  <link rel="stylesheet" href="mypage.css?v=20260904d" />
 </head>
 <body>
   <header>
     <nav>
-      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260904c" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260904d" alt="" width="22" height="22" /><span>소문의섬</span></a>
       <div class="nav-links">
         <!-- ★「요금제」를 뺐다(현빈 2026-09-03: 「왜 요금제 버튼이 탑바에 있는지? 게다가 그건
              고디터 한정 아닌지?」). 맞다 — pricing.html 은 «GODITOR 요금제»다. 앱이 넷인데
@@ -64,21 +64,14 @@
                  0회나 오늘 날짜로 채우면 그건 거짓이다.
                ★등급은 «계정에 하나»다 — 앱마다 따로 있는 값이 아니다. 카드는 그 하나에서
                  «앱별 이용 가능 여부»를 파생해 보여준다(api/license/me.js 의 entitlement). -->
-          <!-- ★★「계정 등급」 — 이 자리에 «무엇에 붙는 값인지»를 같이 적는다(현빈 2026-09-03).
-               전에는 등급 «이름»이 아예 안 그려지고 「2027-01-01 까지 · 베타테스트가 끝나면
-               FREE로 전환돼요」라는 꼬리말만 앱 목록 밑에 붙어 있었다. 그래서
-               「이용 중인 서비스가 없다는데 뭐에 대한 베타테스트냐」가 됐다.
-               ⇒ 원인은 «등급은 계정 하나에 붙는데 앱 목록 밑에 놓여 앱 것처럼 보인 것»이다.
-                 등급을 앱 목록에서 «떼어» 내 정보 탭으로 옮기고, 적용 범위를 글자로 밝힌다. -->
-          <div class="mp-tier">
-            <div class="mp-tier-head">
-              <span class="mp-tier-name" id="mp-tier">—</span>
-              <span class="mp-tier-scope">이 계정 전체에 적용</span>
-            </div>
-            <p class="mp-tier-until" id="mp-until"></p>
-            <p class="mp-tier-note" id="mp-tier-note"></p>
-          </div>
-
+          <!-- ★★「계정 등급」 카드를 «없앴다»(현빈 2026-09-03: 「이건 왜있냐고 공용계정인데
+               마이페이지에서 티어를 보여줄 필요있어?」).
+               ⇒ 맞다. 이 사이트의 등급 구조는 «앱별»(users.apps.<앱>.tier)이고, 등급의 제자리는
+                 「이용 중인 서비스」의 각 앱 카드다 — 거기에 이미 BETA 가 붙어 있다.
+                 계정 등급(user.plan)을 여기 또 크게 띄우면 ⑴같은 값을 두 번 말하고
+                 ⑵앱마다 등급이 갈리는 순간 «이 카드가 거짓말»이 된다.
+               ★내가 이 카드를 만든 건 「무슨 베타냐」는 물음에 답하려던 것이었는데,
+                 그 답은 «설명을 붙이는 것»이 아니라 «그 값을 안 보여주는 것»이었다. -->
           <div class="account-panel">
             <p class="mp-sec-label">내 정보</p>
             <div class="account-rows">
@@ -177,9 +170,9 @@
         <p class="footer-meta"><span id="footer-copy"></span><span class="footer-email">coq3820@gmail.com</span></p>
       </div>
     </footer>
-  <script src="footer.js?v=20260904c"></script>
-  <script src="mypage.js?v=20260904c"></script>
-  <script src="nav-auth.js?v=20260904c"></script>
-  <script src="theme.js?v=20260904c"></script>
+  <script src="footer.js?v=20260904d"></script>
+  <script src="mypage.js?v=20260904d"></script>
+  <script src="nav-auth.js?v=20260904d"></script>
+  <script src="theme.js?v=20260904d"></script>
 </body>
 </html>
