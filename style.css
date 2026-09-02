@@ -692,6 +692,18 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .legal-title{ font-size:var(--fs-h2); font-weight:800; letter-spacing:-.03em; color:var(--fg); }
 .legal-meta{ font-size:var(--fs-xs); color:var(--subtle); }
 .legal-sec{ margin-top:14px; }
+/* ★약관·방침에 목차를 붙이며 .legal-inner 에 .doc-layout 이 같이 걸린다.
+   둘의 display 가 달라(flex vs grid) 어느 쪽이 이기는지 소스 순서에 맡기면 위험하다 —
+   두 폭 모두에서 «명시»한다. (좁은 폭에서는 목차가 숨으므로 원래대로 한 단) */
+.legal-inner.doc-layout { display: flex; flex-direction: column; gap: 14px; }
+@media (min-width: 900px) {
+  /* 목차(216) + 간격(40) 만큼 «컨테이너를» 넓힌다 — 안 그러면 본문이 그만큼 좁아진다
+     (실측: 그냥 두면 본문 632→376px). 본문은 원래 읽기 폭을 그대로 유지한다. */
+  .legal { max-width: calc(var(--read) + 216px + 40px + 48px); }
+  .legal-inner.doc-layout { display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 40px; align-items: start; }
+  .legal-inner.doc-layout .doc-main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .legal-sec[id] { scroll-margin-top: 92px; }
+}
 .legal-h{ font-size:var(--fs-lead); font-weight:700; color:var(--fg); margin-bottom:6px; }
 .legal-p{ font-size:var(--fs-body); color:var(--muted); line-height:1.85; margin-bottom:6px; }
 .legal-empty{ background:var(--bg-elev); border:1px solid rgba(255,209,102,.35); border-radius:var(--radius); padding:22px 20px; text-align:center; }
