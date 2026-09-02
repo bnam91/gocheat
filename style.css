@@ -176,7 +176,14 @@ header { position: sticky; top: 0; z-index: 100; background: var(--header-bg); b
 /* ★`nav` 가 아니라 `header nav` 다 — 고디터 전용 내비도 <nav> 라
    범위를 안 좁히면 이 규칙(가운데 정렬·space-between·52px)이 거기까지 걸린다. */
 header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
-.logo { font-size: var(--fs-body); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+/* ★로고 = «마크 + 글자»(현빈 2026-09-02, 소문의섬 유튜브 채널 프로필).
+   마크는 #3EFF00 «자기 배경»을 가진 타일이라 두 테마 어디서든 그대로 읽힌다
+   (라이트 흰 판 1.35:1 / 다크 1.14:1 — 배경 대비는 낮지만 «안쪽 검은 글리프»가 형태를 만든다).
+   ⚠️사이트 강조색(--accent 라임 #C9F23A)과 «다른 초록»이다. 채널 아이덴티티라 그대로 쓴다.
+   ★baseline 이 아니라 center 로 맞춘다 — 정사각 타일과 한글 글자는 baseline 이 안 맞는다. */
+.logo { display: inline-flex; align-items: center; gap: 8px;
+        font-size: var(--fs-body); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+.logo-mark { display: block; width: 22px; height: 22px; border-radius: 5px; flex-shrink: 0; }
 /* ★align-items:center 가 «있어야» 한다. 없으면 flex 기본값(stretch)이라 자식이 컨테이너
    높이에 맞춰 늘어난다. 텍스트 링크는 line-height(24px)만큼만 그리므로, 32px 로 늘어난
    박스 «위쪽»에 글자가 붙어 광학적으로 4.5px 위로 올라간다.
