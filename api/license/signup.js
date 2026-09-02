@@ -26,11 +26,21 @@ function buildProfile(raw) {
   };
 }
 
+// ★★동의는 «무엇에» 했는지가 «문서 버전»까지 남아야 증빙이 된다.
+//   boolean + 시각만으로는 방침을 한 번 고치는 순간 「이 사람이 본 문서」를 재구성할 수 없다.
+// ★그리고 이용약관 동의와 개인정보 수집·이용 동의는 «따로» 받는다 — 하나로 묶으면
+//   개인정보 보호법 제22조① 의 «구분 동의» 요건을 못 채운다. (2026-09-02)
+//   ⚠️ 옛 폼(구버전 탭)은 privacy 를 안 보낸다. 그래서 «없으면 없는 대로» 기록하고,
+//      막는 건 아래 검사에서 «명시적으로» 한다 — 조용히 true 로 채우지 않는다.
 function buildConsents(raw, now) {
   const c = (raw && typeof raw === 'object') ? raw : {};
-  const out = { terms: { agreed: c.terms === true, at: c.terms === true ? now : null } };
-  out.marketing = { agreed: c.marketing === true, at: c.marketing === true ? now : null };
-  return out;
+  const mark = (v) => ({ agreed: v === true, at: v === true ? now : null });
+  return {
+    docVersion: LEGAL_VERSION,
+    terms: mark(c.terms),
+    privacy: mark(c.privacy),
+    marketing: mark(c.marketing),
+  };
 }
 
 // ★배포 분리 스위치. 클라이언트(signup.html)와 «같은 파일»을 본다.
@@ -38,6 +48,10 @@ function buildConsents(raw, now) {
 //   레포 파일이라 정적 require 로 번들에 실린다 — 켜고 끄는 건 커밋 한 줄이다.
 const FLAGS = require('../../data/flags.json');
 const EXTENDED_SIGNUP = FLAGS.extendedSignup === true;
+
+// ★동의 레코드에 박아 둘 «고지 문서 버전». data/legal.json 을 고칠 때 version 을 올리면
+//   그 이후 가입자는 새 버전으로 기록된다 — 옛 동의는 옛 버전으로 남는다.
+const LEGAL_VERSION = (require('../../data/legal.json').version || 'unknown');
 
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 const EVENT_MODE = process.env.EVENT_MODE !== 'off';           // 이벤트 기간엔 이메일 인증 생략
@@ -72,7 +86,18 @@ module.exports = async (req, res) => {
 
   // 필수 동의가 없으면 개인정보를 받지 않는다(확장이 열린 뒤에도 유효한 규칙).
   if (profile && consents && consents.terms !== true) {
-    return json(res, 400, { error: 'terms_required', detail: '이용약관·개인정보 처리방침 동의가 필요합니다' });
+    return json(res, 400, { error: 'terms_required', detail: '이용약관 동의가 필요합니다' });
+  }
+  // ★개인정보를 «받는» 요청이면 개인정보 수집·이용 동의가 따로 있어야 한다.
+  //   약관 동의로 갈음하지 않는다(제22조① 구분 동의).
+  if (profile && consents && consents.privacy !== true) {
+    // ★이 오류를 볼 «유일한» 사람은 배포 «전»에 열어둔 탭을 쓰는 사용자다 —
+    //   그 폼에는 개인정보 동의 칸이 아예 «없어서» 「동의해 달라」는 말이 통하지 않는다.
+    //   그래서 문구가 «할 수 있는 행동»을 말해야 한다.
+    return json(res, 400, {
+      error: 'privacy_consent_required',
+      detail: '페이지를 새로고침한 뒤 개인정보 수집·이용에 동의해 주세요.',
+    });
   }
 
   try {

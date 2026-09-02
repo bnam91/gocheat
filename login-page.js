@@ -46,13 +46,16 @@
     if (!v) return '제한 없음';
     const d = new Date(v);
     if (isNaN(d.getTime())) return String(v);
+    // ★표기 규칙은 사이트 전체가 「KST 기준 YYYY-MM-DD」 하나여야 한다.
+    //   전에는 여기만 「2027년 1월 1일까지 (KST)」였고 마이페이지는 「2026-12-31 까지」라
+    //   같은 값이 두 화면에서 «다른 날짜, 다른 모양»으로 보였다(2026-09-02 QA 발견).
     try {
-      const s = new Intl.DateTimeFormat('ko-KR', {
-        timeZone: 'Asia/Seoul', year: 'numeric', month: 'long', day: 'numeric',
-      }).format(d);
-      return s + '까지 (KST)';
+      const s = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit',
+      }).format(d);                                   // en-CA = YYYY-MM-DD
+      return s + ' 까지';
     } catch (e) {
-      return d.toISOString().slice(0, 10) + '까지';
+      return new Date(d.getTime() + 9 * 3600 * 1000).toISOString().slice(0, 10) + ' 까지';
     }
   }
 
@@ -204,7 +207,17 @@
       if (res.status === 401) return fail('이메일 또는 비밀번호가 올바르지 않아요.');
       if (res.status === 403) return fail('이메일 인증이 완료되지 않은 계정이에요.');
       if (!res.ok || !data.ok) {
-        return fail('로그인에 실패했어요: ' + (data.reason || 'HTTP ' + res.status));
+        // ★모르는 코드까지 그대로 붙이면 「로그인에 실패했어요: internal_error」가 화면에 뜬다.
+        //   아는 건 번역하고, 모르는 건 «코드를 숨기고» 사람 말로 폴백한다.
+        const REASON = {
+          invalid_credentials: '이메일 또는 비밀번호가 올바르지 않아요.',
+          not_verified:        '이메일 인증이 완료되지 않은 계정이에요.',
+          invalid_email:       '이메일 형식이 올바르지 않아요.',
+          invalid_body:        '요청을 읽지 못했어요. 새로고침한 뒤 다시 시도해 주세요.',
+          too_many_attempts:   '시도가 너무 많아요. 잠시 후 다시 시도해 주세요.',
+          internal_error:      '서버 오류예요. 잠시 후 다시 시도해 주세요.',
+        };
+        return fail(REASON[data.reason] || '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.');
       }
 
       pw.value = '';

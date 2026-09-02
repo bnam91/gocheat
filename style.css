@@ -10,9 +10,26 @@
   --subtle:       #8E8E96;
   --border:       rgba(255,255,255,0.08);
   --border-strong:rgba(255,255,255,0.16);
-  --accent:       #C9F23A;
-  --accent-hover: #B5DE2C;
-  --accent-fg:    #0B0B0E;
+  --accent:            #C9F23A;
+  /* ★accent = 텍스트/테두리용(다크에선 라임 그대로). accent-fill/-hover = «채움» 버튼 배경용 —
+     다크는 텍스트색과 같아 구분 없이 보이지만, 라이트에서는 값이 갈린다(아래 라이트 블록 주석). */
+  --accent-fill:       #C9F23A;
+  --accent-fill-hover: #B5DE2C;
+  --accent-fg:         #0B0B0E;
+
+  /* ★채널 토큰 — 알파가 필요한 자리에서 리터럴을 다시 적지 않기 위한 것.
+     리터럴로 두면 «테마마다 다른 색»이 필요할 때 27군데를 손으로 고쳐야 한다(2026-09-02 디자인 감사). */
+  --accent-rgb:        201,242,58;
+  --warn-rgb:          255,209,102;
+  /* ★현재 미사용 — 백로그 #9(warn/danger/success 테두리 11건 토큰화)에서 쓴다.
+     지금 같이 정의해 두는 건 «라이트 값을 다시 유도하지 않게» 하기 위해서다. */
+  --danger-rgb:        255,122,138;
+  --success-rgb:       111,227,162;
+  /* ★포커스 링은 «키보드 사용자의 유일한 위치 표시»다. 한 자리에서 정의해 테마마다 갈아끼운다. */
+  /* ★알파는 눈대중이 아니라 «계산»으로 잡았다(2026-09-02). WCAG UI 요건 3:1 을 넘는
+     최소 알파가 다크 0.40 · 라이트 0.78 이었다 — 여유를 둬 0.50 / 0.90 으로 간다.
+     ⚠️옛 값 0.28 은 다크 2.19:1 · 라이트 1.06:1 로 «둘 다» 미달이었다(다크는 원래부터). */
+  --focus-ring:        0 0 0 3px rgba(var(--accent-rgb), 0.50);
   --danger:       #FF7A8A;
   --success:      #6FE3A2;
   /* ★--warn 은 «쓰이고 있었는데 정의가 없었다» — .legal-empty-title 과 .dl-msg-warn 이
@@ -45,6 +62,56 @@
   /* 넓은 축 — 큰 시각물(영상·스크린샷)과 카드 격자가 쓴다 */
   --wide:    1040px;
   --sp-section: 84px;   /* 구간 사이 여백 — 리듬을 여기 하나로 모은다 */
+
+  /* ★다크가 기본값이다(브랜드 정체성). --header-bg·--surface-veil 은 하드코딩된
+     rgba(…) 리터럴 3곳(헤더 블러배경·아이콘 워시 2곳)을 대체하는 신규 토큰. */
+  --header-bg:    rgba(11,11,14,0.72);
+  --surface-veil: rgba(255,255,255,0.06);
+  color-scheme: dark;
+}
+
+/* ===== LIGHT THEME (2026-08-24 확정 · 2026-09-02 main 포팅) ───────────────
+   ★라이트는 «명시 선택»으로만 켜진다 — [data-theme="light"] 단일 경로.
+     (08-25 배포 조건 ①: 기본은 «항상» 다크. OS prefers-color-scheme 자동추종은
+      의도적으로 제거했다 — 되살리면 회귀다. 복원하려면 현빈 승인 먼저.)
+
+   ★danger·success·warn 은 다크용 원색 그대로 쓰면 흰 배경에서 대비가 무너진다
+     (예: 라임 #C9F23A 는 흰 배경 텍스트 대비 1.2:1 — 사실상 안 보임). 그래서 세 토큰은
+     «흰 배경에서 읽히는 진한 톤»으로 다시 잡는다.
+     (rgba(201,242,58,…) 같은 «틴트 리터럴»은 안 건드린다 — 옅은 배경 워시는 두 테마 다 무난하다)
+
+   ★accent 는 «둘로 갈랐다»(2026-08-24 현빈 피드백 2회). --accent = 텍스트/테두리용,
+     --accent-fill = 버튼 «채움» 배경용(흰 글자와 짝).
+     WCAG(흰 배경 기준): --accent(#537E16) 4.81:1(AA 통과) ·
+     --accent-fill(#80C322) 흰 글자 대비 2.15:1(AA 미달, 브랜드 인지 우선 의도적 절충). */
+:root[data-theme="light"] {
+  --bg:            #FFFFFF;
+  --bg-elev:       #F4F4F6;
+  --bg-elev-hi:    #EAEAEE;
+  --fg:            #0B0B0E;
+  --muted:         #4B4B54;
+  --subtle:        #71717A;
+  --border:        rgba(11,11,14,0.10);
+  --border-strong: rgba(11,11,14,0.18);
+  --accent:            #537E16;
+  --accent-fill:       #80C322;
+  --accent-fill-hover: #69A01C;
+  --accent-fg:     #FFFFFF;
+  /* ★라이트에서 라임 틴트 알파 .28 은 흰 판 대비 1.06:1 — 포커스 링이 «보이지 않는다».
+     그래서 라이트는 링을 «진한 accent 색»으로 그린다(옅은 틴트가 아니라 선). */
+  --accent-rgb:    83,126,22;
+  --warn-rgb:      166,106,0;
+  /* ★다크에만 정의하면 백로그 #9 에서 라이트가 «다크 원색»을 그대로 물려받는다 — 짝을 맞춰 둔다. */
+  --danger-rgb:    199,41,61;
+  --success-rgb:   30,142,90;
+  --focus-ring:    0 0 0 3px rgba(var(--accent-rgb), 0.90);
+  --subtle:        #6B6B74;
+  --danger:        #C7293D;
+  --success:       #1E8E5A;
+  --warn:          #A66A00;
+  --header-bg:     rgba(255,255,255,0.72);
+  --surface-veil:  rgba(11,11,14,0.045);
+  color-scheme: light;
 }
 
 html { scroll-behavior: smooth; background: var(--bg); font-size: 100%; }
@@ -57,10 +124,10 @@ html { scroll-behavior: smooth; background: var(--bg); font-size: 100%; }
 body { background: var(--bg); color: var(--fg); font-family: var(--font); -webkit-font-smoothing: antialiased; font-size: var(--fs-body); line-height: 1.6; text-align: center; word-break: keep-all; overflow-wrap: break-word; }
 a { color: inherit; text-decoration: none; }
 
-::selection { background: var(--accent); color: var(--accent-fg); }
+::selection { background: var(--accent-fill); color: var(--accent-fg); }
 
 /* ===== NAV ===== */
-header { position: sticky; top: 0; z-index: 100; background: rgba(11,11,14,0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+header { position: sticky; top: 0; z-index: 100; background: var(--header-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
 /* ★`nav` 가 아니라 `header nav` 다 — 고디터 전용 내비도 <nav> 라
    범위를 안 좁히면 이 규칙(가운데 정렬·space-between·52px)이 거기까지 걸린다. */
 header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
@@ -69,6 +136,21 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 .nav-links a { font-size: var(--fs-sm); color: var(--muted); transition: color 0.15s; }
 .nav-links a:hover { color: var(--fg); }
 .nav-links a:focus-visible { outline: none; color: var(--accent); }
+
+/* 다크/라이트 토글 버튼 — 두 아이콘을 겹쳐두고 현재 테마에 맞는 쪽만 보인다.
+   기본(다크)은 달 아이콘, [data-theme=light] 에서는 해 아이콘으로 바뀐다. */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); cursor: pointer; flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.theme-toggle:hover { color: var(--fg); border-color: var(--border-strong); background: var(--bg-elev); }
+.theme-toggle:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.theme-icon { display: block; }
+.theme-icon-sun { display: none; }
+:root[data-theme="light"] .theme-icon-sun { display: block; }
+:root[data-theme="light"] .theme-icon-moon { display: none; }
 
 /* ===== HERO ===== */
 /* padding-top 126px = 원래 80px + 아이브로(.hero-badge)가 차지하던 46px.
@@ -106,8 +188,8 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
   border-radius: 20px;
   letter-spacing: -0.01em;
 }
-.cta-primary:hover { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
-.cta-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); }
+.cta-primary:hover { background: var(--accent-fill); color: var(--accent-fg); border-color: var(--accent-fill); }
+.cta-primary:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 /* 두 번째 CTA — .cta-primary 의 «형태»를 그대로 쓰고 색만 중립 토큰으로 낮춘다.
    새 버튼 모양을 만들지 않는다(강조는 하나만 남긴다). */
 .cta-primary.is-quiet { color: var(--fg); border-color: var(--border-strong); }
@@ -141,9 +223,9 @@ main { padding-bottom: 0; margin-top: 0; }
   width: 100%;
 }
 .app-card:hover { border-color: var(--border-strong); background: var(--bg-elev-hi); }
-.app-card:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,242,58,0.20); }
+.app-card:focus-visible { outline: none; border-color: var(--accent); box-shadow: var(--focus-ring); }
 
-.app-icon { width: 48px; height: 48px; min-width: 48px; border-radius: 10px; background: rgba(255,255,255,0.06); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 18px; }
+.app-icon { width: 48px; height: 48px; min-width: 48px; border-radius: 10px; background: var(--surface-veil); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 18px; }
 .app-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
 .app-info { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 3px; width: 100%; }
 .app-name { font-size: var(--fs-body); font-weight: 600; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
@@ -283,14 +365,14 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .hero-app-pill:focus-visible {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(201,242,58,0.22);
+  box-shadow: var(--focus-ring);
 }
 
 .hero-app-pill-icon {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.06);
+  background: var(--surface-veil);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -342,13 +424,13 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
               box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
 }
 .cta-primary:hover {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--accent-fg);
-  border-color: var(--accent);
+  border-color: var(--accent-fill);
   transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(201,242,58,0.22);
 }
-.cta-primary:active { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-fg); transform: translateY(0); }
+.cta-primary:active { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); color: var(--accent-fg); transform: translateY(0); }
 
 /* ===== APP DETAIL (goditor.html) ===== */
 .detail { max-width: var(--read); margin: 0 auto; padding: 56px 24px 40px; text-align: center; }
@@ -403,7 +485,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 .signup-input::placeholder { color: var(--subtle); }
-.signup-input:focus { border-color: var(--accent); background: var(--bg-elev-hi); box-shadow: 0 0 0 3px rgba(201,242,58,0.18); }
+.signup-input:focus { border-color: var(--accent); background: var(--bg-elev-hi); box-shadow: var(--focus-ring); }
 .signup-submit {
   align-self: center;
   font-family: var(--font);
@@ -422,14 +504,14 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
               box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
 }
 .signup-submit:hover {
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--accent-fg);
-  border-color: var(--accent);
+  border-color: var(--accent-fill);
   transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(201,242,58,0.22);
 }
-.signup-submit:active { background: var(--accent-hover); border-color: var(--accent-hover); transform: translateY(0); }
-.signup-submit:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); }
+.signup-submit:active { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); transform: translateY(0); }
+.signup-submit:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .signup-msg { font-size: var(--fs-sm); min-height: 18px; margin-top: 4px; text-align: center; }
 .signup-msg-error { color: var(--danger); }
 .signup-msg-ok { color: var(--success); }
@@ -442,6 +524,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   .app-grid { grid-template-columns: 1fr; }
   .hero, main, .yt-section, footer { padding-left: 20px; padding-right: 20px; }
   header nav { padding: 0 20px; }
+  /* ★토글 버튼이 nav-links 항목으로 붙으면서 390px 폭에서 11px 넘쳤다(2026-08-24 실측) —
+     링크 사이 간격만 좁혀 흡수한다. 항목을 숨기지 않는다(전부 보여야 하는 링크들). */
+  .nav-links { gap: 12px; }
+  .theme-toggle { width: 28px; height: 28px; }
   .hero-apps { gap: 8px; margin-top: 40px; }
   .hero-app-pill { padding: 6px 10px 6px 6px; }
   .hero-app-pill-icon { width: 28px; height: 28px; font-size: 12px; }
@@ -527,9 +613,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   cursor: pointer; letter-spacing: -0.01em; width: 100%; margin-top: 6px;
   transition: background 0.18s, color 0.18s, border-color 0.18s, transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
 }
-.plan-cta:hover { background: var(--accent); color: var(--accent-fg); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(201,242,58,0.22); }
-.plan-cta:active { background: var(--accent-hover); border-color: var(--accent-hover); transform: translateY(0); }
-.plan-cta:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(201,242,58,0.28); }
+.plan-cta:hover { background: var(--accent-fill); color: var(--accent-fg); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(201,242,58,0.22); }
+.plan-cta:active { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); transform: translateY(0); }
+.plan-cta:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .plan-cta-quiet { color: var(--muted); border-color: var(--border-strong); }
 .plan-cta-quiet:hover { background: var(--bg-elev-hi); color: var(--fg); border-color: var(--border-strong); box-shadow: none; }
 
@@ -594,13 +680,19 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .dummy-notice b{color:var(--fg); font-weight:600}
 .dummy-tag{
   display:inline-block; font-family:var(--mono); font-size:var(--fs-xs); letter-spacing:.06em;
-  text-transform:uppercase; color:#FFD166; border:1px solid rgba(255,209,102,.5);
-  background:rgba(255,209,102,.10); border-radius:4px; padding:1px 6px; margin-right:7px;
+  text-transform:uppercase; color:var(--warn); border:1px solid rgba(var(--warn-rgb),.5);
+  background:rgba(var(--warn-rgb),.10); border-radius:4px; padding:1px 6px; margin-right:7px;
 }
 .dummy-tag-sm{font-size:var(--fs-xs); padding:0 4px; margin-right:4px}
 .plan-per{font-size:var(--fs-sm); font-weight:500; color:var(--subtle); letter-spacing:0}
 .plan-card-now{border-color:rgba(201,242,58,.42)}
-.plan-feat-off{opacity:.42; text-decoration:line-through}
+/* ★opacity 는 두 테마에서 «다르게» 나빠진다 — 색으로 낮춘다(실측 2.58:1 → --subtle) */
+.plan-feat-off{color:var(--subtle); text-decoration:line-through}
+/* ★위 한 줄은 «안 먹는다» — `.plan-features li`(0-0-1-1)가 `.plan-feat-off`(0-0-1-0)보다
+   구체적이라 color:var(--muted) 가 이긴다. opacity 를 걷어내기만 하면 해제된 기능이
+   오히려 «더 밝아져» 활성 기능과 구분이 안 된다(2026-09-02 실측: 다크 rgb(88,88,94) → rgb(181,181,188)).
+   ⇒ 같은 구체성 층에서 이겨야 «흐려짐»이 실제로 그려진다. */
+.plan-features li.plan-feat-off{ color:var(--subtle); }
 .plan-feat-off .feature-dot{color:var(--subtle); text-decoration:none}
 
 /* 앱 페이지 안의 요금제 블록 — 상세는 680px 폭이라 4단이 안 들어간다.
@@ -643,7 +735,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .modal-close:hover{ color:var(--fg) }
 .dl-resume{ color:var(--success) }
 .dl-resume a{ color:var(--accent); font-weight:600 }
-.cta-pulse{ box-shadow:0 0 0 3px rgba(201,242,58,.28) }
+.cta-pulse{ box-shadow: var(--focus-ring) }
 
 /* 가격 표기 — 예시 정가와 «지금 무료»를 함께 보여준다 */
 .plan-amount{ font-size:var(--fs-lead); font-weight:700; letter-spacing:-.02em }
@@ -662,7 +754,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 /* ── 확장 가입 폼 (ttj 기준, 뉴스레터 제외) ── */
 .signup-form-wide{ max-width:400px; }
-.lbl-hint{ opacity:.5; font-weight:400; }
+.lbl-hint{ color:var(--subtle); font-weight:400; }
 .field-row{ display:flex; gap:8px; width:100%; align-items:stretch; }
 .field-row .signup-input{ flex:1; }
 .field-btn{
@@ -681,10 +773,52 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   border-radius:var(--radius); padding:12px 14px; display:flex; flex-direction:column; gap:9px; margin-top:6px;
 }
 .agree-item{ display:flex; align-items:flex-start; gap:9px; font-size:var(--fs-sm); color:var(--muted); cursor:pointer; text-align:left; line-height:1.6; }
-.agree-item input{ margin-top:2px; accent-color:var(--accent); flex-shrink:0; }
+/* ★네이티브 체크박스는 13px 짜리 «시스템 색»이다. accent-color 는 «체크된 뒤»에만 듣기 때문에,
+   해제 상태는 안쪽 rgb(59,59,59)·대비 1.62 로 --bg-elev 판에 묻혀 「체크박스가 안 들어갔다」로 읽힌다
+   (2026-09-02 현빈 지적, 라이브 실측으로 확인 — 캐시 문제가 아니었다).
+   ★appearance 를 벗기면 «반드시» 대체 UI 를 같이 그려야 한다 — 벗기기만 하면 진짜로 사라진다.
+   ★테두리는 --border-strong 이 아니라 --subtle 이다. --border-strong 은 알파 .16 이라
+     이 판 위에서 합성하면 rgb(58,58,62) = 대비 1.6 으로 지금과 똑같이 안 보인다. */
+.agree-item input[type="checkbox"]{
+  appearance:none; -webkit-appearance:none;
+  width:18px; height:18px; margin-top:1px; flex-shrink:0;
+  border:1.5px solid var(--subtle); border-radius:5px;
+  background:transparent; cursor:pointer;
+  display:grid; place-content:center;
+  transition:background .12s, border-color .12s;
+}
+.agree-item input[type="checkbox"]::before{
+  content:""; width:10px; height:10px; transform:scale(0);
+  background:var(--accent-fg);
+  clip-path:polygon(14% 44%, 0 60%, 39% 100%, 100% 18%, 84% 2%, 39% 68%);
+  transition:transform .12s ease-out;
+}
+.agree-item input[type="checkbox"]:checked{ background:var(--accent-fill); border-color:var(--accent-fill); }
+.agree-item input[type="checkbox"]:checked::before{ transform:scale(1); }
+.agree-item input[type="checkbox"]:hover{ border-color:var(--muted); }
+/* ★라이트 전용 보정 (2026-09-02 실측). 체크박스는 «채움 위 10px 글리프»가 유일한 상태신호다.
+   라이트에서 --accent-fg 는 흰색이라 채움(#80C322) 위 대비가 2.15:1 — 사실상 안 보인다.
+   ⇒ 글리프만 --fg(#0B0B0E)로 뒤집어 9.12:1 을 만든다. 채움색(#80C322·08-24 현빈 확정)은 안 건드린다.
+   ⇒ 체크된 테두리도 --accent-fill 이면 판(--bg-elev #F4F4F6) 대비 1.96:1 이라 윤곽이 사라진다
+     → --accent(#537E16, 4.38:1)로 잡는다. 다크는 이 규칙이 안 걸려 한 픽셀도 안 바뀐다.
+   (해제 상태 테두리 --subtle 은 라이트에서 4.40:1 로 이미 충분해 손대지 않는다) */
+:root[data-theme="light"] .agree-item input[type="checkbox"]::before { background: var(--fg); }
+:root[data-theme="light"] .agree-item input[type="checkbox"]:checked { border-color: var(--accent); }
+.agree-item input[type="checkbox"]:focus-visible{ outline:none; box-shadow: var(--focus-ring); }
 .agree-item a{ color:var(--accent); text-decoration:underline; text-underline-offset:2px; }
 .agree-all span b{ color:var(--fg); font-size:var(--fs-body); }
+/* 전체동의는 «묶음의 머리»다 — 나머지 두 줄과 크기가 같으면 위계가 안 선다 */
+.agree-all{ padding-bottom:2px; }
+.agree-all input[type="checkbox"]{ width:20px; height:20px; }
+.agree-all input[type="checkbox"]::before{ width:11px; height:11px; }
 .agree-divider{ border-top:1px solid var(--border); }
+
+/* ★2026-09-02 동의 구간 분리(개인정보 보호법 제22조① 구분동의)로 새로 생긴 3개 클래스.
+   새 색·새 크기를 만들지 않고 기존 토큰만 쓴다 — 디자인 시스템을 늘리지 않기 위해서다. */
+.req-mark{ color:var(--subtle); font-size:var(--fs-xs); font-weight:500; margin-left:2px; }
+.signup-hint{ font-size:var(--fs-xs); color:var(--subtle); line-height:1.6; margin:6px 0 0; text-align:left; }
+.signup-hint b{ color:var(--muted); font-weight:600; }
+.agree-detail{ display:block; margin-top:4px; font-size:var(--fs-xs); color:var(--subtle); line-height:1.55; }
 
 /* ── 약관·개인정보 문서 ── */
 .legal{ max-width:var(--width); margin:0 auto; padding:56px 24px 72px; text-align:left; }
@@ -797,9 +931,9 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .auth-card .signup-form { max-width: 100%; gap: 2px; align-items: stretch; }
 .auth-card .signup-submit {
   width: 100%; margin-top: 20px; padding: 13px 0; font-size: var(--fs-body); font-weight: 700;
-  background: var(--accent); color: var(--accent-fg); border-color: var(--accent);
+  background: var(--accent-fill); color: var(--accent-fg); border-color: var(--accent-fill);
 }
-.auth-card .signup-submit:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-fg); }
+.auth-card .signup-submit:hover { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); color: var(--accent-fg); }
 .auth-card .signup-msg { text-align: center; }
 
 /* ★카드 «밖» 하단 링크 한 줄 — 지금 우리에겐 이게 없었다 */
@@ -1100,7 +1234,7 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   .doc-toc nav { border-left: 1px solid var(--border); }
   .doc-toc-grp {
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: var(--fs-xs);   /* ★「14px 가 바닥」 규범 — 10px 이었다 */
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--subtle);
@@ -1115,13 +1249,14 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
     padding: 5px 12px 5px 14px;
     margin-left: -1px;
     border-left: 2px solid transparent;
-    font-size: 13px;
+    font-size: var(--fs-xs);   /* ★「14px 가 바닥」 규범 — 13px 이었다 */
     color: var(--muted);
     text-decoration: none;
     line-height: 1.5;
   }
   .doc-toc a:hover { color: var(--fg); }
-  .doc-toc a span { font-family: var(--mono); font-size: 11px; color: var(--subtle); }
+  .doc-toc a span { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); }
+  .doc-toc a:focus-visible { outline:none; color: var(--accent); }
   /* 현재 보고 있는 절 */
   .doc-toc a.on {
     color: var(--accent);

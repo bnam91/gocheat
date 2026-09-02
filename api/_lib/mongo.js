@@ -13,10 +13,30 @@ const { MongoClient } = require('mongodb');
  *   MONGO_DB 를 명시하면 그게 이긴다(로컬 실험·일회성 격리용).
  *   ★Atlas 는 클러스터 하나에 DB 를 여럿 둔다 — 클러스터를 새로 살 필요가 없다.
  */
-const DB_NAME = process.env.MONGO_DB
+// ★★2026-09-02 현빈 지시로 «Vercel 배포를 내린다». 대시보드 작업은 사람 손이 필요하지만,
+//   그 전에 «코드»가 먼저 막는다 — Vercel 은 main push 마다 자동 배포되므로 이 가드가 곧바로 실린다.
+//
+//   막는 이유: hompageapp.vercel.app 이 «main 의 낡은 api» 로 «운영 DB(goditor_license)» 에
+//   붙어 있었다(/api/env 실측: env=production, db=goditor_license). 라이브(EC2)는 main 보다
+//   앞서 있어서, 같은 데이터를 «서로 다른 코드» 두 벌이 만지는 상태였다.
+//
+//   ⚠️EC2 에는 VERCEL 이 «없다» — 이 가드는 Vercel 에서만 켜진다. 라이브는 영향 없다.
+//   되돌리려면 이 블록을 지우면 된다(대시보드를 정리한 뒤).
+const ON_VERCEL = !!process.env.VERCEL;
+const LIVE_DB = 'goditor_license';
+const DEV_DB = 'goditor_license_dev';
+
+let DB_NAME = process.env.MONGO_DB
   || (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production'
-        ? 'goditor_license_dev'
-        : 'goditor_license');
+        ? DEV_DB
+        : LIVE_DB);
+
+if (ON_VERCEL && DB_NAME === LIVE_DB) {
+  // ⛔조용히 바꾸지 않는다 — 「왜 개발 DB 를 보지」로 헤매게 된다.
+  console.warn('[mongo] ★Vercel 배포는 운영 DB 접근이 차단되어 있다(2026-09-02 현빈 지시). '
+    + `'${LIVE_DB}' → '${DEV_DB}' 로 강제한다. 해제하려면 _lib/mongo.js 의 ON_VERCEL 가드를 지워라.`);
+  DB_NAME = DEV_DB;
+}
 
 let cached = global.__goditorMongo;
 if (!cached) {
@@ -62,6 +82,22 @@ async function ensureIndexes(db) {
     db.collection('licenses').createIndex({ userEmail: 1, status: 1 }),
     db.collection('mail_queue').createIndex({ idempotencyKey: 1 }, { unique: true }),
     db.collection('mail_queue').createIndex({ status: 1, createdAt: 1 }),
+
+    // ── 비밀번호 재설정 (api/license/reset-*.js) ──────────────────────────
+    // reset-confirm 이 토큰 해시«만»으로 찾는다 — 없으면 매 요청이 users 전수주사다.
+    db.collection('users').createIndex({ resetTokenHash: 1 }, { sparse: true }),
+    // 레이트리밋 조회 { key, at:{$gte} } 의 형태 그대로.
+    db.collection('reset_attempts').createIndex({ key: 1, at: 1 }),
+    // ★TTL 로 «스스로» 지워지게 둔다. 창(1시간)보다 넉넉한 2시간이면 판정에 영향이 없고,
+    //   지우는 사람을 따로 두지 않아도 컬렉션이 무한히 자라지 않는다.
+    db.collection('reset_attempts').createIndex({ at: 1 }, { expireAfterSeconds: 7200 }),
+    // 담당자가 «아직 회신 안 한» 요청을 찾는 축(mailerLive:false 인 동안만 쌓인다).
+    db.collection('reset_requests').createIndex({ handledAt: 1, at: -1 }),
+
+    // ★동반 결손 — find-email.js:62 의 countDocuments({ phone, at }) 도 인덱스가 «없어»
+    //   매 호출이 전수주사였다. 같은 성격의 컬렉션이라 여기서 같이 세운다.
+    db.collection('find_attempts').createIndex({ phone: 1, at: 1 }),
+    db.collection('find_attempts').createIndex({ at: 1 }, { expireAfterSeconds: 7200 }),
 
     // ── 원격 동시협업 (api/collab/*) ──────────────────────────────────────
     // ★인덱스는 이 파일 «한 곳»에 모은다 — 컬렉션마다 흩어두면 어디를 봐야 할지 모르게 된다.

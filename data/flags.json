@@ -2,5 +2,8 @@
   "_why": "배포를 두 덩이로 가르는 스위치. 클라이언트(signup.html)와 서버(api/license/signup.js)가 «같은 파일»을 본다 — env 로 갈라 두면 둘이 어긋나 폼은 안 물어보는데 서버는 받는 상태가 생긴다.",
   "extendedSignup": true,
   "_extendedSignup": "성함·휴대전화 수집과 약관 동의 폼. ★false 로 잠가 둔다. 개인정보 수집·이용 동의는 고지사항(이용약관·개인정보 처리방침 본문)이 있어야 성립하는데, data/legal.json 의 sections 가 아직 비어 있다. 빈 고지로 개인정보를 받으면 안 된다. 사업자정보와 약관 본문이 채워지면 true 로 바꾼다 — 그때 폼과 서버가 동시에 열린다.",
+  "mailerLive": false,
+  "_mailerLive": "메일을 «실제로 보낼 수 있는가». false 인 동안 api/license/reset-request.js 는 재설정 메일을 mail_queue 에 넣지 «않고» reset_requests 에 접수만 남기며, find-password.html 은 「보냈어요」가 아니라 「접수했어요」라고 말한다. ★false 가 기본인 이유: 이 조직엔 mail_queue 를 꺼내 보내는 주체가 코드에도 서버에도 없다(2026-09-02 실측 — 큐의 4통이 08-14부터 pending). 쌓아 두면 발송기가 붙는 날 «이미 만료된» 재설정 링크가 무더기로 나간다.",
+  "_mailerLiveGate": "true 로 켜기 «전에» 발송기 쪽에 4가지가 먼저 있어야 한다 — ①만료 메일 skip ②동시실행 락(pending→sending) ③재시도 상한(retryCount) ④⛔본문·수신자·링크를 로그에 남기지 않기. 켜는 순간 화면 문구가 「메일을 보냈어요」로 바뀌므로, 발송기 없이 켜면 그 문장이 거짓말이 된다.",
   "_extendedSignupGate": "현빈 지시로 2026-09-02 개방(「체크박스 부분 넣으라고」). 개방 조건이던 약관·개인정보 처리방침 본문을 같은 배포에 함께 내보냈다. ★남은 결손: data/business.json 이 비어 있어 «사업자정보란»과 «개인정보 보호책임자 성명»이 아직 표시되지 않는다(보호책임자는 법정 필수 기재사항). 값을 받는 대로 채울 것."
 }

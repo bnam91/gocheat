@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="dark" />
+  <meta name="color-scheme" content="dark light" />
   <meta name="theme-color" content="#0B0B0E" />
+  <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <title>REVIEW CRAWLER — Naver & Coupang review collector · 소문의섬</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260902n" />
+  <link rel="stylesheet" href="style.css?v=20260902o" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 
@@ -61,7 +62,10 @@
     .how-steps b { color: var(--fg); font-weight: 600; }
 
     .privacy-details {
-      max-width: var(--read); margin: 22px auto 0; text-align: left;
+      /* ★width:100% 가 «있어야» 한다 — 부모 .pricing-inner 가 align-items:center 인 flex 라
+         폭을 안 주면 «접힌 상태»에서 내용 폭(273px)으로 쪼그라든다. 법적 고지 상자가 알약만 해진다.
+         godiv.css:71 이 같은 버그를 고쳤는데 이 사본 둘에만 그 한 줄이 빠져 있었다(2026-09-02 QA). */
+      max-width: var(--read); width: 100%; margin: 22px auto 0; text-align: left;
       border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev);
     }
     .privacy-details > summary {
@@ -96,7 +100,10 @@
   <script>
     (function () {
       try { sessionStorage.setItem('soon', 'REVIEW CRAWLER'); } catch (e) {}
-      location.replace('/#apps');
+      // ★'/#apps' 는 «없는 앵커»다 — index 의 <main id="apps"> 가 주석 처리돼 있다(현빈 2026-09-01).
+      //   그대로 두면 홈 «최상단»에 떨어져 앱을 못 본다. 살아 있는 앵커로 보낸다.
+      //   프로덕트 섹션 주석을 푸는 날 '/#apps' 로 되돌리면 된다.
+      location.replace('/#hero-apps');
     })();
   </script>
 </head>
@@ -116,6 +123,10 @@
       <div class="nav-links">
         <a href="login.html">Log in</a>
         <a href="signup.html">Sign up</a>
+        <button type="button" class="theme-toggle" aria-label="테마 전환">
+          <svg class="theme-icon theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+          <svg class="theme-icon theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>
+        </button>
       </div>
     </nav>
   </header>
@@ -252,5 +263,6 @@
       </div>
     </div>
   </footer>
+  <script src="theme.js?v=20260902o"></script>
 </body>
 </html>

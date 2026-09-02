@@ -31,7 +31,10 @@ if (until) {
   var d = new Date(until);
   if (!isNaN(d)) {
     var left = Math.ceil((d - Date.now()) / 86400000);
-    untilTxt = d.toISOString().slice(0, 10) + ' 까지' + (left >= 0 && left <= 30 ? ' · ' + left + '일 남음' : '');
+    // ★toISOString() 은 UTC 다 — 2026-12-31T23:59:59Z 를 그렇게 찍으면 한국 사용자에게
+    //   「2026-12-31 까지」로 «하루 이르게» 보인다(실제 만료는 KST 2027-01-01).
+    //   바로 아래 kstDate() 가 이미 있었는데 주문일(77행)만 쓰고 여기만 빠져 있었다.
+    untilTxt = kstDate(d) + ' 까지' + (left >= 0 && left <= 30 ? ' · ' + left + '일 남음' : '');
   }
 }
 if (code === 'beta' || code === 'event_free') {
@@ -41,14 +44,29 @@ document.getElementById('mp-until').textContent = untilTxt;
 
 // 탭
 var tabs = document.querySelectorAll('.mp-tabs button');
-Array.prototype.forEach.call(tabs, function (b) {
-  b.addEventListener('click', function () {
-    Array.prototype.forEach.call(tabs, function (x) { x.classList.remove('on'); });
-    b.classList.add('on');
-    Array.prototype.forEach.call(document.querySelectorAll('.mp-pane'), function (p) { p.classList.remove('on'); });
-    document.getElementById('pane-' + b.getAttribute('data-pane')).classList.add('on');
+function showPane(name) {
+  var target = document.getElementById('pane-' + name);
+  if (!target) return false;                       // 없는 이름이면 «아무것도 안 한다» — 빈 화면을 만들지 않는다
+  Array.prototype.forEach.call(tabs, function (x) {
+    x.classList.toggle('on', x.getAttribute('data-pane') === name);
   });
+  Array.prototype.forEach.call(document.querySelectorAll('.mp-pane'), function (p) { p.classList.remove('on'); });
+  target.classList.add('on');
+  return true;
+}
+Array.prototype.forEach.call(tabs, function (b) {
+  b.addEventListener('click', function () { showPane(b.getAttribute('data-pane')); });
 });
+
+// ★해시로 «바로 그 탭»을 열 수 있어야 한다. order.html 의 「내 주문 보기 →」가
+//   mypage.html#orders 로 보내는데, 전에는 click 만 듣고 hash 를 안 읽어서
+//   결제 직후 그 버튼이 «아무 데도 안 가는» 상태였다(2026-09-02 QA 발견).
+function applyHash() {
+  var h = (location.hash || '').replace(/^#/, '');
+  if (h) showPane(h);
+}
+applyHash();
+window.addEventListener('hashchange', applyHash);
 
 // 주문 내역 — ★프론트만이다. order.html 이 남긴 화면 확인용 기록을 읽는다.
 var orders = [];
