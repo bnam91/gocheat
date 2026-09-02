@@ -23,12 +23,16 @@
 
 // 사이트 style.css 의 토큰을 그대로 옮긴 값. 한 곳에서만 고친다.
 const C = {
+  // ★라이트 버튼은 «먹색»이다(2026-09-02 현빈 지시, 사이트 --accent-fill 과 같은 값).
+  //   글자는 흰색 — 19.65:1. 다크는 라임 위 먹 글자 그대로(15.2:1).
   light: { bg: '#FFFFFF', card: '#F4F4F6', fg: '#0B0B0E', muted: '#4B4B54',
-           subtle: '#6B6B74', border: '#E3E3E7', accent: '#80C322' },
+           subtle: '#6B6B74', border: '#E3E3E7', accent: '#0B0B0E', btnInk: '#FFFFFF' },
   dark:  { bg: '#0B0B0E', card: '#15151A', fg: '#F2F2F5', muted: '#B5B5BC',
-           subtle: '#8E8E96', border: '#26262C', accent: '#C9F23A' },
+           subtle: '#8E8E96', border: '#26262C', accent: '#C9F23A', btnInk: '#0B0B0E' },
 };
-const INK = '#0B0B0E';      // 라임 위 글자 — 두 테마 공통
+// ★버튼 글자색이 테마마다 다르다 — 라이트는 «먹 버튼 위 흰 글자», 다크는 «라임 버튼 위 먹 글자».
+//   한 값으로 묶으면 한쪽이 반드시 안 보인다.
+const INK = '#FFFFFF';
 const MONO = "'JetBrains Mono','Fira Code',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace";
 const FONT = "-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif";
 
@@ -93,6 +97,7 @@ function renderMail({ label = '소문의섬', title, paragraphs = [], cta = null
     .muted { color:${C.dark.muted} !important; }
     .subtle, .subtle a, .rawurl, .label { color:${C.dark.subtle} !important; }
     .btn   { background:${C.dark.accent} !important; }
+    .btn a { color:${C.dark.btnInk} !important; }
     .hr, .rule { border-color:${C.dark.border} !important; }
     .accentbar { background:${C.dark.accent} !important; }
     .codebox   { background:${C.dark.bg} !important; border-color:${C.dark.border} !important; }

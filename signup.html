@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260902r" />
+  <link rel="stylesheet" href="style.css?v=20260902s" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 </head>
@@ -88,12 +88,12 @@
                  하나로 묶으면 개인정보 보호법 제22조① 의 «구분 동의» 요건을 못 채운다.
                  (2026-09-02 조사 B5) -->
             <label class="agree-item">
-              <input type="checkbox" id="agree-terms" class="agree-child" />
+              <input type="checkbox" id="agree-terms" class="agree-child" checked />
               <span>[필수] <a href="terms.html" target="_blank" rel="noopener">이용약관</a> 동의</span>
             </label>
 
             <label class="agree-item">
-              <input type="checkbox" id="agree-privacy" class="agree-child" />
+              <input type="checkbox" id="agree-privacy" class="agree-child" checked />
               <span>[필수] <a href="privacy.html" target="_blank" rel="noopener">개인정보 수집·이용</a> 동의
                 <br /><small class="agree-detail">
                   수집 항목: 이메일, 비밀번호, 이름, 휴대전화번호 ·
@@ -102,6 +102,12 @@
                 </small></span>
             </label>
 
+            <!-- ⛔마케팅만 «기본 해제»다. 필수 2개는 현빈 지시로 기본 체크했지만 이것만 뺐다:
+                 정보통신망법 제50조①은 영리 목적 광고성 정보에 «명시적 사전 동의»를 요구한다.
+                 미리 체크해 두면 「동의를 받았다」가 성립하지 않는다(opt-out 은 위법 소지).
+                 ★그리고 우리 개인정보 처리방침 제3조가 스스로 「동의를 철회하셔도 서비스 이용에는
+                   아무런 불이익이 없습니다」라고 적어 뒀다 — 사전 체크는 그 문장과도 어긋난다.
+                 켜려면 checked 한 단어만 붙이면 된다. -->
             <label class="agree-item">
               <input type="checkbox" id="agree-marketing" class="agree-child" />
               <span>[선택] 마케팅 정보 수신 동의
@@ -179,6 +185,9 @@
             all.checked = kids.every(function (x) { return x.checked; });
           });
         });
+        // ★열자마자 «전체 동의»의 상태를 자식들과 맞춘다. 안 하면 필수 2개가 켜져 있는데
+        //   전체 동의만 꺼져 보여, 사용자가 「내가 뭘 안 했나」 하고 헷갈린다.
+        all.checked = kids.every(function (x) { return x.checked; });
 
         var phoneEl = document.getElementById('phone');
         phoneEl.addEventListener('input', function () {
@@ -188,12 +197,13 @@
 
       // ★flags.json 은 응답에 Cache-Control 이 «없다» → 브라우저 휴리스틱 캐시가 걸린다.
       //   플래그를 뒤집어도 옛 값을 든 브라우저는 동의 구간이 «통째로 없는» 화면을 본다.
-      fetch('data/flags.json?v=20260902r')
+      fetch('data/flags.json?v=20260902s')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (f) { (f && f.extendedSignup === true) ? openExtended() : lockExtended(); })
         .catch(lockExtended)
         .then(function () { submit.disabled = false; });
 
+      var askedMarketing = false;   // ★한 번 물으면 다시 묻지 않는다
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
         var email    = (emailInput.value || '').trim();
@@ -211,6 +221,31 @@
         if (!email || !emailRe.test(email))  return bad('이메일 형식이 올바르지 않아요.', emailInput);
         if (password.length < 8)             return bad('비밀번호는 8자 이상이어야 해요.', passwordInput);
         if (password !== pw2)                return bad('비밀번호가 서로 달라요.', document.getElementById('password2'));
+        // ★★마케팅 미동의로 «그냥 지나치는» 사람에게 한 번 더 묻는다(현빈 2026-09-02).
+        //   ⛔단, 「동의 안 하면 기능이 제한된다」고 «말하지 않는다». 두 가지 이유다:
+        //     ① 사실이 아니다 — 마케팅 수신동의와 자동 업데이트는 기술적으로 무관하다.
+        //        업데이트는 앱이 하고, 이건 «소식을 메일로 받을지»일 뿐이다.
+        //     ② 우리 개인정보 처리방침 제3조가 스스로 「동의를 철회하셔도 서비스 이용에는
+        //        아무런 불이익이 없습니다」라고 적어 뒀다. 여기서 반대로 말하면 자기모순이고,
+        //        선택 동의를 거부했다고 불이익을 «고지»하는 것은 개인정보보호법 제22조⑤ 에 걸린다.
+        //   ⇒ «사실만» 말하고 되묻는다. 목적(한 번 더 묻기)은 그대로 달성된다.
+        if (extOpen && !marketing && !askedMarketing) {
+          askedMarketing = true;   // 한 번만 묻는다 — 두 번 물으면 강요가 된다
+          submit.disabled = false;
+          var goOn = window.confirm(
+            '마케팅 정보 수신에 동의하지 않으셨어요.\n\n' +
+            '동의하시면 새 기능·버그 수정 소식을 메일로 가장 먼저 받아보실 수 있어요.\n' +
+            '동의하지 않으셔도 가입과 서비스 이용, 자동 업데이트에는 아무런 제한이 없습니다.\n\n' +
+            '[확인] 동의하지 않고 계속 가입하기\n' +
+            '[취소] 돌아가서 동의 체크하기'
+          );
+          if (!goOn) {
+            var mk = document.getElementById('agree-marketing');
+            if (mk) mk.focus();
+            return false;
+          }
+        }
+
         if (extOpen) {
           if (!name)                         return bad('이름을 입력해 주세요.', document.getElementById('name'));
           if (phone.length < 10)             return bad('휴대전화 번호를 정확히 입력해 주세요.', document.getElementById('phone'));
@@ -308,7 +343,7 @@
         }).catch(function () {});
     })();
   </script>
-  <script src="footer.js?v=20260902r"></script>
-  <script src="theme.js?v=20260902r"></script>
+  <script src="footer.js?v=20260902s"></script>
+  <script src="theme.js?v=20260902s"></script>
 </body>
 </html>

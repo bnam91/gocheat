@@ -53,6 +53,24 @@
 })();
 
 /**
+ * 저작권 표기 — 푸터 맨 아래.
+ * ★business.json 과 «분리»한다: 저작권은 사업자정보가 아니라 «항상 있어야 하는» 것이라,
+ *   그 파일을 못 읽어도(또는 값이 비어도) 반드시 떠야 한다. 위 IIFE 의 fetch 에 묶으면
+ *   네트워크가 한 번 실패할 때 저작권까지 같이 사라진다.
+ * ★연도는 «한국 시간» 기준으로 뽑는다 — 보는 사람의 시간대에 따라 연말·연초에
+ *   1년이 어긋나 보이면 안 된다(이 프로젝트의 날짜 규범과 같다).
+ */
+(function () {
+  var slot = document.getElementById('biz-info');
+  if (!slot || !slot.parentNode) return;
+  var kstYear = new Date(Date.now() + 9 * 3600 * 1000).getUTCFullYear();
+  var p = document.createElement('p');
+  p.className = 'footer-copy';
+  p.textContent = '\u00A9 ' + kstYear + ' 소문의섬. All rights reserved.';
+  slot.parentNode.appendChild(p);
+})();
+
+/**
  * ★배포 배지 — 지금 보고 있는 게 «라이브가 아니면» 화면 위에 띠를 띄운다.
  *   프리뷰를 라이브로 착각해서 「반영됐네」라고 판단하는 사고를 막는다.
  *   production 이면 아무것도 그리지 않는다.
