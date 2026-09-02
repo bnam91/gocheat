@@ -119,19 +119,21 @@ if (until) {
 }
 document.getElementById('mp-until').textContent = untilTxt;
 
-// ★★「베타테스트가 끝나면 FREE로 전환돼요」 한 줄로는 «무슨 베타인지»를 알 수 없었다.
-//   ⇒ 무엇이 열려 있고, 언제 무엇으로 바뀌는지를 문장으로 적는다.
-//     이 값은 «계정»에 붙고 «앱과 무관»하다는 것도 같이 말한다 — 그게 오해의 뿌리였다.
+// ★★평소엔 «아무 말도 안 한다»(현빈 2026-09-03: 「이런말은 왜 필요해?? 회원가입만
+//   했을때는 이런내용이 필요없는데?」).
+//   ⇒ 맞다. 「무슨 베타냐」의 원인은 «등급 이름이 안 그려진 것»이었지 설명이 부족한 게
+//     아니었다. 이름 + 「이 계정 전체에 적용」 배지로 이미 답이 됐는데 해설을 세 문장
+//     더 붙인 건 군더더기였다. 화면은 설명서가 아니다.
+//   ★남기는 건 «지금 행동이 필요한 때» 한 줄뿐이다 — 기한이 임박했을 때.
+//     그때는 「곧 바뀐다」가 정보가 되고, 그 전엔 소음이다.
 var noteEl = document.getElementById('mp-tier-note');
 if (noteEl) {
-  if (code === 'beta' || code === 'event_free') {
-    noteEl.textContent = '지금은 베타테스트 기간이라 가입만 하면 GODITOR·GODIV·GOSHOT 을 '
-      + '전부 무료로 쓰실 수 있어요. 베타가 끝나면 이 계정은 FREE 등급으로 바뀌고, '
-      + '그때 요금제를 고르시면 됩니다. 앱을 아직 안 쓰셨어도 등급은 계정에 그대로 붙어 있어요.';
-  } else if (code === 'free') {
-    noteEl.textContent = '무료 등급이에요. 유료 기능이 필요하시면 요금제에서 등급을 올리실 수 있어요.';
+  var days = null;
+  if (until) { var du = new Date(until); if (!isNaN(du)) days = Math.ceil((du - Date.now()) / 86400000); }
+  if ((code === 'beta' || code === 'event_free') && days !== null && days >= 0 && days <= 30) {
+    noteEl.textContent = '기간이 끝나면 FREE 등급으로 바뀌어요. 요금제에서 등급을 올리실 수 있습니다.';
   } else {
-    noteEl.textContent = '이 등급은 계정 하나에 붙습니다 — 앱마다 따로 결제하지 않으셔도 돼요.';
+    noteEl.textContent = '';   // ★CSS 의 :empty 가 이 칸을 통째로 감춘다
   }
 }
 
@@ -165,7 +167,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904a').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904b').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
