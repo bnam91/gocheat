@@ -76,8 +76,14 @@
           autocomplete="tel" inputmode="numeric" maxlength="13" required />
 
           <div class="agree-box">
+            <!-- ★checked 를 «마크업»에도 박는다(2026-09-02 라이브 실측).
+                 아래 스크립트의 동기화(all.checked = kids.every(...))는 flags.json 을 받은 «뒤»에
+                 돌기 때문에, 네트워크가 느리면 1~2초간 「자식 3개는 켜졌는데 전체 동의만 꺼진」
+                 상태가 «보인다». 로컬에서는 응답이 즉시라 안 보였다 — 라이브에서만 드러났다.
+                 ⚠️자식 기본값을 하나라도 «해제»로 바꾸면 이 checked 도 같이 떼라(스크립트가
+                   결국 바로잡긴 하지만, 그 사이 «틀린 상태»가 보인다). -->
             <label class="agree-item agree-all">
-              <input type="checkbox" id="agree-all" /> <span><b>전체 동의</b></span>
+              <input type="checkbox" id="agree-all" checked /> <span><b>전체 동의</b></span>
             </label>
             <div class="agree-divider"></div>
 
