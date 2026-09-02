@@ -79,6 +79,13 @@ module.exports = async (req, res) => {
       await db.collection('users').updateOne(
         { email, [k + '.tier']: { $exists: false } },
         { $set: { [k + '.tier']: tiers.DEFAULT_TIER, [k + '.payment']: null } });
+
+      // ★★「처음 어느 앱에서 등록됐는지」(현빈 2026-09-02) — 계정에 «한 번만» 남긴다.
+      //   앱 번들의 firstSeenAt 은 앱마다 따로지만, 이건 «이 사람이 우리를 처음 만난 앱»이다.
+      //   ⛔덮어쓰지 않는다 — 조건에 «없을 때만»을 걸어, 두 번째 앱 로그인이 첫 기록을 지우지 못하게.
+      await db.collection('users').updateOne(
+        { email, firstAppId: { $exists: false } },
+        { $set: { firstAppId: appId, firstAppAt: now } });
     }
 
     await db.collection('users').updateOne({ email }, { $set: set });

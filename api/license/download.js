@@ -14,7 +14,6 @@ const PURCHASE_URL = process.env.PURCHASE_URL || 'https://blacksheepwall.kr/pric
 // ★플랫폼별로 «다른 파일»을 준다. 버튼이 "macOS 버전"이라고 말했는데
 //   세 폴더가 든 상위 주소로 보내면 말과 화면이 어긋난다.
 const DOWNLOAD_FILE = require('../../data/downloads.json');
-const tiers = require('../_lib/tiers');
 
 const FALLBACK = process.env.DOWNLOAD_URL_GODITOR || DOWNLOAD_FILE.goditor[''];
 
@@ -96,13 +95,13 @@ module.exports = async (req, res) => {
       await users.updateOne({ email }, {
         $set: {
           ['downloads.' + app + '.lastAt']: now,
-          // ★★다운로드도 «앱을 쓰기 시작한» 순간이다(현빈: 「앱A를 다운받으면 번들이 붙는다」).
-          //   로그인만 기다리면 「받았는데 마이페이지엔 안 보이는」 구간이 생긴다.
-          ...(tiers.appMeta(app) ? {
-            ['apps.' + app + '.kind']: tiers.appMeta(app).kind,
-            ['apps.' + app + '.name']: tiers.appMeta(app).name,
-            ['apps.' + app + '.lastDownloadAt']: now,
-          } : {}),
+          // ⛔여기서 apps.<id> 번들을 만들지 «않는다»(2026-09-02 되돌림).
+          //   ★다운로드는 «로그인 없이도» 된다(DOWNLOAD_REQUIRE_LOGIN=off, 실측 recorded:false).
+          //     그러니 「받은 앱」은 대부분 누구 것인지 모르고, 알 수 있는 소수만 잡히면
+          //     「이용 중인 앱」이 «반쪽짜리»가 된다 — 반쪽 목록은 없는 것보다 나쁘다.
+          //   ★그리고 등록 시점이 둘(다운로드·로그인)이면 firstSeenAt 이 무엇을 뜻하는지 흐려진다.
+          //   ⇒ 등록은 «앱에서 로그인하는 순간» 하나로 둔다(현빈 2026-09-02).
+          //     downloads.<id> 기록은 그대로 남는다 — 그건 「받았다」는 사실이지 「쓴다」가 아니다.
           ['downloads.' + app + '.lastPlan']: plan,
           ['downloads.' + app + '.lastPlatform']: platform || 'unknown',
         },

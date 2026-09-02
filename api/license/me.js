@@ -71,6 +71,9 @@ module.exports = async (req, res) => {
       email: user.email,
       plan: user.plan || 'event_free',
       accessUntil: user.accessUntil || null,
+      // ★이 사람이 «우리를 처음 만난 앱». 마케팅·지원 양쪽에서 쓰인다.
+      firstAppId: user.firstAppId || null,
+      firstAppAt: user.firstAppAt || null,
       // ⛔프로필은 «이름·연락처»만 준다. 해시·토큰은 절대 싣지 않는다.
       profile: {
         name: (user.profile && user.profile.name) || null,
