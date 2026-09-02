@@ -82,7 +82,9 @@
     sub.textContent = '아래에서 이어서 진행하세요.';
     panel.classList.add('is-open');
 
+
     // ★"받으려다 로그인한" 사람은 다운로드로 돌려보낸다. 로그인 자체가 목적이 아니었다.
+    var goMypage = false;
     try {
       // ★UL-010: next 가 order/mypage 면 «사려던 그 자리»로 돌려보낸다.
       //   전에는 next=download 만 처리해서, 주문하려고 로그인한 사람이 앱 목록으로 떨어졌다.
@@ -94,6 +96,16 @@
         dlLink.removeAttribute('target'); dlLink.classList.add('cta-pulse');
         title.textContent = '로그인되었습니다. 주문을 이어서 하세요.';
         sub.textContent = '아래 버튼을 누르면 주문서로 돌아갑니다.';
+      } else if (!nx) {
+        // ★★목적 없이 로그인한 사람은 «마이페이지로 보낸다»(현빈 2026-09-03).
+        //   이 영수증 화면은 원래 «받으려다/사려다 로그인한 사람»을 되돌려보내려고 만든 자리다.
+        //   그런 사람에겐 next 가 붙어 있다. next 가 «없는» 사람에게는 돌아갈 자리가 없어서
+        //   목적 없는 「앱 목록으로」 버튼만 남았고 화면은 login.html 에 그대로 머물렀다.
+        //   ⇒ 로그인은 «목적지»가 아니라 «수단»이다. 계정·등급·기한은 마이페이지가 다 보여준다.
+        // ⛔여기서 «바로 이동하면 안 된다» — 이 자리는 sessionStorage 저장보다 «앞»이라,
+        //   지금 떠나면 마이페이지가 토큰을 못 보고 로그인 화면으로 되튕긴다.
+        //   ⇒ 깃발만 세우고, 저장이 끝난 «맨 아래»에서 떠난다.
+        goMypage = true;
       } else if (dlLink && nx === 'mypage') {
         dlLink.textContent = '마이페이지로 →';
         dlLink.href = 'mypage.html';
@@ -137,6 +149,20 @@
       if (data.plan) sessionStorage.setItem('sms_plan', data.plan); else sessionStorage.removeItem('sms_plan');
       if (data.accessUntil) sessionStorage.setItem('sms_until', data.accessUntil); else sessionStorage.removeItem('sms_until');
     } catch (e) {}
+
+    // ★★여기서부터가 «토큰이 저장된 뒤»다. 순서를 바꾸지 마라 —
+    //   위에서 이동하면 마이페이지가 토큰을 못 보고 로그인으로 되튕긴다.
+
+    // 상단바 갱신 — nav-auth.js 는 페이지가 뜰 때 한 번 도는데 그때는 아직 로그인 «전»이라
+    // 「로그인 · 회원가입」인 채로 남는다. 방금 로그인한 화면의 상단이 「로그인하세요」라고
+    // 말하던 자리다(2026-09-03 현빈 지적).
+    try { if (window.__navAuth) window.__navAuth(); } catch (eNav) {}
+
+    // ★replace 를 쓴다 — push 로 남기면 «뒤로가기»가 로그인 화면으로 되돌아와
+    //   이미 로그인한 사람에게 로그인 폼을 다시 보여준다.
+    if (goMypage) {
+      try { location.replace('mypage.html'); } catch (eGo) { location.href = 'mypage.html'; }
+    }
   }
 
   function showExpired(data) {
