@@ -16,8 +16,10 @@ try {
 
 if (!email) { document.getElementById('mp-guest').style.display = 'block'; return; }
 document.getElementById('mp-body').style.display = 'block';
-var navLogin = document.getElementById('nav-login');
-if (navLogin) { navLogin.textContent = '마이페이지'; navLogin.href = 'mypage.html'; }
+// ★상단바는 nav-auth.js 가 맡는다(2026-09-03).
+//   전에는 여기서 「로그인」을 «무조건» 「마이페이지」로 바꿨는데, 그러면 마이페이지 안에
+//   «자기 자신을 가리키는 링크»가 남고, 정작 «로그아웃할 문»이 없었다.
+//   ⇒ nav-auth.js 가 로그인 상태를 보고 이 칸을 「로그아웃」으로 만든다.
 
 // ★표시명과 코드값을 가른다 — 서버는 코드값을 주고 화면은 표시명을 쓴다.
 //   beta 는 등급이 아니라 «기간»이다. event_free 는 옛 서버 값으로 뜻이 같다.
@@ -144,7 +146,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260903x').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260903y').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -174,7 +176,7 @@ if (!orders.length) {
 }
 
 // 다운로드
-fetch('data/downloads.json?v=20260903x').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+fetch('data/downloads.json?v=20260903y').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
   var g = (d && d.goditor) || {};
   document.getElementById('mp-dl-ver').textContent = g.version ? ('GODITOR ' + g.version) : '';
   var NAME = { 'mac-arm64': '맥 (Apple Silicon)', 'mac-intel': '맥 (Intel)', 'win': '윈도우' };
