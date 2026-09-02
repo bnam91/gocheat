@@ -1597,3 +1597,15 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   .kko-float{ transition: none; }
   .kko-float.is-away{ transform: none; }
 }
+
+/* ★GODITOR 「왜 피그마가 아닌가」 — 영상 바로 아래(현빈 2026-09-03).
+   ★.showcase 안에 있어 폭은 영상과 같은 축으로 맞춘다 — 글이 영상보다 넓으면
+     두 덩이가 «다른 페이지»처럼 보인다.
+   ★읽는 글이라 한 줄 길이를 62ch 로 묶는다(그 이상이면 눈이 다음 줄을 못 찾는다). */
+.goditor-why{
+  max-width: 62ch; margin: 26px auto 0; text-align: left;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.goditor-why p{ margin: 0; font-size: var(--fs-body); line-height: 1.75; color: var(--muted); }
+.goditor-why b{ color: var(--fg); font-weight: 600; }
+@media (max-width: 560px){ .goditor-why{ margin-top: 20px; } }
