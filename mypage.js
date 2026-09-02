@@ -26,8 +26,70 @@ var PLAN_LABEL = { beta:'BETA', event_free:'BETA', free:'FREE',
   intern:'INTERNSHIP', pro:'PRO', pro12:'PROx12', pro_training:'프로 트레이닝',
   starter:'STARTER', promax:'PRO MAX' };
 var code = String(plan || '').toLowerCase();
-document.getElementById('mp-plan').textContent = PLAN_LABEL[code] || (code ? code.toUpperCase() : 'FREE');
 document.getElementById('mp-email').textContent = email;
+
+// ── 앱별 이용 현황 · 이름·연락처 ─────────────────────────────────
+// ★서버에서 «한 번에» 받아온다(api/license/me). sessionStorage 에 없는 값(이름·연락처·사용 기록)이라
+//   화면이 스스로 지어낼 수 없다. 못 받으면 «비워 두지» 말고 그 사실을 말한다.
+(function loadMe() {
+  var box = document.getElementById('mp-apps');
+  var token = null;
+  try { token = sessionStorage.getItem('sms_token') || ''; } catch (e) {}
+  if (!token) { box.innerHTML = '<p class="mp-apps-note">이용 현황을 불러오려면 다시 로그인해 주세요.</p>'; return; }
+
+  var esc = function (t) { return String(t == null ? '' : t)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
+  // ★날짜는 «한국 시간»으로 찍는다 — 이 파일 아래 kstDate 와 같은 이유다(UTC 로 찍으면 하루 어긋난다).
+  var fmt = function (iso) {
+    if (!iso) return null;
+    var d = new Date(iso); if (isNaN(d)) return null;
+    var k = new Date(d.getTime() + 9 * 3600e3);
+    return k.getUTCFullYear() + '-' + String(k.getUTCMonth()+1).padStart(2,'0') + '-' + String(k.getUTCDate()).padStart(2,'0');
+  };
+
+  fetch('/api/license/me', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionToken: token }),
+  }).then(function (r) { return r.json().catch(function () { return {}; }); })
+    .then(function (d) {
+      if (!d || !d.ok) {
+        box.innerHTML = '<p class="mp-apps-note">이용 현황을 불러오지 못했어요. 새로고침해 주세요.</p>';
+        return;
+      }
+      // 이름·연락처 — 확장 가입 «전»에 만들어진 계정은 값이 없다. 빈칸이 아니라 «없다»고 말한다.
+      var nm = document.getElementById('mp-name');
+      var ph = document.getElementById('mp-phone');
+      if (nm) nm.textContent = (d.profile && d.profile.name) || '등록 안 됨';
+      if (ph) ph.textContent = (d.profile && d.profile.phone)
+        ? String(d.profile.phone).replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3')
+        : '등록 안 됨';
+
+      box.innerHTML = (d.apps || []).map(function (a) {
+        // ★«기록을 안 남기는 앱»과 «아직 안 쓴 앱»을 다르게 말한다 — 둘은 다른 사실이다.
+        var used = !a.tracksUsage
+          ? '<span class="mp-app-dim">사용 기록을 남기지 않아요</span>'
+          : (a.lastUsedAt
+              ? '마지막 사용 <b>' + esc(fmt(a.lastUsedAt)) + '</b>'
+                + (a.uses ? ' · ' + a.uses + '회' : '')
+              : '<span class="mp-app-dim">아직 사용 기록이 없어요</span>');
+        // ★번들이 있으면 «언제부터 쓰는지»가 있다. 그게 「이용 중」이라는 말의 근거다.
+        var since = a.firstLoginAt ? '<span class="mp-app-dim"> · ' + esc(fmt(a.firstLoginAt)) + '부터</span>' : '';
+        return '<div class="mp-app">'
+          + '<div class="mp-app-top">'
+          +   '<span class="mp-app-name">' + esc(a.name) + '</span>'
+          +   '<span class="mp-app-plan">' + esc(a.label) + '</span>'
+          + '</div>'
+          + (a.note ? '<p class="mp-app-note">' + esc(a.note) + '</p>' : '')
+          + '<p class="mp-app-used">' + used + since + '</p>'
+          + '<a href="pricing.html" class="mp-app-up">등급 올리기 →</a>'
+          + '</div>';
+      }).join('') || '<p class="mp-apps-note">아직 이용 중인 서비스가 없어요. '
+          + '앱이나 확장 프로그램에서 이 계정으로 로그인하면 여기에 나타납니다.</p>';
+    })
+    .catch(function () {
+      box.innerHTML = '<p class="mp-apps-note">이용 현황을 불러오지 못했어요. 새로고침해 주세요.</p>';
+    });
+})();
 
 var untilTxt = '';
 if (until) {
@@ -75,7 +137,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260903m').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260903p').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -105,7 +167,7 @@ if (!orders.length) {
 }
 
 // 다운로드
-fetch('data/downloads.json?v=20260903m').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+fetch('data/downloads.json?v=20260903p').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
   var g = (d && d.goditor) || {};
   document.getElementById('mp-dl-ver').textContent = g.version ? ('GODITOR ' + g.version) : '';
   var NAME = { 'mac-arm64': '맥 (Apple Silicon)', 'mac-intel': '맥 (Intel)', 'win': '윈도우' };

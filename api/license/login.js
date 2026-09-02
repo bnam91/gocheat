@@ -39,9 +39,25 @@ module.exports = async (req, res) => {
     const expired = until ? until.getTime() < Date.now() : false;
     // ★앱이 비밀번호를 저장하면 안 된다 — 토큰만 주고 앱은 그것만 보관한다
     const sessionToken = randomToken(32);
-    await db.collection('users').updateOne({ email }, {
-      $set: { lastLoginAt: new Date(), sessionToken, sessionIssuedAt: new Date() },
-    });
+    const now = new Date();
+    const set = { lastLoginAt: now, sessionToken, sessionIssuedAt: now };
+
+    // ★★앱별 «번들»(현빈 2026-09-02: 「앱별로 로그인을 하면 앱별로 키밸류 번들이 추가된다」).
+    //   users.apps.<앱id> 에 그 앱의 이용 기록이 쌓인다. 계정 하나에 앱이 여러 개 붙는 구조다.
+    //   ★download.js 가 이미 users.downloads.<앱id> 를 같은 꼴로 쓰고 있다 — 그 관례를 따른다.
+    //   ⛔plan 응답은 «그대로» 둔다. 데스크톱 앱이 그 값을 읽는다 — 모양을 바꾸면 앱이 깨진다.
+    //     앱별 등급은 apps.<id>.plan 에 «추가»로 들어가고, 없으면 계정 등급에서 파생한다.
+    //   ⚠️앱이 app 을 «안 보내면» 번들이 안 생긴다. 웹사이트 로그인은 앱이 아니므로 그게 맞다.
+    //     데스크톱 앱·확장이 번들을 가지려면 로그인 요청에 app 을 실어야 한다(앱 쪽 작업).
+    const appId = typeof body.app === 'string' ? body.app.trim().toLowerCase() : '';
+    if (/^[a-z][a-z0-9-]{0,31}$/.test(appId)) {
+      set['apps.' + appId + '.lastLoginAt'] = now;
+      // ★첫 로그인 시각은 «덮어쓰지 않는다». $min 은 없으면 넣고, 있으면 더 이른 값을 남긴다 —
+      //   $setOnInsert 는 «문서» 삽입에만 걸려서 중첩 필드에는 못 쓴다.
+      await db.collection('users').updateOne({ email }, { $min: { ['apps.' + appId + '.firstLoginAt']: now } });
+    }
+
+    await db.collection('users').updateOne({ email }, { $set: set });
 
     return json(res, 200, {
       ok: !expired,

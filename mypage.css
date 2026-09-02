@@ -97,3 +97,50 @@ main.detail .detail-inner > .detail-title { align-self:center; }
   .mp-tier .plan-cta { max-width:none; align-self:stretch; }
   #mp-body #mp-logout { width:100%; margin-left:0; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   ★앱별 이용 현황 카드 (현빈 2026-09-02)
+   「어떤 걸 쓰는지 · 어떤 등급인지 · 마지막 사용일 · 등급 올리기」를 한눈에.
+   ⛔없는 값을 0 이나 오늘 날짜로 채우지 않는다 — 「기록 없음」이 사실이면 그렇게 적는다.
+   ══════════════════════════════════════════════════════════════════ */
+.mp-sec-label{
+  font-size:var(--fs-xs); color:var(--subtle); margin:0 0 10px; letter-spacing:.02em;
+}
+/* ★한 줄에 한 앱. 2열로 두면 3개일 때 «마지막 하나가 외톨이»로 남는다(요금제에서 겪은 것과 같다).
+   앱은 늘어날 수 있으니 «개수에 안 흔들리는» 세로 목록이 맞다. */
+.mp-apps{ display:flex; flex-direction:column; gap:10px; margin:0 0 14px; }
+.mp-app{
+  background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
+  padding:15px 17px;
+  display:grid; grid-template-columns:1fr auto; align-items:center; gap:2px 16px;
+}
+/* 이름·등급은 윗줄, 사용 기록·링크는 아랫줄 — 왼쪽은 «무엇», 오른쪽은 «상태와 행동» */
+.mp-app-top{ display:flex; align-items:baseline; gap:10px; grid-column:1; }
+.mp-app-note{ grid-column:1; }
+.mp-app-used{ grid-column:1; }
+.mp-app-plan{ grid-column:2; grid-row:1; justify-self:end; }
+.mp-app-up{ grid-column:2; grid-row:2 / span 2; justify-self:end; align-self:center; }
+.mp-app-name{ font-size:var(--fs-body); font-weight:700; letter-spacing:-.01em; color:var(--fg); }
+/* 등급은 «값»이라 눈에 들어와야 하지만, 앱 이름보다 세면 무엇의 카드인지 흐려진다 */
+.mp-app-plan{
+  font-size:var(--fs-xs); font-weight:700; color:var(--accent-fill);
+  white-space:nowrap; letter-spacing:.01em;
+}
+/* 좁은 화면에서는 오른쪽 칸을 접어 세로로 쌓는다 — 안 그러면 이름이 눌려 두 줄이 된다 */
+@media (max-width:520px){
+  .mp-app{ grid-template-columns:1fr; }
+  .mp-app-plan, .mp-app-up{ grid-column:1; grid-row:auto; justify-self:start; }
+  .mp-app-up{ margin-top:8px; }
+}
+.mp-app-note{ font-size:var(--fs-xs); color:var(--subtle); margin:0; }
+.mp-app-used{ font-size:var(--fs-xs); color:var(--muted); margin:6px 0 0; }
+.mp-app-used b{ color:var(--fg); font-weight:600; }
+/* 「기록 없음」은 «값이 아니라 상태»다 — 값처럼 또렷하면 그게 정보인 줄 읽힌다 */
+.mp-app-dim{ color:var(--faint); }
+.mp-app-up{
+  font-size:var(--fs-xs); font-weight:600; color:var(--accent-fill);
+  text-decoration:none; white-space:nowrap;
+}
+.mp-app-up:hover{ text-decoration:underline; text-underline-offset:2px; }
+.mp-apps-note{ font-size:var(--fs-sm); color:var(--subtle); margin:0; }
+.mp-tier-until{ font-size:var(--fs-xs); color:var(--subtle); margin:0 0 22px; }

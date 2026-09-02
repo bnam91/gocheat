@@ -199,7 +199,17 @@
       const res = await fetch('/api/license/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailVal, password: pw.value }),
+        // ★★앱에서 넘어온 로그인이면 «어느 앱인지»를 같이 보낸다(현빈 2026-09-02).
+        //   서버가 users.apps.<id> 번들을 만들어 「이 계정이 무슨 앱을 쓰는지」가 쌓인다.
+        //   ⚠️웹사이트 자체 로그인(?app 없음)은 «앱이 아니다» — 번들을 만들지 않는 게 맞다.
+        //   ★app 값은 여기서 «형식 검사»를 이미 통과한 것만 쓴다(아래 R3-01 오픈 리다이렉트 방어와 같은 규칙).
+        body: JSON.stringify(Object.assign(
+          { email: emailVal, password: pw.value },
+          (function () {
+            var raw = new URLSearchParams(location.search).get('app') || '';
+            return /^[a-z][a-z0-9-]{0,31}$/.test(raw) ? { app: raw } : {};
+          })()
+        )),
       });
       const data = await res.json().catch(function () { return {}; });
 
@@ -244,7 +254,7 @@
   var app;
   try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
   if (!app) return;
-  fetch('data/apps.json?v=20260903m').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260903p').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) return;
       var a = apps.filter(function (x) { return x.id === app; })[0];
