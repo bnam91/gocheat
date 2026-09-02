@@ -743,6 +743,20 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    구분점은 별도 span 이라, 줄이 나뉠 때 점이 줄 끝에 홀로 매달리지 않는다. */
 .plan-price-note .note-seg { white-space: nowrap; }
 .plan-price-note .note-sep { white-space: nowrap; }
+
+/* ★「15% 할인, 하루 5,030원」 — 기능 목록과 CTA «사이»에 선다(현빈 2026-09-02: 「맨 마지막 줄에」).
+   결정 직전에 «가장 작은 단위»로 금액을 다시 말해 주는 자리다.
+   ★색은 리본과 같은 --neon 이라 「할인」이 카드 안에서 한 목소리로 읽힌다.
+   ★margin-top:auto 를 쓰지 않는다 — .plan-features 가 flex:1 로 이미 아래를 밀고 있어
+     여기서 또 밀면 CTA 와 간격이 카드마다 달라진다. */
+.plan-daily{
+  font-size: var(--fs-xs); font-weight: 700; color: var(--neon);
+  margin: 12px 0 0; letter-spacing: -0.01em;
+}
+/* ★기간 딱지는 «형광이 아니다» — 할인과 금액이 주인공이고 기간은 조건이다.
+   셋 다 형광이면 어디를 봐야 할지 안 갈린다. */
+.plan-daily .plan-daily-term{ color: var(--subtle); font-weight: 600; }
+.plan-daily .note-sep{ color: var(--subtle); font-weight: 400; }
 /* ★min-height 로 «자리»를 고정한다. 12개월 카드만 주석이 두 줄이라, 없으면 기능 목록이
    54px 밀려 «같은 행이 가로로 안 맞는다»(실측). 비교표는 가로로 읽는 것이라 그게 곧 결함이다.
    ⚠️문구가 세 줄이 되면 이 값도 같이 올려야 한다 — 값을 바꾸면 여길 다시 재라. */

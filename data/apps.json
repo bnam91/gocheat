@@ -125,7 +125,8 @@
             "t": "GODIV · GOSHOT 포함 및 연동",
             "ok": true
           }
-        ]
+        ],
+        "dailyNote": true
       },
       {
         "id": "pro_training",

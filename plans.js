@@ -21,7 +21,7 @@
 
   // ★business.json 은 이제 이 화면에서 안 읽는다 — 「결제 연동 전」 안내문을 뺐기 때문이다(2026-09-02).
   //   결제 가능 여부 판단(bankIsDummy)은 order.html·mypage.js 가 «각자» 한다. 여기서 읽으면 쓰이지 않는 값이 된다.
-  fetch('data/apps.json?v=20260903g').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260903h').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) throw new Error('apps.json');
       var app = apps.filter(function (a) { return a.id === appId; })[0];
@@ -88,6 +88,30 @@
               : '')
           + '<div class="plan-divider"></div>'
           + '<ul class="plan-features">' + feats + '</ul>'
+          // ★★「하루 얼마」는 «금액에서 계산»한다 — 손으로 적으면 가격을 바꿀 때 반드시 늙는다.
+          //   (오늘만 두 번 겪었다: 등급 수 문장, 등급 이름) 여기서는 price·per 가 유일한 진실이다.
+          //   ⚠️일수 = 개월 × 365/12 (12개월 = 365일). 개월을 30일로 곱하면 1년이 360일이 되어
+          //     하루 단가가 «실제보다 비싸게» 나온다 — 우리가 손해 보는 쪽이라 더 조심해야 한다.
+          //   ★할인 문구는 리본 값을 그대로 쓴다(「15% 할인」). 두 곳에 따로 적으면 한쪽이 어긋난다.
+          //   ★못 세면 «아무것도 안 그린다» — 틀린 숫자를 보여주느니 안 보여주는 게 낫다.
+          + (function () {
+              if (!p.dailyNote) return '';
+              var won = parseInt(String(p.price).replace(/[^0-9]/g, ''), 10);
+              var mon = parseInt(String(p.per || '').replace(/[^0-9]/g, ''), 10);
+              if (!won || !mon) return '';
+              var days = Math.round(mon * 365 / 12);
+              var per  = Math.round(won / days / 10) * 10;
+              // 형식: [12개월] 15% 할인 · 하루 약 5,030원   (현빈 2026-09-02)
+              //   ★기간·할인·하루단가를 «전부 데이터에서» 만든다. 셋 중 하나만 손으로 적어도
+              //     가격을 바꿀 때 그것만 남아 어긋난다.
+              //   ★「약」을 붙인다 — 365 로 나눈 값이라 실제 결제와 1원 단위로는 안 맞는다.
+              //     반올림한 값을 «단정»하면 그게 곧 틀린 표기가 된다.
+              var term = p.per ? '<span class="plan-daily-term">[' + esc(p.per) + ']</span> ' : '';
+              var save = (p.ribbonKind === 'save' && p.ribbon) ? esc(p.ribbon) + ' ' : '';
+              return '<p class="plan-daily">' + term + save
+                   + '<span class="note-sep">· </span>하루 약 '
+                   + per.toLocaleString('ko-KR') + '원</p>';
+            })()
           + (p.id === 'free'
               ? '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
               // ★유료 등급은 «주문서»로 보낸다. 전에는 넷 다 가입 페이지로 가서
