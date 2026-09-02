@@ -16,28 +16,14 @@ const { json, handlePreflight, readJsonBody } = require('../_lib/util');
  * 출력  { ok, email, plan, accessUntil, profile:{name,phone}, apps:[…] }
  */
 
-// 앱 이름표. data/apps.json 은 «판매용» 정보라 성격이 다르고, 서버가 그 파일을 읽으면
-// 화면 문구 변경이 API 응답을 흔든다 — 여기서 고정한다.
-const APP_NAME = { goditor: 'GODITOR', godiv: 'GODIV', goshot: 'GOSHOT', reviewcrawler: 'REVIEW CRAWLER' };
+const tiers = require('../_lib/tiers');
 // 사용 기록을 «실제로 남기는» 앱만 적는다. 없는 앱에 0 을 넣으면 「한 번도 안 썼다」는 거짓이 된다.
 const USAGE_COLL = { godiv: 'godiv_events' };
 
-// 계정 등급에서 «앱별 이용 가능 여부»를 파생한다.
-// ★등급은 계정에 하나뿐이다 — 앱마다 따로 있는 값이 아니다. 그 사실을 화면이 알아야
-//   「앱별 등급」이 있는 것처럼 보이지 않는다.
-const PAID = ['pro', 'pro12', 'pro_training'];
-function entitlement(plan, appId) {
-  const p = String(plan || '').toLowerCase();
-  if (p === 'beta' || p === 'event_free') return { label: 'BETA', note: '베타 기간 무료' };
-  if (appId === 'goditor') {
-    if (p === 'intern') return { label: 'INTERNSHIP', note: null };
-    if (PAID.includes(p)) return { label: p === 'pro12' ? 'PROx12' : (p === 'pro' ? 'PRO' : '프로 트레이닝'), note: null };
-    return { label: 'FREE', note: null };
-  }
-  // GODIV·GOSHOT 은 «PRO 이상 포함»이다(data/apps.json 의 기능 행과 같은 규칙).
-  if (PAID.includes(p)) return { label: '포함', note: 'PRO 등급에 포함' };
-  return { label: '미포함', note: 'PRO 등급부터 제공' };
-}
+// ★등급은 이제 «번들의 숫자»에서 온다(api/_lib/tiers.js).
+//   계정 등급(user.plan)에서 파생하던 옛 방식은 걷어냈다 — 앱마다 등급이 다를 수 있게 됐기 때문이다.
+//   ⚠️번들에 tier 가 «없는» 옛 계정은 베타(기본값)로 본다. 0(guest)으로 떨어뜨리면
+//     지금 쓰고 있는 사람의 화면에서 갑자기 등급이 사라진다.
 
 module.exports = async (req, res) => {
   if (handlePreflight(req, res, { origin: '*' })) return;
@@ -77,7 +63,7 @@ module.exports = async (req, res) => {
     }
 
     const APPS = [...ids]
-      .filter((id) => APP_NAME[id])          // 모르는 id 는 화면에 올리지 않는다
+      .filter((id) => tiers.appMeta(id))     // 등급표에 없는 id 는 화면에 올리지 않는다
       .sort((a, b) => a.localeCompare(b));
 
     return json(res, 200, {
@@ -92,17 +78,21 @@ module.exports = async (req, res) => {
       },
       apps: APPS.map((id) => {
         const b = bundles[id] || {};
+        const meta = tiers.appMeta(id);
+        const tier = Number.isFinite(Number(b.tier)) ? Number(b.tier) : tiers.DEFAULT_TIER;
         return {
           id,
-          name: APP_NAME[id],
-          // ★«기록을 남기는 앱인지»를 화면에 알려준다. 그래야 화면이 「기록 없음」과
-          //   「아직 안 썼음」을 구분해 말할 수 있다 — 둘은 다른 사실이다.
+          kind: b.kind || meta.kind,        // 프로덕트 유형(앱/서비스)
+          name: b.name || meta.name,        // 프로덕트 이름
+          tier,                             // ★등급 «번호» — 권한 판정은 이 값으로 한다
+          label: tiers.alias(id, tier),     // 등급 «별칭» — 화면 표시용
+          staff: tiers.isStaff(tier),       // 88·99 는 운영 계정이라 화면에서 티가 나야 한다
+          // ★다음 등급이 있으면 «등급 올리기»가 의미 있다. 최고 등급이면 그 링크를 안 그린다.
+          canUpgrade: tiers.tiersOf(id).some((n) => n > tier),
+          payment: b.payment || null,       // 결제방식
+          // ★«기록을 남기는 앱인지»를 화면에 알려준다. 「기록 없음」과 「아직 안 썼음」은 다른 사실이다.
           tracksUsage: !!USAGE_COLL[id],
-          // ★★앱별 등급 — 번들에 «자기 등급»이 있으면 그걸 쓰고, 없으면 계정 등급에서 파생한다.
-          //   앱마다 따로 파는 날이 오면 apps.<id>.plan 에 값을 넣기만 하면 화면이 저절로 갈린다.
-          ...(b.plan ? entitlement(b.plan, id) : entitlement(user.plan, id)),
-          ownPlan: b.plan || null,
-          firstLoginAt: b.firstLoginAt || null,
+          firstSeenAt: b.firstSeenAt || b.firstLoginAt || null,
           lastLoginAt: b.lastLoginAt || null,
           uses: usage[id] ? usage[id].uses : null,
           lastUsedAt: usage[id] ? usage[id].lastUsedAt : null,

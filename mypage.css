@@ -144,3 +144,13 @@ main.detail .detail-inner > .detail-title { align-self:center; }
 .mp-app-up:hover{ text-decoration:underline; text-underline-offset:2px; }
 .mp-apps-note{ font-size:var(--fs-sm); color:var(--subtle); margin:0; }
 .mp-tier-until{ font-size:var(--fs-xs); color:var(--subtle); margin:0 0 22px; }
+
+/* 프로덕트 «유형»(앱/서비스) — 이름 옆에 작게. 같은 계정에 성격이 다른 것이 붙기 때문에
+   무엇인지 한 글자로라도 갈려야 한다. */
+.mp-app-kind{
+  font-size:var(--fs-xs); color:var(--faint); font-weight:500;
+  border:1px solid var(--border); border-radius:4px; padding:1px 6px; line-height:1.5;
+}
+/* ★운영 등급(88·99)은 «구매로 도달할 수 없는» 자리다 — 일반 등급과 같은 색이면
+   화면만 보고 「살 수 있는 등급」으로 오해한다. */
+.mp-app-plan-staff{ color:var(--warn-fill) !important; }

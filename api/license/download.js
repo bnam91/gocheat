@@ -14,6 +14,7 @@ const PURCHASE_URL = process.env.PURCHASE_URL || 'https://blacksheepwall.kr/pric
 // ★플랫폼별로 «다른 파일»을 준다. 버튼이 "macOS 버전"이라고 말했는데
 //   세 폴더가 든 상위 주소로 보내면 말과 화면이 어긋난다.
 const DOWNLOAD_FILE = require('../../data/downloads.json');
+const tiers = require('../_lib/tiers');
 
 const FALLBACK = process.env.DOWNLOAD_URL_GODITOR || DOWNLOAD_FILE.goditor[''];
 
@@ -95,6 +96,13 @@ module.exports = async (req, res) => {
       await users.updateOne({ email }, {
         $set: {
           ['downloads.' + app + '.lastAt']: now,
+          // ★★다운로드도 «앱을 쓰기 시작한» 순간이다(현빈: 「앱A를 다운받으면 번들이 붙는다」).
+          //   로그인만 기다리면 「받았는데 마이페이지엔 안 보이는」 구간이 생긴다.
+          ...(tiers.appMeta(app) ? {
+            ['apps.' + app + '.kind']: tiers.appMeta(app).kind,
+            ['apps.' + app + '.name']: tiers.appMeta(app).name,
+            ['apps.' + app + '.lastDownloadAt']: now,
+          } : {}),
           ['downloads.' + app + '.lastPlan']: plan,
           ['downloads.' + app + '.lastPlatform']: platform || 'unknown',
         },

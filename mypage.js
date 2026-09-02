@@ -73,15 +73,22 @@ document.getElementById('mp-email').textContent = email;
                 + (a.uses ? ' · ' + a.uses + '회' : '')
               : '<span class="mp-app-dim">아직 사용 기록이 없어요</span>');
         // ★번들이 있으면 «언제부터 쓰는지»가 있다. 그게 「이용 중」이라는 말의 근거다.
-        var since = a.firstLoginAt ? '<span class="mp-app-dim"> · ' + esc(fmt(a.firstLoginAt)) + '부터</span>' : '';
+        var since = a.firstSeenAt ? '<span class="mp-app-dim"> · ' + esc(fmt(a.firstSeenAt)) + '부터</span>' : '';
+        // 결제방식은 «있을 때만» 적는다. 없는데 「무료」라고 쓰면 유료 전환 뒤 거짓이 된다.
+        var pay = a.payment ? '<p class="mp-app-note">결제 ' + esc(a.payment) + '</p>' : '';
+        // ★최고 등급이면 「등급 올리기」를 안 그린다 — 눌러도 올릴 게 없는 링크는 거짓말이다.
+        var up = a.canUpgrade ? '<a href="pricing.html" class="mp-app-up">등급 올리기 →</a>' : '';
+        // ★운영 등급(88·99)은 «구매로 도달할 수 없는» 자리라 화면에서도 티가 나야 한다.
+        var badge = a.staff ? ' mp-app-plan-staff' : '';
         return '<div class="mp-app">'
           + '<div class="mp-app-top">'
           +   '<span class="mp-app-name">' + esc(a.name) + '</span>'
-          +   '<span class="mp-app-plan">' + esc(a.label) + '</span>'
+          +   '<span class="mp-app-kind">' + (a.kind === 'service' ? '서비스' : '앱') + '</span>'
           + '</div>'
-          + (a.note ? '<p class="mp-app-note">' + esc(a.note) + '</p>' : '')
+          + '<span class="mp-app-plan' + badge + '">' + esc(a.label) + '</span>'
+          + pay
           + '<p class="mp-app-used">' + used + since + '</p>'
-          + '<a href="pricing.html" class="mp-app-up">등급 올리기 →</a>'
+          + up
           + '</div>';
       }).join('') || '<p class="mp-apps-note">아직 이용 중인 서비스가 없어요. '
           + '앱이나 확장 프로그램에서 이 계정으로 로그인하면 여기에 나타납니다.</p>';
@@ -137,7 +144,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260903p').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260903q').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -167,7 +174,7 @@ if (!orders.length) {
 }
 
 // 다운로드
-fetch('data/downloads.json?v=20260903p').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+fetch('data/downloads.json?v=20260903q').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
   var g = (d && d.goditor) || {};
   document.getElementById('mp-dl-ver').textContent = g.version ? ('GODITOR ' + g.version) : '';
   var NAME = { 'mac-arm64': '맥 (Apple Silicon)', 'mac-intel': '맥 (Intel)', 'win': '윈도우' };
