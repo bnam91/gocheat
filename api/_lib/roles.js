@@ -22,7 +22,10 @@ function isAdminUser(user) {
   return String((user && user.role) || '').trim().toLowerCase() === ADMIN;
 }
 
-/** 로그인·세션 응답에 실을 값. 일반 사용자는 «필드 자체를 안 준다»(있는 것처럼 보이지 않게). */
+/** 로그인·세션 응답에 실을 값. 어드민이면 'admin', 아니면 null.
+ *  ★null 을 «항상» 실어 보낸다(필드를 빼지 않는다) — 그래야 앱이
+ *    「role:null = 일반 사용자」와 「필드 없음 = 아직 이 패치가 안 실린 서버」를 구분할 수 있다.
+ *    둘 다 탭을 감추는 건 같지만, 원인을 못 가르면 「왜 안 보이지」를 두 번 조사하게 된다. */
 function roleForResponse(user) {
   return isAdminUser(user) ? ADMIN : null;
 }
