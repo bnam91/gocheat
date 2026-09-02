@@ -40,6 +40,10 @@
           {
             "t": "MCP 연동",
             "ok": false
+          },
+          {
+            "t": "기획 기능(예정)",
+            "ok": false
           }
         ],
         "priceNote": "매월 결제 · 언제든 해지"
@@ -69,11 +73,15 @@
             "ok": true
           },
           {
-            "t": "원격 작업",
+            "t": "원격 협업기능",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함",
+            "t": "기획 기능(예정)",
+            "ok": true
+          },
+          {
+            "t": "GODIV · GOSHOT 포함 및 연동",
             "ok": true
           }
         ],
@@ -106,11 +114,15 @@
             "ok": true
           },
           {
-            "t": "원격 작업",
+            "t": "원격 협업기능",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함",
+            "t": "기획 기능(예정)",
+            "ok": true
+          },
+          {
+            "t": "GODIV · GOSHOT 포함 및 연동",
             "ok": true
           }
         ]
@@ -142,11 +154,15 @@
             "ok": true
           },
           {
-            "t": "원격 작업",
+            "t": "원격 협업기능",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함",
+            "t": "기획 기능(예정)",
+            "ok": true
+          },
+          {
+            "t": "GODIV · GOSHOT 포함 및 연동",
             "ok": true
           },
           {
