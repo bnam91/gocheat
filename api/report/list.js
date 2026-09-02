@@ -22,11 +22,11 @@ const STATUSES = ['new', 'read', 'done'];
 module.exports = async (req, res) => {
   if (handlePreflightAuth(req, res, 'POST, OPTIONS')) return;
   setCorsAuth(res, 'POST, OPTIONS');
-  if (req.method !== 'POST') return json(res, 405, { ok: false, error: 'method_not_allowed' });
+  if (req.method !== 'POST') return json(res, 405, { ok: false, error: 'method_not_allowed', message: '잘못된 요청입니다.' });
 
   let body;
   try { body = await readJsonBodyLimited(req, 16 * 1024); }
-  catch { return json(res, 400, { ok: false, error: 'invalid_body' }); }
+  catch { return json(res, 400, { ok: false, error: 'invalid_body', message: '요청 형식이 올바르지 않습니다.' }); }
 
   try {
     const db = await getDb();
@@ -35,15 +35,17 @@ module.exports = async (req, res) => {
 
     if (String(body.op || '') === 'status') {
       if (!/^[0-9a-f]{24}$/i.test(String(body.reportId || ''))) {
-        return json(res, 400, { ok: false, error: 'bad_id' });
+        return json(res, 400, { ok: false, error: 'bad_id', message: '신고를 고르세요.' });
       }
       const status = STATUSES.includes(String(body.status || '')) ? String(body.status) : null;
-      if (!status) return json(res, 400, { ok: false, error: 'bad_status' });
+      if (!status) return json(res, 400, { ok: false, error: 'bad_status', message: '상태 값이 올바르지 않습니다(new·read·done).' });
       const r = await db.collection('reports').updateOne(
         { _id: new ObjectId(String(body.reportId)) },
         { $set: { status, statusAt: new Date(), statusBy: gate.user.email } },
       );
-      if (!r.matchedCount) return json(res, 404, { ok: false, error: 'not_found' });
+      // ★message 를 «반드시» 싣는다 — 어드민 화면이 「경로 미배포(404, message 없음)」와
+      //   「그런 신고 없음(404, message 있음)」을 이걸로 가른다(G4 2026-09-02 합의).
+      if (!r.matchedCount) return json(res, 404, { ok: false, error: 'not_found', message: '그런 신고가 없습니다.' });
       return json(res, 200, { ok: true, status });
     }
 
@@ -88,6 +90,6 @@ module.exports = async (req, res) => {
     });
   } catch (err) {
     console.error('[report/list] error', err && err.message);
-    return json(res, 500, { ok: false, error: 'internal_error' });
+    return json(res, 500, { ok: false, error: 'internal_error', message: '신고를 불러오지 못했습니다.' });
   }
 };

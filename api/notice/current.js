@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
   // ★캐시 금지 — 공지는 «지금» 상태다. 중간 캐시가 끝난 공지를 되살리면 안 된다.
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'GET' && req.method !== 'POST') {
-    return json(res, 405, { ok: false, error: 'method_not_allowed' });
+    return json(res, 405, { ok: false, error: 'method_not_allowed', message: '잘못된 요청입니다.' });
   }
 
   const q = getQuery(req);
@@ -73,6 +73,6 @@ module.exports = async (req, res) => {
   } catch (err) {
     console.error('[notice/current] error', err && err.message);
     // ⛔공지 조회 실패로 앱이 멈추면 안 된다 — 앱은 notice:null 과 같게 다뤄야 한다.
-    return json(res, 500, { ok: false, error: 'internal_error', notice: null });
+    return json(res, 500, { ok: false, error: 'internal_error', notice: null, message: '공지를 불러오지 못했습니다.' });
   }
 };

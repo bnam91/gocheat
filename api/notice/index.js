@@ -26,7 +26,7 @@ const BODY_LIMIT = 64 * 1024;    // 공지는 글이다. 이보다 클 이유가
 module.exports = async (req, res) => {
   if (handlePreflightAuth(req, res, 'POST, OPTIONS')) return;
   setCorsAuth(res, 'POST, OPTIONS');
-  if (req.method !== 'POST') return json(res, 405, { ok: false, error: 'method_not_allowed' });
+  if (req.method !== 'POST') return json(res, 405, { ok: false, error: 'method_not_allowed', message: '잘못된 요청입니다.' });
 
   let body;
   try {

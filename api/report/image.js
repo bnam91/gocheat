@@ -21,13 +21,13 @@ module.exports = async (req, res) => {
   if (handlePreflightAuth(req, res, 'GET, OPTIONS')) return;
   setCorsAuth(res, 'GET, OPTIONS');
   res.setHeader('Cache-Control', 'no-store');
-  if (req.method !== 'GET') return json(res, 405, { ok: false, error: 'method_not_allowed' });
+  if (req.method !== 'GET') return json(res, 405, { ok: false, error: 'method_not_allowed', message: '잘못된 요청입니다.' });
 
   const q = getQuery(req);
   const id = String(q.id || '');
   const idx = parseInt(q.i, 10);
   if (!/^[0-9a-f]{24}$/i.test(id) || !Number.isInteger(idx) || idx < 0) {
-    return json(res, 400, { ok: false, error: 'bad_request' });
+    return json(res, 400, { ok: false, error: 'bad_request', message: '이미지를 고르세요.' });
   }
 
   try {
@@ -38,10 +38,11 @@ module.exports = async (req, res) => {
     const doc = await db.collection('reports').findOne(
       { _id: new ObjectId(id) }, { projection: { images: 1 } });
     const im = doc && Array.isArray(doc.images) ? doc.images[idx] : null;
-    if (!im) return json(res, 404, { ok: false, error: 'not_found' });
+    // ★404 에 message 필수 — 「경로 미배포」와 구분하는 근거다(G4 합의).
+    if (!im) return json(res, 404, { ok: false, error: 'not_found', message: '그런 이미지가 없습니다.' });
 
     const file = await readStored(im.path);
-    if (!file) return json(res, 404, { ok: false, error: 'file_missing' });
+    if (!file) return json(res, 404, { ok: false, error: 'file_missing', message: '이미지 파일을 찾을 수 없습니다(서버에서 지워졌을 수 있습니다).' });
 
     res.statusCode = 200;
     res.setHeader('Content-Type', im.mime || 'application/octet-stream');
@@ -52,6 +53,6 @@ module.exports = async (req, res) => {
     return res.end(file.buf);
   } catch (err) {
     console.error('[report/image] error', err && err.message);
-    return json(res, 500, { ok: false, error: 'internal_error' });
+    return json(res, 500, { ok: false, error: 'internal_error', message: '이미지를 불러오지 못했습니다.' });
   }
 };
