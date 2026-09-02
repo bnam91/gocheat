@@ -167,8 +167,14 @@ document.getElementById('mp-logout').addEventListener('click', function () {
     internal_error:         '서버 오류예요. 잠시 후 다시 시도해 주세요.'
   };
 
+  // ★성공하면 «다시 열지 않는다». 2.2초 뒤 로그인 화면으로 나가는 동안 한 번 더 눌리면
+  //   빈 폼 검증이 «성공 문구»를 덮어써서, 성공한 사람에게 「현재 비밀번호를 입력해 주세요」가 뜬다.
+  //   성공을 실패로 오인시키는 화면은 실패보다 나쁘다.
+  var okDone = false;
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (okDone) return;
     var token = '';
     try { token = sessionStorage.getItem('sms_token') || ''; } catch (e2) {}
     if (!token) return bad('로그인이 풀렸어요. 다시 로그인해 주세요.');
@@ -200,11 +206,17 @@ document.getElementById('mp-logout').addEventListener('click', function () {
           sessionStorage.removeItem('goditor_after_login');
         } catch (e3) {}
         cur.value = nw.value = nw2.value = '';
+        okDone = true;
+        submit.textContent = '변경 완료';
+        toggle.disabled = true;                 // 접기 토글도 잠근다 — 나가는 중이다
         say('비밀번호를 바꿨어요. 보안을 위해 모든 기기에서 로그아웃했어요 — 다시 로그인해 주세요.', true);
         setTimeout(function () { location.href = 'login.html?next=mypage'; }, 2200);
       })
       .catch(function () { say('네트워크 오류로 바꾸지 못했어요. 잠시 후 다시 시도해 주세요.', false); })
-      .then(function () { submit.disabled = false; submit.textContent = original; });
+      .then(function () {
+        if (okDone) return;                     // ★성공이면 잠근 채로 둔다
+        submit.disabled = false; submit.textContent = original;
+      });
   });
 })();
 

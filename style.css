@@ -1,6 +1,18 @@
 /* ===== H7 HYBRID — dark canvas + lime accent ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ★★[hidden] 을 «전역»으로 못박는다.
+   UA 기본값 `[hidden]{display:none}` 은 «브라우저 스타일»이라, 작성자가 그 요소에
+   display 를 주는 순간(예: .account-rows{display:flex}) 그 쪽이 이긴다.
+   그러면 JS 가 `el.hidden = true` 로 감췄다고 믿는데 «화면에는 그대로 보인다».
+   ⚠️이 프로젝트는 그 함정을 이미 네 번 밟았고 그때마다 «그 선택자만» 고쳤다
+     (.modal[hidden] · .ext-block:not([hidden]) · .auth-mark[hidden] · .find-result[hidden]).
+     다섯 번째가 마이페이지의 비밀번호 변경 폼이었다(2026-09-02, 라이브 반영된 채 발견).
+   ⇒ 개별 패치를 반복하지 않는다. 결함은 «그 선택자»가 아니라 «패턴»에 있었다.
+   ★!important 가 필요하다 — 목적이 «작성자 스타일을 이기는 것» 자체이기 때문이다.
+     보이게 하려면 CSS 로 덮지 말고 JS 로 `el.hidden = false`(속성 제거)를 써라. */
+[hidden] { display: none !important; }
+
 :root {
   --bg:           #0B0B0E;
   --bg-elev:      #15151A;
@@ -642,6 +654,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .account-key { color: var(--subtle); }
 .account-val { color: var(--fg); font-weight: 600; text-align: right; word-break: break-all; }
 .account-val-accent { color: var(--accent); }
+/* ★.account-panel 안의 폼은 .auth-card 와 «같은 규칙»을 따른다 — 라벨은 왼쪽, 제출은 폭 채움.
+   두 자리가 갈리면 «같은 폼»이 화면마다 다르게 보인다. 새 색·새 크기 0(전부 기존 토큰). */
+.account-panel .signup-label  { align-self: flex-start; }
+.account-panel .signup-submit { width: 100%; margin-top: 14px; background: var(--accent-fill);
+                                color: var(--accent-fg); border-color: var(--accent-fill); }
+.account-panel .signup-submit:hover { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); color: var(--accent-fg); }
 /* ★«링크처럼 보이는 버튼» — 마크업은 button 이어야 하는 자리(페이지 이동이 아니라 «동작»)인데
    시각적으로는 옆의 링크들과 같아야 하는 경우. a 태그로 쓰면 href 없는 링크가 되어
    키보드 포커스도 안 잡히고 스크린리더가 «링크»라고 잘못 읽는다. (2026-09-02) */
@@ -677,6 +695,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .footer-biz { font-size: var(--fs-sm); color: var(--subtle); line-height: 1.8; margin-top: 4px; max-width: 560px; }
 .footer-biz-sep { margin: 0 8px; opacity: 0.4; }
 .footer-biz-item { display: inline-block; white-space: nowrap; }
+/* ★nowrap 은 「값 중간에서 줄이 끊기지 않게」 하려던 것인데(footer.js:44), 좁은 화면에서는
+   «항목 하나가 화면보다 넓어» 페이지 전체를 밀어낸다 — 390px 에서 387px 짜리
+   「개인정보보호책임자: …」 한 항목이 17px 넘침을 만들었다(2026-09-02, 14페이지 전부).
+   좁은 폭에서만 어절 단위 줄바꿈을 허용한다. body 의 word-break:keep-all 이 살아 있어
+   한글 낱말 «중간»에서는 여전히 안 끊긴다. */
+@media (max-width: 560px) { .footer-biz-item { white-space: normal; } }
 
 /* 더미(예시) 표식 — 자리표시자가 «진짜»로 읽히면 사고다. 눈에 띄게 둔다 */
 .dummy-notice{

@@ -19,7 +19,11 @@ const { json, handlePreflight, readJsonBody, isStrongEnough } = require('../_lib
  */
 
 // ★한 번에 세 번까지. reset-request.js 와 «같은 컬렉션»(reset_attempts)을 쓰되 키 접두어로 가른다 —
-//   그 컬렉션에는 이미 TTL 인덱스(2시간)가 걸려 있어 청소가 저절로 된다(_lib/mongo.js).
+//   ⚠️2026-09-02 실측: 그 컬렉션에 인덱스가 «하나도 없었다»(_id_ 뿐). 배포 머지에서
+//   _lib/mongo.js 의 신규 인덱스 블록이 통째로 빠져 있었기 때문이다 — 같은 날 바로잡았다.
+//   ⇒ 지금은 { key, at } 조회 인덱스와 at 의 TTL(2시간)이 _lib/mongo.js 에 있고,
+//     ensureIndexes 가 «기동 시» 만든다. 인덱스가 없으면 이 조회는 매번 전수주사가 되고
+//     기록이 영원히 쌓인다 — 「레이트리밋이 도는데 느려지는」 조용한 고장이다.
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_PER_USER = 5;
 const MAX_PER_IP = 15;

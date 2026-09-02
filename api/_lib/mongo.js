@@ -38,6 +38,7 @@ if (ON_VERCEL && DB_NAME === LIVE_DB) {
   DB_NAME = DEV_DB;
 }
 
+
 let cached = global.__goditorMongo;
 if (!cached) {
   cached = global.__goditorMongo = { client: null, dbPromise: null };
@@ -78,26 +79,12 @@ async function ensureIndexes(db) {
     db.collection('users').createIndex({ verificationToken: 1 }, { sparse: true }),
     // session.js 가 토큰만으로 찾는다 — 인덱스가 없으면 컬렉션 전수주사가 된다
     db.collection('users').createIndex({ sessionToken: 1 }, { sparse: true }),
+    // ★2026-08-25 제품별 세션(_lib/sessions.js) — 배열 안 토큰으로도 찾는다. 없으면 여기도 전수주사.
+    db.collection('users').createIndex({ 'sessions.token': 1 }, { sparse: true }),
     db.collection('licenses').createIndex({ key: 1 }, { unique: true }),
     db.collection('licenses').createIndex({ userEmail: 1, status: 1 }),
     db.collection('mail_queue').createIndex({ idempotencyKey: 1 }, { unique: true }),
     db.collection('mail_queue').createIndex({ status: 1, createdAt: 1 }),
-
-    // ── 비밀번호 재설정 (api/license/reset-*.js) ──────────────────────────
-    // reset-confirm 이 토큰 해시«만»으로 찾는다 — 없으면 매 요청이 users 전수주사다.
-    db.collection('users').createIndex({ resetTokenHash: 1 }, { sparse: true }),
-    // 레이트리밋 조회 { key, at:{$gte} } 의 형태 그대로.
-    db.collection('reset_attempts').createIndex({ key: 1, at: 1 }),
-    // ★TTL 로 «스스로» 지워지게 둔다. 창(1시간)보다 넉넉한 2시간이면 판정에 영향이 없고,
-    //   지우는 사람을 따로 두지 않아도 컬렉션이 무한히 자라지 않는다.
-    db.collection('reset_attempts').createIndex({ at: 1 }, { expireAfterSeconds: 7200 }),
-    // 담당자가 «아직 회신 안 한» 요청을 찾는 축(mailerLive:false 인 동안만 쌓인다).
-    db.collection('reset_requests').createIndex({ handledAt: 1, at: -1 }),
-
-    // ★동반 결손 — find-email.js:62 의 countDocuments({ phone, at }) 도 인덱스가 «없어»
-    //   매 호출이 전수주사였다. 같은 성격의 컬렉션이라 여기서 같이 세운다.
-    db.collection('find_attempts').createIndex({ phone: 1, at: 1 }),
-    db.collection('find_attempts').createIndex({ at: 1 }, { expireAfterSeconds: 7200 }),
 
     // ── 원격 동시협업 (api/collab/*) ──────────────────────────────────────
     // ★인덱스는 이 파일 «한 곳»에 모은다 — 컬렉션마다 흩어두면 어디를 봐야 할지 모르게 된다.
@@ -116,6 +103,35 @@ async function ensureIndexes(db) {
       { createdAt: 1 },
       { expireAfterSeconds: 7 * 24 * 60 * 60 },
     ),
+
+    // ── 고디브 사용 원장 (api/godiv/use.js) ────────────────────────────────
+    // 계정별 조회(추이·재방문)와 전체 일자별 집계(사이트별 성공률)를 «둘 다» 본다.
+    db.collection('godiv_events').createIndex({ email: 1, at: -1 }),
+    db.collection('godiv_events').createIndex({ site: 1, at: -1 }),
+    // ★TTL — 원장은 «자동으로 사라진다». 이건 성능이 아니라 «약속»이다:
+    //   처리방침에 「이용 기록은 최대 180일 보관 후 자동 파기」라고 적어 두었다(godiv.html#privacy).
+    //   ⚠️기간을 바꾸려면 처리방침을 «먼저» 고쳐라. 그리고 createIndex 로는 못 바꾼다
+    //     (이미 있는 인덱스에 다른 expireAfterSeconds → IndexOptionsConflict) — collMod 로 바꿔야 한다.
+    //   ★계정 요약(users.usage.godiv.*)은 여기 안 걸린다 — 누적 카운터라 원본이 사라져도 남는다.
+    db.collection('godiv_events').createIndex(
+      { at: 1 },
+      { expireAfterSeconds: 180 * 24 * 60 * 60 },
+    ),
+    // ── 비밀번호 재설정 (api/license/reset-*.js) ──────────────────────────
+    // reset-confirm 이 토큰 해시«만»으로 찾는다 — 없으면 매 요청이 users 전수주사다.
+    db.collection('users').createIndex({ resetTokenHash: 1 }, { sparse: true }),
+    // 레이트리밋 조회 { key, at:{$gte} } 의 형태 그대로.
+    db.collection('reset_attempts').createIndex({ key: 1, at: 1 }),
+    // ★TTL 로 «스스로» 지워지게 둔다. 창(1시간)보다 넉넉한 2시간이면 판정에 영향이 없고,
+    //   지우는 사람을 따로 두지 않아도 컬렉션이 무한히 자라지 않는다.
+    db.collection('reset_attempts').createIndex({ at: 1 }, { expireAfterSeconds: 7200 }),
+    // 담당자가 «아직 회신 안 한» 요청을 찾는 축(mailerLive:false 인 동안만 쌓인다).
+    db.collection('reset_requests').createIndex({ handledAt: 1, at: -1 }),
+
+    // ★동반 결손 — find-email.js:62 의 countDocuments({ phone, at }) 도 인덱스가 «없어»
+    //   매 호출이 전수주사였다. 같은 성격의 컬렉션이라 여기서 같이 세운다.
+    db.collection('find_attempts').createIndex({ phone: 1, at: 1 }),
+    db.collection('find_attempts').createIndex({ at: 1 }, { expireAfterSeconds: 7200 }),
   ]).catch((err) => {
     indexesEnsured = false;
     throw err;

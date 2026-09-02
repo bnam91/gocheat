@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260902p" />
+  <link rel="stylesheet" href="style.css?v=20260902q" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
 </head>
@@ -188,7 +188,7 @@
 
       // ★flags.json 은 응답에 Cache-Control 이 «없다» → 브라우저 휴리스틱 캐시가 걸린다.
       //   플래그를 뒤집어도 옛 값을 든 브라우저는 동의 구간이 «통째로 없는» 화면을 본다.
-      fetch('data/flags.json?v=20260902p')
+      fetch('data/flags.json?v=20260902q')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (f) { (f && f.extendedSignup === true) ? openExtended() : lockExtended(); })
         .catch(lockExtended)
@@ -308,7 +308,7 @@
         }).catch(function () {});
     })();
   </script>
-  <script src="footer.js?v=20260902p"></script>
-  <script src="theme.js?v=20260902p"></script>
+  <script src="footer.js?v=20260902q"></script>
+  <script src="theme.js?v=20260902q"></script>
 </body>
 </html>
