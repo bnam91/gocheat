@@ -75,7 +75,12 @@ document.getElementById('mp-email').textContent = email;
               ? '마지막 로그인 <b>' + esc(fmt(a.lastLoginAt)) + '</b>'
               : '<span class="mp-app-dim">기록 없음</span>');
         // ★번들이 있으면 «언제부터 쓰는지»가 있다. 그게 「이용 중」이라는 말의 근거다.
-        var since = a.firstSeenAt ? '<span class="mp-app-dim"> · ' + esc(fmt(a.firstSeenAt)) + '부터</span>' : '';
+        // ⛔단, 앞에 찍은 날짜와 «같은 날»이면 안 쓴다 — 「마지막 로그인 09-03 · 09-03부터」는
+        //   같은 값을 두 번 말하는 것이고, 오늘 처음 쓴 사람에게는 «전부» 그렇게 보인다.
+        var lastShown = a.lastUsedAt ? fmt(a.lastUsedAt) : (a.lastLoginAt ? fmt(a.lastLoginAt) : null);
+        var sinceTxt  = a.firstSeenAt ? fmt(a.firstSeenAt) : null;
+        var since = (sinceTxt && sinceTxt !== lastShown)
+          ? '<span class="mp-app-dim"> · ' + esc(sinceTxt) + '부터</span>' : '';
         // 결제방식은 «있을 때만» 적는다. 없는데 「무료」라고 쓰면 유료 전환 뒤 거짓이 된다.
         var pay = a.payment ? '<p class="mp-app-note">결제 ' + esc(a.payment) + '</p>' : '';
         // ★최고 등급이면 「등급 올리기」를 안 그린다 — 눌러도 올릴 게 없는 링크는 거짓말이다.
@@ -139,7 +144,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904d').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904e').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
