@@ -10,6 +10,7 @@
 """
 import argparse, base64, os, sys
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 GM = os.path.expanduser("~/Documents/claude_skills/gmail_manager")
 sys.path.insert(0, GM)
@@ -30,13 +31,24 @@ def main():
     p.add_argument("--to", required=True)
     p.add_argument("--subject", required=True)
     p.add_argument("--body-file", required=True)
+    p.add_argument("--html-file")   # 있으면 multipart/alternative 로 보낸다
     a = p.parse_args()
 
     with open(a.body_file, encoding="utf-8") as f:
         body = f.read()
 
     sender = resolve(a.account)
-    msg = MIMEText(body, "plain", "utf-8")
+    if a.html_file:
+        with open(a.html_file, encoding="utf-8") as f:
+            html = f.read()
+        # ★multipart/alternative — 평문을 «먼저», HTML 을 «나중»에 넣는다.
+        #   클라이언트는 «마지막» 파트를 선호하므로 순서가 곧 우선순위다.
+        #   ⇒ HTML 을 읽을 수 있으면 HTML, 못 읽으면 평문. 둘 다 «같은 내용»이어야 한다.
+        msg = MIMEMultipart("alternative")
+        msg.attach(MIMEText(body, "plain", "utf-8"))
+        msg.attach(MIMEText(html, "html", "utf-8"))
+    else:
+        msg = MIMEText(body, "plain", "utf-8")
     # ★헤더 이름은 RFC 상 대소문자 무관이지만 «관례»는 대문자다.
     #   소문자로 넣었더니 우리 읽기 도구가 Subject 로만 찾아 「제목 없음」으로 표시했다.
     #   보내는 쪽이 관례를 따르는 편이 안전하다(스팸 필터·구형 클라이언트).

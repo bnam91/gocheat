@@ -49,7 +49,7 @@ async function main() {
       );
       const d = (r && 'lastErrorObject' in r) ? r.value : r;
       if (!d) break;
-      out.push({ id: String(d._id), to: d.to, subject: d.subject, body: d.body });
+      out.push({ id: String(d._id), to: d.to, subject: d.subject, body: d.body, html: d.html || null });
     }
     process.stdout.write(JSON.stringify(out));
   } else if (cmd === 'done') {

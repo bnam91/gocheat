@@ -1,3 +1,5 @@
+const { renderMail } = require('./mail-template');
+
 const { getDb } = require('./mongo');
 
 async function enqueueMail({ to, subject, body, html, idempotencyKey, notAfter = null }) {
@@ -72,10 +74,15 @@ function staleMailFilter(now = new Date()) {
   };
 }
 
+// ★모든 메일은 «HTML + 평문» 두 벌을 만든다.
+//   평문은 폴백이 아니라 «필수»다 — HTML 을 못 읽는 클라이언트가 아직 있고,
+//   평문만 있는 메일은 스팸 점수가 올라간다(멀티파트가 관행인 이유).
+//   ⇒ 두 벌의 «내용이 달라지지 않게» 같은 함수 안에서 나란히 만든다.
 function buildVerifyMail({ to, verifyUrl }) {
+  const title = '이메일 인증을 완료해주세요';
   return {
     to,
-    subject: '[소문의섬] 이메일 인증을 완료해주세요',
+    subject: '[소문의섬] ' + title,
     body: [
       '안녕하세요, 소문의섬입니다.',
       '',
@@ -84,6 +91,14 @@ function buildVerifyMail({ to, verifyUrl }) {
       '',
       '본인이 가입한 적이 없다면 이 메일은 무시해도 됩니다.',
     ].join('\n'),
+    html: renderMail({
+      title,
+      paragraphs: ['안녕하세요, 소문의섬입니다.', '아래 버튼을 눌러 이메일 인증을 완료해주세요.'],
+      cta: { label: '이메일 인증하기', url: verifyUrl },
+      rawUrl: verifyUrl,
+      notes: ['이 링크는 24시간 동안 유효합니다.',
+              '본인이 가입한 적이 없다면 이 메일은 무시해도 됩니다.'],
+    }),
   };
 }
 
@@ -96,6 +111,16 @@ function buildResetMail({ to, resetUrl }) {
   return {
     to,
     subject: '[소문의섬] 비밀번호 재설정 안내',
+    html: renderMail({
+      title: '새 비밀번호를 정해주세요',
+      paragraphs: ['안녕하세요, 소문의섬입니다.',
+                   '아래 버튼을 눌러 새 비밀번호를 직접 정해주세요. 임시 비밀번호를 보내드리지는 않습니다.'],
+      cta: { label: '새 비밀번호 설정하기', url: resetUrl },
+      rawUrl: resetUrl,
+      notes: ['이 링크는 30분 동안, 한 번만 사용할 수 있습니다.',
+              '비밀번호를 바꾸면 앱과 확장 프로그램에서는 다시 로그인해야 합니다.',
+              '본인이 요청한 적이 없다면 이 메일은 무시해도 됩니다. 비밀번호는 그대로 유지됩니다.'],
+    }),
     body: [
       '안녕하세요, 소문의섬입니다.',
       '',
@@ -111,9 +136,10 @@ function buildResetMail({ to, resetUrl }) {
 }
 
 function buildLicenseMail({ to, licenseKey }) {
+  const title = '라이센스 키가 발급되었습니다';
   return {
     to,
-    subject: '[소문의섬] 라이센스 키가 발급되었습니다',
+    subject: '[소문의섬] ' + title,
     body: [
       '안녕하세요, 소문의섬입니다.',
       '',
@@ -121,8 +147,16 @@ function buildLicenseMail({ to, licenseKey }) {
       '',
       licenseKey,
       '',
-      '문의: hello@example.com',
+      // ★2026-09-02: 여기가 'hello@example.com' 이었다 — «존재하지 않는 주소»를
+      //   사용자에게 문의처로 안내하고 있었다. 실제 창구로 바꿨다.
+      '문의: coq3820@gmail.com',
     ].join('\n'),
+    html: renderMail({
+      title,
+      paragraphs: ['안녕하세요, 소문의섬입니다.', '아래 라이센스 키를 앱에 입력해주세요.'],
+      notes: ['키는 본인 계정에서만 사용할 수 있습니다.'],
+      code: licenseKey,
+    }),
   };
 }
 

@@ -30,15 +30,20 @@ function ssh(args) {
   return out.split('\n').filter((l) => !l.startsWith('**')).join('\n').trim();
 }
 
-function sendMail(to, subject, body) {
+function sendMail(to, subject, body, html) {
   // ★★본문을 명령줄 인자로 넘기면 «프로세스 목록»에 재설정 링크가 실린다 — ps 로 누구나 본다.
   //   그 링크 하나면 계정에 들어간다. ⇒ 본문은 «파일»로만 넘기고(0600) 즉시 지운다.
   const dir = mkdtempSync(join(tmpdir(), 'mdrain-'));
   const f = join(dir, 'body.txt');
   try {
     writeFileSync(f, body, { mode: 0o600 });
-    execFileSync('python3', [SENDER, '--account', ACCOUNT, '--to', to,
-      '--subject', subject, '--body-file', f],
+    const args = [SENDER, '--account', ACCOUNT, '--to', to, '--subject', subject, '--body-file', f];
+    if (html) {
+      const hf = join(dir, 'body.html');
+      writeFileSync(hf, html, { mode: 0o600 });   // ★HTML 에도 링크가 들어 있다 — 같은 이유로 파일로만
+      args.push('--html-file', hf);
+    }
+    execFileSync('python3', args,
       { encoding: 'utf8', timeout: 90000, env: { ...process.env, PYTHONUTF8: '1' } });
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
@@ -54,7 +59,7 @@ async function drain() {
   let ok = 0;
   for (const m of claimed) {
     try {
-      sendMail(m.to, m.subject, m.body);          // ⛔m.body 를 로그에 찍지 않는다
+      sendMail(m.to, m.subject, m.body, m.html);   // ⛔m.body·m.html 을 로그에 찍지 않는다
       ssh(`done ${m.id}`);
       log(`  발송 ${mask(m.to)} — ${m.subject}`);
       ok++;

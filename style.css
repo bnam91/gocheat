@@ -700,7 +700,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    「개인정보보호책임자: …」 한 항목이 17px 넘침을 만들었다(2026-09-02, 14페이지 전부).
    좁은 폭에서만 어절 단위 줄바꿈을 허용한다. body 의 word-break:keep-all 이 살아 있어
    한글 낱말 «중간»에서는 여전히 안 끊긴다. */
-@media (max-width: 560px) { .footer-biz-item { white-space: normal; } }
+@media (max-width: 560px) {
+  .footer-biz-item { white-space: normal; }
+  /* ★좁은 화면에서는 «구분자»를 쓰지 않고 줄로 나눈다.
+     항목이 줄바꿈되면 「상호: 소문의섬 |」처럼 구분자가 줄 «끝»에 매달리거나
+     「| 이메일: …」처럼 줄 «머리»에 오게 된다 — 어느 쪽이든 읽는 사람에게는 오류로 보인다.
+     (2026-09-02 현빈 폰 화면에서 확인) */
+  .footer-biz-item { display: block; }
+  .footer-biz-sep  { display: none; }
+}
 
 /* 더미(예시) 표식 — 자리표시자가 «진짜»로 읽히면 사고다. 눈에 띄게 둔다 */
 .dummy-notice{
