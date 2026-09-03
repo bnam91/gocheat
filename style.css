@@ -1204,6 +1204,23 @@ a.appnav-link:focus-visible { outline: none; color: var(--accent); }
   .nav-sections { gap: 14px; }
 }
 
+/* ★★폰에서 «구간 내비를 둘째 줄로» 내린다 (2026-09-03 실측 버그).
+   ⛔증상: 390px 에서 로고 117 + 구간내비 158 + 로그인·회원가입 143 = 418px 로 «28px 넘쳐»
+     「개발자문서」(210~275) 위에 「로그인」(227~266)이 덮였다. 그 자리를 누르면 «로그인»으로 갔다.
+     header nav 가 justify-content:space-between 이라 넘치면 «겹친다» — 잘리지 않고 포개진다.
+     그래서 화면만 봐서는 멀쩡해 보이고, «눌러 봐야» 안다.
+   ★구간 내비를 숨기지 «않는다» — 개요·요금제·개발자문서는 각각 «다른 페이지»라
+     숨기면 폰에서 그 페이지로 가는 길이 사라진다. 줄을 하나 더 쓰는 쪽이 옳다.
+   ⚠️nav.nav--app 에만 건다 — 다른 페이지 상단바는 자식이 둘뿐이라 안 넘친다. */
+@media (max-width: 620px) {
+  nav.nav--app { flex-wrap: wrap; height: auto; min-height: 64px; padding-bottom: 10px; row-gap: 2px; }
+  nav.nav--app .nav-sections {
+    order: 3; width: 100%; margin-left: 0; justify-content: center; gap: 18px;
+  }
+  /* 고정 내비가 «두 줄»이 됐으니 앵커 여백도 같이 늘린다(원래 두 줄일 때 쓰던 값이 118 이었다) */
+  #overview, #pricing { scroll-margin-top: 118px; }
+}
+
 /* ★«← 앱 목록» 뒤로가기 제거(현빈).
    히어로 패딩 안에 홀로 앉아 제목과 175px 떨어져 아무 관계도 못 맺고 있었다.
    상위로 가는 길은 이제 내비 왼쪽의 «소문의섬 ›» 이 맡는다 — 코덱스도 로고가 그 일을 한다.

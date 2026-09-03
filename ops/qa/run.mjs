@@ -21,6 +21,27 @@ const BASE = process.env.QA_BASE || 'https://blacksheepwall.kr';
 const CFG  = JSON.parse(readFileSync(new URL('./lenses.json', import.meta.url), 'utf8'));
 const want = process.argv.slice(2);
 
+// ★검사 범위를 «좁히는» 손잡이 — 전 렌즈 전 페이지는 30분이 넘어 «안 쓰게 된다».
+//   고친 자리만 볼 때 쓴다. 예:
+//     QA_PAGES=/,/pricing.html node ops/qa/run.mjs guest
+//     QA_VIEWPORTS=390 QA_THEMES=dark node ops/qa/run.mjs nojs
+//   ⛔MIN_SETTLE 을 줄여 속도를 내지 마라 — §4-1 거짓 경보가 돌아온다. 줄일 것은 «범위»다.
+if (process.env.QA_PAGES) {
+  const only = process.env.QA_PAGES.split(',').map((x) => x.trim()).filter(Boolean);
+  // ⛔startsWith 를 쓰지 마라 — QA_PAGES=/ 가 «전 페이지»를 고른다(방금 당했다).
+  //   쿼리스트링만 떼고 «정확히» 대조한다. /order.html 로 /order.html?plan=pro 를 고를 수 있게.
+  CFG.pages = CFG.pages.filter((p) => only.includes(p) || only.includes(p.split('?')[0]));
+  if (!CFG.pages.length) { console.error('⛔ QA_PAGES 가 아무 페이지도 안 고른다:', process.env.QA_PAGES); process.exit(1); }
+}
+if (process.env.QA_VIEWPORTS) {
+  const only = process.env.QA_VIEWPORTS.split(',').map((x) => Number(x.trim()));
+  CFG.viewports = CFG.viewports.filter((v) => only.includes(v.w));
+}
+if (process.env.QA_THEMES) {
+  const only = process.env.QA_THEMES.split(',').map((x) => x.trim());
+  CFG.themes = CFG.themes.filter((t) => only.includes(t));
+}
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function http(p, method) {
   const r = await fetch(`http://127.0.0.1:${PORT}${p}`, { method: method || 'GET' });

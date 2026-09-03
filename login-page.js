@@ -289,7 +289,7 @@
   var app;
   try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
   if (!app) return;
-  fetch('data/apps.json?v=20260904s').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260904t').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) return;
       var a = apps.filter(function (x) { return x.id === app; })[0];
