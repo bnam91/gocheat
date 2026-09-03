@@ -1391,15 +1391,15 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   display: inline-flex; align-items: center; gap: 8px;
   padding: 12px 18px; border-radius: 999px;
-  /* ★★두 테마 «모두» 카카오 노랑 바탕 + 검정 글자다(현빈 2026-09-03).
-     브랜드 색이라 테마에 따라 뒤집지 않는다. 실측: 검정 글자 대비 15.37:1(AAA 통과).
-     ⛔--accent-fill 을 쓰면 다크에서 바탕이 라임(#C9F23A)이 된다. 이 버튼만 토큰이 아니라
-       «고정 색»을 쓰는 이유다 — 카카오 노랑은 우리 팔레트가 아니라 «남의 브랜드 색»이다.
+  /* ★★두 테마 «모두» 연녹색(라임 #C9F23A) 바탕 + 검정 글자다(현빈 2026-09-03).
+     사이트 강조색이라 테마에 따라 뒤집지 않는다. 실측: 검정 글자 대비 15.2:1(AAA 통과).
+     ⛔토큰(--accent-fill)을 쓰지 않고 «고정 색»을 쓴다 — 그 토큰은 라이트에서 «먹색»이라
+       쓰는 순간 라이트 버튼이 검정이 된다. 여기는 두 테마 다 연녹색이어야 한다.
      ★★테두리를 뺐다(현빈 2026-09-03). 다만 «경계 자체»를 버린 건 아니다 —
        흰 판 위 노랑은 1.28:1 이라 아무 처리도 안 하면 버튼 모서리가 배경에 녹는다.
        ⇒ 선(테두리) 대신 «그림자»로 경계를 준다. 눈에는 테두리가 안 보이고, 버튼은 떠 보인다.
        라이트에서 그림자가 더 진해야 한다 — 흰 바탕은 어두운 번짐을 잘 삼킨다. */
-  background: #FEE500; color: #0B0B0E;
+  background: #C9F23A; color: #0B0B0E;
   border: none;
   font-size: var(--fs-sm); font-weight: 700; letter-spacing: -0.01em;
   text-decoration: none; white-space: nowrap;
@@ -1408,7 +1408,7 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   box-shadow: 0 1px 2px rgba(0,0,0,.24), 0 4px 10px rgba(0,0,0,.18), 0 12px 28px rgba(0,0,0,.16);
   transition: transform .18s cubic-bezier(0.22,1,0.36,1), opacity .18s, background .18s, box-shadow .18s;
 }
-.kko-float:hover{ background: #F2DA00; color: #0B0B0E; transform: translateY(-2px);
+.kko-float:hover{ background: #BCE22F; color: #0B0B0E; transform: translateY(-2px);
   box-shadow: 0 1px 2px rgba(0,0,0,.26), 0 6px 14px rgba(0,0,0,.22), 0 16px 34px rgba(0,0,0,.18); }
 
 /* ★다크 — 바탕·글자는 위 그대로. «그림자만» 줄인다.
