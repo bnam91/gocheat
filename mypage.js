@@ -18,7 +18,7 @@ document.getElementById('mp-body').style.display = 'block';
 // ★주문 표의 «상품명·금액»은 data/apps.json 이 단일 출처다 — 여기 값을 박아 두면
 //   요금이 바뀔 때 마이페이지만 옛 금액을 보여준다(실제로 겪은 병이다).
 var PLAN_NAME = {}, PRICE_TXT = {};
-fetch('data/apps.json?v=20260904h').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/apps.json?v=20260904i').then(function (r) { return r.ok ? r.json() : null; })
   .then(function (j) {
     // apps.json 은 «앱 배열»이고 각 앱이 plans 를 가진다. 앱을 돌며 요금제를 모은다.
     (Array.isArray(j) ? j : []).forEach(function (app) {
@@ -184,7 +184,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904h').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904i').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -195,15 +195,20 @@ function renderOrders() {
 //   먼저 그린 빈 카드가 표와 «같이» 남는다(2026-09-03 실제로 그랬다).
 //   ⇒ 각 갈래가 «자기 것을 켜고 남의 것을 끈다». 한 줄이라도 빠지면 잔상이 생긴다.
 if (!orders.length) {
-  document.getElementById('mp-ord-empty').style.display = 'block';
+  // ⛔★display 를 «인라인으로 박지 마라» — CSS 가 인라인을 못 이긴다.
+  //   여기 'block' 을 넣었더니 .mp-empty 의 display:flex 가 죽고 align-items:center 가 무시돼
+  //   설명 문단(max-width:34ch)이 카드 왼쪽에 붙었다. 글자만 가운데라 «가운데인 척»했다.
+  //   ★이 파일 CSS 주석 66행에 «이미 적어둔» 함정을 새 자리에서 다시 밟았다(2026-09-03).
+  //   ⇒ 빈 문자열로 «인라인을 걷어» CSS 가 정하게 한다. 숨길 때만 'none' 을 쓴다.
+  document.getElementById('mp-ord-empty').style.display = '';
   document.getElementById('mp-ord-table').style.display = 'none';
   document.getElementById('mp-dummy').style.display    = 'none';
   document.getElementById('mp-ord-note').style.display = 'none';
 } else {
   document.getElementById('mp-ord-empty').style.display = 'none';
   document.getElementById('mp-ord-table').style.display = 'table';
-  var keep = document.getElementById('mp-ord-keep');
-  if (keep) keep.style.display = 'block';       // ★주문이 있을 때만 「탭 닫으면 사라진다」를 띄운다
+  // ★「탭 닫으면 사라진다」 경고는 «없앴다» — 주문을 서버에서 읽게 고쳐서 사라질 일이 없다.
+  //   그 요소를 켜던 코드도 같이 걷는다(없는 id 를 부르는 코드는 다음 사람을 헷갈리게 한다).
   // ★UL-002: 연동 여부는 business.json 한 곳에서만 판단한다(주문 화면과 같은 근거).
   document.getElementById('mp-dummy').style.display    = window.__smsDummy ? 'block' : 'none';
   document.getElementById('mp-ord-note').style.display = window.__smsDummy ? 'none'  : 'block';
