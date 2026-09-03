@@ -140,8 +140,25 @@ main.detail .detail-inner > .detail-title { align-self:center; }
 }
 /* ★운영 등급(88·99)은 «구매로 도달할 수 없는» 자리다 — 일반 등급과 같은 색이면
    화면만 보고 「살 수 있는 등급」으로 오해한다. */
-.mp-app-plan-staff{ color:var(--warn-fill) !important; }
-/* ★staff 는 테두리도 같이 따라간다(currentColor) — 색만 바꾸면 테는 강조색으로 남아 어긋난다 */
+/* ── 등급별 배지 «단계» ────────────────────────────────────────────────
+   ★색이 아니라 «무게»로 가른다(현빈 2026-09-03). 등급이 오를수록 테가 진해지고 최상위는 채운다.
+     색으로만 가르면 색각 이상에서 안 갈리고, 두 테마에 각각 새 색을 지어내야 한다.
+     무게는 기존 토큰 세 개(--faint · --muted · --accent-fill)로 끝난다.
+   ★테두리는 currentColor 다 — 글자색만 바꾸면 테가 «따라온다». 두 줄이 어긋날 일이 없다.
+   실측 대비(앱 카드 바탕 위) — 라이트 / 다크
+     none  3.11 / 3.60 · beta 7.86 / 8.93 · paid 17.89 / 14.08
+     top   19.65 / 15.20(채움 안쪽) · staff 6.16 / 13.63(채움 안쪽) */
+.mp-app-plan-none { color:var(--faint); }                    /* GUEST — 가장 약하게 */
+.mp-app-plan-beta { color:var(--muted); }                    /* 무료 이용 기간 */
+.mp-app-plan-paid { color:var(--accent-fill); }              /* 유료, 위가 남음 */
+.mp-app-plan-top  {                                          /* 그 앱의 최상위 — «채운다» */
+  color:var(--accent-fg); background:var(--accent-fill); border-color:var(--accent-fill);
+}
+/* ★운영 등급(88·99)은 «구매로 도달할 수 없는» 자리다 — 일반 등급과 같은 색이면
+   화면만 보고 「살 수 있는 등급」으로 오해한다. 유일하게 «다른 색»을 쓰는 자리다. */
+.mp-app-plan-staff{
+  color:var(--warn-fg) !important; background:var(--warn-fill); border-color:var(--warn-fill);
+}
 
 /* ══════════════════════════════════════════════════════════════════════
    2026-09-03 개편 (현빈 지시)

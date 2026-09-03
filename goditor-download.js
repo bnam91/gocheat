@@ -48,7 +48,7 @@ if (isMac && mac) { mac.hidden = false; alt.hidden = false; }
 
 // 주소의 단 한 벌은 data/downloads.json 이다(서버도 같은 파일을 본다).
 // 못 읽으면 마크업의 기본 주소가 그대로 남는다 — 아무 데도 못 가는 상태가 없다.
-fetch('data/downloads.json?v=20260904e')
+fetch('data/downloads.json?v=20260904f')
   .then(function (r) { return r.ok ? r.json() : null; })
   .then(function (d) {
     var u = d && d.goditor;

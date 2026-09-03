@@ -85,8 +85,18 @@ document.getElementById('mp-email').textContent = email;
         var pay = a.payment ? '<p class="mp-app-note">결제 ' + esc(a.payment) + '</p>' : '';
         // ★최고 등급이면 「등급 올리기」를 안 그린다 — 눌러도 올릴 게 없는 링크는 거짓말이다.
         var up = a.canUpgrade ? '<a href="pricing.html" class="mp-app-up">등급 올리기 →</a>' : '';
-        // ★운영 등급(88·99)은 «구매로 도달할 수 없는» 자리라 화면에서도 티가 나야 한다.
-        var badge = a.staff ? ' mp-app-plan-staff' : '';
+        // ★★등급별 배지(현빈 2026-09-03: 「라이트모드에서도 별도 등급별 벳지가 있으면 좋겠는데」).
+        //   ★«색»이 아니라 «무게»로 가른다 — 등급이 오를수록 테가 진해지고, 최상위는 «채운다».
+        //     색으로만 가르면 ⑴색각 이상에서 안 갈리고 ⑵두 테마에 각각 색을 정해야 하는데
+        //     우리 팔레트엔 그만한 색이 없어 «새 색»을 지어내야 한다. 무게는 토큰 세 개로 끝난다.
+        //   ★앱마다 등급표가 다르므로 «앱 이름»이 아니라 «번호»로 판정한다(tiers.json 과 같은 축).
+        //     ⛔별칭(label)으로 판정하지 마라 — 이름을 바꾸는 순간 배지가 바뀐다.
+        var tn = Number(a.tier);
+        var badge = a.staff ? ' mp-app-plan-staff'          // 88·99 — 구매로 도달할 수 없는 자리
+          : !isFinite(tn) || tn <= 0 ? ' mp-app-plan-none'  // GUEST
+          : tn === 1 ? ' mp-app-plan-beta'                  // 무료 이용 기간
+          : a.canUpgrade ? ' mp-app-plan-paid'              // 유료지만 위가 남았다
+          : ' mp-app-plan-top';                             // 그 앱의 최상위
         return '<div class="mp-app">'
           + '<div class="mp-app-top">'
           +   '<span class="mp-app-name">' + esc(a.name) + '</span>'
@@ -144,7 +154,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904e').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904f').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 

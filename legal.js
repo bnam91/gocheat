@@ -16,7 +16,7 @@
     });
   }
 
-  fetch('data/legal.json?v=20260904e')
+  fetch('data/legal.json?v=20260904f')
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
       if (!d) throw new Error('legal.json');
