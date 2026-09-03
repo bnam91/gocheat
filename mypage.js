@@ -18,7 +18,7 @@ document.getElementById('mp-body').style.display = 'block';
 // ★주문 표의 «상품명·금액»은 data/apps.json 이 단일 출처다 — 여기 값을 박아 두면
 //   요금이 바뀔 때 마이페이지만 옛 금액을 보여준다(실제로 겪은 병이다).
 var PLAN_NAME = {}, PRICE_TXT = {};
-fetch('data/apps.json?v=20260904m').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/apps.json?v=20260904k').then(function (r) { return r.ok ? r.json() : null; })
   .then(function (j) {
     // apps.json 은 «앱 배열»이고 각 앱이 plans 를 가진다. 앱을 돌며 요금제를 모은다.
     (Array.isArray(j) ? j : []).forEach(function (app) {
@@ -184,7 +184,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904m').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904k').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
