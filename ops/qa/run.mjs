@@ -110,9 +110,12 @@ for (const lens of lenses) {
           if (lens.until) await ev(`sessionStorage.setItem('sms_until', new Date(Date.now()+${lens.until}*864e5).toISOString())`);
         }
       }
+      // ★진행 표시 — 없으면 «러너가 살아있는지»를 알 수 없어 사람이 먼저 포기한다(실제로 겪음).
+      process.stdout.write(`  · ${lens.id}/${th}/${vp.w} `);
       for (const p of CFG.pages) {
         s.evs.length = 0;
         await go(BASE + p);
+        process.stdout.write('.');
         const r = await ev(PROBE);
         const errs = s.evs.filter((d) => d.method === 'Log.entryAdded' && d.params.entry.level === 'error')
           .map((d) => d.params.entry.text.slice(0, 70));
@@ -129,6 +132,7 @@ for (const lens of lenses) {
         [...errs, ...exc].forEach((e) => issues.push('콘솔: ' + e));
         if (issues.length) rows.push({ lens: lens.name, vp: vp.name, th, page: p, issues });
       }
+      process.stdout.write('\n');
       if (lens.throttle) await s.send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
       await s.send('Emulation.setScriptExecutionDisabled', { value: false });
       if (lens.disableJs) break;   // JS 없는 렌즈는 테마를 못 바꾼다 — 한 번만 본다

@@ -38,8 +38,8 @@ export const PROBE = `(() => {
   };
   // ★클래스가 없는 요소는 «글자 앞머리»로 부른다 — 「SPAN.(17px)」 로는 무엇인지 알 수 없다.
   const nm = (e) => {
-    const cls = String(e.className || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).join('.');
-    const txt = e.textContent.trim().replace(/\s+/g, ' ').slice(0, 14);
+    const cls = String(e.className || '').trim().split(/\\s+/).filter(Boolean).slice(0, 2).join('.');
+    const txt = e.textContent.trim().replace(/\\s+/g, ' ').slice(0, 14);
     return e.tagName + (cls ? '.' + cls : '') + (txt ? '「' + txt + '」' : '');
   };
 
@@ -75,17 +75,17 @@ export const PROBE = `(() => {
 
   // ⛔«눌러도 아무 데도 안 가는 링크»
   const deadLinks = [...document.querySelectorAll('a[href]')]
-    .filter((a) => vis(a) && /^\s*(#|javascript:)?\s*$/.test(a.getAttribute('href')) && !a.onclick)
+    .filter((a) => vis(a) && /^\\s*(#|javascript:)?\\s*$/.test(a.getAttribute('href')) && !a.onclick)
     .map((a) => a.textContent.trim().slice(0, 16) || '(빈 링크)');
 
   // ⛔«대비가 낮아 못 읽는 글» — 배경을 거슬러 올라가 실제 뒷색을 찾는다
   const lum = (c) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
     return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
-  const rgb = (s) => (s.match(/[\d.]+/g) || [0,0,0]).slice(0, 3).map(Number);
+  const rgb = (s) => (s.match(/[\\d.]+/g) || [0,0,0]).slice(0, 3).map(Number);
   const bgOf = (e) => { let n = e;
     while (n && n !== document.documentElement) {
       const c = getComputedStyle(n).backgroundColor;
-      if (c && !/rgba\(0, 0, 0, 0\)|transparent/.test(c)) return rgb(c);
+      if (c && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(c)) return rgb(c);
       n = n.parentElement; }
     return rgb(getComputedStyle(document.body).backgroundColor || 'rgb(255,255,255)'); };
   const lowContrast = [...document.querySelectorAll('h1,h2,h3,p,a,button,span,li,label')].filter((e) => {
@@ -96,7 +96,7 @@ export const PROBE = `(() => {
     if (parseFloat(c.opacity) < 1) return false;
     // ★그라디언트 글자는 -webkit-text-fill-color: transparent 라 «color 가 실제 보이는 색이 아니다».
     //   그걸 재면 언제나 낮게 나온다(.gradient-text 로 실제 당했다). 여기서 뺀다.
-    if (c.webkitTextFillColor && /transparent|rgba\(0, 0, 0, 0\)/.test(c.webkitTextFillColor)) return false;
+    if (c.webkitTextFillColor && /transparent|rgba\\(0, 0, 0, 0\\)/.test(c.webkitTextFillColor)) return false;
     if (/text/.test(c.backgroundClip || '') || /text/.test(c.webkitBackgroundClip || '')) return false;
     const fg = rgb(c.color), bg = bgOf(e);
     const l1 = lum(fg), l2 = lum(bg);
