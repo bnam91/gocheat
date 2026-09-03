@@ -70,7 +70,18 @@ module.exports = async (req, res) => {
     const db = await getDb();
     const users = db.collection('users');
     const user = hasCreds ? await users.findOne({ email }) : null;
-    const authed = !!(user && user.sessionToken && user.sessionToken === sessionToken);
+    // ★★2026-09-03 교정 — 세션 모델이 «둘»이다. 구식 한 칸(sessionToken)만 보면 안 된다.
+    //   제품별 칸(sessions[])이 살아난 뒤로, 「고디터로 로그인 → 웹으로도 로그인」 하면
+    //   구식 칸은 «웹» 토큰으로 덮이고 고디터 토큰은 sessions[] 에만 남는다.
+    //   그 상태에서 고디터 앱이 다운로드를 부르면 authed 가 false 가 되어
+    //   ★다운로드가 «익명»으로 처리된다 — 기록(users.downloads)이 안 쌓인다.
+    //   ⛔그런데 REQUIRE_LOGIN 이 꺼져 있어 응답은 여전히 ok:true 다. 즉 «조용히» 틀린다.
+    //     실측으로만 잡힌다(count 가 안 오르는 것으로 확인했다).
+    //   ⇒ session.js·change-password.js 와 «같은 질의»를 쓴다. 한 곳만 고치면 또 어긋난다.
+    const authed = !!(user && sessionToken && (
+      user.sessionToken === sessionToken ||
+      (Array.isArray(user.sessions) && user.sessions.some((x) => x && x.token === sessionToken))
+    ));
 
     // 이벤트 종료 후 다시 회원 전용으로 돌릴 자리 (기본은 꺼져 있다)
     if (REQUIRE_LOGIN && !authed) {
