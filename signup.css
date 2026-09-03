@@ -1,0 +1,104 @@
+/**
+ * 회원가입 전용 스타일 — signup.html «한 장»만 쓴다.
+ *
+ * ★왜 갈랐나(현빈 2026-09-03: 「역할·책임 단위로 파일을 분리」)
+ *   18장 전부에서 선택자 매칭을 재 본 결과 .modal-* · .agree-* · .field-* · .ext-block 은
+ *   signup.html 에서만 잡혔다. 그런데 style.css 에 있어서 «나머지 17장»이 이 84줄을
+ *   매번 같이 받고 있었다.
+ *
+ * ⚠️★로드 순서 — 이 파일은 style.css «뒤»에 와야 한다.
+ *   .auth-card .field-row 처럼 «공용 규칙을 덮어쓰는» 것이 있어서, 앞에 오면 조용히 무시된다.
+ *   signup.html 의 <link> 순서를 바꾸지 마라.
+ *
+ * ⛔여기에 «다른 페이지도 쓰는» 규칙을 넣지 마라. 넣는 순간 그 페이지가 깨지는데,
+ *   원인이 「이 파일이 거기엔 안 실렸다」라서 아주 찾기 어렵다.
+ *   ★새 규칙을 넣기 전에 «그 선택자가 다른 페이지에서도 매칭되는지» 먼저 재라.
+ */
+
+.modal-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(3px) }
+.modal-box{ position:relative; background:var(--bg-elev); border:1px solid var(--border-strong); border-radius:14px;
+  padding:26px 24px 20px; max-width:380px; width:100%; display:flex; flex-direction:column; align-items:center; gap:10px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6); animation:fadeUp .28s cubic-bezier(.22,1,.36,1) both }
+.modal-title{ font-size:var(--fs-lead); font-weight:800; letter-spacing:-.02em; color:var(--fg); text-align:center }
+.modal-sub{ font-size:var(--fs-sm); color:var(--muted); line-height:1.75; text-align:center }
+.modal-sub b{ color:var(--fg) }
+.modal-actions{ display:flex; gap:8px; align-items:center; margin-top:6px; flex-wrap:wrap; justify-content:center }
+.modal-actions .plan-cta{ width:auto; min-width:96px; margin-top:0 }
+.modal-close{ background:none; border:0; color:var(--subtle); font-size:var(--fs-sm); cursor:pointer; margin-top:2px; font-family:var(--font) }
+.modal-close:hover{ color:var(--fg) }
+.ext-block:not([hidden]) { display: contents; }
+.field-row{ display:flex; gap:8px; width:100%; align-items:stretch; }
+.field-row .signup-input{ flex:1; }
+.field-btn{
+  font-family:var(--font); font-size:var(--fs-sm); font-weight:600; white-space:nowrap;
+  color:var(--muted); background:var(--bg-elev); border:1px solid var(--border-strong);
+  border-radius:var(--radius); padding:0 14px; cursor:pointer;
+}
+.field-btn:hover:not(:disabled){ color:var(--fg); border-color:var(--accent); }
+.field-btn:disabled{ opacity:.42; cursor:not-allowed; }
+.field-err{ margin:5px 0 0; font-size:var(--fs-xs); line-height:1.5; color:var(--danger); }
+.field-err:empty{ display:none; }
+.field-err.is-ok{ color:var(--success); }
+.modal-veil{
+  position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:rgba(11,11,14,.62); backdrop-filter:blur(3px);
+  animation:modalVeilIn .18s ease-out both;
+}
+.modal-card{
+  width:100%; max-width:400px; background:var(--bg-elev); color:var(--fg);
+  border:1px solid var(--border); border-radius:16px; padding:32px 28px 26px;
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
+  box-shadow:0 18px 48px rgba(0,0,0,.42);
+  animation:modalCardIn .26s cubic-bezier(0.22,1,0.36,1) both;
+}
+.modal-mark{ width:56px; height:56px; border-radius:13px; display:block; margin-bottom:6px; }
+.modal-title{ font-size:var(--fs-h3); font-weight:800; letter-spacing:-.02em; margin:0; color:var(--fg); }
+.modal-sub{ font-size:var(--fs-sm); color:var(--muted); line-height:1.7; margin:2px 0 0; }
+/* 가입한 주소를 보여 준다 — 오타로 «다른 주소»를 넣었을 때 여기서 알아챌 수 있다. */
+.modal-email{ font-family:var(--mono); font-size:var(--fs-xs); color:var(--subtle);
+              margin:8px 0 0; word-break:break-all; }
+.modal-go{
+  margin-top:20px; width:100%; text-align:center; text-decoration:none; display:block;
+  background:var(--accent-fill); color:var(--accent-fg); border-color:var(--accent-fill);
+}
+.modal-go:hover{ background:var(--accent-fill-hover); border-color:var(--accent-fill-hover); color:var(--accent-fg); }
+.field-note{ font-size:var(--fs-sm); color:var(--subtle); line-height:1.6; text-align:center; margin-top:-4px; }
+.field-note b{ color:var(--muted); }
+.agree-box{
+  width:100%; background:var(--bg-elev); border:1px solid var(--border);
+  border-radius:var(--radius); padding:12px 14px; display:flex; flex-direction:column; gap:9px; margin-top:6px;
+}
+.agree-item{ display:flex; align-items:flex-start; gap:9px; font-size:var(--fs-sm); color:var(--muted); cursor:pointer; text-align:left; line-height:1.6; }
+.agree-item input[type="checkbox"]{
+  appearance:none; -webkit-appearance:none;
+  width:18px; height:18px; margin-top:1px; flex-shrink:0;
+  border:1.5px solid var(--subtle); border-radius:5px;
+  background:transparent; cursor:pointer;
+  display:grid; place-content:center;
+  transition:background .12s, border-color .12s;
+}
+.agree-item input[type="checkbox"]::before{
+  content:""; width:10px; height:10px; transform:scale(0);
+  background:var(--accent-fg);
+  clip-path:polygon(14% 44%, 0 60%, 39% 100%, 100% 18%, 84% 2%, 39% 68%);
+  transition:transform .12s ease-out;
+}
+.agree-item input[type="checkbox"]:checked{ background:var(--accent-fill); border-color:var(--accent-fill); }
+.agree-item input[type="checkbox"]:checked::before{ transform:scale(1); }
+.agree-item input[type="checkbox"]:hover{ border-color:var(--muted); }
+.agree-item input[type="checkbox"]:focus-visible{ outline:none; box-shadow: var(--focus-ring); }
+.agree-item a{ color:var(--accent-fill); text-decoration:underline; text-underline-offset:2px; }
+.agree-all span b{ color:var(--fg); font-size:var(--fs-body); }
+/* 전체동의는 «묶음의 머리»다 — 나머지 두 줄과 크기가 같으면 위계가 안 선다 */
+.agree-all{ padding-bottom:2px; }
+.agree-all input[type="checkbox"]{ width:20px; height:20px; }
+.agree-all input[type="checkbox"]::before{ width:11px; height:11px; }
+.agree-divider{ border-top:1px solid var(--border); }
+.agree-detail{ display:block; margin-top:4px; font-size:var(--fs-xs); color:var(--subtle); line-height:1.55; }
+.auth-card .agree-box { margin-top: 18px; }
+.auth-card .field-row { margin-top: 2px; }
+.auth-card .field-btn { border-radius: 0; border: 0; border-bottom: 1px solid var(--border-strong); padding: 0 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-veil, .modal-card{ animation:none; }
+}

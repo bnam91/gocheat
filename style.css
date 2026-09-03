@@ -564,6 +564,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .feature-dot { color: var(--accent); font-family: var(--mono); }
 
 /* ===== SIGNUP (signup.html) ===== */
+/* ★가입 «모달·동의·칸별 경고»(.modal-* · .agree-* · .field-* · .ext-block)는
+   signup.css 로 옮겼다(2026-09-03). signup.html 한 장만 쓰는데 17장이 같이 받고 있었다.
+   ⇒ signup.html 에서 style.css «뒤»에 실린다 — 공용을 덮어쓰는 규칙이 있어 순서가 중요하다.
+   ★여기 남은 .signup-* 는 login·find-*·mypage 도 쓴다(실측). 같이 옮기면 그 페이지들이 깨진다. */
 .signup { max-width: var(--width); margin: 0 auto; padding: 80px 24px 100px; text-align: center; }
 .signup-inner { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .signup-title { font-size: var(--fs-h2); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-top: 4px; color: var(--fg); text-align: center; }
@@ -916,17 +920,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    스타일만 남긴다: 모달이 다시 필요해지면 클래스 이름째 재사용된다. 지금은 아무 데서도 안 쓴다. */
 .modal[hidden]{ display:none }
 .modal{ position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; padding:20px }
-.modal-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(3px) }
-.modal-box{ position:relative; background:var(--bg-elev); border:1px solid var(--border-strong); border-radius:14px;
-  padding:26px 24px 20px; max-width:380px; width:100%; display:flex; flex-direction:column; align-items:center; gap:10px;
-  box-shadow:0 20px 60px rgba(0,0,0,.6); animation:fadeUp .28s cubic-bezier(.22,1,.36,1) both }
-.modal-title{ font-size:var(--fs-lead); font-weight:800; letter-spacing:-.02em; color:var(--fg); text-align:center }
-.modal-sub{ font-size:var(--fs-sm); color:var(--muted); line-height:1.75; text-align:center }
-.modal-sub b{ color:var(--fg) }
-.modal-actions{ display:flex; gap:8px; align-items:center; margin-top:6px; flex-wrap:wrap; justify-content:center }
-.modal-actions .plan-cta{ width:auto; min-width:96px; margin-top:0 }
-.modal-close{ background:none; border:0; color:var(--subtle); font-size:var(--fs-sm); cursor:pointer; margin-top:2px; font-family:var(--font) }
-.modal-close:hover{ color:var(--fg) }
 .dl-resume{ color:var(--success) }
 .dl-resume a{ color:var(--accent-fill); font-weight:600; text-decoration:underline; text-underline-offset:2px }
 .cta-pulse{ box-shadow: var(--focus-ring) }
@@ -944,96 +937,33 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 /* ★확장 수집 구간 감싸개 — .signup-form 의 세로 flex 를 «그대로 통과»시켜야
    라벨·입력이 다른 필드와 같은 간격으로 선다. display:contents 가 그 일을 한다.
    단 [hidden] 을 이겨버리면 안 되므로 :not([hidden]) 으로 범위를 좁힌다. */
-.ext-block:not([hidden]) { display: contents; }
 
 /* ── 확장 가입 폼 (ttj 기준, 뉴스레터 제외) ── */
 .lbl-hint{ color:var(--subtle); font-weight:400; }
-.field-row{ display:flex; gap:8px; width:100%; align-items:stretch; }
-.field-row .signup-input{ flex:1; }
-.field-btn{
-  font-family:var(--font); font-size:var(--fs-sm); font-weight:600; white-space:nowrap;
-  color:var(--muted); background:var(--bg-elev); border:1px solid var(--border-strong);
-  border-radius:var(--radius); padding:0 14px; cursor:pointer;
-}
-.field-btn:hover:not(:disabled){ color:var(--fg); border-color:var(--accent); }
-.field-btn:disabled{ opacity:.42; cursor:not-allowed; }
 
 /* ★칸별 경고(현빈 2026-09-02) — 「전화번호를 잘못 쓰면 그 밑에 경고가 떠야지, 버튼 밑에 있으면
    바로 확인이 안 된다」. 그래서 «틀린 칸 바로 아래»에 뜬다.
    ★빈 상태에서는 «자리를 차지하지 않는다» — min-height 로 자리를 잡아두면 칸 사이가
      항상 벌어져 폼이 성기게 보인다. 대신 나타날 때 아래 여백만 준다.
    ★색 하나에만 기대지 않는다 — aria-live 로 읽어주고, 문장 자체가 무엇을 고쳐야 하는지 말한다. */
-.field-err{ margin:5px 0 0; font-size:var(--fs-xs); line-height:1.5; color:var(--danger); }
-.field-err:empty{ display:none; }
-.field-err.is-ok{ color:var(--success); }
 
 /* ★가입 축하 모달(현빈 2026-09-02) — 전에는 「가입 완료!」 한 줄이 1.4초 뜨고 자동 이동했다.
    읽을 새도 없었고, 무엇이 끝났는지 화면에 남지 않았다. ⇒ 사람이 확인하고 넘어간다.
    ★position:fixed + inset:0 — 스크롤 위치와 무관하게 «화면 한가운데»에 선다.
    ⚠️밖을 눌러 닫히게 하지 않는다(마크업 주석 참조) — 나갈 길은 버튼 하나다. */
-.modal-veil{
-  position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
-  padding:24px; background:rgba(11,11,14,.62); backdrop-filter:blur(3px);
-  animation:modalVeilIn .18s ease-out both;
-}
-.modal-card{
-  width:100%; max-width:400px; background:var(--bg-elev); color:var(--fg);
-  border:1px solid var(--border); border-radius:16px; padding:32px 28px 26px;
-  display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;
-  box-shadow:0 18px 48px rgba(0,0,0,.42);
-  animation:modalCardIn .26s cubic-bezier(0.22,1,0.36,1) both;
-}
-.modal-mark{ width:56px; height:56px; border-radius:13px; display:block; margin-bottom:6px; }
-.modal-title{ font-size:var(--fs-h3); font-weight:800; letter-spacing:-.02em; margin:0; color:var(--fg); }
-.modal-sub{ font-size:var(--fs-sm); color:var(--muted); line-height:1.7; margin:2px 0 0; }
-/* 가입한 주소를 보여 준다 — 오타로 «다른 주소»를 넣었을 때 여기서 알아챌 수 있다. */
-.modal-email{ font-family:var(--mono); font-size:var(--fs-xs); color:var(--subtle);
-              margin:8px 0 0; word-break:break-all; }
 /* ★모달 버튼은 «채움»이다. .signup-submit 기본형은 테두리형이고, 카드 안에서만
    .auth-card 규칙이 채움으로 덮는다 — 모달은 그 밖이라 테두리형이 그대로 나왔다.
    모달의 유일한 동작이므로 카드 안 「가입하기」와 «같은 모양»이어야 한다. */
-.modal-go{
-  margin-top:20px; width:100%; text-align:center; text-decoration:none; display:block;
-  background:var(--accent-fill); color:var(--accent-fg); border-color:var(--accent-fill);
-}
-.modal-go:hover{ background:var(--accent-fill-hover); border-color:var(--accent-fill-hover); color:var(--accent-fg); }
 @keyframes modalVeilIn{ from{opacity:0} to{opacity:1} }
 @keyframes modalCardIn{ from{opacity:0; transform:translateY(10px) scale(.98)} to{opacity:1; transform:none} }
-@media (prefers-reduced-motion: reduce){
-  .modal-veil, .modal-card{ animation:none; }
-}
-.field-note{ font-size:var(--fs-sm); color:var(--subtle); line-height:1.6; text-align:center; margin-top:-4px; }
-.field-note b{ color:var(--muted); }
 
 
-.agree-box{
-  width:100%; background:var(--bg-elev); border:1px solid var(--border);
-  border-radius:var(--radius); padding:12px 14px; display:flex; flex-direction:column; gap:9px; margin-top:6px;
-}
-.agree-item{ display:flex; align-items:flex-start; gap:9px; font-size:var(--fs-sm); color:var(--muted); cursor:pointer; text-align:left; line-height:1.6; }
 /* ★네이티브 체크박스는 13px 짜리 «시스템 색»이다. accent-color 는 «체크된 뒤»에만 듣기 때문에,
    해제 상태는 안쪽 rgb(59,59,59)·대비 1.62 로 --bg-elev 판에 묻혀 「체크박스가 안 들어갔다」로 읽힌다
    (2026-09-02 현빈 지적, 라이브 실측으로 확인 — 캐시 문제가 아니었다).
    ★appearance 를 벗기면 «반드시» 대체 UI 를 같이 그려야 한다 — 벗기기만 하면 진짜로 사라진다.
    ★테두리는 --border-strong 이 아니라 --subtle 이다. --border-strong 은 알파 .16 이라
      이 판 위에서 합성하면 rgb(58,58,62) = 대비 1.6 으로 지금과 똑같이 안 보인다. */
-.agree-item input[type="checkbox"]{
-  appearance:none; -webkit-appearance:none;
-  width:18px; height:18px; margin-top:1px; flex-shrink:0;
-  border:1.5px solid var(--subtle); border-radius:5px;
-  background:transparent; cursor:pointer;
-  display:grid; place-content:center;
-  transition:background .12s, border-color .12s;
-}
-.agree-item input[type="checkbox"]::before{
-  content:""; width:10px; height:10px; transform:scale(0);
-  background:var(--accent-fg);
-  clip-path:polygon(14% 44%, 0 60%, 39% 100%, 100% 18%, 84% 2%, 39% 68%);
-  transition:transform .12s ease-out;
-}
-.agree-item input[type="checkbox"]:checked{ background:var(--accent-fill); border-color:var(--accent-fill); }
-.agree-item input[type="checkbox"]:checked::before{ transform:scale(1); }
-.agree-item input[type="checkbox"]:hover{ border-color:var(--muted); }
 /* ★라이트 전용 보정 (2026-09-02 실측). 체크박스는 «채움 위 10px 글리프»가 유일한 상태신호다.
    라이트에서 --accent-fg 는 흰색이라 채움(#80C322) 위 대비가 2.15:1 — 사실상 안 보인다.
    ⇒ 글리프만 --fg(#0B0B0E)로 뒤집어 9.12:1 을 만든다. 채움색(#80C322·08-24 현빈 확정)은 안 건드린다.
@@ -1049,21 +979,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    ⇒ 보정을 지우면 기본 규칙이 그대로 맞다 — 먹 배경 + 흰 글리프(--accent-fg) = 19.65:1.
    ★교훈: «다른 값을 전제로 한 보정»은 그 값이 바뀌면 «반대로» 작동한다. 토큰을 바꿀 땐
      그 토큰을 전제로 깔린 예외 규칙부터 찾아야 한다. */
-.agree-item input[type="checkbox"]:focus-visible{ outline:none; box-shadow: var(--focus-ring); }
-.agree-item a{ color:var(--accent-fill); text-decoration:underline; text-underline-offset:2px; }
-.agree-all span b{ color:var(--fg); font-size:var(--fs-body); }
-/* 전체동의는 «묶음의 머리»다 — 나머지 두 줄과 크기가 같으면 위계가 안 선다 */
-.agree-all{ padding-bottom:2px; }
-.agree-all input[type="checkbox"]{ width:20px; height:20px; }
-.agree-all input[type="checkbox"]::before{ width:11px; height:11px; }
-.agree-divider{ border-top:1px solid var(--border); }
 
 /* ★2026-09-02 동의 구간 분리(개인정보 보호법 제22조① 구분동의)로 새로 생긴 3개 클래스.
    새 색·새 크기를 만들지 않고 기존 토큰만 쓴다 — 디자인 시스템을 늘리지 않기 위해서다. */
 .req-mark{ color:var(--subtle); font-size:var(--fs-xs); font-weight:500; margin-left:2px; }
 .signup-hint{ font-size:var(--fs-xs); color:var(--subtle); line-height:1.6; margin:6px 0 0; text-align:left; }
 .signup-hint b{ color:var(--muted); font-weight:600; }
-.agree-detail{ display:block; margin-top:4px; font-size:var(--fs-xs); color:var(--subtle); line-height:1.55; }
 
 /* ── 약관·개인정보 문서 ── */
 .legal{ max-width:var(--width); margin:0 auto; padding:56px 24px 72px; text-align:left; }
@@ -1198,9 +1119,6 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 @media (max-width: 560px) { .auth { padding: 48px 20px 56px; } }
 .auth-inner { display: flex; flex-direction: column; align-items: center; }
 .auth .auth-card { width: 100%; }
-.auth-card .agree-box { margin-top: 18px; }
-.auth-card .field-row { margin-top: 2px; }
-.auth-card .field-btn { border-radius: 0; border: 0; border-bottom: 1px solid var(--border-strong); padding: 0 10px; }
 .find-result { display: flex; flex-direction: column; align-items: stretch; text-align: center; }
 .find-result[hidden] { display: none; }
 /* ★한글에 mono·uppercase·자간확장을 쓰지 않는다 — 낱자가 벌어져 「접 수  완 료」처럼 읽힌다.
