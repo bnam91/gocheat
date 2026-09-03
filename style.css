@@ -239,7 +239,14 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 .hero { max-width: var(--width); margin: 0 auto; padding: 126px 24px 100px; text-align: center; }
 .hero-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px; }
 .hero-title {
-  font-size: var(--fs-hero);
+  /* ★★히어로만 «따로» 키운다(현빈 2026-09-03).
+     ⛔--fs-hero 를 올리면 안 된다 — 그 토큰은 .detail-title(마이페이지·앱 상세)도 쓴다.
+       올리는 순간 「마이페이지」 제목이 76px 이 된다. 여기서만 덮는다.
+     실측 비교(1440px): 애플 Books 72 · 팟캐스트 72 · One 96 · 우리 64 ← 우리가 가장 작았다.
+     ★72px 로 맞춘다 — 애플 Books·팟캐스트와 같은 급이다. One(96) 은 브랜드 허브라 예외로 본다.
+     ★우리는 w800 + 자간 -0.04em 이라 «같은 px 에서도 더 크게» 보인다. 그래서 더 올리지 않았다.
+     ★모바일 하한 40px 은 «그대로» 둔다 — 거기선 이미 애플과 같다(Books·팟캐스트 40). */
+  font-size: clamp(40px, 6.2vw, 72px);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.06;
