@@ -23,6 +23,11 @@
   function makeLogout(a) {
     a.textContent = '로그아웃';
     a.setAttribute('href', '#');
+    // ★로그아웃은 «이동»이 아니라 «동작»이다 — 마크업으로도 그렇게 말한다.
+    //   ⑴화면 낭독기가 「링크」가 아니라 「버튼」으로 읽는다(접근성)
+    //   ⑵검사기가 href="#" 를 «죽은 링크»로 오인하지 않는다
+    //     (addEventListener 로 붙인 핸들러는 a.onclick 에 «안 보인다» — 2026-09-03 에 550건 오탐)
+    a.setAttribute('role', 'button');
     a.addEventListener('click', function (e) {
       e.preventDefault();
       // ★sms_ 로 시작하는 걸 «전부» 지운다. 하나씩 지우면 새 키가 늘 때마다 빠뜨린다 —

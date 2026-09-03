@@ -14,7 +14,7 @@
  * ⛔쓰고 나면 «반드시» 죽인다: pkill -f 'remote-debugging-port=9407' && rm -rf /tmp/qa-profile
  */
 import { readFileSync } from 'node:fs';
-import { WAIT, PROBE, MIN_SETTLE } from './probe.mjs';
+import { WAIT, PROBE, MIN_SETTLE, RECHECK_MS } from './probe.mjs';
 
 const PORT = process.env.QA_PORT || 9407;
 const BASE = process.env.QA_BASE || 'https://blacksheepwall.kr';
@@ -137,7 +137,17 @@ for (const lens of lenses) {
         s.evs.length = 0;
         await go(BASE + p);
         process.stdout.write('.');
-        const r = await ev(PROBE);
+        let r = await ev(PROBE);
+        // ★«안 보인다/넘친다»가 잡히면 «한 번 더» 본다 — 지연 렌더를 오탐하지 않으려고.
+        //   둘 다에서 걸린 것만 진짜로 본다(교집합). 걸린 게 없으면 두 번 안 잰다(속도).
+        if (r.invisible.length || r.offscreen.length || r.hScroll) {
+          await sleep(RECHECK_MS);
+          const r2 = await ev(PROBE);
+          r = { ...r2,
+            invisible: r2.invisible.filter((x) => r.invisible.includes(x)),
+            offscreen: r2.offscreen.filter((x) => r.offscreen.includes(x)),
+            hScroll: r.hScroll && r2.hScroll };
+        }
         const errs = s.evs.filter((d) => d.method === 'Log.entryAdded' && d.params.entry.level === 'error')
           .map((d) => d.params.entry.text.slice(0, 70));
         const exc = s.evs.filter((d) => d.method === 'Runtime.exceptionThrown')

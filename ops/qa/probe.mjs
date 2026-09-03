@@ -21,6 +21,15 @@ export const WAIT = `(() => {
 //   ⇒ 700ms 로 시작을 잡고, 끝나는 것은 WAIT(getAnimations) 가 기다린다.
 export const MIN_SETTLE = 700;
 
+/** ★«안 보인다/넘친다»는 «두 번» 재라.
+ *   한 번만 재면 지연 렌더(플랫폼 감지 후 표시 등)를 「안 보임」으로 잡는다.
+ *   2026-09-03 실측: .detail-alt 가 29건 잡혔는데 조금 뒤 재니 203x24 로 «정상»이었다.
+ *   pricing 의 「가로스크롤」도 다시 재니 넘침 0px 이었다.
+ *   ⇒ 호출부가 PROBE 를 두 번 돌려 «둘 다에서 걸린 것»만 진짜로 본다(RECHECK_MS 뒤).
+ *   ⛔MIN_SETTLE 을 늘려 해결하려 하지 마라 — 전 페이지가 느려져 러너를 «안 쓰게» 된다.
+ *     느린 것 하나 때문에 모두를 기다리게 하는 대신, «의심될 때만» 한 번 더 본다. */
+export const RECHECK_MS = 1200;
+
 /** ② 한 페이지에서 «사람이 겪는 문제»만 뽑는다. */
 export const PROBE = `(() => {
   const vis = (e) => {
@@ -74,20 +83,41 @@ export const PROBE = `(() => {
   }).map(nm);
 
   // ⛔«눌러도 아무 데도 안 가는 링크»
+  // ⛔★addEventListener 로 붙인 핸들러는 «a.onclick 에 안 보인다».
+  //   그래서 href="#" + addEventListener 인 «동작 버튼»(로그아웃 등)이 전부 죽은 링크로 잡혔다
+  //   (2026-09-03 실측: 550건 «전부» 오탐. 전 로그인 렌즈가 이것 하나 때문에 72건씩 나왔다).
+  //   ⇒ role="button" 이나 data-action 이 있으면 «동작»으로 보고 뺀다.
+  //     그리고 그런 요소에는 마크업 쪽에서도 role="button" 을 붙여 두는 게 옳다 —
+  //     로그아웃은 «이동»이 아니라 «동작»이라 접근성상으로도 그게 맞다.
   const deadLinks = [...document.querySelectorAll('a[href]')]
-    .filter((a) => vis(a) && /^\\s*(#|javascript:)?\\s*$/.test(a.getAttribute('href')) && !a.onclick)
+    .filter((a) => vis(a)
+      && /^\\s*(#|javascript:)?\\s*$/.test(a.getAttribute('href'))
+      && !a.onclick
+      && a.getAttribute('role') !== 'button'
+      && !a.hasAttribute('data-action'))
     .map((a) => a.textContent.trim().slice(0, 16) || '(빈 링크)');
 
   // ⛔«대비가 낮아 못 읽는 글» — 배경을 거슬러 올라가 실제 뒷색을 찾는다
   const lum = (c) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
     return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
   const rgb = (s) => (s.match(/[\\d.]+/g) || [0,0,0]).slice(0, 3).map(Number);
-  const bgOf = (e) => { let n = e;
+  // ★rgba 의 alpha 까지 읽는다. 없으면 1.
+  const rgba = (s) => { const v = (s || '').match(/[\\d.]+/g) || [0,0,0,0];
+    return [Number(v[0]) || 0, Number(v[1]) || 0, Number(v[2]) || 0, v[3] === undefined ? 1 : Number(v[3])]; };
+  // ★★배경의 «alpha 를 무시하면 대비가 거짓말한다».
+  //   .od-note 는 background: rgba(255,122,138,.07) 이다 — 거의 투명한데 이걸 «분홍 배경»으로
+  //   계산해 1.23:1 이 나왔다(2026-09-03 실측 오탐 37건). 실제로는 뒤의 어두운 판이 비친다.
+  //   ⇒ 위에서부터 만나는 배경들을 «알파 합성»해 실제로 보이는 색을 만든다.
+  const over = (t, b) => { const a = t[3] + b[3] * (1 - t[3]);
+    if (a <= 0) return [0, 0, 0, 0];
+    return [0, 1, 2].map((i) => (t[i] * t[3] + b[i] * b[3] * (1 - t[3])) / a).concat(a); };
+  const bgOf = (e) => { let n = e, acc = null;
     while (n && n !== document.documentElement) {
-      const c = getComputedStyle(n).backgroundColor;
-      if (c && !/rgba\\(0, 0, 0, 0\\)|transparent/.test(c)) return rgb(c);
+      const c = rgba(getComputedStyle(n).backgroundColor);
+      if (c[3] > 0) { acc = acc ? over(acc, c) : c; if (acc[3] >= 0.99) return acc.slice(0, 3); }
       n = n.parentElement; }
-    return rgb(getComputedStyle(document.body).backgroundColor || 'rgb(255,255,255)'); };
+    const root = rgba(getComputedStyle(document.body).backgroundColor || 'rgb(255,255,255)');
+    return (acc ? over(acc, root[3] > 0 ? root : [255, 255, 255, 1]) : root).slice(0, 3); };
   const lowContrast = [...document.querySelectorAll('h1,h2,h3,p,a,button,span,li,label')].filter((e) => {
     if (!vis(e)) return false;
     const own = [...e.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent.trim()).join('');
