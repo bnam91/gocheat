@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { getDb } = require('../_lib/mongo');
 const {
   json, handlePreflight, readJsonBody, isStrongEnough,
+  normalizeEmail,
 } = require('../_lib/util');
 const { sha256hex } = require('../_lib/crypto');
 
@@ -54,8 +55,21 @@ module.exports = async (req, res) => {
     //   ⛔findOne → updateOne 2단계로 짜면 동시 요청 2건이 «둘 다» 통과한다
     //     (둘 다 findOne 에서 유효한 토큰을 보고, 둘 다 쓴다). 1회용이 1회용이 아니게 된다.
     //   조건에 만료시각을 넣었으므로, 매치되는 순간 그 토큰은 «유효했고 이제 사라졌다»가 동시에 참이다.
+    // ★2026-09-04: email 을 «같이 보냈으면» 대조한다(session.js 와 같은 규약).
+    //   예전엔 토큰만 봤다. 그래서 «다른 계정 이메일 + 이 토큰» 요청이 ok:true 로 돌아오면서
+    //   실제로는 «토큰 주인의» 비밀번호가 바뀌었다(2026-09-04 실측). 권한 상승은 아니다 —
+    //   토큰이 비밀이라 그 토큰을 쥔 사람은 어차피 주인의 비번을 바꿀 수 있다.
+    //   ⛔문제는 «응답이 거짓말을 한다»는 것이다: 바뀌지 않은 계정을 바꿨다고 답한다.
+    //   ⓘ우리 reset-password.html 은 { token, password } 만 보내므로 화면으로는 닿지 않는 길이다.
+    //     그래도 막는다 — 앱·구버전 폼이 email 을 얹기 시작하면 «조용히» 어긋나기 때문이다.
+    const claimedEmail = body.email === undefined ? null : normalizeEmail(body.email);
+
     const r = await users.findOneAndUpdate(
-      { resetTokenHash: hash, resetTokenExpiresAt: { $gt: now } },
+      {
+        resetTokenHash: hash,
+        resetTokenExpiresAt: { $gt: now },
+        ...(claimedEmail ? { email: claimedEmail } : {}),
+      },
       {
         $set: {
           passwordHash,
@@ -80,7 +94,12 @@ module.exports = async (req, res) => {
       //   여기엔 열거 위험이 없다 — 토큰은 32바이트 난수라 «존재 자체»가 비밀이 아니고,
       //   추측으로 여기까지 올 수 없다. 반대로 구분해 주면 「다시 요청하세요」라는
       //   정확한 안내가 가능해진다(만료인데 「링크가 틀렸다」고 하면 사용자가 헤맨다).
-      const stale = await users.findOne({ resetTokenHash: hash }, { projection: { _id: 1 } });
+      // ★email 대조로 떨어진 건 «만료»가 아니다 — 여기에도 같은 조건을 걸어야
+      //   「만료됐다」는 «틀린» 안내가 나가지 않는다(2026-09-04 실측: 안 걸면 410 만료로 답한다).
+      const stale = await users.findOne(
+        { resetTokenHash: hash, ...(claimedEmail ? { email: claimedEmail } : {}) },
+        { projection: { _id: 1 } },
+      );
       if (stale) return json(res, 410, { ok: false, reason: 'expired_token' });
       return json(res, 400, { ok: false, reason: 'invalid_token' });
     }
