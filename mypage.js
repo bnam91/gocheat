@@ -18,7 +18,7 @@ document.getElementById('mp-body').style.display = 'block';
 // ★주문 표의 «상품명·금액»은 data/apps.json 이 단일 출처다 — 여기 값을 박아 두면
 //   요금이 바뀔 때 마이페이지만 옛 금액을 보여준다(실제로 겪은 병이다).
 var PLAN_NAME = {}, PRICE_TXT = {};
-fetch('data/apps.json?v=20260904g').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/apps.json?v=20260904h').then(function (r) { return r.ok ? r.json() : null; })
   .then(function (j) {
     // apps.json 은 «앱 배열»이고 각 앱이 plans 를 가진다. 앱을 돌며 요금제를 모은다.
     (Array.isArray(j) ? j : []).forEach(function (app) {
@@ -184,15 +184,23 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904g').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904h').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
 function renderOrders() {
   if (!document.getElementById('mp-ord-body')) return;   // 화면이 아직 없으면 아무것도 안 한다
+// ★★두 갈래가 «서로의 상태를 되돌려야» 한다.
+//   renderOrders 는 여러 번 불린다(세션 값 → 서버 응답 → 요금표 도착). 한쪽만 켜고 끄지 않으면
+//   먼저 그린 빈 카드가 표와 «같이» 남는다(2026-09-03 실제로 그랬다).
+//   ⇒ 각 갈래가 «자기 것을 켜고 남의 것을 끈다». 한 줄이라도 빠지면 잔상이 생긴다.
 if (!orders.length) {
   document.getElementById('mp-ord-empty').style.display = 'block';
+  document.getElementById('mp-ord-table').style.display = 'none';
+  document.getElementById('mp-dummy').style.display    = 'none';
+  document.getElementById('mp-ord-note').style.display = 'none';
 } else {
+  document.getElementById('mp-ord-empty').style.display = 'none';
   document.getElementById('mp-ord-table').style.display = 'table';
   var keep = document.getElementById('mp-ord-keep');
   if (keep) keep.style.display = 'block';       // ★주문이 있을 때만 「탭 닫으면 사라진다」를 띄운다
