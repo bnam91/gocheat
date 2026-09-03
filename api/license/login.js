@@ -25,6 +25,30 @@ const { getDb } = require('../_lib/mongo');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 const { roleForResponse } = require('../_lib/roles');
 
+/* ★★로그인 시도 제한 (2026-09-03 신설)
+ *   그동안 로그인은 «무제한»이었다. 비밀번호 찾기엔 시간당 3회 제한이 있는데
+ *   정작 로그인이 열려 있어 대입 공격에 무방비였다.
+ *   ⚠️Cloudflare 가 앞단에서 1015 로 막고는 있다(실측). 하지만 그건 «빌려 쓰는 보호»다 —
+ *     우리 정책이 아니고 CF 설정이 바뀌면 조용히 사라진다. 앱에도 둔다(이중).
+ *   ★reset-request.js 와 «같은 컬렉션·같은 방식»을 쓴다. 방식이 갈리면 한쪽만 고쳐진다.
+ *     reset_attempts 에는 이미 TTL 2시간이 걸려 있어 기록이 무한히 쌓이지 않는다.
+ *   ★한도를 찾기(3회)보다 «넉넉히» 잡는다 — 로그인은 오타로도 자주 틀린다.
+ *     사람이 막히면 안 되고 기계는 막혀야 한다. */
+const LOGIN_WINDOW_MS = 60 * 60 * 1000;
+const LOGIN_MAX_PER_EMAIL = 10;
+const LOGIN_MAX_PER_IP = 30;
+
+/* ★XFF 는 위조 가능하다 — ip 축은 «보조»고 주 방어는 email 축이다.
+ *   cf-connecting-ip 를 먼저 보는 이유: TLS 종단이 Cloudflare 라 CF 가 «자기가 본» 접속 IP 를
+ *   그 헤더에 덮어쓴다(사용자가 못 지어낸다). reset-request.js 의 clientIp 와 같은 규칙. */
+function loginClientIp(req) {
+  const cf = req.headers['cf-connecting-ip'];
+  if (typeof cf === 'string' && cf.trim()) return cf.trim().slice(0, 64);
+  const xff = req.headers['x-forwarded-for'];
+  if (typeof xff === 'string' && xff.trim()) return xff.split(',')[0].trim().slice(0, 64);
+  return (req.socket && req.socket.remoteAddress) || 'unknown';
+}
+
 // ★2026-08-18 도메인 통일(현빈 승인): 라이브 = blacksheepwall.kr(EC2). 옛 vercel.app 은 개발용으로 내려간다.
 //   ⇒ env PURCHASE_URL 이 없을 때 사용자를 «개발용 사이트»로 보내지 않도록 기본값을 옮긴다.
 const PURCHASE_URL = process.env.PURCHASE_URL || 'https://blacksheepwall.kr/pricing.html';
@@ -50,11 +74,39 @@ module.exports = async (req, res) => {
 
   try {
     const db = await getDb();
+
+    // ★★시도 제한은 «계정을 찾기 전»에 센다.
+    //   찾은 뒤에 세면 「없는 계정은 제한에 안 걸린다」가 되어 그 차이가 곧 열거 도구다.
+    //   (reset-request.js 와 같은 이유·같은 순서)
+    const attempts = db.collection('reset_attempts');
+    const ip = loginClientIp(req);
+    const attemptAt = new Date();
+    const since = new Date(attemptAt.getTime() - LOGIN_WINDOW_MS);
+    const [byEmail, byIp] = await Promise.all([
+      attempts.countDocuments({ key: `login:email:${email}`, at: { $gte: since } }),
+      attempts.countDocuments({ key: `login:ip:${ip}`, at: { $gte: since } }),
+    ]);
+    if (byEmail >= LOGIN_MAX_PER_EMAIL || byIp >= LOGIN_MAX_PER_IP) {
+      // ★이 응답도 «가입 여부를 흘리지 않는다» — 있는 계정도 없는 계정도 똑같이 받는다.
+      return json(res, 429, { ok: false, reason: 'too_many_attempts' });
+    }
+    // ★실패를 «기록»한다. 성공하면 아래에서 지운다.
+    //   ⛔기록이 실패해도 로그인을 막지 않는다 — 보안 장치가 서비스를 죽이면 안 된다.
+    const noteFail = () => attempts.insertMany([
+      { key: `login:email:${email}`, at: attemptAt },
+      { key: `login:ip:${ip}`, at: attemptAt },
+    ]).catch(() => {});
+
     const user = await db.collection('users').findOne({ email });
-    if (!user) return json(res, 401, { ok: false, reason: 'invalid_credentials' });
+    if (!user) { await noteFail(); return json(res, 401, { ok: false, reason: 'invalid_credentials' }); }
     if (!(await bcrypt.compare(password, user.passwordHash || ''))) {
+      await noteFail();
       return json(res, 401, { ok: false, reason: 'invalid_credentials' });
     }
+    // ★★성공하면 그 이메일의 실패 기록을 «지운다».
+    //   안 지우면 「9번 틀리고 10번째에 맞힌 사람」이 그 뒤 한 시간 동안 못 들어온다.
+    //   ⛔ip 축은 «남긴다» — 여러 계정을 훑는 공격이 성공 한 번으로 초기화되면 안 된다.
+    await attempts.deleteMany({ key: `login:email:${email}` }).catch(() => {});
     if (!user.verified) return json(res, 403, { ok: false, reason: 'email_not_verified' });
 
     const until = user.accessUntil ? new Date(user.accessUntil) : null;
