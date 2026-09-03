@@ -264,7 +264,11 @@
           not_verified:        '이메일 인증이 완료되지 않은 계정이에요.',
           invalid_email:       '이메일 형식이 올바르지 않아요.',
           invalid_body:        '요청을 읽지 못했어요. 새로고침한 뒤 다시 시도해 주세요.',
-          too_many_attempts:   '시도가 너무 많아요. 잠시 후 다시 시도해 주세요.',
+          // ★★잠긴 사람에게 «갈 곳»을 준다(2026-09-03 시도 제한 신설과 함께).
+          //   10번을 틀렸다면 그 사람은 실제로 비밀번호를 «모른다». 「잠시 후 다시」만 말하면
+          //   한 시간 뒤에 또 틀리고 또 기다린다 — 막기만 하고 길을 안 알려주면 사람은 헤맨다.
+          //   ⛔한도를 풀어 주는 건 답이 아니다(대입 공격은 「맞을 때까지」 던진다). 막되 «찾기»로 보낸다.
+          too_many_attempts:   '로그인 시도가 너무 많아요. 1시간 뒤에 다시 되거나, 지금 바로 아래 「비밀번호 찾기」를 이용해 주세요.',
           internal_error:      '서버 오류예요. 잠시 후 다시 시도해 주세요.',
         };
         return fail(REASON[data.reason] || '로그인에 실패했어요. 잠시 후 다시 시도해 주세요.');
@@ -289,7 +293,7 @@
   var app;
   try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
   if (!app) return;
-  fetch('data/apps.json?v=20260904u').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260904v').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) return;
       var a = apps.filter(function (x) { return x.id === app; })[0];
