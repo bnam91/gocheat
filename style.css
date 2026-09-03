@@ -233,30 +233,22 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 :root[data-theme="light"] .theme-icon-moon { display: none; }
 
 /* ===== HERO ===== */
+/* ★히어로(.hero-* · .title-line-*)와 오픈카톡 플로팅(.kko-float)은 home.css 로 옮겼다(2026-09-03).
+   index.html 한 장만 쓰는데 17장이 같이 받고 있었다.
+   ⛔.app-* 는 «여기 남는다» — 여섯 장이 쓴다(app.js 가 #app-grid 에 동적으로 그린다).
+   ⛔.hero 를 main·footer 와 묶은 규칙, .app-icon 과 .hero-app-pill-icon 을 함께 쓴 규칙도 남겼다. */
 /* padding-top 126px = 원래 80px + 아이브로(.hero-badge)가 차지하던 46px.
    라벨을 걷어내니(2026-09-01 미사여구 정리) 카피가 위로 붙어 보였다 — 실측해서 그만큼 되돌린다.
    ★라벨을 다시 넣으면 이 값을 80px 로 되돌릴 것. */
-.hero { max-width: var(--width); margin: 0 auto; padding: 126px 24px 100px; text-align: center; }
-.hero-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px; }
-.hero-title {
-  font-size: var(--fs-hero);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.06;
-  margin-bottom: 24px;
-  color: var(--fg);
-}
 .gradient-text {
   background: linear-gradient(135deg, var(--fg) 0%, var(--fg) 30%, var(--subtle) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-.hero-sub { font-size: var(--fs-lead); color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
 /* ★히어로 제목 ↔ 버튼 간격(현빈 2026-09-01).
    원래는 .hero-sub 의 margin-bottom:40px 이 이 간격을 만들고 있었는데,
    부제를 걷어내면서 «그 여백까지» 같이 사라졌다. ⇒ 버튼이 스스로 갖게 한다. */
-.hero-cta { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 72px; }
 /* ★테두리 버튼의 선·글자는 --accent 가 아니라 --accent-fill 을 쓴다(현빈 2026-09-02).
    (당시) --accent 가 라이트에서 올리브 초록(#537E16)이라 「라이트는 검정 버튼」 지시와 어긋났다.
    ★2026-09-02 이후 --accent 도 먹색이라 두 토큰이 라이트에서 같은 값이다 — 이 규칙은 그대로 유효하다
@@ -412,88 +404,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   50%       { transform: translateY(-6px); }
 }
 
-/* Hero stagger */
-.hero-badge    { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
-.hero-title    { opacity: 1; } /* 줄별로 처리 */
 /* ★2026-09-02: 그라디언트가 «첫 줄»로 옮겨갔다(카피 교체). 애니메이션도 같이 옮긴다 —
    revealCopyGradient 는 Safari 의 -webkit-text-fill 충돌을 피하려고 «그라디언트 전용»으로
    만든 것이라, 그라디언트가 걸린 줄이 반드시 이걸 써야 한다. 한쪽만 바꾸면 사파리에서 글자가 사라진다. */
-.title-line-1  { display: block; animation: revealCopyGradient 1.0s cubic-bezier(0.16,1,0.3,1) 0.10s both; }
-.title-line-2  { display: block; animation: revealCopy 1.0s cubic-bezier(0.16,1,0.3,1) 0.28s both; }
-.hero-sub      { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.62s both; }
-.hero-cta      { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.72s both; }
 
-/* Hero app icons */
-.hero-apps {
-  display: flex;
-  gap: 12px;
-  margin-top: 48px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.hero-app-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg-elev);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 8px 12px 8px 8px;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  /* entrance: delay는 JS에서 inline으로 주입, backwards fill이 delay 중 투명 처리 */
-  animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both;
-  transition: background 0.22s, border-color 0.22s,
-              transform 0.4s cubic-bezier(0.22,1,0.36,1),
-              box-shadow 0.4s cubic-bezier(0.22,1,0.36,1);
-}
-
-.hero-app-pill.bob-ready {
-  animation: floatBob ease-in-out infinite;
-  animation-fill-mode: none;
-}
-
-.hero-app-pill:hover {
-  background: var(--bg-elev-hi);
-  border-color: var(--border-strong);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.40);
-}
-.hero-app-pill:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: var(--focus-ring);
-}
-
-.hero-app-pill-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--surface-veil);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.hero-app-pill-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.hero-app-pill-name {
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  color: var(--fg);
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
 
 /* Card hover lift */
 .app-card {
@@ -635,18 +549,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      링크 사이 간격만 좁혀 흡수한다. 항목을 숨기지 않는다(전부 보여야 하는 링크들). */
   .nav-links { gap: 12px; }
   .theme-toggle { width: 28px; height: 28px; }
-  .hero-apps { gap: 8px; margin-top: 40px; }
-  .hero-app-pill { padding: 6px 10px 6px 6px; }
-  .hero-app-pill-icon { width: 28px; height: 28px; font-size: 12px; }
-  .hero-app-pill-name { font-size: var(--fs-xs); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-badge, .hero-title, .title-line-1, .title-line-2,
-  .hero-sub, .hero-cta, .hero-apps {
-    animation: none; opacity: 1; transform: none; filter: none;
-  }
-  .hero-app-pill, .hero-app-pill.bob-ready { animation: none; opacity: 1; }
   .title-waving { animation: none; }
   .card-hidden { opacity: 1; transform: none; }
   .yt-hidden { opacity: 1; transform: none; }
@@ -1224,9 +1130,6 @@ html.js .detail-icon,
 html.js .detail-title,
 html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 
-.hero-in .detail-icon  { animation: heroRise .62s cubic-bezier(.2,.7,.2,1) 0s   forwards; }
-.hero-in .detail-title { animation: heroRise .62s cubic-bezier(.2,.7,.2,1) .09s forwards; }
-.hero-in .detail-lead  { animation: heroRise .62s cubic-bezier(.2,.7,.2,1) .18s forwards; }
 @keyframes heroRise { to { opacity: 1; transform: none; } }
 
 .detail-icon { position: relative; transition: box-shadow .18s ease-out; will-change: transform; }
@@ -1237,7 +1140,6 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
   -webkit-mask-image: url(/assets/icons/goditor.png); mask-image: url(/assets/icons/goditor.png);
   -webkit-mask-size: 100% 100%;                       mask-size: 100% 100%;
 }
-.hero-in .detail-icon::after { animation: heroSheen 1.15s cubic-bezier(.4,0,.2,1) .62s; }
 .detail-icon:hover::after    { animation: heroSheen 1.15s cubic-bezier(.4,0,.2,1); }
 @keyframes heroSheen { from { background-position: 150% 0; } to { background-position: -50% 0; } }
 
@@ -1379,37 +1281,6 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
    히어로 CTA 를 걷어내면서 «사이트 통틀어 하나뿐인» 오픈카톡 링크를 여기로 옮겼다.
    첫 화면에만 있던 것이 어느 위치에서도 닿게 되어 오히려 나아진다.
    ══════════════════════════════════════════════════════════════════ */
-.kko-float{
-  /* ★★width:auto 를 «명시»한다. body > *:not(script):not(template){width:100%} (348행) 이
-     이 버튼까지 잡아 화면 폭(1280px)으로 늘려 놨다 — 그래서 left 가 -20px 로 밀렸다.
-     그 규칙은 «흐름 안의 블록»을 위한 것인데 position:fixed 자식까지 걸린다. 여기서 끊는다. */
-  width: auto; max-width: calc(100vw - 40px);
-  position: fixed; z-index: 60;
-  right: 20px; left: auto;
-  /* ★iOS 사파리는 «하단 주소창»이 이 자리를 먹는다. safe-area 를 더해 그 위로 띄운다 —
-     안 그러면 폰에서 버튼이 반쯤 가리거나 아예 안 눌린다. */
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 12px 18px; border-radius: 999px;
-  /* ★★두 테마 «모두» 카카오 노랑 바탕 + 검정 글자다(현빈 2026-09-03).
-     브랜드 색이라 테마에 따라 뒤집지 않는다. 실측: 검정 글자 대비 15.37:1(AAA 통과).
-     ⛔--accent-fill 을 쓰면 다크에서 바탕이 라임(#C9F23A)이 된다. 이 버튼만 토큰이 아니라
-       «고정 색»을 쓰는 이유다 — 카카오 노랑은 우리 팔레트가 아니라 «남의 브랜드 색»이다.
-     ★★테두리를 뺐다(현빈 2026-09-03). 다만 «경계 자체»를 버린 건 아니다 —
-       흰 판 위 노랑은 1.28:1 이라 아무 처리도 안 하면 버튼 모서리가 배경에 녹는다.
-       ⇒ 선(테두리) 대신 «그림자»로 경계를 준다. 눈에는 테두리가 안 보이고, 버튼은 떠 보인다.
-       라이트에서 그림자가 더 진해야 한다 — 흰 바탕은 어두운 번짐을 잘 삼킨다. */
-  background: #FEE500; color: #0B0B0E;
-  border: none;
-  font-size: var(--fs-sm); font-weight: 700; letter-spacing: -0.01em;
-  text-decoration: none; white-space: nowrap;
-  /* 라이트 기본 — 두 겹이다. 촘촘한 것이 «모서리»를 긋고, 넓은 것이 «떠 있음»을 만든다.
-     한 겹만 쓰면 흰 배경에서 경계가 흐려진다. */
-  box-shadow: 0 1px 2px rgba(0,0,0,.24), 0 4px 10px rgba(0,0,0,.18), 0 12px 28px rgba(0,0,0,.16);
-  transition: transform .18s cubic-bezier(0.22,1,0.36,1), opacity .18s, background .18s, box-shadow .18s;
-}
-.kko-float:hover{ background: #F2DA00; color: #0B0B0E; transform: translateY(-2px);
-  box-shadow: 0 1px 2px rgba(0,0,0,.26), 0 6px 14px rgba(0,0,0,.22), 0 16px 34px rgba(0,0,0,.18); }
 
 /* ★다크 — 바탕·글자는 위 그대로. «그림자만» 줄인다.
    먹색 판 위에서는 검은 그림자가 아예 안 보이고(배경과 같은 색이다), 노랑 바탕 자체가
@@ -1418,29 +1289,18 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
    ⚠️«둘 다» 써야 한다 — :not([data-theme="light"]) 는 «OS 가 다크인데 아무 선택도 안 한» 사람용이고,
      [data-theme="dark"] 는 «직접 다크를 고른» 사람용이다. 하나만 쓰면 한쪽이 라이트 그림자를 쓴다. */
 :root:not([data-theme="light"]) .kko-float,
-:root[data-theme="dark"] .kko-float{ box-shadow: 0 6px 20px rgba(0,0,0,.45); }
 :root:not([data-theme="light"]) .kko-float:hover,
-:root[data-theme="dark"] .kko-float:hover{ box-shadow: 0 10px 26px rgba(0,0,0,.5); }
-.kko-float:focus-visible{ outline: none; box-shadow: var(--focus-ring), 0 6px 20px rgba(0,0,0,.28); }
 
 /* ★★푸터에 닿으면 «비켜준다». 고정 요소는 가만두면 저작권·약관 링크를 덮는다 —
    페이지 끝까지 내린 사람에게 마지막으로 보이는 것이 가려진 글자면 안 된다.
    (JS 가 IntersectionObserver 로 이 클래스를 붙인다. JS 가 죽으면 «그냥 계속 보인다» — 안전한 쪽) */
-.kko-float.is-away{ opacity: 0; transform: translateY(12px); pointer-events: none; }
 
 /* 좁은 화면에서는 글자를 빼고 아이콘만 — 폰에서 본문을 덜 가린다 */
 @media (max-width: 560px){
-  .kko-float{ right: 14px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); padding: 12px; gap: 0; }
-  .kko-float span{ display: none; }
   /* ★★폰에서는 푸터 글자가 «화면 폭을 다 써서» 우측 하단 버튼과 진짜로 겹친다.
      그러면 회피 규칙이 늘 걸려 버튼이 «영영 안 뜬다».
      ⇒ 푸터 아래에 «버튼 자리»를 만들어 준다(아이콘 43px + 여백). 겹칠 일이 없어지고
        버튼도 정상적으로 뜬다. ⛔데스크톱에는 넣지 않는다 — 거기선 좌우가 비어 안 겹친다. */
-  body:has(.kko-float) > footer{ padding-bottom: calc(56px + 62px + env(safe-area-inset-bottom, 0px)); }
-}
-@media (prefers-reduced-motion: reduce){
-  .kko-float{ transition: none; }
-  .kko-float.is-away{ transform: none; }
 }
 
 /* ★GODITOR 「왜 피그마가 아닌가」 — 영상 바로 아래(현빈 2026-09-03).

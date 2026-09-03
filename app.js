@@ -8,7 +8,7 @@ const RECENT_VIDEOS = [
 
 async function loadApps() {
   // hidden:true 앱은 메인페이지에서 숨긴다(지우지 않음 — apps.json에서 hidden 제거하면 되살아난다).
-  const apps = (await fetch('data/apps.json?v=20260904k').then(r=>r.json())).filter(a => !a.hidden);
+  const apps = (await fetch('data/apps.json?v=20260904m').then(r=>r.json())).filter(a => !a.hidden);
 
   // Hero pills — 개별 stagger: 0.78s 기준, 0.08s 간격
   const bobDurations = [3.5, 4.0, 3.7, 4.1, 3.6, 3.9];
