@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <title>마이페이지 · 소문의섬</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260904f" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260904f" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260904g" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260904g" />
   <!--
     ★로그인한 사람이 «갈 곳». 지금까지 홈페이지엔 이 페이지가 없어서
       로그인해도 갈 데가 없었다(login.html 안에서만 계정을 보여줬다).
@@ -17,13 +17,13 @@
       주문 내역은 order.html 이 남긴 «화면 확인용» 기록이다. 서버 연동 아님.
   -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260904f" />
-  <link rel="stylesheet" href="mypage.css?v=20260904f" />
+  <link rel="stylesheet" href="style.css?v=20260904g" />
+  <link rel="stylesheet" href="mypage.css?v=20260904g" />
 </head>
 <body>
   <header>
     <nav>
-      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260904f" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260904g" alt="" width="22" height="22" /><span>소문의섬</span></a>
       <div class="nav-links">
         <!-- ★「요금제」를 뺐다(현빈 2026-09-03: 「왜 요금제 버튼이 탑바에 있는지? 게다가 그건
              고디터 한정 아닌지?」). 맞다 — pricing.html 은 «GODITOR 요금제»다. 앱이 넷인데
@@ -142,15 +142,10 @@
           <p class="order-warn" id="mp-ord-note" style="margin-top:18px;display:none">
             입금 확인은 영업일 기준 하루 안에 처리됩니다. 입금자명이 다르면 확인이 늦어질 수 있어요.
           </p>
-          <!-- ★UL-009: 세션 저장이라 탭을 닫으면 사라진다. 「처음부터 없었다」고 읽히면 안 된다.
-               ★문장을 «주문 내역»으로 좁혔다 — 이 탭엔 이제 앱 목록도 함께 있는데 그건 서버에서
-                 오므로 탭을 닫아도 그대로다. 옛 문장은 탭 «전체»를 가리키는 것처럼 읽혔다. -->
-          <!-- ★주문이 «있을 때만» 띄운다 — 주문이 0건인 사람에게 「탭을 닫으면 사라진다」는
-               경고할 것이 없는 경고다. 빈 화면에 경고문만 남으면 그게 소음이다. -->
-          <p class="order-warn" id="mp-ord-keep" style="margin-top:10px;display:none">
-            <b>주문 내역</b>은 이 탭에서만 유지됩니다. 탭을 닫으면 비어 보일 수 있어요 —
-            주문번호는 따로 적어 두세요.
-          </p>
+          <!-- ★「주문 내역은 이 탭에서만 유지됩니다」를 «없앴다»(현빈 2026-09-03).
+               그건 «우리 사정»을 사용자에게 고백한 문장이었고, 심지어 «한계»도 아니었다 —
+               주문은 order.js 가 이미 DB 에 넣고 있었는데 화면이 sessionStorage 만 읽고 있었을 뿐이다.
+               ⇒ 문구를 지운 게 아니라 «원인을 고쳤다». 이제 /api/license/me 가 주문을 같이 준다. -->
         </section>
 
         <!-- ★다운로드 탭을 없앴다(현빈 2026-09-03). 받는 자리는 각 앱 소개 페이지다 —
@@ -170,9 +165,9 @@
         <p class="footer-meta"><span id="footer-copy"></span><span class="footer-email">coq3820@gmail.com</span></p>
       </div>
     </footer>
-  <script src="footer.js?v=20260904f"></script>
-  <script src="mypage.js?v=20260904f"></script>
-  <script src="nav-auth.js?v=20260904f"></script>
-  <script src="theme.js?v=20260904f"></script>
+  <script src="footer.js?v=20260904g"></script>
+  <script src="mypage.js?v=20260904g"></script>
+  <script src="nav-auth.js?v=20260904g"></script>
+  <script src="theme.js?v=20260904g"></script>
 </body>
 </html>

@@ -15,6 +15,22 @@ try { email = sessionStorage.getItem('sms_email'); } catch (e) {}
 
 if (!email) { document.getElementById('mp-guest').style.display = 'block'; return; }
 document.getElementById('mp-body').style.display = 'block';
+// ★주문 표의 «상품명·금액»은 data/apps.json 이 단일 출처다 — 여기 값을 박아 두면
+//   요금이 바뀔 때 마이페이지만 옛 금액을 보여준다(실제로 겪은 병이다).
+var PLAN_NAME = {}, PRICE_TXT = {};
+fetch('data/apps.json?v=20260904g').then(function (r) { return r.ok ? r.json() : null; })
+  .then(function (j) {
+    // apps.json 은 «앱 배열»이고 각 앱이 plans 를 가진다. 앱을 돌며 요금제를 모은다.
+    (Array.isArray(j) ? j : []).forEach(function (app) {
+      (app && Array.isArray(app.plans) ? app.plans : []).forEach(function (p) {
+        if (!p || !p.id) return;
+        PLAN_NAME[p.id] = p.name || p.id;
+        PRICE_TXT[p.id] = p.price || '';
+      });
+    });
+    renderOrders();
+  }).catch(function () {});
+
 // ★상단바는 nav-auth.js 가 맡는다(2026-09-03).
 //   전에는 여기서 「로그인」을 «무조건» 「마이페이지」로 바꿨는데, 그러면 마이페이지 안에
 //   «자기 자신을 가리키는 링크»가 남고, 정작 «로그아웃할 문»이 없었다.
@@ -61,6 +77,16 @@ document.getElementById('mp-email').textContent = email;
       if (ph) ph.textContent = (d.profile && d.profile.phone)
         ? String(d.profile.phone).replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3')
         : '등록 안 됨';
+
+      // ★서버가 준 주문으로 «갈아끼운다». 세션 값은 여기서 버린다.
+      if (Array.isArray(d.orders)) {
+        orders = d.orders.map(function (o) {
+          return { orderNo: o.orderNo, planName: PLAN_NAME[o.plan] || o.plan || '—',
+                   price: PRICE_TXT[o.plan] || '—', depositor: o.depositor,
+                   status: o.status === 'paid' ? 'paid' : 'awaiting_deposit', at: o.at };
+        });
+        renderOrders();
+      }
 
       box.innerHTML = (d.apps || []).map(function (a) {
         // ★★「사용 기록을 남기지 않아요」를 걷었다(현빈 2026-09-03) — 그건 «우리 사정»이지
@@ -151,14 +177,19 @@ applyHash();
 window.addEventListener('hashchange', applyHash);
 
 // 주문 내역 — ★프론트만이다. order.html 이 남긴 화면 확인용 기록을 읽는다.
+// ★★주문은 «서버»에서 온다(2026-09-03). sessionStorage 는 «주문 직후 한 번»만 쓰는 임시 통로다.
+//   전에는 이것만 봐서 탭을 닫으면 주문이 사라졌고, 화면은 그걸 「이 탭에서만 유지됩니다」라고
+//   고백했다 — 한계가 아니라 «버그를 문구로 덮은 것»이었다. 이제 /api/license/me 가 같이 준다.
+//   ⛔둘을 합치지 마라 — 서버 응답이 오면 «그것이 정답»이다. 세션 값은 서버가 답하기 전의 임시 표시다.
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260904f').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260904g').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
 function renderOrders() {
+  if (!document.getElementById('mp-ord-body')) return;   // 화면이 아직 없으면 아무것도 안 한다
 if (!orders.length) {
   document.getElementById('mp-ord-empty').style.display = 'block';
 } else {

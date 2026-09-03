@@ -66,12 +66,35 @@ module.exports = async (req, res) => {
       .filter((id) => tiers.appMeta(id))     // 등급표에 없는 id 는 화면에 올리지 않는다
       .sort((a, b) => a.localeCompare(b));
 
-    return json(res, 200, {
+      // ★★주문은 «서버»에서 읽는다(2026-09-03).
+    //   전에는 마이페이지가 sessionStorage 만 봐서 «탭을 닫으면 주문이 사라졌다».
+    //   그래서 화면에 「이 탭에서만 유지됩니다」라는 경고를 달아 뒀는데 — 그건 한계가 아니라
+    //   «버그를 문구로 덮은 것»이었다. 주문은 order.js 가 이미 DB 에 넣고 있다.
+    //   ⇒ 여기서 같이 내려준다. 그 경고문은 필요 없어진다.
+    // ★최근 것부터 20건. 그 이상은 이 화면의 몫이 아니다(따로 페이지가 필요하면 그때 만든다).
+    let orders = [];
+    try {
+      orders = (await db.collection('orders')
+        .find({ email }, { projection: { _id: 0, orderNo: 1, plan: 1, depositor: 1, status: 1, createdAt: 1 } })
+        .sort({ createdAt: -1 }).limit(20).toArray()).map((o) => ({
+          orderNo: o.orderNo,
+          plan: o.plan || '',
+          depositor: o.depositor || '',
+          status: o.status || 'awaiting_deposit',
+          at: o.createdAt || null,
+        }));
+    } catch (e) {
+      // ★실패해도 나머지는 그대로 보여준다 — 주문 조회가 계정 화면 전체를 막을 이유가 없다.
+      orders = [];
+    }
+
+  return json(res, 200, {
       ok: true,
       email: user.email,
       plan: user.plan || 'event_free',
       accessUntil: user.accessUntil || null,
       // ★이 사람이 «우리를 처음 만난 앱». 마케팅·지원 양쪽에서 쓰인다.
+      orders,
       firstAppId: user.firstAppId || null,
       firstAppAt: user.firstAppAt || null,
       // ⛔프로필은 «이름·연락처»만 준다. 해시·토큰은 절대 싣지 않는다.
