@@ -36,7 +36,12 @@ export const PROBE = `(() => {
     }
     return true;
   };
-  const nm = (e) => e.tagName + '.' + String(e.className || '').trim().split(/\s+/).slice(0, 2).join('.');
+  // ★클래스가 없는 요소는 «글자 앞머리»로 부른다 — 「SPAN.(17px)」 로는 무엇인지 알 수 없다.
+  const nm = (e) => {
+    const cls = String(e.className || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).join('.');
+    const txt = e.textContent.trim().replace(/\s+/g, ' ').slice(0, 14);
+    return e.tagName + (cls ? '.' + cls : '') + (txt ? '「' + txt + '」' : '');
+  };
 
   // ⛔«안 보이는 요소» — 보여야 하는데 안 보이는 것. 여기가 백지 사고를 잡는 자리다.
   const invisible = [...document.querySelectorAll('body *')].filter((e) => {
@@ -89,6 +94,10 @@ export const PROBE = `(() => {
     if (own.length < 2) return false;
     const c = getComputedStyle(e);
     if (parseFloat(c.opacity) < 1) return false;
+    // ★그라디언트 글자는 -webkit-text-fill-color: transparent 라 «color 가 실제 보이는 색이 아니다».
+    //   그걸 재면 언제나 낮게 나온다(.gradient-text 로 실제 당했다). 여기서 뺀다.
+    if (c.webkitTextFillColor && /transparent|rgba\(0, 0, 0, 0\)/.test(c.webkitTextFillColor)) return false;
+    if (/text/.test(c.backgroundClip || '') || /text/.test(c.webkitBackgroundClip || '')) return false;
     const fg = rgb(c.color), bg = bgOf(e);
     const l1 = lum(fg), l2 = lum(bg);
     const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);

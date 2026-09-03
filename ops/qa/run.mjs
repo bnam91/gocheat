@@ -88,6 +88,16 @@ for (const lens of lenses) {
       if (!lens.disableJs) {
         await go(BASE + '/');
         await ev(`try{localStorage.setItem('sms_theme',${JSON.stringify(th)})}catch(e){}`);
+        // ★★테마가 «실제로 걸렸는지» 확인한다(플레이북 §4-11).
+        //   확인 없이 재면 «전환 중간 상태»(라이트 글자색 × 다크 배경)를 잡아
+        //   전 페이지가 「대비 낮음」으로 뜬다 — 2026-09-03 에 72건 전부 오탐이 났다.
+        await go(BASE + '/');
+        let themeOk = false;
+        for (let i = 0; i < 20; i++) {
+          if (await ev(`document.documentElement.getAttribute('data-theme')`) === th) { themeOk = true; break; }
+          await sleep(150);
+        }
+        if (!themeOk) { console.log(`  ⚠️ 테마 «${th}» 적용 실패 — 이 조합은 건너뛴다(헛경보 방지)`); continue; }
         if (acc) {
           await go(BASE + '/login.html');
           await ev(`(()=>{const e=document.getElementById('email'),p=document.getElementById('password');
