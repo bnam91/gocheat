@@ -1,7 +1,7 @@
 const { getDb } = require('../_lib/mongo');
 const {
   json, handlePreflight, readJsonBody,
-  isValidEmail, normalizeEmail,
+  isValidEmail, normalizeEmail, normalizePhone,
 } = require('../_lib/util');
 const { randomToken, sha256hex } = require('../_lib/crypto');
 const { enqueueMail, buildResetMail } = require('../_lib/mail');
@@ -72,7 +72,7 @@ module.exports = async (req, res) => {
   //   진짜 목적은 «오타로 남의 주소를 넣었을 때» 애먼 사람에게 메일이 가고,
   //   그 사람이 받아 둔 재설정 링크가 덮어써져 죽는 것을 막는 것이다(아래 updateOne).
   const name  = typeof body.name === 'string' ? body.name.trim().slice(0, 40) : '';
-  const phone = String(body.phone || '').replace(/\D/g, '').slice(0, 15);
+  const phone = normalizePhone(body.phone);
 
   try {
     const db = await getDb();
@@ -112,7 +112,10 @@ module.exports = async (req, res) => {
     let identityOk = true;
     if (user) {
       const savedName  = String((user.profile && user.profile.name)  || '').trim();
-      const savedPhone = String((user.profile && user.profile.phone) || '').replace(/\D/g, '');
+      // ★★«저장된 값»도 정규화해서 비교한다.
+      //   그래야 이미 +82 로 저장돼 있는 사람도 「010…」으로 찾을 수 있다.
+      //   DB 를 고치지 않고도 구제된다 — 마이그레이션은 위험하고 이건 안전하다.
+      const savedPhone = normalizePhone((user.profile && user.profile.phone) || '');
       if (savedName && savedPhone) {
         identityOk = (savedName === name) && (savedPhone === phone);
       }

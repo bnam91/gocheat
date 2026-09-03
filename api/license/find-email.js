@@ -1,5 +1,5 @@
 const { getDb } = require('../_lib/mongo');
-const { json, handlePreflight, readJsonBody } = require('../_lib/util');
+const { json, handlePreflight, readJsonBody , normalizePhone } = require('../_lib/util');
 
 const MAX_TRIES = 5;              // 같은 번호로 1시간에 5번
 const WINDOW_MS = 60 * 60 * 1000;
@@ -27,7 +27,9 @@ function maskEmail(email) {
   return local.slice(0, keep) + '*'.repeat(Math.max(4, local.length - keep)) + domain;
 }
 
-const onlyDigits = (v) => (typeof v === 'string' ? v.replace(/[^0-9]/g, '') : '');
+// ★공용 정규화를 쓴다(util.js normalizePhone) — 국가번호까지 처리한다.
+//   ⛔직접 replace 하지 마라. 이 파일만 다르게 처리하면 「가입은 됐는데 아이디를 못 찾는」 짝이 생긴다.
+const onlyDigits = (v) => normalizePhone(v);
 
 module.exports = async (req, res) => {
   if (handlePreflight(req, res, { origin: '*' })) return;

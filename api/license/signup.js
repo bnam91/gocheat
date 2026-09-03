@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const { getDb } = require('../_lib/mongo');
 const {
   json, handlePreflight, readJsonBody,
-  isValidEmail, normalizeEmail, isStrongEnough,
+  isValidEmail, normalizeEmail, isStrongEnough, normalizePhone,
 } = require('../_lib/util');
 const { randomToken } = require('../_lib/crypto');
 const { emailDomainAcceptsMail } = require('../_lib/mx');
@@ -16,7 +16,9 @@ const { enqueueMail, buildVerifyMail } = require('../_lib/mail');
 function buildProfile(raw) {
   if (!raw || typeof raw !== 'object') return null;
   const s = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
-  const phone = s(raw.phone, 20).replace(/[^0-9]/g, '');
+  // ★공용 정규화를 쓴다 — 국가번호(+82)까지 국내 형식으로 되돌린다(util.js 주석 참고).
+  //   ⛔여기서 직접 replace 하지 마라. 네 곳이 따로 하다가 「+82 로 가입하면 비번을 못 찾는」 버그가 났다.
+  const phone = normalizePhone(raw.phone);
   const name = s(raw.name, 40);
   if (!name && !phone) return null;
   return {
