@@ -98,12 +98,16 @@ module.exports = async (req, res) => {
   }
 
   // 필수 동의가 없으면 개인정보를 받지 않는다(확장이 열린 뒤에도 유효한 규칙).
-  if (profile && consents && consents.terms !== true) {
+  // ⛔2026-09-04 고침: 예전엔 `profile && consents && …` 라, «consents 를 아예 안 보내면»
+  //   두 검사를 «통째로 건너뛰고» 이름·전화번호가 «동의 기록 없이» 저장됐다(실측 확인).
+  //   빠뜨린 동의는 «거부»와 같이 다뤄야 한다 — 없는 것은 통과가 아니다.
+  const consentOf = (k) => !!(consents && typeof consents === 'object' && consents[k] === true);
+  if (profile && !consentOf('terms')) {
     return json(res, 400, { error: 'terms_required', detail: '이용약관 동의가 필요합니다' });
   }
   // ★개인정보를 «받는» 요청이면 개인정보 수집·이용 동의가 따로 있어야 한다.
   //   약관 동의로 갈음하지 않는다(제22조① 구분 동의).
-  if (profile && consents && consents.privacy !== true) {
+  if (profile && !consentOf('privacy')) {
     // ★이 오류를 볼 «유일한» 사람은 배포 «전»에 열어둔 탭을 쓰는 사용자다 —
     //   그 폼에는 개인정보 동의 칸이 아예 «없어서» 「동의해 달라」는 말이 통하지 않는다.
     //   그래서 문구가 «할 수 있는 행동»을 말해야 한다.
