@@ -74,8 +74,11 @@ module.exports = async (req, res) => {
     // ★최근 것부터 20건. 그 이상은 이 화면의 몫이 아니다(따로 페이지가 필요하면 그때 만든다).
     let orders = [];
     try {
+      // ⚠️이 스코프에 «email» 이라는 변수는 없다 — user.email 이다.
+      //   처음에 { email } 로 썼다가 ReferenceError 가 났고, 아래 catch 가 그걸 «조용히 삼켜»
+      //   주문이 0건인 것처럼 보였다. 화면은 멀쩡했고 아무 데도 흔적이 없었다.
       orders = (await db.collection('orders')
-        .find({ email }, { projection: { _id: 0, orderNo: 1, plan: 1, depositor: 1, status: 1, createdAt: 1 } })
+        .find({ email: user.email }, { projection: { _id: 0, orderNo: 1, plan: 1, depositor: 1, status: 1, createdAt: 1 } })
         .sort({ createdAt: -1 }).limit(20).toArray()).map((o) => ({
           orderNo: o.orderNo,
           plan: o.plan || '',
@@ -85,6 +88,11 @@ module.exports = async (req, res) => {
         }));
     } catch (e) {
       // ★실패해도 나머지는 그대로 보여준다 — 주문 조회가 계정 화면 전체를 막을 이유가 없다.
+      // ⛔★그러나 «조용히» 삼키지는 않는다. 삼키면 「주문이 0건」과 「조회가 깨졌다」가
+      //   화면에서 똑같이 보이고, 그 위의 모든 판정이 거짓이 된다(2026-09-03 실제로 당했다).
+      //   ⇒ 서버 로그에 남긴다. 수신자 주소는 마스킹한다(로그에 개인정보를 남기지 않는다).
+      const who = String(user.email || '').replace(/^(.).*(@.*)$/, '$1***$2');
+      console.error('[me] orders 조회 실패:', who, e && e.message);
       orders = [];
     }
 
