@@ -230,13 +230,19 @@
         headers: { 'Content-Type': 'application/json' },
         // ★★앱에서 넘어온 로그인이면 «어느 앱인지»를 같이 보낸다(현빈 2026-09-02).
         //   서버가 users.apps.<id> 번들을 만들어 「이 계정이 무슨 앱을 쓰는지」가 쌓인다.
-        //   ⚠️웹사이트 자체 로그인(?app 없음)은 «앱이 아니다» — 번들을 만들지 않는 게 맞다.
         //   ★app 값은 여기서 «형식 검사»를 이미 통과한 것만 쓴다(아래 R3-01 오픈 리다이렉트 방어와 같은 규칙).
+        // ★★2026-09-03: app 을 «안 보내던» 것을 'web' 으로 바꿨다.
+        //   서버는 app 이 없으면 세션을 'legacy' 칸에 넣는데, 그 칸은 «app 을 안 보내는
+        //   구버전 데스크톱 앱»도 쓴다. 앱당 1개 규칙 때문에 둘이 서로를 밀어내
+        //   「홈페이지에 로그인했더니 앱이 로그아웃되는」 증상이 남는다.
+        //   ⇒ 홈페이지가 «자기 칸»을 가지면 아무도 안 밀어낸다.
+        //   ⚠️번들은 여전히 안 생긴다 — tiers.json 에 'web' 이 없어서 서버가 걸러낸다.
+        //     즉 「웹은 앱이 아니다」는 원칙은 그대로고, «세션 칸»만 분리한 것이다.
         body: JSON.stringify(Object.assign(
           { email: emailVal, password: pw.value },
           (function () {
             var raw = new URLSearchParams(location.search).get('app') || '';
-            return /^[a-z][a-z0-9-]{0,31}$/.test(raw) ? { app: raw } : {};
+            return { app: /^[a-z][a-z0-9-]{0,31}$/.test(raw) ? raw : 'web' };
           })()
         )),
       });

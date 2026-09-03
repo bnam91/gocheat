@@ -17,8 +17,10 @@
  *     둘을 함께 살리는 형태로 합쳐야 한다(둘 중 하나를 되돌리는 게 아니다).
  */
 const bcrypt = require('bcryptjs');
-const { randomToken } = require('../_lib/crypto');
+// ★randomToken 은 «여기서 안 쓴다» — 토큰 발급은 issueSession 의 몫이다(2026-09-03 복구).
+//   직접 만들어 쓰면 sessions[] 가 비어 「제품별 세션 칸」이 다시 회귀한다.
 const tiers = require('../_lib/tiers');
+const { issueSession } = require('../_lib/sessions');
 const { getDb } = require('../_lib/mongo');
 const { json, handlePreflight, readJsonBody, isValidEmail, normalizeEmail } = require('../_lib/util');
 const { roleForResponse } = require('../_lib/roles');
@@ -58,9 +60,21 @@ module.exports = async (req, res) => {
     const until = user.accessUntil ? new Date(user.accessUntil) : null;
     const expired = until ? until.getTime() < Date.now() : false;
     // ★앱이 비밀번호를 저장하면 안 된다 — 토큰만 주고 앱은 그것만 보관한다
-    const sessionToken = randomToken(32);
-    const now = new Date();
-    const set = { lastLoginAt: now, sessionToken, sessionIssuedAt: now };
+    // ★★2026-09-03 복구 — 「제품별 세션 칸」을 되살렸다.
+    //   전엔 여기서 randomToken 을 직접 만들어 sessionToken «한 칸»에 넣었다. 그래서
+    //   같은 계정으로 홈페이지에 로그인하면 «앱·확장의 로그인이 그 자리에서 풀렸다»
+    //   (2026-09-03 실제 발생: QA 로 웹 로그인 한 번에 대표 계정의 브라우저 세션이 끊겼다).
+    //   ⇒ issueSession 이 앱별 칸에 넣는다. 다른 앱 칸은 «안 건드린다».
+    //     구버전 호환용 sessionToken 한 칸도 그 안에서 같이 갱신된다(파이프라인 ③단계).
+    //   ★한 번의 updateOne = 원자적이다. 동시 로그인 두 건이 겹쳐도 앱당 1개가 유지된다.
+    // ⛔여기서 randomToken 을 다시 직접 쓰지 마라 — 그러면 sessions[] 가 또 비어 회귀한다.
+    const appId = typeof body.app === 'string' ? body.app.trim().toLowerCase() : '';
+    const issued = await issueSession(db, email, appId);
+    const sessionToken = issued.sessionToken;
+    const now = issued.issuedAt;
+    // ★lastLoginAt·sessionToken·sessionIssuedAt 은 issueSession 이 «이미» 넣었다.
+    //   여기 set 에는 «앱별 번들»만 담는다 — 같은 필드를 두 번 쓰면 나중 것이 이긴다.
+    const set = {};
 
     // ★★앱별 «번들»(현빈 2026-09-02: 「앱별로 로그인을 하면 앱별로 키밸류 번들이 추가된다」).
     //   users.apps.<앱id> 에 그 앱의 이용 기록이 쌓인다. 계정 하나에 앱이 여러 개 붙는 구조다.
@@ -69,7 +83,6 @@ module.exports = async (req, res) => {
     //     앱별 등급은 apps.<id>.plan 에 «추가»로 들어가고, 없으면 계정 등급에서 파생한다.
     //   ⚠️앱이 app 을 «안 보내면» 번들이 안 생긴다. 웹사이트 로그인은 앱이 아니므로 그게 맞다.
     //     데스크톱 앱·확장이 번들을 가지려면 로그인 요청에 app 을 실어야 한다(앱 쪽 작업).
-    const appId = typeof body.app === 'string' ? body.app.trim().toLowerCase() : '';
     if (/^[a-z][a-z0-9-]{0,31}$/.test(appId) && tiers.appMeta(appId)) {
       const k = 'apps.' + appId;
       const meta = tiers.appMeta(appId);
@@ -95,7 +108,11 @@ module.exports = async (req, res) => {
         { $set: { firstAppId: appId, firstAppAt: now } });
     }
 
-    await db.collection('users').updateOne({ email }, { $set: set });
+    // ⛔$set 이 «빈 객체»면 MongoDB 가 에러를 낸다("'$set' is empty").
+    //   app 을 안 보내는 클라이언트(웹·구버전 앱)는 번들이 없어 set 이 빈다 — 그때는 안 친다.
+    if (Object.keys(set).length) {
+      await db.collection('users').updateOne({ email }, { $set: set });
+    }
 
     return json(res, 200, {
       ok: !expired,
