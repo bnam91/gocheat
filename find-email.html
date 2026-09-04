@@ -6,6 +6,7 @@
   <meta name="color-scheme" content="dark light" />
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script src="phone.js?v=20260904w"></script>
   <title>이메일 찾기 · 소문의섬</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260904w" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260904w" />
@@ -33,7 +34,7 @@
         <label class="signup-label" for="name">이름</label>
         <input id="name" type="text" class="signup-input" placeholder="가입할 때 입력한 이름" autocomplete="name" maxlength="40" required />
         <label class="signup-label" for="phone">휴대전화</label>
-        <input id="phone" type="tel" class="signup-input" placeholder="01012345678" autocomplete="tel" inputmode="numeric" maxlength="11" required />
+        <input id="phone" type="tel" class="signup-input" placeholder="01012345678" autocomplete="tel" inputmode="numeric" maxlength="20" required />
         <button type="submit" class="signup-submit" id="find-submit">이메일 찾기</button>
         <p class="signup-msg" id="find-msg" role="status" aria-live="polite"></p>
       </form>
@@ -71,7 +72,8 @@
       var btn = document.getElementById("find-submit");
       var phone = document.getElementById("phone");
       phone.addEventListener("input", function () {
-        phone.value = phone.value.replace(/[^0-9]/g, "").slice(0, 11);
+        // ★phone.js 로 통일(2026-09-04) — 여기서 자르면 «+82 …» 가 망가진다.
+        phone.value = window.normalizePhoneKR(phone.value);
       });
       function say(t, ok) { msg.textContent = t; msg.className = "signup-msg " + (ok ? "signup-msg-ok" : "signup-msg-error"); }
       var REASON = {

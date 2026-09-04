@@ -6,6 +6,7 @@
   <meta name="color-scheme" content="dark light" />
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script src="phone.js?v=20260904w"></script>
   <title>회원가입 · 소문의섬</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -89,7 +90,7 @@
                «고장난 것»으로 보인다 — 그래서 버튼은 두지 않는다.
                (2026-09-02 독립검수 지적 / 안내문구는 현빈 지시로 삭제) -->
           <input id="phone" name="phone" type="tel" class="signup-input" placeholder="01012345678"
-          autocomplete="tel" inputmode="numeric" maxlength="13" required />
+          autocomplete="tel" inputmode="numeric" maxlength="20" required />
           <p class="field-err" id="err-phone" role="status" aria-live="polite"></p>
 
           <div class="agree-box">
@@ -247,7 +248,9 @@
 
         var phoneEl = document.getElementById('phone');
         phoneEl.addEventListener('input', function () {
-          phoneEl.value = phoneEl.value.replace(/[^0-9]/g, '').slice(0, 11);
+          // ★국가번호를 «자르기 전에» 뗀다 — phone.js 한 곳에만 규칙이 있다(2026-09-04).
+          //   예전엔 여기서 숫자만 남기고 11자로 잘라 «+82 …» 가 82101111000 이 됐다.
+          phoneEl.value = window.normalizePhoneKR(phoneEl.value);
         });
       }
 
