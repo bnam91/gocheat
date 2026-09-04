@@ -22,7 +22,13 @@ const zlib = require('zlib');
 const { MongoClient } = require('/opt/goditor-api/node_modules/mongodb');
 const { EJSON } = require('/opt/goditor-api/node_modules/bson');
 
-const OUT_DIR = process.env.BACKUP_DIR || path.join(process.env.HOME || '/home/ec2-user', 'db-backup');
+/* ★보관 위치는 «절대경로로 못박는다» — HOME 에 기대지 않는다(2026-09-04).
+ *   ⛔예전엔 HOME 을 봤다. systemd 유닛이 HOME=/home/ec2-user 를 박아 두니 «타이머는» 늘 맞았는데,
+ *     사람이 `sudo node …` 로 손수 돌리면 HOME=/root 라 /root/db-backup 에 «따로» 쌓였다.
+ *     ★그 상태에서 보관 개수를 세면 「보관 1개」가 나온다 — 옛 백업 3개가 다른 폴더에 있는데도.
+ *     계정을 지우기 «직전»에 이걸 보고 「백업이 사라졌나」 하고 3분을 썼다. 실제로는 멀쩡했다.
+ *   ⇒ 「누가 돌리느냐」로 결과가 갈리면 그건 백업이 아니다. BACKUP_DIR 로만 바꿀 수 있게 둔다. */
+const OUT_DIR = process.env.BACKUP_DIR || '/home/ec2-user/db-backup';
 const KEEP_DAYS = Number(process.env.BACKUP_KEEP_DAYS || 7);
 
 (async () => {
