@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <title>GODITOR 개발자문서 · 소문의섬</title>
-  <meta name="description" content="Claude(데스크톱·Claude Code)가 GODITOR를 직접 조작하는 MCP 도구 71개. 연결 방법과 규약." />
+  <meta name="description" content="Claude(데스크톱·Claude Code)가 GODITOR를 직접 조작하는 MCP 도구 74개. 연결 방법과 규약." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
@@ -60,13 +60,14 @@
         <a href="#connect">연결하기</a>
         <a href="#token">접속 토큰</a>
         <a href="#userbusy">USER_BUSY</a>
-        <p class="doc-toc-grp">도구 71개</p>
+        <p class="doc-toc-grp">도구 74개</p>
         <a href="#t-read">읽기 · 검색 · 상태 <span>8</span></a>
         <a href="#t-section">섹션 제어 <span>6</span></a>
         <a href="#t-add">블록 추가 <span>27</span></a>
         <a href="#t-update">블록 수정 <span>26</span></a>
         <a href="#t-delete">삭제 · 구조 <span>2</span></a>
-        <a href="#t-project">프로젝트 <span>1</span></a>
+        <a href="#t-project">프로젝트 <span>3</span></a>
+        <a href="#t-image">이미지 투입 <span>1</span></a>
         <a href="#t-diag">연결 진단 <span>1</span></a>
         <p class="doc-toc-grp">참고</p>
         <a href="#example">짧은 예시</a>
@@ -76,7 +77,7 @@
     <div class="legal-inner doc-main">
       <a href="goditor.html" class="detail-back">← GODITOR</a>
       <h1 class="legal-title">개발자문서</h1>
-      <p class="legal-meta">MCP 도구 71개 · 로컬 HTTP(127.0.0.1) · Claude 데스크톱 / Claude Code</p>
+      <p class="legal-meta">MCP 도구 74개 · 로컬 HTTP(127.0.0.1) · Claude 데스크톱 / Claude Code</p>
 
       <p class="legal-p">
         GODITOR는 <b>MCP 서버를 앱 안에 내장</b>하고 있습니다. Claude가 이 서버에 붙으면
@@ -206,7 +207,7 @@
 
       <!-- ⑷ 도구 목록 -->
       <section class="legal-sec">
-        <h2 class="legal-h" id="tools">4. 도구 71개</h2>
+        <h2 class="legal-h" id="tools">4. 도구 74개</h2>
         <p class="legal-p">
           각 도구의 파라미터는 MCP <code class="doc-c">tools/list</code> 로 언제든 받아볼 수 있습니다
           (스키마가 «정본»입니다 — 아래 목록은 무엇이 있는지 훑어보기 위한 것입니다).
@@ -256,10 +257,24 @@
           <code>delete_block</code> <code>insert_gap_after_block</code>
         </p>
 
-        <h3 class="doc-h3" id="t-project">프로젝트 <span class="doc-count">1</span></h3>
+        <h3 class="doc-h3" id="t-project">프로젝트 <span class="doc-count">3</span></h3>
         <p class="doc-tools">
-          <code>duplicate_project</code>
+          <code>create_project</code> <code>duplicate_project</code> <code>open_project</code>
         </p>
+        <p class="doc-note"><code class="doc-c">create_project</code> / <code class="doc-c">duplicate_project</code>
+          는 <b>만들기만 하고 열지 않습니다.</b> 만든 프로젝트를 편집하려면
+          <code class="doc-c">open_project</code> 로 <b>활성 프로젝트를 전환</b>해야 합니다
+          (편집 도구는 전부 «현재 활성 프로젝트»를 대상으로 동작합니다).</p>
+
+        <h3 class="doc-h3" id="t-image">이미지 투입 <span class="doc-count">1</span></h3>
+        <p class="doc-tools">
+          <code>put_image</code>
+        </p>
+        <p class="doc-note">이미지는 <b>data URL</b> 로만 받습니다(파일 경로는 받지 않습니다).
+          최대 약 5MB이며, 넘으면 <b>거부</b>됩니다 — 말없이 줄이지 않습니다.
+          기본값 <code class="doc-c">target="canvas"</code> 는 스크래치패드에 넣고 곧바로 섹션에 붙이고,
+          <code class="doc-c">target="scratch"</code> 는 스크래치패드에만 둡니다.
+          어느 쪽이든 <b>프로젝트가 열려 있어야</b> 합니다(스크래치패드는 프로젝트+페이지 단위입니다).</p>
 
         <h3 class="doc-h3" id="t-diag">연결 진단 <span class="doc-count">1</span></h3>
         <p class="doc-tools">
