@@ -347,35 +347,42 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-/* ★★2026-09-05 히어로 제목 — 색도 궤적도 «매번 다른» 그라디언트 (현빈 PR안).
-   움직임과 난수 색은 hero-gradient.js 가 넣는다. 여기 있는 것은 «폴백»이다.
-   ⛔★스크립트가 죽어도 제목이 보여야 하므로 배경을 여기서 «완성»해 둔다.
-     -webkit-text-fill-color:transparent 만 두고 배경을 JS 에 맡기면, JS 가 실패하는 순간
-     글자가 투명해져 제목이 통째로 사라진다.
+/* ★★2026-09-05 히어로 제목 그라디언트 — 색은 «고정», 움직임만 «매번 다르게».
+   (현빈: X2+X3 조합 — 「범위가 너무 크다」 + 「N5 랑 결이 다르다」에 대한 답)
+
+   ★색을 셔플하지 «않는다». N5 순서(흰 → 연은빛 → 그레이블루 → 은빛 → 짙은 회색)를 지킨다.
+     매번 바뀌는 건 «궤적·속도»뿐이라 결이 안 흔들린다.
+     ⇒ 앞 판(PR)은 색까지 난수라 색이 서로 상쇄되어 N5 의 질서가 사라졌다.
+   ★background-size 300% → 170%. 범위가 넓으면 색 띠가 크게 출렁인다.
+     좁히면 변화가 «촘촘»해져서 은은해진다.
+   ★파랑은 «아주 살짝»만(--hg-c3). 그레이블루보다 조금 더 파란 정도다.
+     ⚠️#A9C9E8 처럼 진하면 무채 결에서 벗어나 다른 브랜드처럼 보인다 —
+       그래서 한 자리에만, 그것도 낮은 채도로 둔다.
+   ★가운데 56% 는 «심지»(--hg-mid). 여기가 고정돼야 흐름이 한 방향으로 읽힌다.
+
+   ⛔★스크립트가 죽어도 제목이 «보여야» 하므로 배경을 여기서 «완성»해 둔다.
+     -webkit-text-fill-color:transparent 만 두고 배경을 JS 로 넣으면, JS 가 실패하는 순간
+     글자가 투명해져 제목이 통째로 사라진다. hero-gradient.js 는 «움직임만» 얹는다.
    ⚠️background 는 shorthand 라 «뒤에 오면» background-clip·size 를 초기값으로 되돌린다.
      그래서 background → size → clip 순서로 «한 규칙 안에서» 끝낸다.
-     (2026-09-05 시안에서 이걸 세 번 밟아 글자 대신 색칠한 사각형이 나왔다.)
-   ★56% 자리는 «난수가 아니다»(--hg-mid). 가운데에 고정된 «심지»가 있어야 흐름이 한 방향으로
-     읽힌다 — 전부 난수로 두면 색이 서로 상쇄되어 결이 흐려진다(시안 PR 이 그렇게 되어 있었다).
-   ★변수 기본값은 «다크 기준»이다. 라이트에서는 아래 [data-theme] 블록이 덮고,
-     JS 가 살아 있으면 테마를 보고 다시 뽑는다(테마 토글에도 반응한다). */
+     (2026-09-05 시안에서 이걸 세 번 밟아 글자 대신 색칠한 사각형이 나왔다.) */
 .hero-title .title-line {
-  background: linear-gradient(var(--hg-ang, 105deg),
-    var(--hg-c1, #FFFFFF) 0%, var(--hg-c2, #DCE3EA) 20%, var(--hg-c3, #AEB8C4) 38%,
+  background: linear-gradient(105deg,
+    var(--hg-c1, #FFFFFF) 0%, var(--hg-c2, #DCE3EA) 20%, var(--hg-c3, #BCCBDA) 38%,
     var(--hg-mid, #FFFFFF) 56%, var(--hg-c4, #C8CEDA) 74%, var(--hg-c5, #9AA6B4) 90%,
     var(--hg-c1, #FFFFFF) 100%);
-  background-size: 300% 300%;
+  background-size: 170% 170%;
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-/* 라이트 — 밝은 색을 그대로 쓰면 흰 배경에 묻는다. 어두운 무채로 바꾼다. */
+/* 라이트 — 밝은 색을 그대로 쓰면 흰 배경에 묻는다. 어두운 무채로 바꾸고 파랑도 어둡게. */
 :root[data-theme="light"] .hero-title .title-line {
-  --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #4A5462; --hg-c4: #1B212B; --hg-c5: #3B4553;
+  --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #3B4553;
   --hg-mid: #0B0B0E;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) .hero-title .title-line {
-    --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #4A5462; --hg-c4: #1B212B; --hg-c5: #3B4553;
+    --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #3B4553;
     --hg-mid: #0B0B0E;
   }
 }
