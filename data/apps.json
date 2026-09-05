@@ -20,10 +20,10 @@
     "plans": [
       {
         "id": "beta",
-        "name": "BETA",
+        "name": "BETA TEST",
         "price": "₩0",
         "per": "1개월",
-        "ribbon": "프로모션",
+        "ribbon": "🎉 프로모션",
         "cta": "BETA 다운로드",
         "features": [
           {
@@ -31,24 +31,38 @@
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF 생성",
-            "ok": false
+            "t": "GIF로 내보내기",
+            "ok": true
           },
           {
-            "t": "MCP 연동",
-            "ok": false
+            "t": "AI 도구 연결 (MCP)",
+            "ok": true
           },
           {
-            "t": "기획 기능(예정)",
-            "ok": false
+            "t": "여럿이 동시 편집",
+            "ok": true
+          },
+          {
+            "t": "상세페이지 기획모드",
+            "ok": true
+          },
+          {
+            "t": "GODIV · GOSHOT 연동",
+            "ok": true
+          },
+          {
+            "t": "베타 기간 업데이트 전부",
+            "ok": true
           }
         ],
-        "priceNote": "베타 기간 한정 · 결제 없음",
-        "ctaAction": "download"
+        "priceNote": "베타 기간 한정",
+        "ctaAction": "download",
+        "featured": true,
+        "wasPrice": "₩180,000"
       },
       {
         "id": "intern",
@@ -62,19 +76,19 @@
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF 생성",
+            "t": "GIF로 내보내기",
             "ok": false
           },
           {
-            "t": "MCP 연동",
+            "t": "AI 도구 연결 (MCP)",
             "ok": false
           },
           {
-            "t": "기획 기능(예정)",
+            "t": "상세페이지 기획모드",
             "ok": false
           }
         ],
@@ -94,27 +108,27 @@
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF 생성",
+            "t": "GIF로 내보내기",
             "ok": true
           },
           {
-            "t": "MCP 연동",
+            "t": "AI 도구 연결 (MCP)",
             "ok": true
           },
           {
-            "t": "원격 협업기능",
+            "t": "여럿이 동시 편집",
             "ok": true
           },
           {
-            "t": "기획 기능(예정)",
+            "t": "상세페이지 기획모드",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함 및 연동",
+            "t": "GODIV · GOSHOT 연동",
             "ok": true
           }
         ],
@@ -137,27 +151,27 @@
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF 생성",
+            "t": "GIF로 내보내기",
             "ok": true
           },
           {
-            "t": "MCP 연동",
+            "t": "AI 도구 연결 (MCP)",
             "ok": true
           },
           {
-            "t": "원격 협업기능",
+            "t": "여럿이 동시 편집",
             "ok": true
           },
           {
-            "t": "기획 기능(예정)",
+            "t": "상세페이지 기획모드",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함 및 연동",
+            "t": "GODIV · GOSHOT 연동",
             "ok": true
           }
         ],
@@ -179,27 +193,27 @@
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF 생성",
+            "t": "GIF로 내보내기",
             "ok": true
           },
           {
-            "t": "MCP 연동",
+            "t": "AI 도구 연결 (MCP)",
             "ok": true
           },
           {
-            "t": "원격 협업기능",
+            "t": "여럿이 동시 편집",
             "ok": true
           },
           {
-            "t": "기획 기능(예정)",
+            "t": "상세페이지 기획모드",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함 및 연동",
+            "t": "GODIV · GOSHOT 연동",
             "ok": true
           },
           {
@@ -207,7 +221,7 @@
             "ok": true
           },
           {
-            "t": "LAB 기능",
+            "t": "LAB 실험 기능",
             "ok": true
           },
           {

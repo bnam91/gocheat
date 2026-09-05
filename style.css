@@ -995,7 +995,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   transition: border-color 0.2s, background 0.2s, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
 }
 .plan-card:hover { border-color: var(--border-strong); background: var(--bg-elev-hi); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.40); }
-.plan-card-featured { border-color: rgba(var(--accent-line-rgb),0.42); }
+/* ★★«지금 이걸 보라»는 카드의 테두리 (2026-09-05 BETA 에 되살렸다).
+   ⚠️전까지 이 규칙은 «아무도 안 쓰는» 죽은 규칙이었다(사용처 0). 새로 만들지 않고 되살린다.
+   ★현빈: 「테두리는 어디 갔니?」 — 연두로 «채워» 뒀을 땐 면이 경계를 대신했는데,
+     배경을 원복하니 기본 테두리(rgba(255,255,255,0.08))만 남아 사실상 안 보였다.
+     네 장이 같은 테두리라 «파는 카드»가 어디인지 가장자리로는 알 수 없었다.
+   ★채움이 아니라 «선»으로만 말한다 — 채우면 앞서 지적하신 대로 「추천」과 목소리가 겹친다.
+   ★0.42 → 0.55 로 조금 올렸다. 0.42 는 카드 «넷이 다 밝을 때» 잡은 값인데, 지금은 옆 셋이
+     0.42 로 물러나 있어서 그 정도로는 대비가 안 선다. */
+.plan-card-featured { border-color: rgba(var(--accent-line-rgb),0.55); }
 /* ★리본을 «칩»으로 올린다(현빈 2026-09-02: 「15%할인 이런 부분은 좀 잘보이게」).
    전에는 라임색 «맨 글자»라 카드 안의 다른 작은 글자와 구분이 거의 없었다.
    ⚠️두 변종의 «상자 높이가 같아야» 한다 — 다르면 카드마다 등급 이름 baseline 이 어긋난다.
@@ -1036,10 +1044,54 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    ⇒ ★등급 이름을 «두 줄 나는 길이»로 다시 늘리면 이 문제가 그대로 돌아온다. 그때는
      min-height 로 자리를 잡고 flex 로 가운데 정렬하면 된다(이미 검증한 방법이다). */
 .plan-name { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
-.plan-price { font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+/* ★★금액 «칸»의 높이를 고정한다(2026-09-05).
+   ⛔취소선 정가를 한 카드에만 넣었더니 그 카드의 «기능·주석이 25px 내려앉았다».
+     비교표는 가로 줄이 맞아야 비교가 된다 — 이름 칸에서 이미 한 번 겪은 병이다.
+     ⇒ 이번엔 «자리»를 먼저 만들어 두고 안에서 정렬한다. 그러면 취소선을 넣든 빼든,
+       금액 글자를 키우든 줄이든, 아래 줄들이 «움직이지 않는다».
+   ★flex column + 아래 정렬 — 금액이 커져도 «바닥»이 그대로라 아래 줄이 안 밀린다.
+     (가운데 정렬로 두면 커질 때 위아래로 함께 번져 결국 밀린다.)
+   ⚠️2.55em 은 「취소선 한 줄 + 키운 금액 한 줄」이 들어가는 높이다. 둘 중 하나라도
+     더 키우면 이 값을 다시 재라. */
+.plan-price {
+  font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg);
+  /* ⚠️실측으로 정한 값이다(2026-09-05). 「취소선 한 줄 + 1.45배 금액」이 실제로 차지한
+     높이가 81px 이었고 다른 카드는 59px 이었다 — 그 차이가 그대로 아래 줄을 밀었다.
+     ⇒ 3.7em(=81.4px) 로 «넷 다» 같은 칸을 준다. 눈대중으로 잡으면 또 어긋난다. */
+  line-height: 1.2;
+  min-height: 3.7em;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+}
+
+/* ⚠️★한때 여기서 «파는 카드의 금액만» 1.45배로 키웠다가 «되돌렸다»
+   (현빈 2026-09-05: 「₩0 이걸 더 크게 하지 마라 이상하네」).
+   ★왜 이상했나 — 「₩0」은 글자가 «두 자»뿐이라, 키우면 옆 카드의 「₩1,836,000」보다
+     짧은데 굵기만 커져서 «덩어리»로 보인다. 자릿수가 다른 값끼리는 크기로 못 겨룬다.
+     낙차는 크기가 아니라 «취소선»이 만든다. 그쪽에 맡긴다. */
+/* ★금액 + 기간을 한 줄로 묶는 덩이. 위 .plan-price 가 flex column 이라 이 래퍼가 없으면
+   둘이 «각각» 항목이 되어 세로로 갈라진다. baseline 정렬로 「₩0 / 1개월」이 한 줄에 앉는다.
+   ⛔★이름이 «plan-now» 였다가 바꿨다 — 그 이름은 이미 1363 줄에 있었다(현재 등급 표시,
+     연두 12px). 겹치는 순간 네 카드 금액이 «전부 연두»가 되고 크기까지 어긋났다.
+     ⚠️새 클래스를 만들 땐 «먼저 grep 해라». 이 파일은 1,400줄이 넘어서 눈으로는 못 찾는다. */
+.plan-priceline { display: flex; align-items: baseline; justify-content: center; gap: 0; }
+
 .plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 2.9em; }
 /* ★절은 «통째로» 줄바꿈된다 — 금액이 「정가 / ₩2,160,000」처럼 쪼개지지 않게.
    구분점은 별도 span 이라, 줄이 나뉠 때 점이 줄 끝에 홀로 매달리지 않는다. */
+/* ★내려오기 «전» 값. 금액 «위»에 따로 줄을 세운다 — 옆에 붙이면 둘 중 어느 게
+   지금 값인지 반 박자 헷갈린다. 위아래로 두면 «내려왔다»는 방향이 그대로 읽힌다.
+   ★크기를 확 줄이고(--fs-sm) 흐리게 둔다. 주인공은 내려온 값이지 정가가 아니다.
+   ⚠️취소선은 «실재하는 값»에만 긋는다. 여기 ₩80,000 은 바로 옆 SOLO 카드에서
+     실제로 파는 값이다 — 지어낸 정가를 그으면 그냥 허위 표시가 된다. */
+.plan-was {
+  display: block;
+  font-size: var(--fs-sm); font-weight: 600; letter-spacing: -0.01em;
+  color: var(--faint); text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  line-height: 1.15;
+  margin-bottom: 2px;
+}
+
 .plan-price-note .note-seg { white-space: nowrap; }
 .plan-price-note .note-sep { white-space: nowrap; }
 

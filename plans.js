@@ -59,8 +59,21 @@
         //   그래서 카드는 «자기 예시 금액»을 그대로 보여준다 — 이게 등급을 가르는 값이다.
         //   「지금 전부 무료」는 상단 이벤트 띠와 요금제 절 머리글이 이미 말했으니
         //   카드마다 되풀이하지 않는다.
-        var priceHtml = '<span class="plan-amount">' + esc(p.price) + '</span>'
-              + '<span class="plan-per"> / ' + esc(p.per) + '</span>';
+        // ★★정가 «낙차»를 보여 준다(현빈 2026-09-05: 「베타테스트 무료 개이득 이런 느낌이 부족하다」).
+        //   ₩0 은 그냥 공짜지만 «₩80,000 에서 내려온 ₩0» 은 사건이다. 이벤트를 만드는 건
+        //   색도 이모지도 아니고 «낙차»다.
+        //   ★지어낸 정가가 아니다 — 바로 옆 칸(SOLO)에서 «실제로 그 값에 판다».
+        //     옆에 원본이 서 있으니 거짓말을 할 수가 없는 구조다.
+        //   ⚠️wasPrice 를 쓸 땐 그 값이 «다른 카드에 실재하는지» 확인해라. 없는 정가를
+        //     그어 보이는 건 그냥 허위 할인 표시다.
+        //   ⚠️금액과 기간은 «한 덩이»로 묶는다(.plan-now). .plan-price 가 flex column 이라
+        //     안에 든 인라인 요소가 «각각 flex 항목»이 되어 세로로 쪼개진다 —
+        //     묶지 않으면 「₩0」과 「/ 1개월」이 위아래로 갈라진다(2026-09-05 실제로 그랬다).
+        var priceHtml = (p.wasPrice ? '<span class="plan-was">' + esc(p.wasPrice) + '</span>' : '')
+              + '<span class="plan-priceline">'
+              +   '<span class="plan-amount">' + esc(p.price) + '</span>'
+              +   '<span class="plan-per"> / ' + esc(p.per) + '</span>'
+              + '</span>';
 
         // ★어느 카드를 «채워서» 강조할지는 데이터가 정한다(apps.json 의 emphasis).
         //   카드 순서나 등급 이름으로 넘겨짚지 않는다 — 순서는 바뀌고 이름도 바뀐다.
@@ -68,7 +81,10 @@
           + (p.emphasis === 'accent' ? ' plan-card-accent' : '')
           // ★muted = 「지금은 이걸 팔지 않는다」를 «보여만» 준다. 링크는 살아 있다 —
           //   진짜로 못 누르게 하려면 comingSoon 처럼 href 를 빼야 하고, 그건 별개 결정이다.
-          + (p.muted ? ' plan-card-muted' : '') + '">'
+          + (p.muted ? ' plan-card-muted' : '')
+          // ★featured = 「지금 이걸 보라」. 테두리 하나로만 말한다 — 채우면 「추천」과 목소리가 겹친다.
+          //   (.plan-card-featured 는 이미 style.css 에 있던 규칙이다. 새로 만들지 않았다.)
+          + (p.featured ? ' plan-card-featured' : '') + '">'
           + (p.ribbon
               // ★kind 는 «데이터»에서 온다 — 문구를 /할인/ 로 넘겨짚으면 「반값」처럼
               //   할인인데 안 잡히거나, 등급 이름에 그 글자가 들어가면 잘못 잡힌다.
