@@ -77,7 +77,8 @@
             "ok": false
           }
         ],
-        "priceNote": "매월 결제 · 언제든 해지"
+        "priceNote": "매월 결제 · 언제든 해지",
+        "muted": true
       },
       {
         "id": "pro",
@@ -116,7 +117,9 @@
             "ok": true
           }
         ],
-        "priceNote": "매월 결제 · 언제든 해지"
+        "priceNote": "매월 결제 · 언제든 해지",
+        "ribbonKind": "quiet",
+        "muted": true
       },
       {
         "id": "pro12",
@@ -157,7 +160,8 @@
             "ok": true
           }
         ],
-        "dailyNote": true
+        "dailyNote": true,
+        "muted": true
       },
       {
         "id": "pro_training",

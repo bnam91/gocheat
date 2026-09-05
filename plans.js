@@ -65,11 +65,16 @@
         // ★어느 카드를 «채워서» 강조할지는 데이터가 정한다(apps.json 의 emphasis).
         //   카드 순서나 등급 이름으로 넘겨짚지 않는다 — 순서는 바뀌고 이름도 바뀐다.
         return '<div class="plan-card' + (p.now ? ' plan-card-now' : '')
-          + (p.emphasis === 'accent' ? ' plan-card-accent' : '') + '">'
+          + (p.emphasis === 'accent' ? ' plan-card-accent' : '')
+          // ★muted = 「지금은 이걸 팔지 않는다」를 «보여만» 준다. 링크는 살아 있다 —
+          //   진짜로 못 누르게 하려면 comingSoon 처럼 href 를 빼야 하고, 그건 별개 결정이다.
+          + (p.muted ? ' plan-card-muted' : '') + '">'
           + (p.ribbon
               // ★kind 는 «데이터»에서 온다 — 문구를 /할인/ 로 넘겨짚으면 「반값」처럼
               //   할인인데 안 잡히거나, 등급 이름에 그 글자가 들어가면 잘못 잡힌다.
-              ? '<p class="plan-ribbon' + (p.ribbonKind === 'save' ? ' plan-ribbon-save' : '') + '">'
+              ? '<p class="plan-ribbon'
+                + (p.ribbonKind === 'save' ? ' plan-ribbon-save' : '')
+                + (p.ribbonKind === 'quiet' ? ' plan-ribbon-quiet' : '') + '">'
                 + esc(p.ribbon) + '</p>'
               : '')
           + '<h3 class="plan-name">' + esc(p.name) + '</h3>'

@@ -1119,6 +1119,45 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-card-accent .plan-cta:active { background: #000; border-color: #000; }
 .plan-card-accent .plan-cta:focus-visible { box-shadow: 0 0 0 3px rgba(11,11,14,0.35); }
 
+/* ★「추천」을 «조용히» (현빈 2026-09-05: 「PRO 위에 추천 라벨은 일단 회색 숨기기」).
+   ⛔지우지 «않는다». .plan-card::before 가 「리본 없는 카드」에만 자리를 만들어 주는데,
+     리본을 지우면 그 카드만 ::before 가 켜지면서 «높이가 재계산»되고, 지금 맞아 있는
+     네 장의 이름 baseline 이 다시 어긋난다. ⇒ 자리는 두고 «색만» 뺀다.
+   ★채움도 테두리도 없애고 본문보다 흐린 색만 남긴다 — 있지만 «말을 걸지 않는» 상태다.
+   ⚠️세로 크기(line-height·상하 padding·border 폭)는 건드리지 않는다. plan-ribbon-save 와
+     같은 이유다 — 높이가 달라지면 리본 있는 카드끼리 이름 baseline 이 어긋난다. */
+.plan-ribbon-quiet {
+  background: transparent; border-color: transparent;
+  color: var(--faint); font-weight: 700;
+  padding-left: 0; padding-right: 0;
+}
+
+/* ★★«물러난» 등급 카드 (현빈 2026-09-05: 「베타 말고 나머지는 비활성화된 느낌으로」).
+   ★지금 파는 건 BETA 하나뿐이라는 «상태»를 색으로 말한다. 지우거나 감추면 등급 사다리가
+     안 보이고, 그러면 BETA 가 «무엇의 베타»인지도 안 보인다. 남겨 두되 물러나게 한다.
+   ★opacity 하나로 처리한다 — 글자·테두리·리본·버튼을 «각각» 흐리게 하면 요소마다
+     흐린 정도가 어긋나서 「고장 난 카드」로 보인다. 한 겹으로 덮어야 «물러난» 것이 된다.
+   ★hover 의 «들림»을 없앤다. 뜨는 카드는 「눌러라」는 신호다 — 물러난 카드가 뜨면
+     말이 어긋난다. 대신 hover 시 살짝 «또렷해지게» 해서 읽을 수는 있게 둔다.
+   ⚠️★이건 «보이기»만이다. 링크는 살아 있어서 누르면 주문 화면으로 간다.
+     진짜로 못 누르게 하려면 comingSoon 처럼 href 를 빼야 하고, 그건 별개 결정이다. */
+.plan-card-muted {
+  opacity: 0.42;
+  transition: opacity 0.22s, border-color 0.2s, background 0.2s;
+}
+.plan-card-muted:hover {
+  opacity: 0.72;
+  transform: none;
+  box-shadow: none;
+  background: var(--bg-elev);
+  border-color: var(--border);
+}
+/* 버튼도 «뜨지 않는다» — 카드가 물러났는데 버튼만 살아 있으면 시선이 그리로 간다 */
+.plan-card-muted .plan-cta:hover {
+  background: transparent; color: var(--accent);
+  transform: none; box-shadow: none;
+}
+
 /* 구매 신청 폼 — 카드 아래 인라인으로 펼쳐진다 */
 .order-panel { width: 100%; max-width: 380px; margin-top: 28px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; display: none; flex-direction: column; align-items: center; gap: 10px; }
 .order-panel.is-open { display: flex; animation: fadeUp 0.35s cubic-bezier(0.22,1,0.36,1) both; }
