@@ -19,8 +19,12 @@
   if (!lines.length) return;
 
   // 다크 = 밝은 무채·은빛 / 라이트 = 어두운 무채·먹빛. 채도는 양쪽 다 낮게 둔다.
-  var DARK  = ['#FFFFFF','#DCE3EA','#AEB8C4','#C8CEDA','#9AA6B4','#E6EAF0','#8E9BAC','#BFC9D6','#A9C9E8'];
-  var LIGHT = ['#0B0B0E','#2C333F','#4A5462','#1B212B','#3B4553','#5A6474','#242B36','#414B5A','#33506E'];
+  /* ⚠️파랑(#A9C9E8)은 «팔레트에 넣지 않는다» — 시안 PR 에도 없었다.
+     넣으면 N5 계열의 무채 결에서 벗어나 다른 브랜드처럼 보인다. */
+  var DARK  = ['#FFFFFF','#DCE3EA','#AEB8C4','#C8CEDA','#9AA6B4','#E6EAF0','#8E9BAC','#BFC9D6','#F4F6F9'];
+  var LIGHT = ['#0B0B0E','#2C333F','#4A5462','#1B212B','#3B4553','#5A6474','#242B36','#414B5A','#1F2630'];
+  /* 가운데 56% 자리 — 여기만 «난수가 아니다». 고정된 심지가 흐름의 방향을 잡아 준다. */
+  var MID = { dark: '#FFFFFF', light: '#0B0B0E' };
 
   function isLight() {
     var t = root.getAttribute('data-theme');
@@ -51,6 +55,7 @@
 
     lines.forEach(function (el, i) {
       el.style.setProperty('--hg-ang', ang);
+      el.style.setProperty('--hg-mid', isLight() ? MID.light : MID.dark);
       for (var k = 1; k <= 5; k++) el.style.setProperty('--hg-c' + k, pal[k - 1]);
 
       // reduced-motion 이면 색만 바꾸고 «움직이지 않는다»
