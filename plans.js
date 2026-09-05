@@ -62,7 +62,10 @@
         var priceHtml = '<span class="plan-amount">' + esc(p.price) + '</span>'
               + '<span class="plan-per"> / ' + esc(p.per) + '</span>';
 
-        return '<div class="plan-card' + (p.now ? ' plan-card-now' : '') + '">'
+        // ★어느 카드를 «채워서» 강조할지는 데이터가 정한다(apps.json 의 emphasis).
+        //   카드 순서나 등급 이름으로 넘겨짚지 않는다 — 순서는 바뀌고 이름도 바뀐다.
+        return '<div class="plan-card' + (p.now ? ' plan-card-now' : '')
+          + (p.emphasis === 'accent' ? ' plan-card-accent' : '') + '">'
           + (p.ribbon
               // ★kind 는 «데이터»에서 온다 — 문구를 /할인/ 로 넘겨짚으면 「반값」처럼
               //   할인인데 안 잡히거나, 등급 이름에 그 글자가 들어가면 잘못 잡힌다.

@@ -1082,6 +1082,47 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-cta-quiet { color: var(--muted); border-color: var(--border-strong); }
 .plan-cta-quiet:hover { background: var(--bg-elev-hi); color: var(--fg); border-color: var(--border-strong); box-shadow: none; }
 
+/* ★★«채운» 요금제 카드 — 연두 배경 + 어두운 글자 (현빈 2026-09-05, BETA PROMOTION).
+   ⛔var(--accent) 를 쓰면 «라이트 테마에서 검은 카드»가 된다. 이 사이트는 라이트에서
+     --accent 를 «먹색»으로 뒤집기 때문이다(style.css:154). 강조색 토큰은 「눈에 띄는 색」이
+     아니라 「그 테마의 강조 축」이라 값이 통째로 달라진다.
+   ⇒ 이 카드는 «자기 색»을 갖는다 — 두 테마에서 같은 연두다. 헤더 로고 마크와 같은 방식이고,
+     연두는 밝은 색이라 어느 판 위에 놓여도 어두운 글자가 읽힌다.
+   ★글자색을 한 색으로 박지 않고 «투명도»로 층을 만든다(1.0 / .66 / .82 / .42).
+     같은 먹색의 농도 차이라 카드 안이 한 목소리로 읽히고, 층위(이름 > 기능 > 꺼진 기능)도 남는다.
+   ★hover 로 배경이 «안» 바뀐다 — 채운 카드가 뜨는 것까지 하면 과하다. 들림(transform)만 남긴다. */
+.plan-card-accent {
+  --pc-bg: #C9F23A;
+  --pc-fg: #0B0B0E;
+  background: var(--pc-bg);
+  border-color: var(--pc-bg);
+}
+.plan-card-accent:hover { background: var(--pc-bg); border-color: var(--pc-bg); }
+
+.plan-card-accent .plan-name,
+.plan-card-accent .plan-price,
+.plan-card-accent .plan-amount        { color: var(--pc-fg); }
+.plan-card-accent .plan-per,
+.plan-card-accent .plan-price-note    { color: rgba(11,11,14,0.66); }
+.plan-card-accent .plan-divider       { border-top-color: rgba(11,11,14,0.22); }
+.plan-card-accent .plan-features li   { color: rgba(11,11,14,0.82); }
+.plan-card-accent .plan-features .feature-dot { color: rgba(11,11,14,0.5); }
+/* 꺼진 기능은 «더 흐리게» — 연두 위에서는 흰 판보다 대비가 빨리 사라지므로 .42 에서 멈춘다 */
+.plan-card-accent .plan-features li.plan-feat-off,
+.plan-card-accent .plan-features li.plan-feat-off .feature-dot { color: rgba(11,11,14,0.42); }
+
+/* 리본·버튼은 «뒤집는다» — 연두 위의 연두는 안 보인다 */
+.plan-card-accent .plan-ribbon { background: var(--pc-fg); color: var(--pc-bg); border-color: var(--pc-fg); }
+.plan-card-accent .plan-cta {
+  background: var(--pc-fg); border-color: var(--pc-fg); color: var(--pc-bg);
+}
+.plan-card-accent .plan-cta:hover {
+  background: #1B1B22; border-color: #1B1B22; color: var(--pc-bg);
+  box-shadow: 0 8px 22px rgba(11,11,14,0.28);
+}
+.plan-card-accent .plan-cta:active { background: #000; border-color: #000; }
+.plan-card-accent .plan-cta:focus-visible { box-shadow: 0 0 0 3px rgba(11,11,14,0.35); }
+
 /* 구매 신청 폼 — 카드 아래 인라인으로 펼쳐진다 */
 .order-panel { width: 100%; max-width: 380px; margin-top: 28px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; display: none; flex-direction: column; align-items: center; gap: 10px; }
 .order-panel.is-open { display: flex; animation: fadeUp 0.35s cubic-bezier(0.22,1,0.36,1) both; }

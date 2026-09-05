@@ -21,7 +21,8 @@
       {
         "id": "beta",
         "name": "BETA PROMOTION",
-        "price": "₩9,900",
+        "emphasis": "accent",
+        "price": "₩0",
         "per": "1개월",
         "ribbon": "베타 한정",
         "cta": "베타로 시작하기",
@@ -47,14 +48,14 @@
             "ok": false
           }
         ],
-        "priceNote": "베타 기간 한정 · 매월 결제"
+        "priceNote": "베타 기간 한정 · 결제 없음"
       },
       {
         "id": "intern",
-        "name": "INTERNSHIP",
+        "name": "SOLO",
         "price": "₩80,000",
         "per": "1개월",
-        "cta": "INTERNSHIP 시작하기",
+        "cta": "SOLO 시작하기",
         "features": [
           {
             "t": "프로젝트 무제한",
