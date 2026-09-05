@@ -180,9 +180,9 @@
 
       /* ★다운로드 CTA 를 «플랫폼별 드라이브 주소»로 올려친다.
        *   goditor-download.js 와 «같은 파일»(data/downloads.json)을 본다 — 주소는 한 벌이다.
-       *   ⚠️맥은 ARM64/Intel 을 브라우저로 구분할 방법이 없다. 그래서 여기서는 «상위 폴더»로
-       *     보낸다 — 세 폴더가 다 보이므로 잘못 짚어 놓고 우기는 것보다 낫다.
-       *     (한 번에 맞히는 건 goditor.html 의 다운로드 절이 한다. 거기엔 Intel 경로가 나란히 있다.)
+       *   ⚠️맥은 ARM64/Intel 을 브라우저로 구분할 방법이 없다. 상단 다운로드 버튼과 «같게»
+       *     arm64 로 보낸다 — 다르게 보내면 「위 버튼과 딴 데로 간다」가 더 큰 혼란이다.
+       *     Intel 맥은 goditor.html 의 다운로드 절로 가야 한다(거기엔 Intel 경로가 나란히 있다).
        *   ★못 읽으면 아무것도 «안 바꾼다». 기본값이 사이트 안의 다운로드 절이라 막다른 길이 없다.
        *   ★새 탭으로 연다 — 요금표를 보다가 드라이브로 «갈아타면» 비교하던 맥락이 사라진다. */
       var dlBtns = grid.querySelectorAll('[data-cta-download]');
@@ -195,8 +195,13 @@
             var ua = navigator.userAgent || '';
             var isWin = /Windows/i.test(ua);
             var isMac = /Mac OS X|Macintosh/i.test(ua) && !/iPhone|iPad/i.test(ua);
-            // 맥은 칩이 갈리므로 «상위 폴더»(빈 키)로 보낸다. 윈도만 딱 짚는다.
-            var href = isWin ? u['win'] : (isMac ? u[''] : u['']);
+            // ★상단 다운로드 버튼과 «같은 폴더»로 보낸다(현빈 2026-09-05: 「위에 다운로드
+            //   버튼처럼」). 윈도 → win / 맥 → mac-arm64 / 그 외 → 세 폴더가 다 보이는 상위 폴더.
+            //   ⚠️맥의 ARM·Intel 은 브라우저로 구분할 방법이 «없다». 상단 버튼은 arm64 를
+            //     기본으로 걸고 «옆에 Intel 링크»를 따로 두는데, 카드에는 그 자리가 없다.
+            //     ⇒ Intel 맥 사용자는 goditor.html 의 다운로드 절로 가야 한다.
+            //     (앞서 상위 폴더로 보내 봤는데, 「상단 버튼과 다르다」가 더 큰 혼란이었다.)
+            var href = isWin ? u['win'] : (isMac ? u['mac-arm64'] : u['']);
             if (!href) return;
             dlBtns.forEach(function (b) {
               b.href = href;
