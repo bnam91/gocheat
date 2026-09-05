@@ -19,6 +19,37 @@
     ],
     "plans": [
       {
+        "id": "beta",
+        "name": "BETA PROMOTION",
+        "price": "₩9,900",
+        "per": "1개월",
+        "ribbon": "베타 한정",
+        "cta": "베타로 시작하기",
+        "features": [
+          {
+            "t": "프로젝트 무제한",
+            "ok": true
+          },
+          {
+            "t": "템플릿 저장",
+            "ok": true
+          },
+          {
+            "t": "GIF",
+            "ok": false
+          },
+          {
+            "t": "MCP 연동",
+            "ok": false
+          },
+          {
+            "t": "기획 기능(예정)",
+            "ok": false
+          }
+        ],
+        "priceNote": "베타 기간 한정 · 매월 결제"
+      },
+      {
         "id": "intern",
         "name": "INTERNSHIP",
         "price": "₩80,000",
