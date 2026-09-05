@@ -243,9 +243,30 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 /* ===== HERO ===== */
 /* padding-top 126px = 원래 80px + 아이브로(.hero-badge)가 차지하던 46px.
    라벨을 걷어내니(2026-09-01 미사여구 정리) 카피가 위로 붙어 보였다 — 실측해서 그만큼 되돌린다.
-   ★라벨을 다시 넣으면 이 값을 80px 로 되돌릴 것. */
+   ★라벨을 다시 넣으면 이 값을 80px 로 되돌릴 것.
+   ★★2026-09-05 라벨이 «돌아왔다»(「드디어 공개합니다.」) — 위 지시대로 80px 로 되돌린다.
+     126px 인 채로 두면 라벨 46px 이 그 위에 얹혀 첫 화면이 통째로 아래로 밀린다.
+   ★★2026-09-05 저녁 — 라벨을 «다시 걷었다»(현빈: 「아이브로우는 없애도 될듯」).
+     ⇒ 규칙대로 126px 로 되돌린다. 라벨 있으면 80 / 없으면 126(=80+라벨 46).
+     이 값은 «라벨의 유무»만 따라간다 — 카피가 몇 줄이냐와는 무관하다. */
+/* ★★2026-09-05 저녁 — 히어로만 «글 폭»을 넓힌다(680 → 860px). 현빈: 「메인 카피 좀 더 크게」.
+   ⚠️이건 폰트만으로는 안 되는 일이라 폭을 건드린다. 제목 둘째 줄이 18자라
+     680px 폭(글폭 632)에서는 «50px 이 한계»다 — 그 이상은 어떤 화면에서도 3줄이 된다.
+     860px 폭(글폭 812)이면 64px 까지 2줄이 유지된다(실측).
+   ★대응표(둘째 줄이 한 줄로 들어가는 한계): 680→50 / 780→58 / 860→64 / 900→68 / 1000↑→70
+   ★--width(680) 자체는 «건드리지 않는다» — 헤더·푸터·다른 섹션이 전부 그 토큰을 쓴다.
+     여기서만 덮으므로 다른 페이지는 한 픽셀도 안 바뀐다.
+   ★이 사이트엔 이미 1040px 폭을 쓰는 섹션이 있다(.pricing) — 낯선 폭이 아니다.
+   ⚠️문구를 바꾸면 이 폭·크기 조합을 다시 재라. 글자 수가 달라지면 한계가 달라진다. */
 .hero { max-width: var(--width); margin: 0 auto; padding: 126px 24px 100px; text-align: center; }
-.hero-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px; }
+/* ★2026-09-05 한글 라벨에 맞게 고쳤다. 원래 이 규칙은 «영문 대문자» 라벨 전제였다
+   (mono + uppercase + letter-spacing 0.06em). 「드디어 공개합니다.」를 넣자 두 가지가 깨졌다:
+     ① JetBrains Mono 에 한글이 없어 fallback 으로 떨어진다 — 제목과 다른 글꼴이 섞여 보인다.
+     ② 0.06em 자간이 한글에서는 «글자가 흩어져» 보인다(영문은 벌려야 읽히지만 한글은 반대다).
+   ⇒ 본문 글꼴로 바꾸고 자간을 0 으로 둔다. uppercase 는 남긴다 — 나중에 영문 라벨을 쓸 때
+     그대로 동작하고, 한글에는 아무 영향이 없다.
+   ★색(--subtle)과 크기(--fs-xs)는 «건드리지 않았다». 아이브로는 제목보다 물러나 있어야 한다. */
+.hero-badge { font-family: var(--font); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0; text-transform: uppercase; margin-bottom: 24px; }
 .hero-title {
   /* ★★히어로만 «따로» 키운다(현빈 2026-09-03).
      ⛔--fs-hero 를 올리면 안 된다 — 그 토큰은 .detail-title(마이페이지·앱 상세)도 쓴다.
@@ -253,8 +274,78 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
      실측 비교(1440px): 애플 Books 72 · 팟캐스트 72 · One 96 · 우리 64 ← 우리가 가장 작았다.
      ★72px 로 맞춘다 — 애플 Books·팟캐스트와 같은 급이다. One(96) 은 브랜드 허브라 예외로 본다.
      ★우리는 w800 + 자간 -0.04em 이라 «같은 px 에서도 더 크게» 보인다. 그래서 더 올리지 않았다.
-     ★모바일 하한 40px 은 «그대로» 둔다 — 거기선 이미 애플과 같다(Books·팟캐스트 40). */
-  font-size: clamp(40px, 6.2vw, 72px);
+     ★모바일 하한 40px 은 «그대로» 둔다 — 거기선 이미 애플과 같다(Books·팟캐스트 40).
+
+     ★★2026-09-05 다시 키웠다 — 제목이 「역전 야매 치트키」 «한 줄»이 되며 세로가 남았다.
+       (현빈: 「한 줄만 메인카피로, 좀 더 키워주고」)
+       ⚠️위의 「하한 40px 은 그대로 둔다」는 제목이 «두 줄»이던 시절 기준이다. 한 줄이 된 지금은
+         모바일에서도 여유가 생겨 48px 까지 올려도 한 줄이 유지된다 — 그래서 하한도 같이 올렸다.
+       ★실측(이 문구·이 폭 기준, headless 렌더로 줄 수를 셈):
+         · 데스크톱 글폭 632px — 100px 까지 1줄, 104px 부터 2줄  ⇒ 상한 96px (4px 여유)
+         · 390px 폰(글폭 342) — 56px 까지 1줄
+         · 360px 폰(글폭 312) — 50px 까지 1줄                   ⇒ 하한 48px (2px 여유)
+       ★6.6vw 는 1440px 에서 95px 이 되도록 잡은 값이다(상한 96 바로 아래).
+       ⚠️★문구를 바꾸면 이 숫자는 «전부 무효»다. 글자 수가 달라지면 접히는 지점이 달라진다.
+         카피를 바꿀 땐 여기를 다시 재라.
+
+       ★★2026-09-05 다시 «줄였다» — 96px 은 과했다(현빈: 「크기를 좀 줄여봐」).
+         그리고 위에 아이브로 라벨이 돌아와 첫 화면에 요소가 하나 늘었다. 제목이 혼자
+         화면을 다 먹으면 라벨과 서브가 안 보인다 — 셋의 균형을 위해 내린다.
+         ⇒ 96 → 80px (1440px 기준), 모바일 하한 48 → 44px.
+         한 줄 한계(데스크톱 100px / 360px폰 50px)에는 여전히 한참 못 미쳐 안전하다.
+
+       ★★2026-09-05 저녁 3차 — 또 내렸다(80 → 64px, 모바일 44 → 36px).
+         제목이 «두 줄»로 돌아왔고 둘째 줄(「애초에 다수를 위한 곳이 아닙니다.」 18자)은
+         데스크톱에서 2줄로 접힌다 ⇒ 제목 전체가 «3줄»이다.
+         3줄을 80px 로 두면 첫 화면을 제목이 통째로 먹어 라벨·서브·CTA 가 밀려난다.
+         ⚠️위의 「한 줄 한계 100px」은 «한 줄짜리 제목» 기준이다 — 지금은 해당 없다.
+           제목이 몇 줄이 되느냐는 «가장 긴 줄»이 정한다. 문구를 바꾸면 여기를 다시 재라.
+
+       ★★2026-09-05 저녁 5차 — 다시 키웠다(64 → 72px, 모바일 36 → 40px).
+         현빈: 「글자 크기가 좀 더 커져도 될 거 같애」.
+         ⚠️CTA 가 «버튼 하나 + 글자 하나»로 가벼워지면서(D′안) 아래쪽이 비었다 — 제목이
+           그만큼 받아도 된다. 라벨을 걷어낸 것도 세로 여유를 만들었다.
+         실측: 72px 에서도 제목은 3줄 그대로다(줄 수가 안 늘어난다 = 첫 화면 높이가 안 밀린다).
+
+       ★★2026-09-05 저녁 6차 — 「제목이 «2줄»이 되게」(현빈). 32px 로 내렸다.
+         ⛔⛔그 32px 은 «틀린 측정»에서 나온 값이다. 정정 기록을 남긴다:
+           측정 하네스에서 span 에 class="title-line" 만 줬는데, display:block 은
+           «.title-line-1 / .title-line-2» 에만 걸려 있다(이 파일 500·501 줄).
+           그래서 두 줄이 inline 으로 «이어붙어» 27자 한 덩어리로 재졌고,
+           「34px 부터 3줄」이라는 가짜 한계가 나왔다. 실물은 두 span 이 각각 block 이다.
+         ★실제로 페이지를 렌더해 보니 40·44·48·50px 이 «전부 2줄»이다(화면으로 확인).
+           ⇒ 680px 폭(글폭 632)에서 둘째 줄 18자가 한 줄로 들어가는 한계는 «50px» 이다.
+         ★★2026-09-05 저녁 7차 — 그래서 48px 로 올린다(50 에서 2px 여유).
+           현빈: 「너무 작아진 듯한데」 · 「2배로 커져도 될 듯」.
+         ⚠️모바일은 2줄이 안 된다(342px 폭에 18자면 20px 안팎이어야 한다) — 3줄을 받아들인다.
+           현빈 확인: 「모바일은 그렇게 되도 되겠지만」. 그래서 하한을 40px 로 올렸다.
+         ★48px 보다 더 키우려면 «글 폭»을 넓혀야 한다 — 실측 대응표(둘째 줄이 한 줄이 되는 한계):
+             680px→50 / 780px→58 / 860px→64 / 900px→68 / 1000px 이상→70
+           이 사이트엔 이미 1040px 폭을 쓰는 섹션이 있다(.pricing). 낯선 폭이 아니다.
+           다만 --width(680) 를 쓰는 헤더·푸터와 히어로 폭이 갈리는 «디자인 결정»이라
+           여기서 하지 않았다.
+
+       ★★2026-09-05 저녁 8차 — 48 → 64px. 글 폭을 860 으로 넓혀서 가능해졌다(위 .hero 주석).
+         현빈: 「메인 카피 좀 더 크게」 · 앞서 「2배로 커져도 될 듯」. 32 → 64 라 정확히 2배다.
+
+       ★★2026-09-05 저녁 9차 — 제목을 «3줄»로 손수 나눴다(현빈 제안).
+         「소문내지 마세요. / 애초에 다수를 위한 / 제품이 아닙니다.」
+         ⇒ 가장 긴 줄이 9자로 짧아졌다. 18자 한 줄이 정하던 한계가 사라진다.
+         실측: 이 3줄 구성에서 680px 폭(글폭 632)은 «100px 까지» 각 줄이 한 줄이다.
+         ★그래서 .hero 의 max-width 를 «680 으로 되돌렸다» — 폭을 넓힐 이유가 없어졌다.
+           («곳이 → 제품이»로 낱말도 바뀌었다. 파는 물건이 있는 곳이라는 뜻이 분명해진다.) */
+  /* ★★2026-09-05 밤 10차 — «모바일만» 키웠다(현빈: 「모바일 화면에서는 더 커져 보여도 될 것 같다」).
+         ⚠️하한 36px 을 그냥 올리면 «작은 폰»이 깨진다 — 360px 폰은 44px 이 한계다.
+           그래서 하한이 아니라 «vw 계수»를 올렸다(5.8 → 11.5vw). 폭에 비례해 같이 줄어든다.
+         ★실측(390px 폰, 글폭 350 · 가장 긴 줄 「애초에 모두를 위한」):
+             36px→226,250,226  ·  48px→301,334,301  ·  50px→313,348,350  ← 한계
+             52px 부터 둘째 줄이 «접힌다»(rows 1,2,1)
+           ⇒ 390px 에서 11.5vw = 44.9px (한계 50 에서 5px 여유)
+             360px 에서는 41.4px, 320px 에서도 36.8px 로 «스스로» 내려간다.
+         ★상한 84px 은 그대로다. 다만 11.5vw 라 730px 부터 상한에 닿는다 —
+           .hero 가 어차피 680px 에서 «폭이 멈추므로» 그 위로 더 키울 이유가 없다.
+         ⚠️문구를 바꾸면 위 숫자는 전부 무효다. 가장 긴 줄이 한계를 정한다. */
+  font-size: clamp(36px, 11.5vw, 84px);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.06;
@@ -267,11 +358,90 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+/* ★★2026-09-05 히어로 제목 그라디언트 — 색은 «고정», 움직임만 «매번 다르게».
+   (현빈: X2+X3 조합 — 「범위가 너무 크다」 + 「N5 랑 결이 다르다」에 대한 답)
+
+   ★색을 셔플하지 «않는다». N5 순서(흰 → 연은빛 → 그레이블루 → 은빛 → 짙은 회색)를 지킨다.
+     매번 바뀌는 건 «궤적·속도»뿐이라 결이 안 흔들린다.
+     ⇒ 앞 판(PR)은 색까지 난수라 색이 서로 상쇄되어 N5 의 질서가 사라졌다.
+   ★background-size 300% → 170% → «120%»(현빈 2026-09-05: 「170% 말고 120% 로도 해볼까」).
+     ★이 값은 «한 화면에 램프가 얼마나 보이나»를 정한다. 120% 면 100/120 = 83%,
+       즉 다섯 색이 «거의 동시에» 한 줄 안에 들어온다(170% 는 59% 만 보인다).
+       ⇒ 한 줄 안의 색 변화가 촘촘해지고, 램프의 «구성»이 그대로 읽힌다.
+     ⚠️대신 «움직임»이 줄어든다. position 0→100% 가 미끄러지는 폭은
+         170% → 램프의 41% / 120% → 램프의 «17%» 뿐이다.
+       같은 궤적·같은 초라도 «덜 움직이는 것처럼» 보인다. 은은함을 원하면 장점,
+       움직임을 원하면 단점이다 — 둘은 같은 손잡이의 양쪽이다.
+     ⚠️그리고 90% 의 짙은 회색이 «거의 항상» 오른쪽 끝에 걸린다(170% 에서는 창 밖으로
+       나갔다 들어왔다 했다). 지금은 그 색이 옅어서 눈에 안 띄지만, 이 값을 유지한 채
+       골짜기를 다시 어둡게 하면 「'위한' 만 가려진다」가 «더 세게» 재현된다.
+   ★파랑은 «아주 살짝»만(--hg-c3). 그레이블루보다 조금 더 파란 정도다.
+     ⚠️#A9C9E8 처럼 진하면 무채 결에서 벗어나 다른 브랜드처럼 보인다 —
+       그래서 한 자리에만, 그것도 낮은 채도로 둔다.
+   ★가운데 56% 는 «심지»(--hg-mid). 여기가 고정돼야 흐름이 한 방향으로 읽힌다.
+
+   ★★★2026-09-05 밤 — 여기까지 «되돌아왔다». 현빈: 「아까 이걸로 갈까? x3」
+     사이에 네 판을 시도했다가 전부 물렸다. 다시 밟지 않게 결과만 남긴다:
+
+       ⑴ 골짜기(--hg-c5)를 3단(#4A5361)까지 어둡게 → 「가려진 글자 연출이 맞다」로 한 번
+          채택됐지만, 어두워지자 «어디가 어두워지는지»가 눈에 띄기 시작했다.
+       ⑵ 「'위한' 이 부분만 가려진다」 — 원인은 궤적이 아니라 «자리»였다.
+          골짜기가 램프의 90%, 즉 «끝»에 있는데 background-size 170% 라 한 번에 보이는 건
+          램프의 59% 뿐이다. position 이 76% 를 넘을 때만 창에 들어오고, 그때 늘 오른쪽 끝에
+          붙어 나타난다. ⇒ ★골짜기를 «옅게» 두면 이 편중이 눈에 안 띈다. 지금이 그 상태다.
+       ⑶ 골짜기를 한가운데(48%)로 옮김 → 이번엔 검은 덩어리가 글자 «한복판»을 훑었다.
+          「너무 티나게 지나가서 짜치네」. ★가장자리가 뚜렷한 것은 «물체»로 읽힌다.
+       ⑷ 램프를 접어 «양 끝»에 골짜기를 두고(가장자리 가중) 반투명 그림자 겹을 얹음
+          → 「너무 탁하다」. ⛔★어두운 겹은 alpha 를 낮춰도 회색이 섞여 순백이 사라진다.
+            최종 어두움은 «램프 색 × 겹 alpha»의 곱이라 램프를 밝혀도 소용이 없었다.
+
+     ⇒ 결론: 이 절의 «단순함»이 값이다. 한 겹 · 고정 순서 · 궤적만 난수.
+       ⚠️어두움을 «더 넣는» 방향의 수정은 위 넷 중 하나로 수렴한다. 손대기 전에 이 기록을 읽어라.
+
+   ⛔★스크립트가 죽어도 제목이 «보여야» 하므로 배경을 여기서 «완성»해 둔다.
+     -webkit-text-fill-color:transparent 만 두고 배경을 JS 로 넣으면, JS 가 실패하는 순간
+     글자가 투명해져 제목이 통째로 사라진다. hero-gradient.js 는 «움직임만» 얹는다.
+   ⚠️background 는 shorthand 라 «뒤에 오면» background-clip·size 를 초기값으로 되돌린다.
+     그래서 background → size → clip 순서로 «한 규칙 안에서» 끝낸다.
+     (2026-09-05 시안에서 이걸 세 번 밟아 글자 대신 색칠한 사각형이 나왔다.) */
+.hero-title .title-line {
+  background: linear-gradient(105deg,
+    var(--hg-c1, #FFFFFF) 0%, var(--hg-c2, #DCE3EA) 20%, var(--hg-c3, #BCCBDA) 38%,
+    var(--hg-mid, #FFFFFF) 56%, var(--hg-c4, #C8CEDA) 74%, var(--hg-c5, #9AA6B4) 90%,
+    var(--hg-c1, #FFFFFF) 100%);
+  background-size: 120% 120%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 라이트 — 밝은 색을 그대로 쓰면 흰 배경에 묻는다. 어두운 무채로 바꾸고 파랑도 어둡게. */
+:root[data-theme="light"] .hero-title .title-line {
+  --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #3B4553;
+  --hg-mid: #0B0B0E;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .hero-title .title-line {
+    --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #3B4553;
+    --hg-mid: #0B0B0E;
+  }
+}
 .hero-sub { font-size: var(--fs-lead); color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
 /* ★히어로 제목 ↔ 버튼 간격(현빈 2026-09-01).
    원래는 .hero-sub 의 margin-bottom:40px 이 이 간격을 만들고 있었는데,
    부제를 걷어내면서 «그 여백까지» 같이 사라졌다. ⇒ 버튼이 스스로 갖게 한다. */
-.hero-cta { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 72px; }
+/* ★2026-09-05 flex-wrap 추가 — D′안(글자+버튼)에서 CTA 글자를 15 → 17px 로 키우자
+   360px 폰에서 두 요소가 한 줄에 안 들어가 «각각이 2줄로 접혔다»(실측).
+   wrap 을 주면 요소가 통째로 아래로 내려가 각각은 한 줄을 유지한다 — 글자를 줄이는 것보다
+   낫다(좁은 화면이라고 작게 만들 이유가 없다). 390px 이상에서는 그대로 한 줄에 나란히 선다.
+   ★gap 12px 은 가로·세로 둘 다에 걸린다 — 쌓였을 때의 세로 간격도 이 값이다. */
+/* ★2026-09-05 저녁 — margin-top 72 → 44px (현빈: 「이게 좀 내려와 있나 싶네」).
+   ★왜 72px 이었나 — 2026-09-01 에 부제를 걷으면서 «부제가 갖고 있던 여백»을 버튼이
+     스스로 갖게 한 값이다. 그때는 제목이 짧았다.
+   ⚠️지금은 제목이 3줄 84px 이라 위쪽 덩어리가 커졌다. 그 밑에 72px 을 더 두면
+     CTA 가 제목에서 «떨어져 나와» 혼자 떠 보인다.
+   ⇒ 44px 로 붙여 CTA 를 제목 그룹 안으로 들인다. 대신 앱 칩을 아래로 내려
+     「제목+CTA」와 「앱 칩」이 두 덩어리로 갈리게 한다(아래 .hero-apps 참고). */
+.hero-cta { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 44px; }
 /* ★테두리 버튼의 선·글자는 --accent 가 아니라 --accent-fill 을 쓴다(현빈 2026-09-02).
    (당시) --accent 가 라이트에서 올리브 초록(#537E16)이라 「라이트는 검정 버튼」 지시와 어긋났다.
    ★2026-09-02 이후 --accent 도 먹색이라 두 토큰이 라이트에서 같은 값이다 — 이 규칙은 그대로 유효하다
@@ -281,7 +451,8 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
    테두리→채움 전환이 색이 튀지 않는다. */
 .cta-primary {
   display: inline-block;
-  font-size: var(--fs-sm);
+  /* ★2026-09-05 --fs-sm → --fs-body. D′안에서 채움 버튼이 «하나»뿐이라 그만큼 받쳐야 한다. */
+  font-size: var(--fs-body);
   font-weight: 600;
   /* ★테두리가 아니라 «채움»이다(현빈 2026-09-02: 「배경으로 칠해줘 … 검정으로 흰글씨로」).
      라이트: 배경 #0B0B0E + 흰 글자 / 다크: 배경 라임 + 먹색 글자 — 토큰이 알아서 갈린다. */
@@ -298,8 +469,29 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
    ⚠️그래서 지금은 1·2 CTA 의 «시각적 우열이 없다» — 둘을 구분하고 싶어지면 여기만 손대면 된다. */
 .cta-primary.is-quiet { color: var(--accent-fg); background: var(--accent-fill); border-color: var(--accent-fill); }
 .cta-primary.is-quiet:hover { background: var(--accent-fill-hover); color: var(--accent-fg); border-color: var(--accent-fill-hover); }
+/* ★★2026-09-05 저녁 — 히어로 CTA 를 «채움 버튼»에서 «글자»로 바꿨다(현빈 C3안).
+   「소문내지 마세요 / 애초에 다수를 위한 제품이 아닙니다」로 물러서는 톤에 채움 버튼이 있으면
+   «오지 말라 해놓고 눌러달라»가 되어 미세하게 부딪힌다. 글자면 그 모순이 없다.
+
+   ★두 요소의 «역할이 다르다» — 이게 핵심이다.
+     .cta-lead = 「지금 저점매수하러가기 →」 ⇒ «링크가 아니다». 오른쪽을 가리키는 안내 문구다.
+        그래서 hover 도 커서 변화도 없다(현빈: 「지금 저점매수하기는 호버될 필요가 없지 않겠니?」).
+        ⇒ 목적지를 정할 필요도 없어졌다. 화살표가 «오른쪽 링크»를 가리킨다.
+     .cta-go = 「유튜브 구독하기」 ⇒ 진짜 링크. 네온색으로 혼자 도드라진다.
+   ★밑줄은 평소엔 «없다». 네온색이 이미 「여기가 눌린다」를 말하고, 밑줄까지 있으면 시끄럽다.
+     hover 에서만 밑줄이 올라온다 — 마우스를 올린 사람에게만 확인을 준다.
+   ⚠️--neon 은 테마마다 «다른 값»이다(다크 형광 #C9F23A / 라이트 #4E7300). 둘 다 읽힌다.
+   ★기존 .cta-primary/.is-quiet/.cta-secondary 는 «지우지 않는다» — 다른 페이지와 되살릴 때가 쓴다. */
+.cta-lead { font-size: var(--fs-body); color: var(--subtle); letter-spacing: -0.01em; }
+.cta-go   { font-size: var(--fs-body); font-weight: 600; color: var(--neon); letter-spacing: -0.01em;
+            text-decoration: none; transition: color 0.15s; }
+.cta-go:hover { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1.5px; }
+.cta-go:focus-visible { outline: none; text-decoration: underline; text-underline-offset: 6px; box-shadow: var(--focus-ring); border-radius: 4px; }
 .cta-sep { color: var(--border-strong); font-size: var(--fs-sm); margin: 0 4px; }
-.cta-secondary { font-size: var(--fs-sm); color: var(--subtle); transition: color 0.15s; }
+/* ★2026-09-05 D′안 — CTA 가 «글자 하나 + 버튼 하나»가 되며 둘 다 한 단계 키운다.
+   버튼이 하나뿐이라 작으면 첫 화면에서 눈에 안 걸린다. --fs-sm(15) → --fs-body(17).
+   ★색·hover 는 그대로 둔다 — 글자 링크는 버튼보다 물러나 있어야 무게가 갈린다. */
+.cta-secondary { font-size: var(--fs-body); color: var(--subtle); transition: color 0.15s; }
 .cta-secondary:hover { color: var(--fg); }
 .cta-secondary:focus-visible { outline: none; color: var(--accent); }
 
@@ -435,14 +627,22 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    만든 것이라, 그라디언트가 걸린 줄이 반드시 이걸 써야 한다. 한쪽만 바꾸면 사파리에서 글자가 사라진다. */
 .title-line-1  { display: block; animation: revealCopyGradient 1.0s cubic-bezier(0.16,1,0.3,1) 0.10s both; }
 .title-line-2  { display: block; animation: revealCopy 1.0s cubic-bezier(0.16,1,0.3,1) 0.28s both; }
+/* ★2026-09-05 셋째 줄 추가 — 제목을 「소문내지 마세요. / 애초에 다수를 위한 / 제품이 아닙니다.」
+   3줄로 손수 나누면서 필요해졌다. 지연은 0.28 → 0.46s(1·2줄 간격 0.18s 를 그대로 이어간다).
+   ⚠️display:block 이 여기 «번호 붙은 클래스»에만 있다는 점을 기억할 것 — .title-line 만으로는
+     줄이 안 나뉜다(2026-09-05 에 이걸 몰라 측정을 한 번 틀렸다). */
+.title-line-3  { display: block; animation: revealCopy 1.0s cubic-bezier(0.16,1,0.3,1) 0.46s both; }
 .hero-sub      { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.62s both; }
 .hero-cta      { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.72s both; }
 
 /* Hero app icons */
 .hero-apps {
+  /* ★2026-09-05 저녁 — margin-top 48 → 84px (현빈: 「앱 카드들 좀 더 내리자」).
+     CTA 를 제목 쪽으로 붙인 만큼(72→44) 앱 칩은 반대로 떼어 «두 덩어리»로 나눈다.
+     위 = 카피와 갈 곳 / 아래 = 우리가 만든 것들. 셋이 균등하게 놓이면 위계가 안 읽힌다. */
   display: flex;
   gap: 12px;
-  margin-top: 48px;
+  margin-top: 84px;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -500,6 +700,55 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
+}
+
+/* ★★2026-09-05 NEW 표시(현빈: 「앱처럼 빨간 점 뱃지를 붙이는 건 어때?」 → 시안 5안 중 «B» 채택).
+   ★점이 아니라 «NEW 글자 필»이다. 점은 「무엇이」 새로운지 안 알려준다 —
+     글자를 넣으면 자리를 먹는 대신 뜻이 «읽힌다». 현빈이 그 쪽을 골랐다.
+   ★칩 «바깥 모서리»에 걸친다 — 앱 아이콘의 미확인 뱃지와 같은 자리다. 안쪽에 넣으면
+     아이콘·이름과 셋이 나란히 놓여 「또 하나의 요소」가 되고 뱃지가 아니라 «라벨»로 읽힌다.
+   ⚠️position:absolute 라 «줄바꿈 계산»에는 안 들어간다 — 칩이 접히는 지점은 그대로다.
+     대신 오른쪽으로 10px 삐져나와 «옆 칩과 겹칠» 수 있다. 그래서 모바일 gap 을 8→14px 로
+     넓혔다(아래 반응형). 폭이 아니라 «겹침»이 문제라 gap 으로 푸는 게 맞다.
+   ★테두리 색을 배경색(--bg)으로 줘서 «파낸 것처럼» 보이게 한다. 점이 칩 선 위에
+     그냥 얹히면 지저분해진다 — 이 링 하나가 iOS 뱃지의 인상을 만든다.
+   ★빨강은 브랜드 라임(--accent)과 «반대편» 색이라 CTA 와 경쟁하지 않고 눈에만 걸린다.
+   ⚠️.is-soon 칩은 opacity .55 라 점도 같이 흐려진다 — 준비 중인 앱에 NEW 는 안 붙인다.
+   ⚠️애니메이션은 «맥박 한 겹»만. 칩 자체가 이미 floatBob 으로 떠 있어서 둘 다 크게
+     움직이면 산만하다. reduced-motion 이면 점은 남고 맥박만 멈춘다. */
+.hero-app-pill { position: relative; }
+.hero-app-pill[data-new]::after {
+  content: "NEW";
+  position: absolute;
+  top: -8px; right: -10px;
+  font-family: var(--font);
+  font-size: 9px; font-weight: 800; line-height: 1;
+  letter-spacing: 0.06em;
+  color: #FFFFFF;
+  background: #FF3B30;
+  border: 2px solid var(--bg);
+  padding: 3px 5px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 0 rgba(255,59,48,0.5);
+  animation: newPulse 2.4s ease-out infinite;
+  pointer-events: none;
+}
+/* ★A안(점)은 «지우지 않고» 남겨둔다 — 현빈: 「A안은 후보로 둘 건데 담에 요청하면 이걸로 바꿔줘」.
+   ⇒ 되돌리는 법은 «한 줄»이다: data/apps.json 의  "isNew": true  →  "isNew": "dot"
+     (app.js 가 그 문자열을 data-new 값으로 그대로 넘긴다. CSS·JS 는 손댈 게 없다.)
+   ★아래는 B 를 덮어쓰는 «차이분»만 적었다. 글자를 지우고(content:"") 원으로 돌린다. */
+.hero-app-pill[data-new="dot"]::after {
+  content: "";
+  top: -3px; right: -3px;
+  width: 10px; height: 10px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+@keyframes newPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(255,59,48,0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(255,59,48,0);   }
+  100% { box-shadow: 0 0 0 0   rgba(255,59,48,0);   }
 }
 
 .hero-app-pill-name {
@@ -645,23 +894,29 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      스스로 40px 로 내려간다. 두 군데서 크기를 정하면 축이 갈라진다. */
   .app-grid { grid-template-columns: 1fr; }
   .hero, main, .yt-section, footer { padding-left: 20px; padding-right: 20px; }
+  /* ★위 여백만 따로 줄인다(현빈 2026-09-05: 「피씨는 적당한데 모바일은 좀 올려야겠다」).
+     데스크톱 126px 은 «넓은 화면»에서 첫 화면이 남아돌 때 쓰는 값이다. 폰은 세로가 귀하고
+     헤더(64px)가 바로 위에 붙어 있어서 그만큼이면 카피가 화면 한참 아래로 내려간다.
+     ⚠️좌우(20px)와 아래(100px)는 건드리지 않는다 — 위만 줄이는 게 목적이다. */
+  .hero { padding-top: 72px; }
   header nav { padding: 0 20px; }
   /* ★토글 버튼이 nav-links 항목으로 붙으면서 390px 폭에서 11px 넘쳤다(2026-08-24 실측) —
      링크 사이 간격만 좁혀 흡수한다. 항목을 숨기지 않는다(전부 보여야 하는 링크들). */
   .nav-links { gap: 12px; }
   .theme-toggle { width: 28px; height: 28px; }
-  .hero-apps { gap: 8px; margin-top: 40px; }
+  .hero-apps { gap: 14px; margin-top: 40px; }   /* ★8→14: NEW 필이 10px 삐져나와 옆 칩을 덮는다 */
   .hero-app-pill { padding: 6px 10px 6px 6px; }
   .hero-app-pill-icon { width: 28px; height: 28px; font-size: 12px; }
   .hero-app-pill-name { font-size: var(--fs-xs); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-badge, .hero-title, .title-line-1, .title-line-2,
+  .hero-badge, .hero-title, .title-line-1, .title-line-2, .title-line-3,
   .hero-sub, .hero-cta, .hero-apps {
     animation: none; opacity: 1; transform: none; filter: none;
   }
   .hero-app-pill, .hero-app-pill.bob-ready { animation: none; opacity: 1; }
+  .hero-app-pill[data-new]::after { animation: none; box-shadow: none; }
   .title-waving { animation: none; }
   .card-hidden { opacity: 1; transform: none; }
   .yt-hidden { opacity: 1; transform: none; }
