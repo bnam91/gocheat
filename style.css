@@ -384,6 +384,24 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
    ⚠️그래서 지금은 1·2 CTA 의 «시각적 우열이 없다» — 둘을 구분하고 싶어지면 여기만 손대면 된다. */
 .cta-primary.is-quiet { color: var(--accent-fg); background: var(--accent-fill); border-color: var(--accent-fill); }
 .cta-primary.is-quiet:hover { background: var(--accent-fill-hover); color: var(--accent-fg); border-color: var(--accent-fill-hover); }
+/* ★★2026-09-05 저녁 — 히어로 CTA 를 «채움 버튼»에서 «글자»로 바꿨다(현빈 C3안).
+   「소문내지 마세요 / 애초에 다수를 위한 제품이 아닙니다」로 물러서는 톤에 채움 버튼이 있으면
+   «오지 말라 해놓고 눌러달라»가 되어 미세하게 부딪힌다. 글자면 그 모순이 없다.
+
+   ★두 요소의 «역할이 다르다» — 이게 핵심이다.
+     .cta-lead = 「지금 저점매수하러가기 →」 ⇒ «링크가 아니다». 오른쪽을 가리키는 안내 문구다.
+        그래서 hover 도 커서 변화도 없다(현빈: 「지금 저점매수하기는 호버될 필요가 없지 않겠니?」).
+        ⇒ 목적지를 정할 필요도 없어졌다. 화살표가 «오른쪽 링크»를 가리킨다.
+     .cta-go = 「유튜브 구독하기」 ⇒ 진짜 링크. 네온색으로 혼자 도드라진다.
+   ★밑줄은 평소엔 «없다». 네온색이 이미 「여기가 눌린다」를 말하고, 밑줄까지 있으면 시끄럽다.
+     hover 에서만 밑줄이 올라온다 — 마우스를 올린 사람에게만 확인을 준다.
+   ⚠️--neon 은 테마마다 «다른 값»이다(다크 형광 #C9F23A / 라이트 #4E7300). 둘 다 읽힌다.
+   ★기존 .cta-primary/.is-quiet/.cta-secondary 는 «지우지 않는다» — 다른 페이지와 되살릴 때가 쓴다. */
+.cta-lead { font-size: var(--fs-body); color: var(--subtle); letter-spacing: -0.01em; }
+.cta-go   { font-size: var(--fs-body); font-weight: 600; color: var(--neon); letter-spacing: -0.01em;
+            text-decoration: none; transition: color 0.15s; }
+.cta-go:hover { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1.5px; }
+.cta-go:focus-visible { outline: none; text-decoration: underline; text-underline-offset: 6px; box-shadow: var(--focus-ring); border-radius: 4px; }
 .cta-sep { color: var(--border-strong); font-size: var(--fs-sm); margin: 0 4px; }
 /* ★2026-09-05 D′안 — CTA 가 «글자 하나 + 버튼 하나»가 되며 둘 다 한 단계 키운다.
    버튼이 하나뿐이라 작으면 첫 화면에서 눈에 안 걸린다. --fs-sm(15) → --fs-body(17).
