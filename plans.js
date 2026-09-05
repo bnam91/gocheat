@@ -122,6 +122,20 @@
             })()
           + (p.id === 'free'
               ? '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
+              // ★★값이 0원인 등급은 «주문서로 보내지 않는다»(현빈 2026-09-05: 「결제할 필요는
+              //   없으니 바로 다운로드 버튼처럼 드라이브를 열어주면 되겠다」).
+              //   무통장입금 주문서는 「입금할 금액」을 말하는 화면이다. 0원짜리를 거기로 보내면
+              //   낼 것이 없는 사람에게 계좌를 보여 준다 — 화면이 거짓말을 하게 된다.
+              //   ⇒ apps.json 의 ctaAction:"download" 로 «지금은 받기만 하면 된다»를 말한다.
+              //
+              //   ⚠️주소를 여기에 «박지 않는다». 다운로드 주소의 단 한 벌은 data/downloads.json
+              //     이고 서버(api/license/download.js)도 그 파일을 본다. 여기 박으면 두 벌이 되어
+              //     드라이브를 옮길 때 한쪽만 고치는 사고가 난다(그 파일 _why 가 경고하는 것).
+              //   ⇒ 기본값은 «사이트 안»의 다운로드 절로 두고, 아래에서 downloads.json 을 읽어
+              //     플랫폼별 드라이브 주소로 «올려친다». 못 읽어도 막다른 길이 아니다.
+              : p.ctaAction === 'download'
+              ? '<a href="goditor.html#download" class="plan-cta" data-cta-download="1">'
+                  + esc(p.cta || (p.name + ' 다운로드')) + ' →</a>'
               // ★유료 등급은 «주문서»로 보낸다. 전에는 넷 다 가입 페이지로 가서
               //   「돈을 내겠다」는 의사를 받을 곳이 아예 없었다.
               // ★버튼 문구는 «등급마다 달라야» 한다. 이름만 쓰면 프로 1개월과 프로 12개월이
@@ -146,6 +160,35 @@
               + esc(p.id) + '" data-plan-label="' + esc(p.name) + '">' + esc(p.name) + ' 신청</button>';
           }).join('');
         if (window.__bindOrderButtons) window.__bindOrderButtons();
+      }
+
+      /* ★다운로드 CTA 를 «플랫폼별 드라이브 주소»로 올려친다.
+       *   goditor-download.js 와 «같은 파일»(data/downloads.json)을 본다 — 주소는 한 벌이다.
+       *   ⚠️맥은 ARM64/Intel 을 브라우저로 구분할 방법이 없다. 그래서 여기서는 «상위 폴더»로
+       *     보낸다 — 세 폴더가 다 보이므로 잘못 짚어 놓고 우기는 것보다 낫다.
+       *     (한 번에 맞히는 건 goditor.html 의 다운로드 절이 한다. 거기엔 Intel 경로가 나란히 있다.)
+       *   ★못 읽으면 아무것도 «안 바꾼다». 기본값이 사이트 안의 다운로드 절이라 막다른 길이 없다.
+       *   ★새 탭으로 연다 — 요금표를 보다가 드라이브로 «갈아타면» 비교하던 맥락이 사라진다. */
+      var dlBtns = grid.querySelectorAll('[data-cta-download]');
+      if (dlBtns.length) {
+        fetch('data/downloads.json?v=20260905m')
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (dl) {
+            var u = dl && dl.goditor;
+            if (!u) return;
+            var ua = navigator.userAgent || '';
+            var isWin = /Windows/i.test(ua);
+            var isMac = /Mac OS X|Macintosh/i.test(ua) && !/iPhone|iPad/i.test(ua);
+            // 맥은 칩이 갈리므로 «상위 폴더»(빈 키)로 보낸다. 윈도만 딱 짚는다.
+            var href = isWin ? u['win'] : (isMac ? u[''] : u['']);
+            if (!href) return;
+            dlBtns.forEach(function (b) {
+              b.href = href;
+              b.target = '_blank';
+              b.rel = 'noopener';
+            });
+          })
+          .catch(function () { /* 주소를 못 올려쳐도 기본 링크가 살아 있다 */ });
       }
     })
     .catch(function () {

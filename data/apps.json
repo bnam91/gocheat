@@ -24,7 +24,7 @@
         "price": "₩0",
         "per": "1개월",
         "ribbon": "프로모션",
-        "cta": "BETA 시작하기",
+        "cta": "BETA 다운로드",
         "features": [
           {
             "t": "프로젝트 무제한",
@@ -47,7 +47,8 @@
             "ok": false
           }
         ],
-        "priceNote": "베타 기간 한정 · 결제 없음"
+        "priceNote": "베타 기간 한정 · 결제 없음",
+        "ctaAction": "download"
       },
       {
         "id": "intern",
