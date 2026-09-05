@@ -77,7 +77,7 @@
              ★띄어쓰기 — 「소문내지 마세요」. 보조용언 '마세요'는 띄는 것이 원칙이다.
                ⚠️현빈 지시는 「소문내지마세요」로 붙어 있었으나, 2026-09-02 이 자리에 남긴
                  띄어쓰기 원칙을 그대로 따른다(같은 문장을 그때도 띄어 썼다). -->
-        <span class="title-line title-line-1 gradient-text">소문내지 마세요.</span>
+        <span class="title-line title-line-1">소문내지 마세요.</span>
         <span class="title-line title-line-2">애초에 모두를 위한</span>
         <span class="title-line title-line-3">제품이 아닙니다.</span>
       </h1>
@@ -187,5 +187,11 @@
   <script src="footer.js?v=20260904w"></script>
   <script src="nav-auth.js?v=20260904w"></script>
   <script src="theme.js?v=20260904w"></script>
+  <!-- ★히어로 제목 그라디언트 — 색도 궤적도 매번 다르게(현빈 2026-09-05 PR안).
+       ⚠️defer 로 둔다: 제목은 style.css 의 «정적 그라디언트»로 이미 보이고, 이 파일은 그 위에
+         움직임만 덮는다. 파일이 못 오거나 죽어도 제목은 그대로다.
+       ⚠️.title-line-1 의 .gradient-text 클래스는 뗐다 — 이제 세 줄이 «같은» 그라디언트를 쓴다.
+         (gradient-text 규칙 자체는 남겼다. 다른 페이지가 쓴다.) -->
+  <script src="hero-gradient.js?v=20260905a" defer></script>
 </body>
 </html>

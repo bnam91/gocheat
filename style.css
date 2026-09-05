@@ -347,6 +347,34 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+/* ★★2026-09-05 히어로 제목 — 색도 궤적도 «매번 다른» 그라디언트 (현빈 PR안).
+   움직임과 난수 색은 hero-gradient.js 가 넣는다. 여기 있는 것은 «폴백»이다.
+   ⛔★스크립트가 죽어도 제목이 보여야 하므로 배경을 여기서 «완성»해 둔다.
+     -webkit-text-fill-color:transparent 만 두고 배경을 JS 에 맡기면, JS 가 실패하는 순간
+     글자가 투명해져 제목이 통째로 사라진다.
+   ⚠️background 는 shorthand 라 «뒤에 오면» background-clip·size 를 초기값으로 되돌린다.
+     그래서 background → size → clip 순서로 «한 규칙 안에서» 끝낸다.
+     (2026-09-05 시안에서 이걸 세 번 밟아 글자 대신 색칠한 사각형이 나왔다.)
+   ★변수 기본값은 «다크 기준»이다. 라이트에서는 아래 [data-theme] 블록이 덮고,
+     JS 가 살아 있으면 테마를 보고 다시 뽑는다(테마 토글에도 반응한다). */
+.hero-title .title-line {
+  background: linear-gradient(var(--hg-ang, 105deg),
+    var(--hg-c1, #FFFFFF) 0%, var(--hg-c2, #DCE3EA) 20%, var(--hg-c3, #AEB8C4) 38%,
+    var(--hg-c1, #FFFFFF) 56%, var(--hg-c4, #C8CEDA) 74%, var(--hg-c5, #9AA6B4) 90%,
+    var(--hg-c1, #FFFFFF) 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* 라이트 — 밝은 색을 그대로 쓰면 흰 배경에 묻는다. 어두운 무채로 바꾼다. */
+:root[data-theme="light"] .hero-title .title-line {
+  --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #4A5462; --hg-c4: #1B212B; --hg-c5: #3B4553;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .hero-title .title-line {
+    --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #4A5462; --hg-c4: #1B212B; --hg-c5: #3B4553;
+  }
+}
 .hero-sub { font-size: var(--fs-lead); color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
 /* ★히어로 제목 ↔ 버튼 간격(현빈 2026-09-01).
    원래는 .hero-sub 의 margin-bottom:40px 이 이 간격을 만들고 있었는데,
