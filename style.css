@@ -370,6 +370,14 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
      ⚠️#A9C9E8 처럼 진하면 무채 결에서 벗어나 다른 브랜드처럼 보인다 —
        그래서 한 자리에만, 그것도 낮은 채도로 둔다.
    ★가운데 56% 는 «심지»(--hg-mid). 여기가 고정돼야 흐름이 한 방향으로 읽힌다.
+   ★★2026-09-05 밤 — 마지막 자리(--hg-c5, 90%)를 «한 단 어둡게» 했다(현빈: 「짙은 회색을 좀 더 어둡게」).
+       #9AA6B4 → #7C8895 (배경대비 7.9:1 → 5.4:1)
+     ★이 자리는 «골짜기»다. 흐름이 지날 때 글자가 잠깐 어두워지는 지점이라, 어둡게 할수록
+       색을 더 넣지 않고도 움직임이 «세게» 느껴진다.
+     ⚠️대신 그 구간의 읽힘을 깎는다. #626D7B(3.7:1)부터 「배경으로 가라앉는」 인상이 시작되고
+       #4A5361(2.5:1)은 그라디언트가 아니라 «가려진 글자»로 보인다 — 그래서 한 단만 갔다.
+     ★라이트 테마는 이 자리가 «가장 밝은 회색»이라 반대로 밀었다(#3B4553 → #545F6E).
+       같은 방향으로 밀면 골짜기가 «메워져» 두 테마의 깊이가 어긋난다.
 
    ⛔★스크립트가 죽어도 제목이 «보여야» 하므로 배경을 여기서 «완성»해 둔다.
      -webkit-text-fill-color:transparent 만 두고 배경을 JS 로 넣으면, JS 가 실패하는 순간
@@ -380,7 +388,7 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 .hero-title .title-line {
   background: linear-gradient(105deg,
     var(--hg-c1, #FFFFFF) 0%, var(--hg-c2, #DCE3EA) 20%, var(--hg-c3, #BCCBDA) 38%,
-    var(--hg-mid, #FFFFFF) 56%, var(--hg-c4, #C8CEDA) 74%, var(--hg-c5, #9AA6B4) 90%,
+    var(--hg-mid, #FFFFFF) 56%, var(--hg-c4, #C8CEDA) 74%, var(--hg-c5, #7C8895) 90%,
     var(--hg-c1, #FFFFFF) 100%);
   background-size: 170% 170%;
   -webkit-background-clip: text; background-clip: text;
@@ -388,12 +396,12 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 }
 /* 라이트 — 밝은 색을 그대로 쓰면 흰 배경에 묻는다. 어두운 무채로 바꾸고 파랑도 어둡게. */
 :root[data-theme="light"] .hero-title .title-line {
-  --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #3B4553;
+  --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #545F6E;
   --hg-mid: #0B0B0E;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) .hero-title .title-line {
-    --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #3B4553;
+    --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #545F6E;
     --hg-mid: #0B0B0E;
   }
 }
