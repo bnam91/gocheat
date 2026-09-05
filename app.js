@@ -8,7 +8,7 @@ const RECENT_VIDEOS = [
 
 async function loadApps() {
   // hidden:true 앱은 메인페이지에서 숨긴다(지우지 않음 — apps.json에서 hidden 제거하면 되살아난다).
-  const apps = (await fetch('data/apps.json?v=20260905b').then(r=>r.json())).filter(a => !a.hidden);
+  const apps = (await fetch('data/apps.json?v=20260905c').then(r=>r.json())).filter(a => !a.hidden);
 
   // Hero pills — 개별 stagger: 0.78s 기준, 0.08s 간격
   const bobDurations = [3.5, 4.0, 3.7, 4.1, 3.6, 3.9];
@@ -21,11 +21,13 @@ async function loadApps() {
     // ★NEW 점 뱃지 — apps.json 의 isNew 하나로 켜고 끈다(현빈 2026-09-05).
     //   ⚠️준비 중(comingSoon)인 앱에는 안 붙인다 — 「곧 나온다」와 「새로 나왔다」는 다른 말이고,
     //     is-soon 칩은 흐려져 있어 점만 선명하면 오히려 어긋나 보인다.
-    const isNew = !!app.isNew && !soon;
+    //   ★값을 «그대로» 넘긴다 — true 면 NEW 필(B안), "dot" 이면 빨간 점(A안, 후보로 남겨둠).
+    //     시안을 CSS 에 둘 다 두고 JSON 한 줄로 갈아끼우는 구조다.
+    const isNew = (!soon && app.isNew) ? (typeof app.isNew === 'string' ? app.isNew : '') : null;
     const href = soon ? '' : (app.detailUrl || app.buyUrl || app.downloadUrl || '#apps');
     const delay = (0.78 + i * 0.08).toFixed(2);
     return `
-    <a class="hero-app-pill${soon ? ' is-soon' : ''}"${soon ? ` role="link" aria-disabled="true" data-soon="${app.name}"` : ` href="${href}"`}${isNew ? ' data-new=""' : ''} style="animation-delay:${delay}s;">
+    <a class="hero-app-pill${soon ? ' is-soon' : ''}"${soon ? ` role="link" aria-disabled="true" data-soon="${app.name}"` : ` href="${href}"`}${isNew !== null ? ` data-new="${isNew}"` : ''} style="animation-delay:${delay}s;">
       <div class="hero-app-pill-icon">
         <img src="${app.icon}" alt="${app.name}"
              onerror="this.parentElement.textContent='${EMOJI_FALLBACK[app.id]||'📦'}'" />

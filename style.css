@@ -674,9 +674,14 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   border-radius: 8px;
 }
 
-/* ★★2026-09-05 NEW 표시(현빈: 「앱처럼 빨간 점 뱃지를 붙이는 건 어때?」).
+/* ★★2026-09-05 NEW 표시(현빈: 「앱처럼 빨간 점 뱃지를 붙이는 건 어때?」 → 시안 5안 중 «B» 채택).
+   ★점이 아니라 «NEW 글자 필»이다. 점은 「무엇이」 새로운지 안 알려준다 —
+     글자를 넣으면 자리를 먹는 대신 뜻이 «읽힌다». 현빈이 그 쪽을 골랐다.
    ★칩 «바깥 모서리»에 걸친다 — 앱 아이콘의 미확인 뱃지와 같은 자리다. 안쪽에 넣으면
-     아이콘·이름과 셋이 나란히 놓여 「또 하나의 요소」가 되고 뱃지로 안 읽힌다.
+     아이콘·이름과 셋이 나란히 놓여 「또 하나의 요소」가 되고 뱃지가 아니라 «라벨»로 읽힌다.
+   ⚠️position:absolute 라 «줄바꿈 계산»에는 안 들어간다 — 칩이 접히는 지점은 그대로다.
+     대신 오른쪽으로 10px 삐져나와 «옆 칩과 겹칠» 수 있다. 그래서 모바일 gap 을 8→14px 로
+     넓혔다(아래 반응형). 폭이 아니라 «겹침»이 문제라 gap 으로 푸는 게 맞다.
    ★테두리 색을 배경색(--bg)으로 줘서 «파낸 것처럼» 보이게 한다. 점이 칩 선 위에
      그냥 얹히면 지저분해진다 — 이 링 하나가 iOS 뱃지의 인상을 만든다.
    ★빨강은 브랜드 라임(--accent)과 «반대편» 색이라 CTA 와 경쟁하지 않고 눈에만 걸린다.
@@ -685,21 +690,37 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      움직이면 산만하다. reduced-motion 이면 점은 남고 맥박만 멈춘다. */
 .hero-app-pill { position: relative; }
 .hero-app-pill[data-new]::after {
-  content: "";
+  content: "NEW";
   position: absolute;
-  top: -3px; right: -3px;
-  width: 10px; height: 10px;
-  border-radius: 50%;
+  top: -8px; right: -10px;
+  font-family: var(--font);
+  font-size: 9px; font-weight: 800; line-height: 1;
+  letter-spacing: 0.06em;
+  color: #FFFFFF;
   background: #FF3B30;
   border: 2px solid var(--bg);
-  box-shadow: 0 0 0 0 rgba(255,59,48,0.55);
+  padding: 3px 5px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 0 rgba(255,59,48,0.5);
   animation: newPulse 2.4s ease-out infinite;
   pointer-events: none;
 }
+/* ★A안(점)은 «지우지 않고» 남겨둔다 — 현빈: 「A안은 후보로 둘 건데 담에 요청하면 이걸로 바꿔줘」.
+   ⇒ 되돌리는 법은 «한 줄»이다: data/apps.json 의  "isNew": true  →  "isNew": "dot"
+     (app.js 가 그 문자열을 data-new 값으로 그대로 넘긴다. CSS·JS 는 손댈 게 없다.)
+   ★아래는 B 를 덮어쓰는 «차이분»만 적었다. 글자를 지우고(content:"") 원으로 돌린다. */
+.hero-app-pill[data-new="dot"]::after {
+  content: "";
+  top: -3px; right: -3px;
+  width: 10px; height: 10px;
+  padding: 0;
+  border-radius: 50%;
+}
+
 @keyframes newPulse {
-  0%   { box-shadow: 0 0 0 0   rgba(255,59,48,0.55); }
-  70%  { box-shadow: 0 0 0 7px rgba(255,59,48,0);    }
-  100% { box-shadow: 0 0 0 0   rgba(255,59,48,0);    }
+  0%   { box-shadow: 0 0 0 0   rgba(255,59,48,0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(255,59,48,0);   }
+  100% { box-shadow: 0 0 0 0   rgba(255,59,48,0);   }
 }
 
 .hero-app-pill-name {
@@ -855,7 +876,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      링크 사이 간격만 좁혀 흡수한다. 항목을 숨기지 않는다(전부 보여야 하는 링크들). */
   .nav-links { gap: 12px; }
   .theme-toggle { width: 28px; height: 28px; }
-  .hero-apps { gap: 8px; margin-top: 40px; }
+  .hero-apps { gap: 14px; margin-top: 40px; }   /* ★8→14: NEW 필이 10px 삐져나와 옆 칩을 덮는다 */
   .hero-app-pill { padding: 6px 10px 6px 6px; }
   .hero-app-pill-icon { width: 28px; height: 28px; font-size: 12px; }
   .hero-app-pill-name { font-size: var(--fs-xs); }
