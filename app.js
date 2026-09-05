@@ -8,7 +8,7 @@ const RECENT_VIDEOS = [
 
 async function loadApps() {
   // hidden:true 앱은 메인페이지에서 숨긴다(지우지 않음 — apps.json에서 hidden 제거하면 되살아난다).
-  const apps = (await fetch('data/apps.json?v=20260904w').then(r=>r.json())).filter(a => !a.hidden);
+  const apps = (await fetch('data/apps.json?v=20260905b').then(r=>r.json())).filter(a => !a.hidden);
 
   // Hero pills — 개별 stagger: 0.78s 기준, 0.08s 간격
   const bobDurations = [3.5, 4.0, 3.7, 4.1, 3.6, 3.9];
@@ -18,10 +18,14 @@ async function loadApps() {
     // ★comingSoon 앱은 «주소 자체를 안 준다» — href 를 지우면 새 탭·주소복사·크롤러까지 막힌다.
     //   (2026-09-01 현빈: 「버튼뿐 아니라 해당 페이지로 이동도 안 되게」)
     const soon = !!app.comingSoon;
+    // ★NEW 점 뱃지 — apps.json 의 isNew 하나로 켜고 끈다(현빈 2026-09-05).
+    //   ⚠️준비 중(comingSoon)인 앱에는 안 붙인다 — 「곧 나온다」와 「새로 나왔다」는 다른 말이고,
+    //     is-soon 칩은 흐려져 있어 점만 선명하면 오히려 어긋나 보인다.
+    const isNew = !!app.isNew && !soon;
     const href = soon ? '' : (app.detailUrl || app.buyUrl || app.downloadUrl || '#apps');
     const delay = (0.78 + i * 0.08).toFixed(2);
     return `
-    <a class="hero-app-pill${soon ? ' is-soon' : ''}"${soon ? ` role="link" aria-disabled="true" data-soon="${app.name}"` : ` href="${href}"`} style="animation-delay:${delay}s;">
+    <a class="hero-app-pill${soon ? ' is-soon' : ''}"${soon ? ` role="link" aria-disabled="true" data-soon="${app.name}"` : ` href="${href}"`}${isNew ? ' data-new=""' : ''} style="animation-delay:${delay}s;">
       <div class="hero-app-pill-icon">
         <img src="${app.icon}" alt="${app.name}"
              onerror="this.parentElement.textContent='${EMOJI_FALLBACK[app.id]||'📦'}'" />

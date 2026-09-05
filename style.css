@@ -334,7 +334,18 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
          실측: 이 3줄 구성에서 680px 폭(글폭 632)은 «100px 까지» 각 줄이 한 줄이다.
          ★그래서 .hero 의 max-width 를 «680 으로 되돌렸다» — 폭을 넓힐 이유가 없어졌다.
            («곳이 → 제품이»로 낱말도 바뀌었다. 파는 물건이 있는 곳이라는 뜻이 분명해진다.) */
-  font-size: clamp(36px, 5.8vw, 84px);
+  /* ★★2026-09-05 밤 10차 — «모바일만» 키웠다(현빈: 「모바일 화면에서는 더 커져 보여도 될 것 같다」).
+         ⚠️하한 36px 을 그냥 올리면 «작은 폰»이 깨진다 — 360px 폰은 44px 이 한계다.
+           그래서 하한이 아니라 «vw 계수»를 올렸다(5.8 → 11.5vw). 폭에 비례해 같이 줄어든다.
+         ★실측(390px 폰, 글폭 350 · 가장 긴 줄 「애초에 모두를 위한」):
+             36px→226,250,226  ·  48px→301,334,301  ·  50px→313,348,350  ← 한계
+             52px 부터 둘째 줄이 «접힌다»(rows 1,2,1)
+           ⇒ 390px 에서 11.5vw = 44.9px (한계 50 에서 5px 여유)
+             360px 에서는 41.4px, 320px 에서도 36.8px 로 «스스로» 내려간다.
+         ★상한 84px 은 그대로다. 다만 11.5vw 라 730px 부터 상한에 닿는다 —
+           .hero 가 어차피 680px 에서 «폭이 멈추므로» 그 위로 더 키울 이유가 없다.
+         ⚠️문구를 바꾸면 위 숫자는 전부 무효다. 가장 긴 줄이 한계를 정한다. */
+  font-size: clamp(36px, 11.5vw, 84px);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.06;
@@ -663,6 +674,34 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   border-radius: 8px;
 }
 
+/* ★★2026-09-05 NEW 표시(현빈: 「앱처럼 빨간 점 뱃지를 붙이는 건 어때?」).
+   ★칩 «바깥 모서리»에 걸친다 — 앱 아이콘의 미확인 뱃지와 같은 자리다. 안쪽에 넣으면
+     아이콘·이름과 셋이 나란히 놓여 「또 하나의 요소」가 되고 뱃지로 안 읽힌다.
+   ★테두리 색을 배경색(--bg)으로 줘서 «파낸 것처럼» 보이게 한다. 점이 칩 선 위에
+     그냥 얹히면 지저분해진다 — 이 링 하나가 iOS 뱃지의 인상을 만든다.
+   ★빨강은 브랜드 라임(--accent)과 «반대편» 색이라 CTA 와 경쟁하지 않고 눈에만 걸린다.
+   ⚠️.is-soon 칩은 opacity .55 라 점도 같이 흐려진다 — 준비 중인 앱에 NEW 는 안 붙인다.
+   ⚠️애니메이션은 «맥박 한 겹»만. 칩 자체가 이미 floatBob 으로 떠 있어서 둘 다 크게
+     움직이면 산만하다. reduced-motion 이면 점은 남고 맥박만 멈춘다. */
+.hero-app-pill { position: relative; }
+.hero-app-pill[data-new]::after {
+  content: "";
+  position: absolute;
+  top: -3px; right: -3px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #FF3B30;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 0 rgba(255,59,48,0.55);
+  animation: newPulse 2.4s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes newPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(255,59,48,0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(255,59,48,0);    }
+  100% { box-shadow: 0 0 0 0   rgba(255,59,48,0);    }
+}
+
 .hero-app-pill-name {
   font-size: var(--fs-xs);
   font-weight: 600;
@@ -806,6 +845,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      스스로 40px 로 내려간다. 두 군데서 크기를 정하면 축이 갈라진다. */
   .app-grid { grid-template-columns: 1fr; }
   .hero, main, .yt-section, footer { padding-left: 20px; padding-right: 20px; }
+  /* ★위 여백만 따로 줄인다(현빈 2026-09-05: 「피씨는 적당한데 모바일은 좀 올려야겠다」).
+     데스크톱 126px 은 «넓은 화면»에서 첫 화면이 남아돌 때 쓰는 값이다. 폰은 세로가 귀하고
+     헤더(64px)가 바로 위에 붙어 있어서 그만큼이면 카피가 화면 한참 아래로 내려간다.
+     ⚠️좌우(20px)와 아래(100px)는 건드리지 않는다 — 위만 줄이는 게 목적이다. */
+  .hero { padding-top: 72px; }
   header nav { padding: 0 20px; }
   /* ★토글 버튼이 nav-links 항목으로 붙으면서 390px 폭에서 11px 넘쳤다(2026-08-24 실측) —
      링크 사이 간격만 좁혀 흡수한다. 항목을 숨기지 않는다(전부 보여야 하는 링크들). */
@@ -823,6 +867,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     animation: none; opacity: 1; transform: none; filter: none;
   }
   .hero-app-pill, .hero-app-pill.bob-ready { animation: none; opacity: 1; }
+  .hero-app-pill[data-new]::after { animation: none; box-shadow: none; }
   .title-waving { animation: none; }
   .card-hidden { opacity: 1; transform: none; }
   .yt-hidden { opacity: 1; transform: none; }
