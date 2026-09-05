@@ -364,7 +364,15 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
    ★색을 셔플하지 «않는다». N5 순서(흰 → 연은빛 → 그레이블루 → 은빛 → 짙은 회색)를 지킨다.
      매번 바뀌는 건 «궤적·속도»뿐이라 결이 안 흔들린다.
      ⇒ 앞 판(PR)은 색까지 난수라 색이 서로 상쇄되어 N5 의 질서가 사라졌다.
-   ★background-size 300% → 170% → «120%»(현빈 2026-09-05: 「170% 말고 120% 로도 해볼까」).
+   ★background-size 300% → 170% → 120% → «170% 로 되돌림».
+     ⛔120% 는 «탁해진다». 현빈: 「메인카피 뒤에 하얀색이 좀 줄어들었나? 어두워? 탁해졌네」
+       — 정확한 관찰이고, 원인이 바로 이 값이다.
+       램프에서 «순백»은 세 자리(0% · 56% · 100%)뿐이고 나머지는 은빛·회청·짙은 회색이다.
+       120% 면 램프의 83% 가 «한 번에» 보이므로 어두운 자리들이 «항상» 화면에 있다.
+       170% 면 59% 만 보여서, 창이 흰 구간에 걸릴 때는 «거의 흰 글자»가 된다.
+       ⇒ 흰색의 «양»이 아니라 «비중»이 줄어든 것이다. 색을 밝히는 걸로는 안 고쳐진다.
+     ★덤: 170% 는 창이 미끄러지는 폭도 41%(120% 는 17%)라 «움직임»도 같이 돌아온다.
+   ★(옛 기록) background-size 300% → 170% 로 좁힌 이유.
      ★이 값은 «한 화면에 램프가 얼마나 보이나»를 정한다. 120% 면 100/120 = 83%,
        즉 다섯 색이 «거의 동시에» 한 줄 안에 들어온다(170% 는 59% 만 보인다).
        ⇒ 한 줄 안의 색 변화가 촘촘해지고, 램프의 «구성»이 그대로 읽힌다.
@@ -375,6 +383,14 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
      ⚠️그리고 90% 의 짙은 회색이 «거의 항상» 오른쪽 끝에 걸린다(170% 에서는 창 밖으로
        나갔다 들어왔다 했다). 지금은 그 색이 옅어서 눈에 안 띄지만, 이 값을 유지한 채
        골짜기를 다시 어둡게 하면 「'위한' 만 가려진다」가 «더 세게» 재현된다.
+   ★★2026-09-05 «거의 화이트»로 올렸다(현빈: 「거의 화이트여야 되긴 해」).
+       #DCE3EA → #EDF1F5 · #BCCBDA → #D9E3EE · #C8CEDA → #E2E7EE · #9AA6B4 → «#C6CFDA»
+     ★색의 «순서와 정체»(N5)는 그대로다. 밝기만 흰쪽으로 밀었다 —
+       은빛은 은빛, 파랑기는 파랑기로 남되 «색이 아니라 광택»으로 읽히는 밝기다.
+     ⚠️가장 어두운 자리(--hg-c5)가 #9AA6B4 → #C6CFDA 다. 이게 제목의 «바닥»이라
+       여기가 회색이면 제목 전체가 회색으로 읽힌다 — 「탁하다」는 늘 이 자리에서 온다.
+     ★라이트 테마는 뒤집힌 세계라 「거의 화이트」의 짝이 «거의 먹색»이다. 같이 밀었다.
+
    ★파랑은 «아주 살짝»만(--hg-c3). 그레이블루보다 조금 더 파란 정도다.
      ⚠️#A9C9E8 처럼 진하면 무채 결에서 벗어나 다른 브랜드처럼 보인다 —
        그래서 한 자리에만, 그것도 낮은 채도로 둔다.
@@ -406,22 +422,22 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
      (2026-09-05 시안에서 이걸 세 번 밟아 글자 대신 색칠한 사각형이 나왔다.) */
 .hero-title .title-line {
   background: linear-gradient(105deg,
-    var(--hg-c1, #FFFFFF) 0%, var(--hg-c2, #DCE3EA) 20%, var(--hg-c3, #BCCBDA) 38%,
-    var(--hg-mid, #FFFFFF) 56%, var(--hg-c4, #C8CEDA) 74%, var(--hg-c5, #9AA6B4) 90%,
+    var(--hg-c1, #FFFFFF) 0%, var(--hg-c2, #EDF1F5) 20%, var(--hg-c3, #D9E3EE) 38%,
+    var(--hg-mid, #FFFFFF) 56%, var(--hg-c4, #E2E7EE) 74%, var(--hg-c5, #C6CFDA) 90%,
     var(--hg-c1, #FFFFFF) 100%);
-  background-size: 120% 120%;
+  background-size: 170% 170%;
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 /* 라이트 — 밝은 색을 그대로 쓰면 흰 배경에 묻는다. 어두운 무채로 바꾸고 파랑도 어둡게. */
 :root[data-theme="light"] .hero-title .title-line {
-  --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #3B4553;
+  --hg-c1: #0B0B0E; --hg-c2: #23282F; --hg-c3: #1E2831; --hg-c4: #16191F; --hg-c5: #262D36;
   --hg-mid: #0B0B0E;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) .hero-title .title-line {
-    --hg-c1: #0B0B0E; --hg-c2: #2C333F; --hg-c3: #2A3949; --hg-c4: #1B212B; --hg-c5: #3B4553;
+    --hg-c1: #0B0B0E; --hg-c2: #23282F; --hg-c3: #1E2831; --hg-c4: #16191F; --hg-c5: #262D36;
     --hg-mid: #0B0B0E;
   }
 }
