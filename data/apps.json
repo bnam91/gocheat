@@ -20,12 +20,11 @@
     "plans": [
       {
         "id": "beta",
-        "name": "BETA PROMOTION",
-        "emphasis": "accent",
+        "name": "BETA",
         "price": "₩0",
         "per": "1개월",
-        "ribbon": "베타 한정",
-        "cta": "베타로 시작하기",
+        "ribbon": "프로모션",
+        "cta": "BETA 시작하기",
         "features": [
           {
             "t": "프로젝트 무제한",

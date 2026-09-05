@@ -1030,16 +1030,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   /* = 칩 높이(line-height 1.2em + padding 4px×2 + border 1px×2). 칩 규칙을 바꾸면 여기도 바꿔라. */
   height: calc(1.2em + 10px); }
 .plan-card:has(.plan-ribbon)::before { display: none; }
-.plan-name { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg);
-  /* ★이름 칸을 «두 줄 높이»로 고정한다(2026-09-05, BETA PROMOTION 추가하며).
-     ⛔한 카드만 이름이 두 줄이 되면 그 카드의 «금액·기능·버튼이 전부 한 줄씩 밀린다».
-       비교표는 가로 줄이 맞아야 비교가 된다 — 어긋나는 순간 표가 아니라 카드 넷이 된다.
-     ★min-height 로 «자리»만 잡고 flex 로 가운데 정렬한다. 한 줄짜리 이름은 그 칸 안에서
-       가운데에 서므로 위아래 여백이 저절로 균등해진다.
-     ⚠️등급 이름이 «세 줄»이 되면 이 값도 같이 올려야 한다. 이름을 늘릴 땐 여기를 봐라. */
-  min-height: 2.1em;
-  display: flex; align-items: center; justify-content: center;
-}
+/* ⚠️★2026-09-05 여기에 min-height:2.1em(두 줄 높이)을 «넣었다가 뺐다».
+   「BETA PROMOTION」이 두 줄이 되면서 그 카드만 금액·기능·버튼이 한 줄씩 밀렸었다 —
+   비교표는 가로 줄이 맞아야 비교가 된다. 이름이 「BETA」로 짧아져 이유가 사라져 뺐다.
+   ⇒ ★등급 이름을 «두 줄 나는 길이»로 다시 늘리면 이 문제가 그대로 돌아온다. 그때는
+     min-height 로 자리를 잡고 flex 로 가운데 정렬하면 된다(이미 검증한 방법이다). */
+.plan-name { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .plan-price { font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
 .plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 2.9em; }
 /* ★절은 «통째로» 줄바꿈된다 — 금액이 「정가 / ₩2,160,000」처럼 쪼개지지 않게.
