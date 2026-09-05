@@ -243,9 +243,18 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
 /* ===== HERO ===== */
 /* padding-top 126px = 원래 80px + 아이브로(.hero-badge)가 차지하던 46px.
    라벨을 걷어내니(2026-09-01 미사여구 정리) 카피가 위로 붙어 보였다 — 실측해서 그만큼 되돌린다.
-   ★라벨을 다시 넣으면 이 값을 80px 로 되돌릴 것. */
-.hero { max-width: var(--width); margin: 0 auto; padding: 126px 24px 100px; text-align: center; }
-.hero-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px; }
+   ★라벨을 다시 넣으면 이 값을 80px 로 되돌릴 것.
+   ★★2026-09-05 라벨이 «돌아왔다»(「드디어 공개합니다.」) — 위 지시대로 80px 로 되돌린다.
+     126px 인 채로 두면 라벨 46px 이 그 위에 얹혀 첫 화면이 통째로 아래로 밀린다. */
+.hero { max-width: var(--width); margin: 0 auto; padding: 80px 24px 100px; text-align: center; }
+/* ★2026-09-05 한글 라벨에 맞게 고쳤다. 원래 이 규칙은 «영문 대문자» 라벨 전제였다
+   (mono + uppercase + letter-spacing 0.06em). 「드디어 공개합니다.」를 넣자 두 가지가 깨졌다:
+     ① JetBrains Mono 에 한글이 없어 fallback 으로 떨어진다 — 제목과 다른 글꼴이 섞여 보인다.
+     ② 0.06em 자간이 한글에서는 «글자가 흩어져» 보인다(영문은 벌려야 읽히지만 한글은 반대다).
+   ⇒ 본문 글꼴로 바꾸고 자간을 0 으로 둔다. uppercase 는 남긴다 — 나중에 영문 라벨을 쓸 때
+     그대로 동작하고, 한글에는 아무 영향이 없다.
+   ★색(--subtle)과 크기(--fs-xs)는 «건드리지 않았다». 아이브로는 제목보다 물러나 있어야 한다. */
+.hero-badge { font-family: var(--font); font-size: var(--fs-xs); color: var(--subtle); letter-spacing: 0; text-transform: uppercase; margin-bottom: 24px; }
 .hero-title {
   /* ★★히어로만 «따로» 키운다(현빈 2026-09-03).
      ⛔--fs-hero 를 올리면 안 된다 — 그 토큰은 .detail-title(마이페이지·앱 상세)도 쓴다.
@@ -265,8 +274,14 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
          · 360px 폰(글폭 312) — 50px 까지 1줄                   ⇒ 하한 48px (2px 여유)
        ★6.6vw 는 1440px 에서 95px 이 되도록 잡은 값이다(상한 96 바로 아래).
        ⚠️★문구를 바꾸면 이 숫자는 «전부 무효»다. 글자 수가 달라지면 접히는 지점이 달라진다.
-         카피를 바꿀 땐 여기를 다시 재라. */
-  font-size: clamp(48px, 6.6vw, 96px);
+         카피를 바꿀 땐 여기를 다시 재라.
+
+       ★★2026-09-05 다시 «줄였다» — 96px 은 과했다(현빈: 「크기를 좀 줄여봐」).
+         그리고 위에 아이브로 라벨이 돌아와 첫 화면에 요소가 하나 늘었다. 제목이 혼자
+         화면을 다 먹으면 라벨과 서브가 안 보인다 — 셋의 균형을 위해 내린다.
+         ⇒ 96 → 80px (1440px 기준), 모바일 하한 48 → 44px.
+         한 줄 한계(데스크톱 100px / 360px폰 50px)에는 여전히 한참 못 미쳐 안전하다. */
+  font-size: clamp(44px, 5.6vw, 80px);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.06;
