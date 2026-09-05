@@ -1,5 +1,6 @@
 [
   {
+    "_plans_why": "★유료 카드(SOLO·PRO·PROx12)의 기능 목록은 «베타 종료 후의 목표점»이다(현빈 2026-09-05). 그래서 아직 안 열린 기능도 ✓ 로 서 있다 — 결함이 아니다. ⛔지금 이 셋은 muted:true 로 «물러나 있고 팔지 않는다»(BETA 만 활성). ★★그래서 이 배치가 성립한다. 셋 중 하나라도 «실제로 팔기 시작하면» 목표점 목록이 그대로 «판매 문구»가 되므로, 그때는 미구현 항목에 (예정) 을 다시 붙여야 한다. 반대로 BETA 카드는 «지금 파는 것»이라 있는 그대로만 적는다 — 「지금 열어 둔 기능 전부」가 그 뜻이다(만들어져 있어도 막아 둔 것이 있어서 「있는 기능」이라고 쓰면 거짓이 된다).",
     "id": "goditor",
     "name": "GODITOR",
     "tagline": "상세페이지 전용 디자인 에디터",
@@ -19,34 +20,61 @@
     ],
     "plans": [
       {
+        "id": "beta",
+        "name": "BETA TEST",
+        "price": "₩0",
+        "per": "1개월",
+        "ribbon": "🎉 프로모션",
+        "cta": "BETA 다운로드",
+        "features": [
+          {
+            "t": "안정성 검수 후 순차 개방",
+            "ok": true
+          },
+          {
+            "t": "베타 기간 업데이트 전부",
+            "ok": true
+          },
+          {
+            "t": "얼리버드 1차 오픈 -  10월 5일",
+            "ok": true
+          }
+        ],
+        "priceNote": "베타 기간 한정",
+        "ctaAction": "download",
+        "featured": true,
+        "wasPrice": "₩180,000"
+      },
+      {
         "id": "intern",
-        "name": "INTERNSHIP",
+        "name": "SOLO",
         "price": "₩80,000",
         "per": "1개월",
-        "cta": "INTERNSHIP 시작하기",
+        "cta": "SOLO 시작하기",
         "features": [
           {
             "t": "프로젝트 무제한",
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF",
+            "t": "GIF로 내보내기",
             "ok": false
           },
           {
-            "t": "MCP 연동",
+            "t": "AI 도구 연결 (MCP)",
             "ok": false
           },
           {
-            "t": "기획 기능(예정)",
+            "t": "상세페이지 기획모드",
             "ok": false
           }
         ],
-        "priceNote": "매월 결제 · 언제든 해지"
+        "priceNote": "매월 결제 · 언제든 해지",
+        "muted": true
       },
       {
         "id": "pro",
@@ -61,31 +89,33 @@
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF",
+            "t": "GIF로 내보내기",
             "ok": true
           },
           {
-            "t": "MCP 연동",
+            "t": "AI 도구 연결 (MCP)",
             "ok": true
           },
           {
-            "t": "원격 협업기능",
+            "t": "여럿이 동시 편집",
             "ok": true
           },
           {
-            "t": "기획 기능(예정)",
+            "t": "상세페이지 기획모드",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함 및 연동",
+            "t": "GODIV · GOSHOT 연동",
             "ok": true
           }
         ],
-        "priceNote": "매월 결제 · 언제든 해지"
+        "priceNote": "매월 결제 · 언제든 해지",
+        "ribbonKind": "quiet",
+        "muted": true
       },
       {
         "id": "pro12",
@@ -102,31 +132,32 @@
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF",
+            "t": "GIF로 내보내기",
             "ok": true
           },
           {
-            "t": "MCP 연동",
+            "t": "AI 도구 연결 (MCP)",
             "ok": true
           },
           {
-            "t": "원격 협업기능",
+            "t": "여럿이 동시 편집",
             "ok": true
           },
           {
-            "t": "기획 기능(예정)",
+            "t": "상세페이지 기획모드",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함 및 연동",
+            "t": "GODIV · GOSHOT 연동",
             "ok": true
           }
         ],
-        "dailyNote": true
+        "dailyNote": true,
+        "muted": true
       },
       {
         "id": "pro_training",
@@ -143,27 +174,27 @@
             "ok": true
           },
           {
-            "t": "템플릿 저장",
+            "t": "내 템플릿 저장",
             "ok": true
           },
           {
-            "t": "GIF",
+            "t": "GIF로 내보내기",
             "ok": true
           },
           {
-            "t": "MCP 연동",
+            "t": "AI 도구 연결 (MCP)",
             "ok": true
           },
           {
-            "t": "원격 협업기능",
+            "t": "여럿이 동시 편집",
             "ok": true
           },
           {
-            "t": "기획 기능(예정)",
+            "t": "상세페이지 기획모드",
             "ok": true
           },
           {
-            "t": "GODIV · GOSHOT 포함 및 연동",
+            "t": "GODIV · GOSHOT 연동",
             "ok": true
           },
           {
@@ -171,7 +202,7 @@
             "ok": true
           },
           {
-            "t": "LAB 기능",
+            "t": "LAB 실험 기능",
             "ok": true
           },
           {

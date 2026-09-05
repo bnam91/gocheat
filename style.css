@@ -995,7 +995,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   transition: border-color 0.2s, background 0.2s, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
 }
 .plan-card:hover { border-color: var(--border-strong); background: var(--bg-elev-hi); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.40); }
-.plan-card-featured { border-color: rgba(var(--accent-line-rgb),0.42); }
+/* ★★«지금 이걸 보라»는 카드의 테두리 (2026-09-05 BETA 에 되살렸다).
+   ⚠️전까지 이 규칙은 «아무도 안 쓰는» 죽은 규칙이었다(사용처 0). 새로 만들지 않고 되살린다.
+   ★현빈: 「테두리는 어디 갔니?」 — 연두로 «채워» 뒀을 땐 면이 경계를 대신했는데,
+     배경을 원복하니 기본 테두리(rgba(255,255,255,0.08))만 남아 사실상 안 보였다.
+     네 장이 같은 테두리라 «파는 카드»가 어디인지 가장자리로는 알 수 없었다.
+   ★채움이 아니라 «선»으로만 말한다 — 채우면 앞서 지적하신 대로 「추천」과 목소리가 겹친다.
+   ★0.42 → 0.55 로 조금 올렸다. 0.42 는 카드 «넷이 다 밝을 때» 잡은 값인데, 지금은 옆 셋이
+     0.42 로 물러나 있어서 그 정도로는 대비가 안 선다. */
+.plan-card-featured { border-color: rgba(var(--accent-line-rgb),0.55); }
 /* ★리본을 «칩»으로 올린다(현빈 2026-09-02: 「15%할인 이런 부분은 좀 잘보이게」).
    전에는 라임색 «맨 글자»라 카드 안의 다른 작은 글자와 구분이 거의 없었다.
    ⚠️두 변종의 «상자 높이가 같아야» 한다 — 다르면 카드마다 등급 이름 baseline 이 어긋난다.
@@ -1030,11 +1038,67 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
   /* = 칩 높이(line-height 1.2em + padding 4px×2 + border 1px×2). 칩 규칙을 바꾸면 여기도 바꿔라. */
   height: calc(1.2em + 10px); }
 .plan-card:has(.plan-ribbon)::before { display: none; }
+/* ⚠️★2026-09-05 여기에 min-height:2.1em(두 줄 높이)을 «넣었다가 뺐다».
+   「BETA PROMOTION」이 두 줄이 되면서 그 카드만 금액·기능·버튼이 한 줄씩 밀렸었다 —
+   비교표는 가로 줄이 맞아야 비교가 된다. 이름이 「BETA」로 짧아져 이유가 사라져 뺐다.
+   ⇒ ★등급 이름을 «두 줄 나는 길이»로 다시 늘리면 이 문제가 그대로 돌아온다. 그때는
+     min-height 로 자리를 잡고 flex 로 가운데 정렬하면 된다(이미 검증한 방법이다). */
 .plan-name { font-size: var(--fs-h3); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
-.plan-price { font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg); }
+/* ★★금액 «칸»의 높이를 고정한다(2026-09-05).
+   ⛔취소선 정가를 한 카드에만 넣었더니 그 카드의 «기능·주석이 25px 내려앉았다».
+     비교표는 가로 줄이 맞아야 비교가 된다 — 이름 칸에서 이미 한 번 겪은 병이다.
+     ⇒ 이번엔 «자리»를 먼저 만들어 두고 안에서 정렬한다. 그러면 취소선을 넣든 빼든,
+       금액 글자를 키우든 줄이든, 아래 줄들이 «움직이지 않는다».
+   ★flex column + 아래 정렬 — 금액이 커져도 «바닥»이 그대로라 아래 줄이 안 밀린다.
+     (가운데 정렬로 두면 커질 때 위아래로 함께 번져 결국 밀린다.)
+   ⚠️2.55em 은 「취소선 한 줄 + 키운 금액 한 줄」이 들어가는 높이다. 둘 중 하나라도
+     더 키우면 이 값을 다시 재라. */
+.plan-price {
+  font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg);
+  /* ⚠️★이 값은 «두 번» 고쳤다. 처음 3.7em(81.4px)은 「취소선 + 1.45배로 키운 금액」
+     기준이었는데, 금액 확대를 «되돌린 뒤에도 그대로 뒀다». 그래서 칸에 20px 이 남아
+     이름과 금액 사이가 벌어졌다(현빈: 「beta test 와 가격 사이에 갭이 왜 이리 많니」).
+     ★★설정값을 «전제»와 함께 적어 두지 않으면, 전제가 바뀌어도 값만 살아남는다.
+       ⇒ 지금 전제: 「취소선 한 줄(약 19px) + 기본 크기 금액 한 줄(약 27px)」 = 약 46px.
+         금액 크기나 취소선 유무를 바꾸면 «여기를 다시 재라». */
+  line-height: 1.2;
+  min-height: 1.95em;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+}
+
+/* ⚠️★한때 여기서 «파는 카드의 금액만» 1.45배로 키웠다가 «되돌렸다»
+   (현빈 2026-09-05: 「₩0 이걸 더 크게 하지 마라 이상하네」).
+   ★왜 이상했나 — 「₩0」은 글자가 «두 자»뿐이라, 키우면 옆 카드의 「₩1,836,000」보다
+     짧은데 굵기만 커져서 «덩어리»로 보인다. 자릿수가 다른 값끼리는 크기로 못 겨룬다.
+     낙차는 크기가 아니라 «취소선»이 만든다. 그쪽에 맡긴다. */
+/* ★금액 + 기간을 한 줄로 묶는 덩이. 위 .plan-price 가 flex column 이라 이 래퍼가 없으면
+   둘이 «각각» 항목이 되어 세로로 갈라진다. baseline 정렬로 「₩0 / 1개월」이 한 줄에 앉는다.
+   ⛔★이름이 «plan-now» 였다가 바꿨다 — 그 이름은 이미 1363 줄에 있었다(현재 등급 표시,
+     연두 12px). 겹치는 순간 네 카드 금액이 «전부 연두»가 되고 크기까지 어긋났다.
+     ⚠️새 클래스를 만들 땐 «먼저 grep 해라». 이 파일은 1,400줄이 넘어서 눈으로는 못 찾는다. */
+.plan-priceline { display: flex; align-items: baseline; justify-content: center; gap: 0; }
+
 .plan-price-note { font-size: var(--fs-xs); color: var(--subtle); min-height: 2.9em; }
 /* ★절은 «통째로» 줄바꿈된다 — 금액이 「정가 / ₩2,160,000」처럼 쪼개지지 않게.
    구분점은 별도 span 이라, 줄이 나뉠 때 점이 줄 끝에 홀로 매달리지 않는다. */
+/* ★내려오기 «전» 값. 금액 «위»에 따로 줄을 세운다 — 옆에 붙이면 둘 중 어느 게
+   지금 값인지 반 박자 헷갈린다. 위아래로 두면 «내려왔다»는 방향이 그대로 읽힌다.
+   ★크기를 확 줄이고(--fs-sm) 흐리게 둔다. 주인공은 내려온 값이지 정가가 아니다.
+   ⚠️취소선은 «실재하는 값»에만 긋는다. 여기 ₩80,000 은 바로 옆 SOLO 카드에서
+     실제로 파는 값이다 — 지어낸 정가를 그으면 그냥 허위 표시가 된다. */
+.plan-was {
+  display: block;
+  /* ★작게 둔다(--fs-xs). 주인공은 «내려온 값»이지 정가가 아니다.
+     ★그리고 이 줄의 높이가 곧 «네 카드 모두가 비워 두어야 하는 자리»다 —
+       크게 잡으면 취소선이 없는 카드 셋의 이름~금액 사이가 그만큼 벌어진다.
+       (실제로 --fs-sm 일 때 셋이 34px 벌어졌다. 지금은 그 절반이다.) */
+  font-size: var(--fs-xs); font-weight: 600; letter-spacing: -0.01em;
+  color: var(--faint); text-decoration: line-through;
+  text-decoration-thickness: 1.2px;
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+
 .plan-price-note .note-seg { white-space: nowrap; }
 .plan-price-note .note-sep { white-space: nowrap; }
 
@@ -1072,6 +1136,94 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 .plan-cta:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .plan-cta-quiet { color: var(--muted); border-color: var(--border-strong); }
 .plan-cta-quiet:hover { background: var(--bg-elev-hi); color: var(--fg); border-color: var(--border-strong); box-shadow: none; }
+
+/* ★★«채운» 요금제 카드 — 연두 배경 + 어두운 글자 (현빈 2026-09-05, BETA PROMOTION).
+   ⛔var(--accent) 를 쓰면 «라이트 테마에서 검은 카드»가 된다. 이 사이트는 라이트에서
+     --accent 를 «먹색»으로 뒤집기 때문이다(style.css:154). 강조색 토큰은 「눈에 띄는 색」이
+     아니라 「그 테마의 강조 축」이라 값이 통째로 달라진다.
+   ⇒ 이 카드는 «자기 색»을 갖는다 — 두 테마에서 같은 연두다. 헤더 로고 마크와 같은 방식이고,
+     연두는 밝은 색이라 어느 판 위에 놓여도 어두운 글자가 읽힌다.
+   ★글자색을 한 색으로 박지 않고 «투명도»로 층을 만든다(1.0 / .66 / .82 / .42).
+     같은 먹색의 농도 차이라 카드 안이 한 목소리로 읽히고, 층위(이름 > 기능 > 꺼진 기능)도 남는다.
+   ★hover 로 배경이 «안» 바뀐다 — 채운 카드가 뜨는 것까지 하면 과하다. 들림(transform)만 남긴다. */
+.plan-card-accent {
+  --pc-bg: #C9F23A;
+  --pc-fg: #0B0B0E;
+  background: var(--pc-bg);
+  border-color: var(--pc-bg);
+}
+.plan-card-accent:hover { background: var(--pc-bg); border-color: var(--pc-bg); }
+
+.plan-card-accent .plan-name,
+.plan-card-accent .plan-price,
+.plan-card-accent .plan-amount        { color: var(--pc-fg); }
+.plan-card-accent .plan-per,
+.plan-card-accent .plan-price-note    { color: rgba(11,11,14,0.66); }
+.plan-card-accent .plan-divider       { border-top-color: rgba(11,11,14,0.22); }
+.plan-card-accent .plan-features li   { color: rgba(11,11,14,0.82); }
+.plan-card-accent .plan-features .feature-dot { color: rgba(11,11,14,0.5); }
+/* 꺼진 기능은 «더 흐리게» — 연두 위에서는 흰 판보다 대비가 빨리 사라지므로 .42 에서 멈춘다 */
+.plan-card-accent .plan-features li.plan-feat-off,
+.plan-card-accent .plan-features li.plan-feat-off .feature-dot { color: rgba(11,11,14,0.42); }
+
+/* 리본·버튼은 «뒤집는다» — 연두 위의 연두는 안 보인다 */
+.plan-card-accent .plan-ribbon { background: var(--pc-fg); color: var(--pc-bg); border-color: var(--pc-fg); }
+.plan-card-accent .plan-cta {
+  background: var(--pc-fg); border-color: var(--pc-fg); color: var(--pc-bg);
+}
+.plan-card-accent .plan-cta:hover {
+  background: #1B1B22; border-color: #1B1B22; color: var(--pc-bg);
+  box-shadow: 0 8px 22px rgba(11,11,14,0.28);
+}
+.plan-card-accent .plan-cta:active { background: #000; border-color: #000; }
+.plan-card-accent .plan-cta:focus-visible { box-shadow: 0 0 0 3px rgba(11,11,14,0.35); }
+
+/* ★「추천」을 «조용히» (현빈 2026-09-05: 「PRO 위에 추천 라벨은 일단 회색 숨기기」).
+   ⛔지우지 «않는다». .plan-card::before 가 「리본 없는 카드」에만 자리를 만들어 주는데,
+     리본을 지우면 그 카드만 ::before 가 켜지면서 «높이가 재계산»되고, 지금 맞아 있는
+     네 장의 이름 baseline 이 다시 어긋난다. ⇒ 자리는 두고 «색만» 뺀다.
+   ★채움도 테두리도 없애고 본문보다 흐린 색만 남긴다 — 있지만 «말을 걸지 않는» 상태다.
+   ⚠️세로 크기(line-height·상하 padding·border 폭)는 건드리지 않는다. plan-ribbon-save 와
+     같은 이유다 — 높이가 달라지면 리본 있는 카드끼리 이름 baseline 이 어긋난다. */
+.plan-ribbon-quiet {
+  background: transparent; border-color: transparent;
+  color: var(--faint); font-weight: 700;
+  padding-left: 0; padding-right: 0;
+}
+
+/* ★★«물러난» 등급 카드 (현빈 2026-09-05: 「베타 말고 나머지는 비활성화된 느낌으로」).
+   ★지금 파는 건 BETA 하나뿐이라는 «상태»를 색으로 말한다. 지우거나 감추면 등급 사다리가
+     안 보이고, 그러면 BETA 가 «무엇의 베타»인지도 안 보인다. 남겨 두되 물러나게 한다.
+   ★opacity 하나로 처리한다 — 글자·테두리·리본·버튼을 «각각» 흐리게 하면 요소마다
+     흐린 정도가 어긋나서 「고장 난 카드」로 보인다. 한 겹으로 덮어야 «물러난» 것이 된다.
+   ★hover 의 «들림»을 없앤다. 뜨는 카드는 「눌러라」는 신호다 — 물러난 카드가 뜨면
+     말이 어긋난다. 대신 hover 시 살짝 «또렷해지게» 해서 읽을 수는 있게 둔다.
+   ⚠️★이건 «보이기»만이다. 링크는 살아 있어서 누르면 주문 화면으로 간다.
+     진짜로 못 누르게 하려면 comingSoon 처럼 href 를 빼야 하고, 그건 별개 결정이다. */
+.plan-card-muted {
+  opacity: 0.42;
+  transition: opacity 0.22s, border-color 0.2s, background 0.2s;
+}
+.plan-card-muted:hover {
+  opacity: 0.72;
+  transform: none;
+  box-shadow: none;
+  background: var(--bg-elev);
+  border-color: var(--border);
+}
+/* ★물러난 카드 «안»의 형광도 죽인다(2026-09-05 QA).
+   opacity 만 덮으면 「15% 할인」이 흐릿한 형광으로 남아, 물러난 카드에서 «혼자» 튄다.
+   ⇒ 색을 본문 계열로 내려 카드 전체가 한 목소리가 되게 한다.
+   ★BETA 의 「프로모션」 리본은 «건드리지 않는다» — 지금 파는 카드는 그것 하나뿐이고,
+     연두가 한 군데만 남아야 어디를 보라는 건지가 분명해진다. */
+.plan-card-muted .plan-ribbon-save,
+.plan-card-muted .plan-daily { color: var(--muted); }
+
+/* 버튼도 «뜨지 않는다» — 카드가 물러났는데 버튼만 살아 있으면 시선이 그리로 간다 */
+.plan-card-muted .plan-cta:hover {
+  background: transparent; color: var(--accent);
+  transform: none; box-shadow: none;
+}
 
 /* 구매 신청 폼 — 카드 아래 인라인으로 펼쳐진다 */
 .order-panel { width: 100%; max-width: 380px; margin-top: 28px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; display: none; flex-direction: column; align-items: center; gap: 10px; }

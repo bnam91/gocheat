@@ -21,7 +21,7 @@
 
   // ★business.json 은 이제 이 화면에서 안 읽는다 — 「결제 연동 전」 안내문을 뺐기 때문이다(2026-09-02).
   //   결제 가능 여부 판단(bankIsDummy)은 order.html·mypage.js 가 «각자» 한다. 여기서 읽으면 쓰이지 않는 값이 된다.
-  fetch('data/apps.json?v=20260904w').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260905m').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) throw new Error('apps.json');
       var app = apps.filter(function (a) { return a.id === appId; })[0];
@@ -59,14 +59,38 @@
         //   그래서 카드는 «자기 예시 금액»을 그대로 보여준다 — 이게 등급을 가르는 값이다.
         //   「지금 전부 무료」는 상단 이벤트 띠와 요금제 절 머리글이 이미 말했으니
         //   카드마다 되풀이하지 않는다.
-        var priceHtml = '<span class="plan-amount">' + esc(p.price) + '</span>'
-              + '<span class="plan-per"> / ' + esc(p.per) + '</span>';
+        // ★★정가 «낙차»를 보여 준다(현빈 2026-09-05: 「베타테스트 무료 개이득 이런 느낌이 부족하다」).
+        //   ₩0 은 그냥 공짜지만 «₩80,000 에서 내려온 ₩0» 은 사건이다. 이벤트를 만드는 건
+        //   색도 이모지도 아니고 «낙차»다.
+        //   ★지어낸 정가가 아니다 — 바로 옆 칸(SOLO)에서 «실제로 그 값에 판다».
+        //     옆에 원본이 서 있으니 거짓말을 할 수가 없는 구조다.
+        //   ⚠️wasPrice 를 쓸 땐 그 값이 «다른 카드에 실재하는지» 확인해라. 없는 정가를
+        //     그어 보이는 건 그냥 허위 할인 표시다.
+        //   ⚠️금액과 기간은 «한 덩이»로 묶는다(.plan-now). .plan-price 가 flex column 이라
+        //     안에 든 인라인 요소가 «각각 flex 항목»이 되어 세로로 쪼개진다 —
+        //     묶지 않으면 「₩0」과 「/ 1개월」이 위아래로 갈라진다(2026-09-05 실제로 그랬다).
+        var priceHtml = (p.wasPrice ? '<span class="plan-was">' + esc(p.wasPrice) + '</span>' : '')
+              + '<span class="plan-priceline">'
+              +   '<span class="plan-amount">' + esc(p.price) + '</span>'
+              +   '<span class="plan-per"> / ' + esc(p.per) + '</span>'
+              + '</span>';
 
-        return '<div class="plan-card' + (p.now ? ' plan-card-now' : '') + '">'
+        // ★어느 카드를 «채워서» 강조할지는 데이터가 정한다(apps.json 의 emphasis).
+        //   카드 순서나 등급 이름으로 넘겨짚지 않는다 — 순서는 바뀌고 이름도 바뀐다.
+        return '<div class="plan-card' + (p.now ? ' plan-card-now' : '')
+          + (p.emphasis === 'accent' ? ' plan-card-accent' : '')
+          // ★muted = 「지금은 이걸 팔지 않는다」를 «보여만» 준다. 링크는 살아 있다 —
+          //   진짜로 못 누르게 하려면 comingSoon 처럼 href 를 빼야 하고, 그건 별개 결정이다.
+          + (p.muted ? ' plan-card-muted' : '')
+          // ★featured = 「지금 이걸 보라」. 테두리 하나로만 말한다 — 채우면 「추천」과 목소리가 겹친다.
+          //   (.plan-card-featured 는 이미 style.css 에 있던 규칙이다. 새로 만들지 않았다.)
+          + (p.featured ? ' plan-card-featured' : '') + '">'
           + (p.ribbon
               // ★kind 는 «데이터»에서 온다 — 문구를 /할인/ 로 넘겨짚으면 「반값」처럼
               //   할인인데 안 잡히거나, 등급 이름에 그 글자가 들어가면 잘못 잡힌다.
-              ? '<p class="plan-ribbon' + (p.ribbonKind === 'save' ? ' plan-ribbon-save' : '') + '">'
+              ? '<p class="plan-ribbon'
+                + (p.ribbonKind === 'save' ? ' plan-ribbon-save' : '')
+                + (p.ribbonKind === 'quiet' ? ' plan-ribbon-quiet' : '') + '">'
                 + esc(p.ribbon) + '</p>'
               : '')
           + '<h3 class="plan-name">' + esc(p.name) + '</h3>'
@@ -114,6 +138,20 @@
             })()
           + (p.id === 'free'
               ? '<a href="signup.html?app=goditor" class="plan-cta">시작하기 →</a>'
+              // ★★값이 0원인 등급은 «주문서로 보내지 않는다»(현빈 2026-09-05: 「결제할 필요는
+              //   없으니 바로 다운로드 버튼처럼 드라이브를 열어주면 되겠다」).
+              //   무통장입금 주문서는 「입금할 금액」을 말하는 화면이다. 0원짜리를 거기로 보내면
+              //   낼 것이 없는 사람에게 계좌를 보여 준다 — 화면이 거짓말을 하게 된다.
+              //   ⇒ apps.json 의 ctaAction:"download" 로 «지금은 받기만 하면 된다»를 말한다.
+              //
+              //   ⚠️주소를 여기에 «박지 않는다». 다운로드 주소의 단 한 벌은 data/downloads.json
+              //     이고 서버(api/license/download.js)도 그 파일을 본다. 여기 박으면 두 벌이 되어
+              //     드라이브를 옮길 때 한쪽만 고치는 사고가 난다(그 파일 _why 가 경고하는 것).
+              //   ⇒ 기본값은 «사이트 안»의 다운로드 절로 두고, 아래에서 downloads.json 을 읽어
+              //     플랫폼별 드라이브 주소로 «올려친다». 못 읽어도 막다른 길이 아니다.
+              : p.ctaAction === 'download'
+              ? '<a href="goditor.html#download" class="plan-cta" data-cta-download="1">'
+                  + esc(p.cta || (p.name + ' 다운로드')) + ' →</a>'
               // ★유료 등급은 «주문서»로 보낸다. 전에는 넷 다 가입 페이지로 가서
               //   「돈을 내겠다」는 의사를 받을 곳이 아예 없었다.
               // ★버튼 문구는 «등급마다 달라야» 한다. 이름만 쓰면 프로 1개월과 프로 12개월이
@@ -138,6 +176,40 @@
               + esc(p.id) + '" data-plan-label="' + esc(p.name) + '">' + esc(p.name) + ' 신청</button>';
           }).join('');
         if (window.__bindOrderButtons) window.__bindOrderButtons();
+      }
+
+      /* ★다운로드 CTA 를 «플랫폼별 드라이브 주소»로 올려친다.
+       *   goditor-download.js 와 «같은 파일»(data/downloads.json)을 본다 — 주소는 한 벌이다.
+       *   ⚠️맥은 ARM64/Intel 을 브라우저로 구분할 방법이 없다. 상단 다운로드 버튼과 «같게»
+       *     arm64 로 보낸다 — 다르게 보내면 「위 버튼과 딴 데로 간다」가 더 큰 혼란이다.
+       *     Intel 맥은 goditor.html 의 다운로드 절로 가야 한다(거기엔 Intel 경로가 나란히 있다).
+       *   ★못 읽으면 아무것도 «안 바꾼다». 기본값이 사이트 안의 다운로드 절이라 막다른 길이 없다.
+       *   ★새 탭으로 연다 — 요금표를 보다가 드라이브로 «갈아타면» 비교하던 맥락이 사라진다. */
+      var dlBtns = grid.querySelectorAll('[data-cta-download]');
+      if (dlBtns.length) {
+        fetch('data/downloads.json?v=20260905m')
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (dl) {
+            var u = dl && dl.goditor;
+            if (!u) return;
+            var ua = navigator.userAgent || '';
+            var isWin = /Windows/i.test(ua);
+            var isMac = /Mac OS X|Macintosh/i.test(ua) && !/iPhone|iPad/i.test(ua);
+            // ★상단 다운로드 버튼과 «같은 폴더»로 보낸다(현빈 2026-09-05: 「위에 다운로드
+            //   버튼처럼」). 윈도 → win / 맥 → mac-arm64 / 그 외 → 세 폴더가 다 보이는 상위 폴더.
+            //   ⚠️맥의 ARM·Intel 은 브라우저로 구분할 방법이 «없다». 상단 버튼은 arm64 를
+            //     기본으로 걸고 «옆에 Intel 링크»를 따로 두는데, 카드에는 그 자리가 없다.
+            //     ⇒ Intel 맥 사용자는 goditor.html 의 다운로드 절로 가야 한다.
+            //     (앞서 상위 폴더로 보내 봤는데, 「상단 버튼과 다르다」가 더 큰 혼란이었다.)
+            var href = isWin ? u['win'] : (isMac ? u['mac-arm64'] : u['']);
+            if (!href) return;
+            dlBtns.forEach(function (b) {
+              b.href = href;
+              b.target = '_blank';
+              b.rel = 'noopener';
+            });
+          })
+          .catch(function () { /* 주소를 못 올려쳐도 기본 링크가 살아 있다 */ });
       }
     })
     .catch(function () {
