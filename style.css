@@ -1055,11 +1055,14 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      더 키우면 이 값을 다시 재라. */
 .plan-price {
   font-size: var(--fs-lead); font-weight: 700; letter-spacing: -0.02em; color: var(--fg);
-  /* ⚠️실측으로 정한 값이다(2026-09-05). 「취소선 한 줄 + 1.45배 금액」이 실제로 차지한
-     높이가 81px 이었고 다른 카드는 59px 이었다 — 그 차이가 그대로 아래 줄을 밀었다.
-     ⇒ 3.7em(=81.4px) 로 «넷 다» 같은 칸을 준다. 눈대중으로 잡으면 또 어긋난다. */
+  /* ⚠️★이 값은 «두 번» 고쳤다. 처음 3.7em(81.4px)은 「취소선 + 1.45배로 키운 금액」
+     기준이었는데, 금액 확대를 «되돌린 뒤에도 그대로 뒀다». 그래서 칸에 20px 이 남아
+     이름과 금액 사이가 벌어졌다(현빈: 「beta test 와 가격 사이에 갭이 왜 이리 많니」).
+     ★★설정값을 «전제»와 함께 적어 두지 않으면, 전제가 바뀌어도 값만 살아남는다.
+       ⇒ 지금 전제: 「취소선 한 줄(약 19px) + 기본 크기 금액 한 줄(약 27px)」 = 약 46px.
+         금액 크기나 취소선 유무를 바꾸면 «여기를 다시 재라». */
   line-height: 1.2;
-  min-height: 3.7em;
+  min-height: 1.95em;
   display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
 }
 
@@ -1085,10 +1088,14 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
      실제로 파는 값이다 — 지어낸 정가를 그으면 그냥 허위 표시가 된다. */
 .plan-was {
   display: block;
-  font-size: var(--fs-sm); font-weight: 600; letter-spacing: -0.01em;
+  /* ★작게 둔다(--fs-xs). 주인공은 «내려온 값»이지 정가가 아니다.
+     ★그리고 이 줄의 높이가 곧 «네 카드 모두가 비워 두어야 하는 자리»다 —
+       크게 잡으면 취소선이 없는 카드 셋의 이름~금액 사이가 그만큼 벌어진다.
+       (실제로 --fs-sm 일 때 셋이 34px 벌어졌다. 지금은 그 절반이다.) */
+  font-size: var(--fs-xs); font-weight: 600; letter-spacing: -0.01em;
   color: var(--faint); text-decoration: line-through;
-  text-decoration-thickness: 1.5px;
-  line-height: 1.15;
+  text-decoration-thickness: 1.2px;
+  line-height: 1.1;
   margin-bottom: 2px;
 }
 
