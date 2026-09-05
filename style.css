@@ -1916,3 +1916,60 @@ html.js .detail-lead { opacity: 0; transform: translateY(14px); }
 .goditor-why p{ margin: 0; font-size: var(--fs-body); line-height: 1.8; color: var(--muted); }
 .goditor-why b{ color: var(--fg); font-weight: 600; }
 @media (max-width: 600px){ .goditor-why{ margin-top: 20px; padding: 22px 18px; gap: 12px; } }
+/* ══════════════════════════════════════════════════════════════
+   구글 로그인 버튼 (2026-09-06, 현빈 B안 = 「검은 버튼 · 구글 표준(다크)」)
+
+   ★색·높이·폰트·로고는 구글 «브랜딩 가이드»가 정한 값이다 — 우리 토큰이 아니다.
+     그래서 여기만 리터럴을 쓴다. ⛔--accent 같은 우리 토큰으로 바꾸지 마라(심사 지적 대상).
+   ★다크=검정 / 라이트=흰색 으로 «갈린다». 둘 다 구글 규격 안이다.
+     라이트에서 검은 버튼을 그대로 쓰면 「가입하기」(먹색 채움)와 «검은 버튼 두 개»가 된다.
+   ══════════════════════════════════════════════════════════════ */
+.gsi-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; height: 44px; padding: 0 14px;
+  border-radius: 20px;            /* 우리 .signup-submit(20px)과 맞춘다 */
+  cursor: pointer;
+  font-family: 'Roboto', var(--font);
+  font-size: 14px; font-weight: 500; letter-spacing: 0.15px;
+  /* 다크 기본값 */
+  background: #131314; color: #E3E3E3; border: 1px solid #8E918F;
+  transition: background 0.15s, border-color 0.15s;
+}
+.gsi-btn:hover  { background: #1E1F20; }
+.gsi-btn:active { background: #2A2B2C; }
+.gsi-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.gsi-btn svg { width: 18px; height: 18px; flex: none; }
+.gsi-btn[disabled] { opacity: 0.5; cursor: default; }
+
+[data-theme="light"] .gsi-btn {
+  background: #FFFFFF; color: #1F1F1F; border-color: #747775;
+}
+[data-theme="light"] .gsi-btn:hover  { background: #F7F8F8; }
+[data-theme="light"] .gsi-btn:active { background: #EFF0F0; }
+
+/* 「또는」 구분선 — 두 경로가 «동등한 선택지»임을 말한다 */
+.auth-or {
+  display: flex; align-items: center; gap: 12px;
+  margin: 16px 0 4px; color: var(--faint); font-size: var(--fs-xs);
+}
+.auth-or::before, .auth-or::after {
+  content: ""; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ★버튼은 스크립트가 «채운다». 비어 있을 때 자리를 차지하면 폼이 한 번 덜컥거린다. */
+.gsi-slot:empty { display: none; }
+
+/* ★잠긴 입력칸 — 「구글이 확인해 준 이메일」처럼 «못 고치는» 값을 위한 것.
+   ⚠️2026-09-06 검수에서 잡힘: disabled 인데 글자·배경·밑줄이 «일반 칸과 완전히 같아»
+     못 고치는 칸인지 알 수 없었다(다른 건 커서뿐이었다 — 마우스를 올려야만 안다).
+   ⇒ 흐리게 + 밑줄을 점선으로. 「고장」이 아니라 「고정」으로 읽혀야 하므로 너무 죽이지는 않는다. */
+.signup-input:disabled,
+.auth-card .signup-input:disabled {
+  color: var(--muted);
+  border-bottom-style: dashed;
+  cursor: default;
+}
+/* 잠긴 이유를 «칸 옆»에서 한 번 말해 준다 — 라벨만으로는 왜 잠겼는지 모른다. */
+.lbl-locked {
+  font-size: var(--fs-xs); color: var(--faint); font-weight: 400; margin-left: 6px;
+}

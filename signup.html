@@ -46,6 +46,9 @@
       <h1 class="auth-title">회원가입</h1>
 
       <div class="auth-card">
+      <!-- ★구글 버튼 (2026-09-06, 현빈 B안). 스크립트가 채우고 「또는」 구분선까지 만든다.
+           ⛔여기에 SVG 를 붙여넣지 마라 — google-btn.js «한 곳»에서만 만든다(가입·로그인 공용). -->
+      <div class="gsi-slot" data-google-btn></div>
       <form id="signup-form" class="signup-form" novalidate>
         <label class="signup-label" for="email">이메일</label>
         <!-- ★중복확인(현빈 2026-09-02). 왜 넣었나:
@@ -492,6 +495,7 @@
   </script>
   <script src="footer.js?v=20260905m"></script>
   <script src="nav-auth.js?v=20260905m"></script>
+  <script src="google-btn.js?v=20260906a"></script>
   <script src="theme.js?v=20260905m"></script>
 </body>
 </html>

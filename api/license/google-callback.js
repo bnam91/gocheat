@@ -40,15 +40,19 @@ function fail(req, res, code) {
  *   godiv   : 확장 전용 주소에 쿼리로 싣는다(크롬이 그 창을 닫고 값만 확장에 준다) */
 function succeed(req, res, { app, redirect, sessionToken, email, next }) {
   if (app === 'web') {
-    /* ★웹은 토큰을 쿼리로 주면 «브라우저 기록·리퍼러·서버 로그»에 남는다.
-       그래서 HttpOnly 쿠키로 넘기고, 프런트는 쿠키를 못 읽으므로
-       착지 페이지가 /api/license/me 로 «자기가 누구인지»를 물어본다.
-       ⚠️ SameSite=Lax 여야 한다 — 구글에서 «다른 사이트를 거쳐» 돌아오는 이동이라
-          Strict 면 그 첫 요청에 쿠키가 실리지 않는다. */
+    /* ★★웹의 세션은 «sessionStorage 의 sms_token»이다(nav-auth.js 가 그걸로 판단한다).
+       리디렉션 응답은 스크립트에 값을 줄 수 없으므로, 토큰을 «일회용 쿠키»로 건네고
+       착지 페이지(auth-done.html)가 session-adopt 로 바꿔 담는다.
+       ⛔토큰을 쿼리로 주지 않는다 — 브라우저 기록·리퍼러·프록시 로그에 남는다.
+
+       ⚠️SameSite=Lax 여야 한다 — 구글이라는 «다른 사이트를 거쳐» 돌아오는 이동이라
+         Strict 면 그 첫 요청에 쿠키가 실리지 않는다(=로그인이 통째로 안 된다).
+       ★Max-Age 는 «분» 단위다. 이 쿠키는 저장소가 아니라 «건네주는 손»이라 오래 살 이유가 없다. */
     const dest = next || redirect || '/';
+    const q = new URLSearchParams({ next: dest });
     res.writeHead(302, {
-      'Set-Cookie': `sms_session=${sessionToken}; Path=/; Max-Age=2592000; HttpOnly; Secure; SameSite=Lax`,
-      Location: baseUrl(req) + dest,
+      'Set-Cookie': `sms_handoff=${sessionToken}; Path=/; Max-Age=300; HttpOnly; Secure; SameSite=Lax`,
+      Location: baseUrl(req) + '/auth-done.html?' + q.toString(),
       'Cache-Control': 'no-store',
     });
     return res.end();

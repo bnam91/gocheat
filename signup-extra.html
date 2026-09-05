@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#0B0B0E" />
+  <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script src="phone.js?v=20260905m"></script>
+  <title>거의 다 됐어요 · 소문의섬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="style.css?v=20260906a" />
+  <link rel="stylesheet" href="legal.css?v=20260905m" />
+  <link rel="stylesheet" href="signup.css?v=20260905m" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260905m" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260905m" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260905m" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <div class="nav-links">
+        <button type="button" class="theme-toggle" aria-label="테마 전환">
+          <svg class="theme-icon theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+          <svg class="theme-icon theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="auth auth-wide">
+    <div class="auth-inner">
+      <!-- ★제목이 「회원가입」이 아니다. 사용자는 방금 구글에서 «가입을 마쳤다»고 느끼는데
+           여기서 「회원가입」이라고 하면 「아까 그건 뭐였지」가 된다. 남은 한 걸음임을 말한다. -->
+      <h1 class="auth-title">거의 다 됐어요</h1>
+      <p class="auth-sub" id="ex-sub">연락처와 약관 동의만 받으면 끝납니다.</p>
+
+      <div class="auth-card">
+      <form id="extra-form" class="signup-form" novalidate>
+        <!-- ★구글이 확인해 준 주소라 «고칠 수 없다». 고치게 두면 그 순간 검증이 무의미해진다.
+             ★잠긴 이유를 라벨에서 말한다 — 안 말하면 「왜 입력이 안 되지」로 읽힌다. -->
+        <label class="signup-label">이메일 <span class="lbl-locked">구글에서 확인됨</span></label>
+        <input id="ex-email" class="signup-input" type="email" disabled />
+
+        <label class="signup-label" for="ex-name">이름 <span class="req-mark">[필수]</span></label>
+        <input id="ex-name" name="name" type="text" class="signup-input" placeholder="홍길동"
+               autocomplete="name" maxlength="40" required />
+        <p class="field-err" id="err-name" role="status" aria-live="polite"></p>
+
+        <label class="signup-label" for="ex-phone">휴대전화 <span class="req-mark">[필수]</span></label>
+        <input id="ex-phone" name="phone" type="tel" class="signup-input" placeholder="01012345678"
+               autocomplete="tel" inputmode="numeric" maxlength="20" required />
+        <p class="field-err" id="err-phone" role="status" aria-live="polite"></p>
+
+        <div class="agree-box">
+          <label class="agree-item agree-all">
+            <input type="checkbox" id="agree-all" checked /> <span><b>전체 동의</b></span>
+          </label>
+          <div class="agree-divider"></div>
+
+          <!-- ★★약관 동의와 개인정보 수집·이용 동의는 «따로» 받는다
+               (개인정보 보호법 제22조① 구분 동의). signup.html 과 같은 규칙이다. -->
+          <label class="agree-item">
+            <input type="checkbox" id="agree-terms" class="agree-child" checked />
+            <span>[필수] <a href="terms.html" target="_blank" rel="noopener">이용약관</a> 동의</span>
+          </label>
+
+          <label class="agree-item">
+            <input type="checkbox" id="agree-privacy" class="agree-child" checked />
+            <span>[필수] <a href="privacy.html" target="_blank" rel="noopener">개인정보 수집·이용</a> 동의
+              <br /><small class="agree-detail">
+                <!-- ★구글 가입은 비밀번호를 «안 받는다». 항목을 그대로 베끼면 «거짓 고지»가 된다. -->
+                수집 항목: 이메일, 이름, 휴대전화번호 ·
+                이용 목적: 회원 식별과 계정 보호, 아이디 찾기 ·
+                보유 기간: 탈퇴 또는 삭제 요청 시까지
+              </small></span>
+          </label>
+
+          <label class="agree-item">
+            <input type="checkbox" id="agree-marketing" class="agree-child" checked />
+            <span>[선택] 마케팅 정보 수신 동의
+              <br /><small class="agree-detail">
+                신규 기능·이벤트 안내를 이메일로 보내 드립니다.
+                동의하지 않아도 가입과 서비스 이용에 아무런 제한이 없으며, 언제든 철회할 수 있습니다.
+              </small></span>
+          </label>
+        </div>
+        <p class="field-err" id="err-agree" role="status" aria-live="polite"></p>
+
+        <button type="submit" class="signup-submit" id="ex-submit">시작하기 →</button>
+        <p class="signup-msg" id="ex-msg" role="status" aria-live="polite"></p>
+      </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  (function () {
+    'use strict';
+    var form = document.getElementById('extra-form');
+    var msg = document.getElementById('ex-msg');
+    var emailEl = document.getElementById('ex-email');
+    var nameEl = document.getElementById('ex-name');
+    var phoneEl = document.getElementById('ex-phone');
+    var submit = document.getElementById('ex-submit');
+
+    function fieldErr(k, text) {
+      var el = document.getElementById('err-' + k);
+      if (el) el.textContent = text || '';
+    }
+
+    /* ★세션은 «sessionStorage 의 sms_token»이다 — 이 사이트의 기존 방식 그대로다.
+       (auth-done.html 이 구글 콜백의 일회용 쿠키를 여기로 옮겨 담아 준다)
+       ⛔쿠키로 부르지 마라 — 서버 API 는 쿠키를 «안 읽는다»(2026-09-06 검수에서 잡힌 결함). */
+    function token() {
+      try { return sessionStorage.getItem('sms_token') || ''; } catch (e) { return ''; }
+    }
+    if (!token()) { window.location.replace('login.html?err=session'); }
+
+    try { emailEl.value = sessionStorage.getItem('sms_email') || ''; } catch (e) {}
+
+    // 이름은 서버가 아는 값을 채워 준다(구글이 준 표시명). 사용자가 고칠 수 있다.
+    /* ★★「튕기는 조건」을 «401 로만» 좁힌다.
+       전엔 r.ok 가 아니면 무조건 로그인으로 보냈다. 그러면 서버가 500 을 내는 동안
+       사용자가 로그인 → 여기 → 튕김 → 로그인 을 «무한히» 돈다. 본인 잘못이 아닌데도.
+       ⇒ 세션이 «실제로» 무효일 때(401)만 보내고, 그 외 오류는 화면을 지키고 말로 알린다. */
+    fetch('/api/license/me', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionToken: token() }),
+    })
+      .then(function (r) {
+        if (r.status === 401 || r.status === 403) { window.location.replace('login.html?err=session'); return null; }
+        if (!r.ok) { msg.textContent = '정보를 불러오지 못했어요. 입력은 그대로 진행하셔도 됩니다.'; return null; }
+        return r.json();
+      })
+      .then(function (d) {
+        if (!d || !d.email) return;
+        emailEl.value = d.email;
+        /* ★me.js 는 이름을 «d.profile.name» 으로 준다(d.name 이 아니다 — 그건 항상 undefined 라
+           칸이 «조용히» 비어 있게 된다. 2026-09-06 검수에서 잡혔다).
+           ⚠️구글 표시명은 여기 «아직» 안 들어온다 — upsert 가 profile 을 안 만들기 때문이다.
+             그래서 신규 사용자는 이름을 직접 친다. 기존 계정이라 이름이 있으면 그게 채워진다. */
+        var known = d.profile && d.profile.name;
+        if (known && !nameEl.value) nameEl.value = known;
+        if (d.profile && d.profile.phone && !phoneEl.value) phoneEl.value = d.profile.phone;
+      })
+      .catch(function () { /* 네트워크 문제면 폼은 그대로 두고 제출 때 다시 걸린다 */ });
+
+    // 전체동의 ↔ 개별 동기화 (signup.html 과 같은 동작)
+    var all = document.getElementById('agree-all');
+    var kids = Array.prototype.slice.call(document.querySelectorAll('.agree-child'));
+    all.addEventListener('change', function () {
+      kids.forEach(function (k) { k.checked = all.checked; });
+    });
+    kids.forEach(function (k) {
+      k.addEventListener('change', function () {
+        all.checked = kids.every(function (x) { return x.checked; });
+      });
+    });
+
+    [nameEl, phoneEl].forEach(function (el) {
+      el.addEventListener('input', function () { fieldErr(el === nameEl ? 'name' : 'phone', ''); });
+    });
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      fieldErr('name', ''); fieldErr('phone', ''); fieldErr('agree', ''); msg.textContent = '';
+
+      var name = nameEl.value.trim();
+      var phone = phoneEl.value.replace(/[^0-9]/g, '');
+      var terms = document.getElementById('agree-terms').checked;
+      var privacy = document.getElementById('agree-privacy').checked;
+      var marketing = document.getElementById('agree-marketing').checked;
+
+      if (!name) { fieldErr('name', '이름을 입력해 주세요'); nameEl.focus(); return; }
+      if (phone.length < 10) { fieldErr('phone', '휴대전화 번호를 확인해 주세요'); phoneEl.focus(); return; }
+      if (!terms || !privacy) { fieldErr('agree', '필수 항목에 동의해 주세요'); return; }
+
+      submit.disabled = true;
+      try {
+        var r = await fetch('/api/license/profile-complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionToken: token(),
+            profile: { name: name, phone: phone },
+            consents: { terms: terms, privacy: privacy, marketing: marketing },
+          }),
+        });
+        var d = await r.json().catch(function () { return {}; });
+        if (!r.ok) {
+          submit.disabled = false;
+          if (d.error === 'invalid_session' || r.status === 401) {
+            window.location.replace('login.html?err=session');
+            return;
+          }
+          msg.textContent = d.detail || '저장하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+          return;
+        }
+        /* ★원래 가려던 곳으로 돌려보낸다. 없으면 홈.
+           ⛔여기서도 «경로만» 받는다 — //evil.com 같은 값이 들어오면 무시한다. */
+        var next = new URLSearchParams(location.search).get('next') || '/';
+        if (next.charAt(0) !== '/' || next.charAt(1) === '/') next = '/';
+        window.location.replace(next);
+      } catch (err) {
+        submit.disabled = false;
+        msg.textContent = '네트워크 오류입니다. 다시 시도해 주세요.';
+      }
+    });
+  })();
+  </script>
+
+  <script src="footer.js?v=20260905m"></script>
+  <script src="theme.js?v=20260905m"></script>
+</body>
+</html>
