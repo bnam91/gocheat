@@ -70,11 +70,14 @@
              ★둘째 줄은 데스크톱에서 «2줄로 접힌다»(18자). 제목 전체가 3줄이 된다 —
                2026-09-02 판(「여기는 다수를 위한 곳이 아닙니다.」)도 같은 모양이었으니 허용된 형태다.
                ⇒ 그래서 글자 크기를 80 → 64px 로 내렸다(style.css 참고). 3줄이 화면을 다 먹지 않게.
+             ★★2026-09-05 저녁 — 「쉿!」을 붙였다(현빈). 첫 줄이 «태도»에서 «행동»이 된다 —
+               조용히 하라고 «지금 말하는» 소리라 문장이 살아난다.
              ★띄어쓰기 — 「소문내지 마세요」. 보조용언 '마세요'는 띄는 것이 원칙이다.
                ⚠️현빈 지시는 「소문내지마세요」로 붙어 있었으나, 2026-09-02 이 자리에 남긴
                  띄어쓰기 원칙을 그대로 따른다(같은 문장을 그때도 띄어 썼다). -->
         <span class="title-line title-line-1 gradient-text">소문내지 마세요.</span>
-        <span class="title-line title-line-2">애초에 다수를 위한 곳이 아닙니다.</span>
+        <span class="title-line title-line-2">애초에 다수를 위한</span>
+        <span class="title-line title-line-3">제품이 아닙니다.</span>
       </h1>
       <!-- ★서브카피 «숨김» (현빈 2026-09-05: 「이건 없어도 될듯 숨겨줘」).
            더미로 채워 두었던 자리다. 제목이 「소문내지 마세요 / 애초에 다수를 위한 곳이 아닙니다」로
@@ -115,7 +118,16 @@
              ★아직 확정이 아니다. 요금제(goditor.html#pricing) 등으로 바꾸려면 href 만 고치면 된다. -->
       <div class="hero-cta">
         <a href="signup.html" class="cta-secondary">지금 저점매수하러가기 →</a>
-        <a href="https://www.youtube.com/@소문의섬" target="_blank" rel="noopener" class="cta-primary">소문의섬 유튜브</a>
+        <!-- ★유튜브 «구독» 링크 (현빈 2026-09-05: 「구독하기 버튼 느낌이면 좋겠는데」).
+             ?sub_confirmation=1 을 붙이면 유튜브가 «구독 확인 팝업»을 띄운다 — 유튜브가 공식으로
+             지원하는 파라미터다. 채널 페이지만 여는 것보다 한 걸음 덜 걷는다.
+             ★채널 «핸들»(@소문의섬)이 아니라 «채널 ID»로 건다 — 핸들도 대개 동작하지만
+               ID 가 정식 경로다(채널 페이지 canonical 이 이 주소다). 핸들은 바뀔 수 있고 ID 는 안 바뀐다.
+               UCz8sbGVvqpJTVcNR659ch5Q = 「소문의섬」 (2026-09-05 채널 HTML 의 canonical 로 확인).
+             ⚠️구독 팝업은 «유튜브에 로그인돼 있을 때»만 뜬다. 비로그인이면 채널 페이지가 열리고
+               로그인 후 팝업이 이어진다 — 어느 쪽이든 막다른 길은 아니다. -->
+        <a href="https://www.youtube.com/channel/UCz8sbGVvqpJTVcNR659ch5Q?sub_confirmation=1"
+           target="_blank" rel="noopener" class="cta-primary">유튜브 구독하기</a>
       </div>
       <!-- 보존: 오픈카톡 버튼(지금은 우측 하단 플로팅 .kko-float 로 대체)
         <a href="https://open.kakao.com/o/gm2omOLi" target="_blank" rel="noopener" class="cta-primary is-quiet">오픈카톡방 →</a>

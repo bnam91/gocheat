@@ -249,6 +249,15 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
    ★★2026-09-05 저녁 — 라벨을 «다시 걷었다»(현빈: 「아이브로우는 없애도 될듯」).
      ⇒ 규칙대로 126px 로 되돌린다. 라벨 있으면 80 / 없으면 126(=80+라벨 46).
      이 값은 «라벨의 유무»만 따라간다 — 카피가 몇 줄이냐와는 무관하다. */
+/* ★★2026-09-05 저녁 — 히어로만 «글 폭»을 넓힌다(680 → 860px). 현빈: 「메인 카피 좀 더 크게」.
+   ⚠️이건 폰트만으로는 안 되는 일이라 폭을 건드린다. 제목 둘째 줄이 18자라
+     680px 폭(글폭 632)에서는 «50px 이 한계»다 — 그 이상은 어떤 화면에서도 3줄이 된다.
+     860px 폭(글폭 812)이면 64px 까지 2줄이 유지된다(실측).
+   ★대응표(둘째 줄이 한 줄로 들어가는 한계): 680→50 / 780→58 / 860→64 / 900→68 / 1000↑→70
+   ★--width(680) 자체는 «건드리지 않는다» — 헤더·푸터·다른 섹션이 전부 그 토큰을 쓴다.
+     여기서만 덮으므로 다른 페이지는 한 픽셀도 안 바뀐다.
+   ★이 사이트엔 이미 1040px 폭을 쓰는 섹션이 있다(.pricing) — 낯선 폭이 아니다.
+   ⚠️문구를 바꾸면 이 폭·크기 조합을 다시 재라. 글자 수가 달라지면 한계가 달라진다. */
 .hero { max-width: var(--width); margin: 0 auto; padding: 126px 24px 100px; text-align: center; }
 /* ★2026-09-05 한글 라벨에 맞게 고쳤다. 원래 이 규칙은 «영문 대문자» 라벨 전제였다
    (mono + uppercase + letter-spacing 0.06em). 「드디어 공개합니다.」를 넣자 두 가지가 깨졌다:
@@ -314,8 +323,18 @@ header nav { max-width: var(--width); margin: 0 auto; padding: 0 24px; height: 6
              680px→50 / 780px→58 / 860px→64 / 900px→68 / 1000px 이상→70
            이 사이트엔 이미 1040px 폭을 쓰는 섹션이 있다(.pricing). 낯선 폭이 아니다.
            다만 --width(680) 를 쓰는 헤더·푸터와 히어로 폭이 갈리는 «디자인 결정»이라
-           여기서 하지 않았다. */
-  font-size: clamp(40px, 3.4vw, 48px);
+           여기서 하지 않았다.
+
+       ★★2026-09-05 저녁 8차 — 48 → 64px. 글 폭을 860 으로 넓혀서 가능해졌다(위 .hero 주석).
+         현빈: 「메인 카피 좀 더 크게」 · 앞서 「2배로 커져도 될 듯」. 32 → 64 라 정확히 2배다.
+
+       ★★2026-09-05 저녁 9차 — 제목을 «3줄»로 손수 나눴다(현빈 제안).
+         「소문내지 마세요. / 애초에 다수를 위한 / 제품이 아닙니다.」
+         ⇒ 가장 긴 줄이 9자로 짧아졌다. 18자 한 줄이 정하던 한계가 사라진다.
+         실측: 이 3줄 구성에서 680px 폭(글폭 632)은 «100px 까지» 각 줄이 한 줄이다.
+         ★그래서 .hero 의 max-width 를 «680 으로 되돌렸다» — 폭을 넓힐 이유가 없어졌다.
+           («곳이 → 제품이»로 낱말도 바뀌었다. 파는 물건이 있는 곳이라는 뜻이 분명해진다.) */
+  font-size: clamp(36px, 5.8vw, 84px);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.06;
@@ -505,6 +524,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
    만든 것이라, 그라디언트가 걸린 줄이 반드시 이걸 써야 한다. 한쪽만 바꾸면 사파리에서 글자가 사라진다. */
 .title-line-1  { display: block; animation: revealCopyGradient 1.0s cubic-bezier(0.16,1,0.3,1) 0.10s both; }
 .title-line-2  { display: block; animation: revealCopy 1.0s cubic-bezier(0.16,1,0.3,1) 0.28s both; }
+/* ★2026-09-05 셋째 줄 추가 — 제목을 「소문내지 마세요. / 애초에 다수를 위한 / 제품이 아닙니다.」
+   3줄로 손수 나누면서 필요해졌다. 지연은 0.28 → 0.46s(1·2줄 간격 0.18s 를 그대로 이어간다).
+   ⚠️display:block 이 여기 «번호 붙은 클래스»에만 있다는 점을 기억할 것 — .title-line 만으로는
+     줄이 안 나뉜다(2026-09-05 에 이걸 몰라 측정을 한 번 틀렸다). */
+.title-line-3  { display: block; animation: revealCopy 1.0s cubic-bezier(0.16,1,0.3,1) 0.46s both; }
 .hero-sub      { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.62s both; }
 .hero-cta      { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.72s both; }
 
@@ -727,7 +751,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-badge, .hero-title, .title-line-1, .title-line-2,
+  .hero-badge, .hero-title, .title-line-1, .title-line-2, .title-line-3,
   .hero-sub, .hero-cta, .hero-apps {
     animation: none; opacity: 1; transform: none; filter: none;
   }
