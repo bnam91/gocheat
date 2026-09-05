@@ -18,7 +18,7 @@ document.getElementById('mp-body').style.display = 'block';
 // ★주문 표의 «상품명·금액»은 data/apps.json 이 단일 출처다 — 여기 값을 박아 두면
 //   요금이 바뀔 때 마이페이지만 옛 금액을 보여준다(실제로 겪은 병이다).
 var PLAN_NAME = {}, PRICE_TXT = {};
-fetch('data/apps.json?v=20260905m').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/apps.json?v=20260906a').then(function (r) { return r.ok ? r.json() : null; })
   .then(function (j) {
     // apps.json 은 «앱 배열»이고 각 앱이 plans 를 가진다. 앱을 돌며 요금제를 모은다.
     (Array.isArray(j) ? j : []).forEach(function (app) {
@@ -184,7 +184,7 @@ window.addEventListener('hashchange', applyHash);
 var orders = [];
 try { orders = JSON.parse(sessionStorage.getItem('sms_orders') || '[]'); } catch (e) {}
 // ★연동 여부를 «표를 그리기 전»에 알아야 상태 문구를 정할 수 있다.
-fetch('data/business.json?v=20260905m').then(function (r) { return r.ok ? r.json() : null; })
+fetch('data/business.json?v=20260906a').then(function (r) { return r.ok ? r.json() : null; })
   .catch(function () { return null; })
   .then(function (b) { window.__smsDummy = !b || b.bankIsDummy !== false; renderOrders(); });
 
@@ -277,6 +277,9 @@ document.getElementById('mp-logout').addEventListener('click', function () {
   //   (signup.html·login-page.js 와 «같은 규칙»)
   var REASON = {
     wrong_current_password: '현재 비밀번호가 맞지 않아요.',
+    /* ★구글로만 가입한 계정은 비밀번호가 «없다» — 폴백 문구로 두면
+       「바꾸지 못했어요」라고만 하고 «왜인지·무엇을 하면 되는지»를 안 말한다. */
+    no_password: '구글로 로그인하는 계정이라 비밀번호가 없어요. 비밀번호를 만들려면 「비밀번호 찾기」를 이용해 주세요.',
     weak_password:          '새 비밀번호는 8자 이상이어야 해요.',
     same_password:          '지금 쓰는 비밀번호와 같아요. 다른 걸로 정해 주세요.',
     current_required:       '현재 비밀번호를 입력해 주세요.',

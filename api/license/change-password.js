@@ -96,6 +96,21 @@ module.exports = async (req, res) => {
       { key: `pwip:${ip}`, at: now },
     ]);
 
+    /* ★★구글로만 가입한 계정은 passwordHash 가 «없다».
+     *   그대로 두면 bcrypt.compare 가 false 를 내고 「현재 비밀번호가 올바르지 않다」고 말하는데,
+     *   그 사람은 «비밀번호를 만든 적이 없다» — 무엇을 쳐도 틀리다는 답만 듣는다.
+     *   ⇒ 사유를 갈라서 «할 수 있는 것»을 알려 준다.
+     *   ★오라클이 아니다 — 이 문은 «이미 로그인한 본인»만 지난다(sessionToken 검증 뒤).
+     *   ★「비밀번호 찾기」를 안내하는 이유: reset-confirm 이 passwordHash 를 새로 심는다.
+     *     즉 구글 사용자가 «비밀번호를 만드는» 실제 경로가 그것뿐이다. */
+    if (!user.passwordHash) {
+      return json(res, 409, {
+        ok: false,
+        reason: 'no_password',
+        detail: '구글로 로그인하는 계정이라 비밀번호가 없어요. 비밀번호를 만들려면 「비밀번호 찾기」를 이용해 주세요.',
+      });
+    }
+
     const okCurrent = await bcrypt.compare(currentPassword, user.passwordHash || '');
     if (!okCurrent) return json(res, 401, { ok: false, reason: 'wrong_current_password' });
 

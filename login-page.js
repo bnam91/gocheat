@@ -39,6 +39,34 @@
       promax: 'PRO MAX',
     };
 
+  /* ★구글 로그인 실패는 «리디렉션»으로 돌아온다 — /login.html?err=<코드>.
+     이걸 안 읽으면 사용자는 로그인 화면에 그냥 떨어지고 «왜인지 모른다»(2026-09-06 검수).
+     ★문구는 「무엇이 잘못됐다」가 아니라 «지금 할 수 있는 것»을 말한다. */
+  (function showOauthError() {
+    var code = new URLSearchParams(location.search).get('err');
+    if (!code) return;
+    var MAP = {
+      cancelled:               '구글 로그인을 취소하셨어요. 다시 시도하시거나 아래로 로그인해 주세요.',
+      state_expired:           '시간이 오래 지나 로그인이 만료됐어요. 다시 눌러 주세요.',
+      state_invalid:           '로그인 정보가 올바르지 않아요. 처음부터 다시 시도해 주세요.',
+      google_email_unverified: '구글에서 이메일 확인이 끝나지 않은 계정이에요. 구글 계정의 이메일을 확인한 뒤 다시 시도해 주세요.',
+      account_conflict:        '이 이메일은 다른 구글 계정과 연결되어 있어요. 아래 이메일·비밀번호로 로그인하시거나 고객센터로 문의해 주세요.',
+      session:                 '로그인이 만료됐어요. 다시 로그인해 주세요.',
+      not_configured:          '지금은 구글 로그인을 쓸 수 없어요. 아래 이메일·비밀번호로 로그인해 주세요.',
+    };
+    // ★모르는 코드는 «코드를 감추고» 사람 말로 폴백한다(아래 REASON 과 같은 규칙).
+    var text = MAP[code] || '구글 로그인을 마치지 못했어요. 다시 시도해 주세요.';
+    try {
+      var box = document.getElementById('login-msg') || document.querySelector('.signup-msg');
+      if (box) { box.textContent = text; box.className = 'signup-msg signup-msg-err'; }
+    } catch (e) {}
+    // ★주소창에서 err 를 지운다 — 새로고침할 때마다 «지나간 오류»가 다시 뜨면 안 된다.
+    try {
+      var u = new URL(location.href); u.searchParams.delete('err');
+      history.replaceState(null, '', u.pathname + u.search + u.hash);
+    } catch (e) {}
+  })();
+
   function fail(text, el) {
     msg.textContent = text;
     msg.className = 'signup-msg signup-msg-error';
@@ -254,7 +282,12 @@
         showExpired(data);
         return;
       }
-      if (res.status === 401) return fail('이메일 또는 비밀번호가 올바르지 않아요.');
+      /* ★구글로 가입한 사람은 «비밀번호가 없다» — 여기서 아무리 쳐도 401 이다.
+         그 사람에게 「비밀번호가 올바르지 않다」만 말하면 «영영 못 들어온다».
+         ⛔단, 「이 계정은 구글 계정입니다」라고 «가려서» 말하면 안 된다 —
+           그건 이메일을 넣어보고 가입 여부를 알아내는 오라클이 된다(signup.js 와 같은 규칙).
+         ⇒ «모두에게 같은 문구»로 길을 알려 준다. 정보는 안 새고 갇히지도 않는다. */
+      if (res.status === 401) return fail('이메일 또는 비밀번호가 올바르지 않아요. 구글로 가입하셨다면 위 「Google로 계속하기」를 눌러 주세요.');
       if (res.status === 403) return fail('이메일 인증이 완료되지 않은 계정이에요.');
       if (!res.ok || !data.ok) {
         // ★모르는 코드까지 그대로 붙이면 「로그인에 실패했어요: internal_error」가 화면에 뜬다.
@@ -293,7 +326,7 @@
   var app;
   try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
   if (!app) return;
-  fetch('data/apps.json?v=20260905m').then(function (r) { return r.ok ? r.json() : null; })
+  fetch('data/apps.json?v=20260906a').then(function (r) { return r.ok ? r.json() : null; })
     .then(function (apps) {
       if (!apps) return;
       var a = apps.filter(function (x) { return x.id === app; })[0];

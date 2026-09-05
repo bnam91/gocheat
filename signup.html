@@ -6,23 +6,23 @@
   <meta name="color-scheme" content="dark light" />
   <meta name="theme-color" content="#0B0B0E" />
   <script>(function(){try{var t=localStorage.getItem('sms_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
-  <script src="phone.js?v=20260905m"></script>
+  <script src="phone.js?v=20260906a"></script>
   <title>회원가입 · 소문의섬</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
-  <link rel="stylesheet" href="style.css?v=20260905m" />
+  <link rel="stylesheet" href="style.css?v=20260906a" />
   <!-- ★style.css «뒤»여야 한다(.legal-inner ↔ .doc-layout 덮어쓰기) -->
-  <link rel="stylesheet" href="legal.css?v=20260905m" />
+  <link rel="stylesheet" href="legal.css?v=20260906a" />
   <!-- ★★style.css «뒤»여야 한다 — 이 파일엔 공용 규칙을 덮어쓰는 것이 있다(순서 바꾸지 말 것) -->
-  <link rel="stylesheet" href="signup.css?v=20260905m" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260905m" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260905m" />
+  <link rel="stylesheet" href="signup.css?v=20260906a" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260906a" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=20260906a" />
 </head>
 <body>
   <header>
     <nav>
-      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260905m" alt="" width="22" height="22" /><span>소문의섬</span></a>
+      <a href="/" class="logo"><img class="logo-mark" src="/assets/logo-mark.png?v=20260906a" alt="" width="22" height="22" /><span>소문의섬</span></a>
       <div class="nav-links">
         <a href="login.html">로그인</a>
         <a href="signup.html">회원가입</a>
@@ -157,7 +157,7 @@
              (이 프로젝트에서 el.hidden 이 flex 에 먹혀 안 숨은 사고가 있었다) -->
       <div class="modal-veil" id="welcome" hidden role="dialog" aria-modal="true" aria-labelledby="welcome-title">
         <div class="modal-card">
-          <img src="/assets/logo-mark.png?v=20260905m" alt="" class="modal-mark" width="56" height="56" />
+          <img src="/assets/logo-mark.png?v=20260906a" alt="" class="modal-mark" width="56" height="56" />
           <h2 class="modal-title" id="welcome-title">가입이 끝났어요!</h2>
           <p class="modal-sub" id="welcome-sub"></p>
           <p class="modal-email" id="welcome-email"></p>
@@ -259,7 +259,7 @@
 
       // ★flags.json 은 응답에 Cache-Control 이 «없다» → 브라우저 휴리스틱 캐시가 걸린다.
       //   플래그를 뒤집어도 옛 값을 든 브라우저는 동의 구간이 «통째로 없는» 화면을 본다.
-      fetch('data/flags.json?v=20260905m')
+      fetch('data/flags.json?v=20260906a')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (f) { (f && f.extendedSignup === true) ? openExtended() : lockExtended(); })
         .catch(lockExtended)
@@ -479,7 +479,7 @@
       var app;
       try { app = new URLSearchParams(location.search).get('app'); } catch (e) { return; }
       if (!app) return;
-      fetch('data/apps.json?v=20260905m').then(function (r) { return r.ok ? r.json() : null; })
+      fetch('data/apps.json?v=20260906a').then(function (r) { return r.ok ? r.json() : null; })
         .then(function (apps) {
           if (!apps) return;
           var a = apps.filter(function (x) { return x.id === app; })[0];
@@ -493,9 +493,9 @@
         }).catch(function () {});
     })();
   </script>
-  <script src="footer.js?v=20260905m"></script>
-  <script src="nav-auth.js?v=20260905m"></script>
+  <script src="footer.js?v=20260906a"></script>
+  <script src="nav-auth.js?v=20260906a"></script>
   <script src="google-btn.js?v=20260906a"></script>
-  <script src="theme.js?v=20260905m"></script>
+  <script src="theme.js?v=20260906a"></script>
 </body>
 </html>
